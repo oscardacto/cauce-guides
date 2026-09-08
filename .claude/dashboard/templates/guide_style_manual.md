@@ -107,7 +107,7 @@
 - Línea superior de `2 pt` en naranja `#F47920`
 - Fondo `#1A1A1A` o blanco según el diseño
 - Logo `guide_` a la izquierda (en naranja sobre negro, o en negro sobre blanco)
-- Centro: `sofka.com.co` — caption gris `#888888`
+- Centro: sin contenido — el slot quedó libre al eliminar el enlace corporativo
 - Derecha: número de página — caption gris
 
 ---

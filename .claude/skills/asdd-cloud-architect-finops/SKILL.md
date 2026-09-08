@@ -63,7 +63,7 @@ tags = {
   environment = "prod"
   team        = "platform"
   cost_center = "cc-1234"
-  owner       = "juan.gomez@sofka.com.co"
+  owner       = "juan.gomez@example.com"
 }
 ```
 

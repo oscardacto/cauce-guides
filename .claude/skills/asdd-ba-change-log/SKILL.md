@@ -52,7 +52,7 @@ BC-{AAAA-MM-DD}-{autor}-{NNN}
 ```
 
 - `{AAAA-MM-DD}` — fecha del cambio (ej. `2026-07-24`)
-- `{autor}` — slug del usuario: prefijo del email del sistema antes del `@`, con `.` reemplazado por `-` si el AF lo prefiere (ej. `alejandro.lopez` de `alejandro.lopez@sofka.com.co`). Si no está disponible el email → usar el nombre declarado por el agente activador.
+- `{autor}` — slug del usuario: prefijo del email del sistema antes del `@`, con `.` reemplazado por `-` si el AF lo prefiere (ej. `alejandro.lopez` de `alejandro.lopez@example.com`). Si no está disponible el email → usar el nombre declarado por el agente activador.
 - `{NNN}` — secuencial **por autor + fecha**, empezando en `001` cada día por persona
 
 Ejemplos válidos: `BC-2026-07-24-alejandro.lopez-001`, `BC-2026-07-24-carlos.garcia-001`

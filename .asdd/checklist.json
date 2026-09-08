@@ -1,5 +1,5 @@
 {
-  "$schema": "https://sofka.com.co/asdd/checklist/v2.0/schema.json",
+  "$schema": "https://asdd.local/asdd/checklist/v2.0/schema.json",
   "checklist_version": "2.0.0",
   "description": "Pasos verificables que el CLI debe cumplir antes de considerar adoptado el template ASDD v2.x. Incluye verificación de naming convention (check 14).",
   "_pre_install_nota_de_mecanismo": "expect_regex compara la CADENA de `<tool> --version`, así que NO puede expresar un piso de minor: `^v(2[0-9])\\.` aceptaría v20.0.0. Por eso el piso de Node es un MAJOR completo (22), donde toda minor cumple. El piso real de git (>=2.30, declarado en compatibility.required_tools del contrato) es inexpresable acá sin una alternación frágil e inauditable; el regex solo verifica el major para no rechazar git 3.x cuando exista. La solución de fondo es un `type: \"semver_gte\"` en el CLI — seguimiento en guide-ia/cli, bump MINOR de contrato.",

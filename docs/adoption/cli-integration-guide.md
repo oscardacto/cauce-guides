@@ -327,6 +327,6 @@ Cambios incompatibles (MAJOR) evitar hasta 2026-Q4:
 ## 10. Referencias
 
 - Spec formal: `docs/adoption/contract-spec.md`
-- Schema JSON: `https://sofka.com.co/asdd/contract/v1.0/schema.json` (a publicar)
+- Schema JSON: `https://asdd.local/asdd/contract/v1.0/schema.json` (a publicar)
 - Template de referencia: `project-structure` (este repo)
 - CLI: `guide-ai` (repo `/IA/ASDD/cli`)

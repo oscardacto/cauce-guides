@@ -1,5 +1,5 @@
 {
-  "$schema": "https://sofka.com.co/asdd/contract/v2.0/schema.json",
+  "$schema": "https://asdd.local/asdd/contract/v2.0/schema.json",
   "contract_version": "2.5.0",
   "template": {
     "id": "claude",

@@ -68,7 +68,7 @@ console.log('\nC3 — git commit sin Co-Authored-By → exit 0');
 // ---- C4: git commit con co-autor humano → exit 0 ----------------------------
 console.log('\nC4 — git commit con co-autor humano → exit 0');
 {
-  const cmd = 'git commit -m "feat: new\\n\\nCo-Authored-By: Pedro Gómez <pedro@sofka.com.co>"';
+  const cmd = 'git commit -m "feat: new\\n\\nCo-Authored-By: Pedro Gómez <pedro@example.com>"';
   const r = run(makePayload(cmd));
   assert("exit 0", r.status === 0, `got exit ${r.status}`);
 }

@@ -19,7 +19,7 @@ Todo agente que activa `asdd-ba-change-log` DEBE proveer:
 
 | Campo | Cómo obtenerlo |
 |---|---|
-| `autor` | Prefijo del email del sistema (ej. `alejandro.lopez` de `alejandro.lopez@sofka.com.co`). Disponible en el contexto de sesión. Si no está disponible, solicitarlo al AF antes de activar el skill. |
+| `autor` | Prefijo del email del sistema (ej. `alejandro.lopez` de `alejandro.lopez@example.com`). Disponible en el contexto de sesión. Si no está disponible, solicitarlo al AF antes de activar el skill. |
 | `fecha` | Fecha actual en formato `AAAA-MM-DD`. |
 | `tipo` | Según la tabla canónica del skill. |
 | + resto de campos de la plantilla | Ver `asdd-ba-change-log/SKILL.md`. |

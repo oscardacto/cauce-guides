@@ -67,7 +67,7 @@ Un template puede tener `template.version: 3.4.0` consumiendo `contract_version:
 ### 3.1 `$schema` y `contract_version`
 
 ```json
-"$schema": "https://sofka.com.co/asdd/contract/v1.0/schema.json",
+"$schema": "https://asdd.local/asdd/contract/v1.0/schema.json",
 "contract_version": "1.0.0"
 ```
 
