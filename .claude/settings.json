@@ -1,6 +1,6 @@
 {
     "env": {
-        "SOFKA_ASDD_GITFLOW_PREFIXES": "feature/,feat/,fix/,hotfix/,chore/,refactor/,test/,docs/,perf/,ci/,wt/"
+        "ASDD_GITFLOW_PREFIXES": "feature/,feat/,fix/,hotfix/,chore/,refactor/,test/,docs/,perf/,ci/,wt/"
     },
     "permissions": {
         "allow": [
@@ -19,14 +19,14 @@
             "Bash(tail:*)",
             "Bash(wc:*)",
             "Bash(tree:*)",
-            "Bash(node .claude/scripts/sofka-asdd-artifact-name.mjs:*)",
-            "Bash(node .claude/scripts/sofka-asdd-commit-authorization.mjs issue:*)",
-            "Bash(node .claude/scripts/sofka-asdd-load-capability.mjs:*)",
-            "Bash(node .claude/scripts/sofka-asdd-plan-authorization.mjs issue:*)",
-            "Bash(node .claude/scripts/sofka-asdd-resolve-capability.mjs:*)",
-            "Bash(node .claude/scripts/sofka-asdd-resolve-rule.mjs:*)",
-            "Bash(node .claude/scripts/sofka-asdd-route-request.mjs --file:*)",
-            "Bash(node .claude/scripts/sofka-asdd-run-bootstrap.mjs:*)",
+            "Bash(node .claude/scripts/asdd-artifact-name.mjs:*)",
+            "Bash(node .claude/scripts/asdd-commit-authorization.mjs issue:*)",
+            "Bash(node .claude/scripts/asdd-load-capability.mjs:*)",
+            "Bash(node .claude/scripts/asdd-plan-authorization.mjs issue:*)",
+            "Bash(node .claude/scripts/asdd-resolve-capability.mjs:*)",
+            "Bash(node .claude/scripts/asdd-resolve-rule.mjs:*)",
+            "Bash(node .claude/scripts/asdd-route-request.mjs --file:*)",
+            "Bash(node .claude/scripts/asdd-run-bootstrap.mjs:*)",
             "Bash(node .claude/scripts/validate-template.mjs:*)",
             "Bash(node .claude/scripts/*)",
             "Bash(node --version:*)",
@@ -75,7 +75,7 @@
                         "type": "command",
                         "command": "node",
                         "args": [
-                            "${CLAUDE_PROJECT_DIR}/.claude/hooks/sofka-asdd-user-prompt-submit.mjs"
+                            "${CLAUDE_PROJECT_DIR}/.claude/hooks/asdd-user-prompt-submit.mjs"
                         ]
                     }
                 ]
@@ -88,7 +88,7 @@
                         "type": "command",
                         "command": "node",
                         "args": [
-                            "${CLAUDE_PROJECT_DIR}/.claude/hooks/sofka-asdd-post-subagent-stop.mjs"
+                            "${CLAUDE_PROJECT_DIR}/.claude/hooks/asdd-post-subagent-stop.mjs"
                         ]
                     }
                 ]
@@ -102,7 +102,7 @@
                         "type": "command",
                         "command": "node",
                         "args": [
-                            "${CLAUDE_PROJECT_DIR}/.claude/hooks/sofka-asdd-plan-gate.mjs"
+                            "${CLAUDE_PROJECT_DIR}/.claude/hooks/asdd-plan-gate.mjs"
                         ]
                     }
                 ]
@@ -114,7 +114,7 @@
                         "type": "command",
                         "command": "node",
                         "args": [
-                            "${CLAUDE_PROJECT_DIR}/.claude/hooks/sofka-asdd-pre-tool-dispatcher.mjs"
+                            "${CLAUDE_PROJECT_DIR}/.claude/hooks/asdd-pre-tool-dispatcher.mjs"
                         ]
                     }
                 ]
@@ -127,14 +127,14 @@
                         "type": "command",
                         "command": "node",
                         "args": [
-                            "${CLAUDE_PROJECT_DIR}/.claude/hooks/sofka-asdd-session-start-dispatcher.mjs"
+                            "${CLAUDE_PROJECT_DIR}/.claude/hooks/asdd-session-start-dispatcher.mjs"
                         ]
                     },
                     {
                         "type": "command",
                         "command": "node",
                         "args": [
-                            "${CLAUDE_PROJECT_DIR}/.claude/hooks/sofka-asdd-run-manifest.mjs"
+                            "${CLAUDE_PROJECT_DIR}/.claude/hooks/asdd-run-manifest.mjs"
                         ]
                     }
                 ]
