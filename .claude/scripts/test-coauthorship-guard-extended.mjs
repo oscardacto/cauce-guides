@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Tests extendidos del hook sofka-asdd-pre-tool-use-coauthorship-guard.mjs (R2 — BUILD-007)
+ * Tests extendidos del hook asdd-pre-tool-use-coauthorship-guard.mjs (R2 — BUILD-007)
  * Cubre los vectores de escape C1-C5 documentados en
  * docs/tech/2026-07-07-001-BUILD-007-bug-c-co-authored-by-escapes-mr.md
  *
@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const HOOKS_DIR = join(__dirname, "..", "hooks");
-const HOOK = join(HOOKS_DIR, "sofka-asdd-pre-tool-use-coauthorship-guard.mjs");
+const HOOK = join(HOOKS_DIR, "asdd-pre-tool-use-coauthorship-guard.mjs");
 
 let passed = 0;
 let failed = 0;
@@ -44,7 +44,7 @@ function writePayload(filePath, content) {
   return JSON.stringify({ tool_name: "Write", tool_input: { file_path: filePath, content } });
 }
 
-console.log("\n=== Tests extendidos: sofka-asdd-pre-tool-use-coauthorship-guard.mjs (R2 — BUILD-007) ===\n");
+console.log("\n=== Tests extendidos: asdd-pre-tool-use-coauthorship-guard.mjs (R2 — BUILD-007) ===\n");
 
 // ---- C1a: glab mr update con Co-Authored-By Claude → exit 2 (vector 1) -------
 console.log("C1a — glab mr update con trailer Co-Authored-By Claude → exit 2");
@@ -188,11 +188,11 @@ console.log(
 
 // ---- C3g: Write de SKILL.md de create-mr con Co-Authored-By → exit 0 --------
 console.log(
-  "\nC3g — Write de .claude/skills/sofka-asdd-tech-lead-create-mr/SKILL.md con el string en el contenido → exit 0"
+  "\nC3g — Write de .claude/skills/asdd-tech-lead-create-mr/SKILL.md con el string en el contenido → exit 0"
 );
 {
   const payload = writePayload(
-    ".claude/skills/sofka-asdd-tech-lead-create-mr/SKILL.md",
+    ".claude/skills/asdd-tech-lead-create-mr/SKILL.md",
     "Nunca incluir un trailer 'Co-Authored-By: Claude' en el cuerpo del MR."
   );
   const r = run(payload);

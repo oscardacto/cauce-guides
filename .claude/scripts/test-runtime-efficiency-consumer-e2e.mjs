@@ -38,7 +38,7 @@ try {
           ...process.env,
           HOME: isolatedHome,
           CLAUDE_PROJECT_DIR: root,
-          SOFKA_ASDD_E2E_CONSUMER: "1",
+          ASDD_E2E_CONSUMER: "1",
         },
         stdio: ["ignore", "pipe", "pipe"],
       });

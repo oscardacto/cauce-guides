@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-architect-discovery
+Eres un agente especializado ejecutando el skill: asdd-architect-discovery
 
 ---
-name: sofka-asdd-architect-discovery
+name: asdd-architect-discovery
 description: Captura el contexto técnico del cliente al inicio de un engagement, stack, restricciones (regulatorias, presupuesto, deadlines), stakeholders, equipo y deuda. Produce ficha de contexto reusable. Activo en fases Especificar y Analizar.
 allowed-tools: [Read, Write, Edit, Glob, Grep]
 ---
@@ -54,7 +54,7 @@ Identificar y documentar restricciones por categoría:
 - **Tiempo (blandas):** deadline regulatorio, deadline de mercado, ventana de migración, hitos contractuales.
 - **Alcance (auto-impuestas):** "MVP en 8 semanas sin features X/Y/Z", "sólo módulo de checkout".
 
-**Formato Sofka para documentar cada restricción** (6 campos obligatorios):
+**Formato Guide para documentar cada restricción** (6 campos obligatorios):
 
 - **Tipo:** Regulatoria | Contractual | Técnica | Organizacional | Presupuesto | Tiempo | Alcance
 - **Dureza:** Dura (no negociable) | Semi-dura (negociable con costo) | Blanda (preferencia)
@@ -63,7 +63,7 @@ Identificar y documentar restricciones por categoría:
 - **Costo de levantarla:** USD, tiempo, riesgo si se ignora
 - **Vigencia:** fecha hasta la cual aplica, o "permanente"
 
-**Anti-patrones Sofka — restricciones:**
+**Anti-patrones Guide — restricciones:**
 
 1. **Restricciones implícitas** que el cliente da por obvias y el arquitecto no captura → re-trabajo.
 2. **Mezclar dureza** — tratar deadlines blandos como duros bloquea exploraciones legítimas.
@@ -77,9 +77,9 @@ Identificar y documentar restricciones por categoría:
 Producir:
 - Lista de stakeholders con rol y poder de decisión.
 - Power/Interest matrix (`templates/stakeholder-power-interest.md`).
-- RACI para decisiones arquitectónicas (`templates/raci.md` — ya viene con RACI Sofka pre-rellenada para 8 decisiones arquitectónicas).
+- RACI para decisiones arquitectónicas (`templates/raci.md` — ya viene con RACI Guide pre-rellenada para 8 decisiones arquitectónicas).
 
-**Heurísticas operativas Sofka — stakeholders:**
+**Heurísticas operativas Guide — stakeholders:**
 
 1. **Identificar al "veto silencioso"** — quien no aparece en reuniones pero puede bloquear (Compliance, Security corporativa, Finance).
 2. **Mapear a quién depende cada stakeholder** — el CTO depende del CFO si el ticket es grande.
@@ -103,6 +103,6 @@ proyecto del cliente.
 |---|---|
 | Guion de entrevista al cliente | `reference/interview-script.md` |
 | Plantilla ficha de contexto | `templates/context-card.md` |
-| Plantilla RACI (Sofka pre-rellenada) | `templates/raci.md` |
+| Plantilla RACI (Guide pre-rellenada) | `templates/raci.md` |
 | Plantilla power/interest | `templates/stakeholder-power-interest.md` |
 | Ejemplos rellenos | `examples/context-card-banca.md`, `examples/context-card-clinical.md` |

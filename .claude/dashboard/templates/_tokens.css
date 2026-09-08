@@ -1,21 +1,21 @@
 /**
- * ATF — Sofka Design Tokens
+ * ATF — Guide Design Tokens
  * Fuente única de verdad para colores, tipografía y radios.
  * Se inlinea en cada template en tiempo de build por generate-report.js.
  * NO modificar colores hardcodeados en templates individuales — usar estas variables.
  *
- * Identidad visual: sofka_style_manual.md (Sofka Technologies 2026)
+ * Identidad visual: guide_style_manual.md (Guide Technologies 2026)
  * Template version: 3.1.0
  */
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
-  /* ── Sofka Brand Palette 2026 (sofka_style_manual.md §2) ── */
-  --orange:      #F47920;                      /* Naranja Sofka — CTAs, acentos, guión bajo del logo */
+  /* ── Guide Brand Palette 2026 (guide_style_manual.md §2) ── */
+  --orange:      #F47920;                      /* Naranja Guide — CTAs, acentos, guión bajo del logo */
   --orange-bg:   rgba(244,121,32,.09);
   --orange-b:    rgba(244,121,32,.28);
-  --sofka-light: #F0EDE8;                      /* Crema / Beige — fondos de apertura */
-  --sofka-dark:  #B8A894;
+  --guide-light: #F0EDE8;                      /* Crema / Beige — fondos de apertura */
+  --guide-dark:  #B8A894;
 
   /* ── Backgrounds ── */
   --bg:    #F7F5F2;
@@ -33,16 +33,16 @@
   --skip:  #8A8478; --skip-bg:rgba(138,132,120,.10);--skip-b:rgba(138,132,120,.25);
   --p3c:   #0A7A7A;   /* P3 bugs = teal */
 
-  /* ── Sofka Semáforo de Criticidades (§5.1) ── */
+  /* ── Guide Semáforo de Criticidades (§5.1) ── */
   --sev-critical: #E53E3E;  /* Rojo — bloqueos, fallos graves */
-  --sev-high:     #F47920;  /* Naranja Sofka — alertas importantes */
+  --sev-high:     #F47920;  /* Naranja Guide — alertas importantes */
   --sev-medium:   #F6C343;  /* Amarillo — puntos de atención */
   --sev-low:      #38A169;  /* Verde — estado saludable */
 
   /* ── Texto (§2 + §3) ── */
   --text:  #1A1A1A; --text2: #555555; --text3: #888888; --text4: #B0A898;
 
-  /* ── Tipografía Sofka 2026 (§3) ── */
+  /* ── Tipografía Guide 2026 (§3) ── */
   --font-head: 'Barlow Condensed', 'Montserrat', Arial Narrow, sans-serif;  /* Titulares */
   --font-body: 'Montserrat', 'Roboto', Arial, sans-serif;                   /* Cuerpo */
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
@@ -96,8 +96,8 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── SOFKA FOOTER (§4.7 — compartido entre todos los templates) ── */
-.sofka-footer {
+/* ── GUIDE FOOTER (§4.7 — compartido entre todos los templates) ── */
+.guide-footer {
   text-align: center;
   font-size: .75rem;
   color: var(--text3, #888888);
@@ -107,20 +107,20 @@
   line-height: 1.7;
   font-family: var(--font-body);
 }
-.sofka-footer a {
+.guide-footer a {
   color: var(--orange, #F47920);
   text-decoration: none;
   font-weight: 600;
 }
-.sofka-footer a:hover { opacity: .7; }
-.sofka-brand {
+.guide-footer a:hover { opacity: .7; }
+.guide-brand {
   font-family: var(--font-head);
   font-weight: 700;
   font-size: .85rem;
   color: var(--text, #1A1A1A);
   letter-spacing: -.01em;
 }
-.sofka-brand .underscore {
+.guide-brand .underscore {
   color: var(--orange, #F47920);
   font-weight: 800;
 }

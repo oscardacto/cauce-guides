@@ -28,9 +28,9 @@ import { resolveEffectiveCwd, parseInlineEnvVar } from "../hooks/_lib/git-comman
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const HOOKS_DIR = join(__dirname, "..", "hooks");
-const GUARD_BRANCH = join(HOOKS_DIR, "sofka-asdd-guard-branch.mjs");
-const PRE_PUSH_GATE = join(HOOKS_DIR, "sofka-asdd-pre-push-gate.mjs");
-const PRE_PR_GATE = join(HOOKS_DIR, "sofka-asdd-pre-pr-gate.mjs");
+const GUARD_BRANCH = join(HOOKS_DIR, "asdd-guard-branch.mjs");
+const PRE_PUSH_GATE = join(HOOKS_DIR, "asdd-pre-push-gate.mjs");
+const PRE_PR_GATE = join(HOOKS_DIR, "asdd-pre-pr-gate.mjs");
 
 let passed = 0;
 let failed = 0;
@@ -65,8 +65,8 @@ function makeTmpDir(prefix) {
 /** Inicializa un repo git aislado en `dir`, con identidad de test. */
 function gitInit(dir) {
   execFileSync("git", ["init", "-q"], { cwd: dir });
-  execFileSync("git", ["config", "user.email", "test@sofka.local"], { cwd: dir });
-  execFileSync("git", ["config", "user.name", "Sofka Test"], { cwd: dir });
+  execFileSync("git", ["config", "user.email", "test@guide.local"], { cwd: dir });
+  execFileSync("git", ["config", "user.name", "Guide Test"], { cwd: dir });
 }
 
 /** Crea/actualiza un archivo (creando subdirectorios si hace falta) y lo commitea en `dir`. */
@@ -138,7 +138,7 @@ console.log("guard-branch.mjs");
       GUARD_BRANCH,
       repo,
       { tool_name: "Bash", tool_input: { command: "git commit -m 'wip'" } },
-      { SOFKA_ASDD_GUARD_BRANCH_DISABLE: "1" }
+      { ASDD_GUARD_BRANCH_DISABLE: "1" }
     );
     assert("F0.3 escape hatch de sesión permite en rama protegida", r.status === 0, `exit ${r.status}`);
   }
@@ -193,7 +193,7 @@ console.log("\npre-pr-gate.mjs");
       PRE_PR_GATE,
       repo,
       { tool_name: "Bash", tool_input: { command: "gh pr create --title x --body y" } },
-      { SOFKA_ASDD_GUARD_PR_DISABLE: "1" }
+      { ASDD_GUARD_PR_DISABLE: "1" }
     );
     assert("F0.7 escape hatch de sesión permite creación de MR", r.status === 0, `exit ${r.status}`);
   }
@@ -241,7 +241,7 @@ console.log("\npre-push-gate.mjs");
       PRE_PUSH_GATE,
       repo,
       { tool_name: "Bash", tool_input: { command: "git push -u origin feature/push-test" } },
-      { SOFKA_ASDD_GUARD_PUSH_DISABLE: "1" }
+      { ASDD_GUARD_PUSH_DISABLE: "1" }
     );
     assert("F0.10 escape hatch de sesión permite push de código fuente", r.status === 0, `exit ${r.status}`);
   }
@@ -313,22 +313,22 @@ console.log("\n=== B1 — Helper resolveEffectiveCwd / parseInlineEnvVar ===\n")
   {
     assert(
       "B1.8 parseInlineEnvVar detecta prefijo al inicio",
-      parseInlineEnvVar("SOFKA_ASDD_GUARD_BRANCH_DISABLE=1 git commit -m x", "SOFKA_ASDD_GUARD_BRANCH_DISABLE") === true
+      parseInlineEnvVar("ASDD_GUARD_BRANCH_DISABLE=1 git commit -m x", "ASDD_GUARD_BRANCH_DISABLE") === true
     );
   }
   {
     assert(
       "B1.9 parseInlineEnvVar detecta prefijo tras &&",
       parseInlineEnvVar(
-        "cd nested && SOFKA_ASDD_GUARD_BRANCH_DISABLE=true git commit -m x",
-        "SOFKA_ASDD_GUARD_BRANCH_DISABLE"
+        "cd nested && ASDD_GUARD_BRANCH_DISABLE=true git commit -m x",
+        "ASDD_GUARD_BRANCH_DISABLE"
       ) === true
     );
   }
   {
     assert(
       "B1.10 parseInlineEnvVar false cuando no está el prefijo",
-      parseInlineEnvVar("git commit -m x", "SOFKA_ASDD_GUARD_BRANCH_DISABLE") === false
+      parseInlineEnvVar("git commit -m x", "ASDD_GUARD_BRANCH_DISABLE") === false
     );
   }
 }
@@ -381,7 +381,7 @@ function makeNestedFixture(rootBranch, nestedBranch) {
   const { root } = makeNestedFixture("dev", "dev"); // ambos en rama protegida — solo el inline debe salvarlo
   const r = runHook(GUARD_BRANCH, root, {
     tool_name: "Bash",
-    tool_input: { command: "SOFKA_ASDD_GUARD_BRANCH_DISABLE=1 git commit -m 'wip'" },
+    tool_input: { command: "ASDD_GUARD_BRANCH_DISABLE=1 git commit -m 'wip'" },
   });
   assert("B6.3 escape hatch inline permite en rama protegida", r.status === 0, `exit ${r.status}, stderr: ${r.stderr}`);
   assert("B6.3 stdout registra la advertencia del escape hatch", r.stdout.includes("ADVERTENCIA"), r.stdout);

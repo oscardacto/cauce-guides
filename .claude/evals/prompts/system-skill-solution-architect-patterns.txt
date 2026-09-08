@@ -1,8 +1,8 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-architect-patterns
+Eres un agente especializado ejecutando el skill: asdd-architect-patterns
 
 ---
-name: sofka-asdd-architect-patterns
-description: Catálogo arquitectónico que cubre estilos (monolito, microservicios, serverless, EDA), patrones de integración (EIP de Hohpe), datos (CQRS, ES, sagas, outbox) y seguridad (zero trust, mTLS, OAuth/OIDC). Incluye decision tree de selección de estilo con thresholds Sofka. Activo en fase Diseñar.
+name: asdd-architect-patterns
+description: Catálogo arquitectónico que cubre estilos (monolito, microservicios, serverless, EDA), patrones de integración (EIP de Hohpe), datos (CQRS, ES, sagas, outbox) y seguridad (zero trust, mTLS, OAuth/OIDC). Incluye decision tree de selección de estilo con thresholds Guide. Activo en fase Diseñar.
 allowed-tools: [Read, Glob, Grep]
 ---
 
@@ -13,8 +13,8 @@ ayuda a identificar qué patrón aplica al problema y qué references cargar par
 profundizar.
 
 Las decisiones que salen de aquí entran como alternativas en
-`sofka-asdd-architect-tradeoff-analysis` y se documentan en un ADR vía
-`sofka-asdd-architect-adr`.
+`asdd-architect-tradeoff-analysis` y se documentan en un ADR vía
+`asdd-architect-adr`.
 
 ## Cuándo invocar
 
@@ -46,9 +46,9 @@ Las decisiones que salen de aquí entran como alternativas en
 Decision tree para descartar opciones obvias rápido. **NO sustituye análisis
 riguroso** — sirve para acotar.
 
-**Default Sofka: Monolito Modular.** Apartarse de él requiere justificación.
+**Default Guide: Monolito Modular.** Apartarse de él requiere justificación.
 
-### Pregunta 1 — Tamaño del equipo (thresholds Sofka)
+### Pregunta 1 — Tamaño del equipo (thresholds Guide)
 
 - **≤ 15 devs en un solo equipo** → MONOLITO MODULAR (default). Si workload es muy event-driven, considerar SERVERLESS + EDA.
 - **16-50 devs en 2-5 squads** → MICROSERVICIOS si los bounded contexts son claros; sino MONOLITO MODULAR + extraer servicios cuando duela.
@@ -79,7 +79,7 @@ riguroso** — sirve para acotar.
 - Cliente quiere portabilidad → Containers + Kubernetes.
 - Cliente exige on-prem → Containers en infra propia + k8s.
 
-### Anti-flowchart Sofka (señales de alerta)
+### Anti-flowchart Guide (señales de alerta)
 
 | Si oís… | Sospechá |
 |---|---|
@@ -89,7 +89,7 @@ riguroso** — sirve para acotar.
 | "Necesitamos Kafka para todo" | Probable overkill. Validar volumen y casos de uso. |
 | "Hexagonal es overkill" | Quizás. Hexagonal cuesta poco si se aplica desde el start. |
 
-### Heurísticas finales Sofka
+### Heurísticas finales Guide
 
 1. **Default = Monolito modular.** Apartarse de él requiere justificación.
 2. **Conway's Law:** la arquitectura va a reflejar la organización, querás o no.
@@ -99,10 +99,10 @@ riguroso** — sirve para acotar.
 
 ## Default sync/async COE
 
-**Default Sofka:** sync **sólo** cuando el cliente necesita la respuesta para
+**Default Guide:** sync **sólo** cuando el cliente necesita la respuesta para
 continuar. El resto, async.
 
-**Checklist Sofka antes de adoptar async:**
+**Checklist Guide antes de adoptar async:**
 
 - [ ] ¿El consumer es idempotente?
 - [ ] ¿Hay DLQ?
@@ -132,9 +132,9 @@ Transformation / Endpoints / System Management), aplicar:
 4. Filtrar por contexto del cliente (cargado en `architect-discovery`).
 5. Listar trade-offs de cada candidato según el contexto.
 6. Si la elección no es trivial, encadenar con
-   `sofka-asdd-architect-tradeoff-analysis` para matriz formal.
-7. Documentar la decisión final en un ADR (`sofka-asdd-architect-adr`) y, si
-   produce diagrama, delegar a `sofka-asdd-architect-component-diagram`.
+   `asdd-architect-tradeoff-analysis` para matriz formal.
+7. Documentar la decisión final en un ADR (`asdd-architect-adr`) y, si
+   produce diagrama, delegar a `asdd-architect-component-diagram`.
 
 ## Output
 

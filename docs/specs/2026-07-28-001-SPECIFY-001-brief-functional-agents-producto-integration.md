@@ -1,8 +1,8 @@
-# Brief: Integración de agentes funcionales y evolución de `sofka-asdd-producto`
+# Brief: Integración de agentes funcionales y evolución de `asdd-producto`
 
-**Proyecto:** project-structure / Sofka ASDD
+**Proyecto:** project-structure / Guide ASDD
 **Fecha:** 2026-07-28
-**Owner:** Maintainers de Sofka ASDD
+**Owner:** Maintainers de Guide ASDD
 **Equipo receptor:** Equipo responsable de retomar Analyze, Design, Build y Verify
 **Run:** `2026-07-28-001`
 **Estado:** LISTO PARA INICIAR ANALYZE; no autoriza implementación
@@ -14,7 +14,7 @@
 
 El template `3.1.0` ya contiene una capa BA/Funcional especializada compuesta
 por cinco agentes y dieciocho skills, pero esa capa fue integrada como un flujo
-opcional y paralelo a `sofka-asdd-producto`. Producto continúa siendo declarado
+opcional y paralelo a `asdd-producto`. Producto continúa siendo declarado
 como dueño exclusivo del discovery, los requisitos y las specs funcionales, y
 mantiene siete capabilities que se solapan con las nuevas capacidades BA.
 
@@ -41,7 +41,7 @@ El resultado final esperado es:
 5. writers, readers, guards, comandos, routing, manifests, CLI y evaluaciones
    alineados con ese contrato;
 6. compatibilidad y migración explícitas para proyectos y runs existentes;
-7. retiro de `sofka-asdd-producto` únicamente cuando no deje consumidores ni
+7. retiro de `asdd-producto` únicamente cuando no deje consumidores ni
    capabilities huérfanas.
 
 ## 1. ¿Qué construimos?
@@ -52,7 +52,7 @@ standalone competidora y se convertirá en la fuente funcional especializada
 del mismo ciclo ASDD que consumen arquitectura, desarrollo, QA, seguridad,
 datos, UX/UI y operación.
 
-También evolucionaremos `sofka-asdd-producto`. Su responsabilidad estratégica
+También evolucionaremos `asdd-producto`. Su responsabilidad estratégica
 válida se conservará en un agente o capability de Product Strategy, limitada a
 visión, outcomes, valor, priorización, roadmap, OKRs y métricas. Las
 responsabilidades de análisis, requisitos, historias, aceptación, templates y
@@ -148,7 +148,7 @@ debe ser que ambos modos de entrada trabajen sobre el mismo paquete.
 
 ### 2.3 Responsabilidades mezcladas en Producto
 
-`sofka-asdd-producto` agrupa estrategia, análisis de negocio, autoría
+`asdd-producto` agrupa estrategia, análisis de negocio, autoría
 funcional, historias, aceptación, templates y planeación táctica. Esas
 responsabilidades tienen autoridades diferentes. Mantenerlas bajo un agente
 paraguas dificulta:
@@ -296,23 +296,23 @@ Analyze a partir de un baseline reproducible; no se inventan en este brief.
 Snapshot realizado sobre el template `3.1.0`:
 
 - 5 agentes BA especializados:
-  - `sofka-asdd-ba-functional-architect`;
-  - `sofka-asdd-ba-functional-sme`;
-  - `sofka-asdd-ba-scope-manager`;
-  - `sofka-asdd-ba-specification-auditor`;
-  - `sofka-asdd-ba-specification-lead`.
+  - `asdd-ba-functional-architect`;
+  - `asdd-ba-functional-sme`;
+  - `asdd-ba-scope-manager`;
+  - `asdd-ba-specification-auditor`;
+  - `asdd-ba-specification-lead`.
 - 18 skills BA.
-- 1 agente `sofka-asdd-producto`.
+- 1 agente `asdd-producto`.
 - 7 skills/capabilities Producto:
-  - `sofka-asdd-producto-pm`;
-  - `sofka-asdd-producto-ba`;
-  - `sofka-asdd-producto-funcional`;
-  - `sofka-asdd-producto-po`;
-  - `sofka-asdd-producto-new-hu`;
-  - `sofka-asdd-producto-story-planner`;
-  - `sofka-asdd-producto-templates`.
+  - `asdd-producto-pm`;
+  - `asdd-producto-ba`;
+  - `asdd-producto-funcional`;
+  - `asdd-producto-po`;
+  - `asdd-producto-new-hu`;
+  - `asdd-producto-story-planner`;
+  - `asdd-producto-templates`.
 - 88 archivos tracked contienen la referencia exacta
-  `sofka-asdd-producto`; 84 permanecen al excluir baselines congelados.
+  `asdd-producto`; 84 permanecen al excluir baselines congelados.
 - Los agentes BA aún se describen como opcionales, standalone y coexistentes
   con Producto.
 - Producto aún se describe como dueño exclusivo del discovery y la
@@ -374,7 +374,7 @@ No puede:
 
 ### 8.4 Compatibilidad
 
-Durante la ventana acordada, `sofka-asdd-producto` puede existir solo como alias
+Durante la ventana acordada, `asdd-producto` puede existir solo como alias
 deprecado:
 
 - emite warning y destino exacto;
@@ -395,8 +395,8 @@ superficie mediante búsqueda reproducible y clasificarla como `change`,
 
 Impacto directo:
 
-- `.claude/agents/sofka-asdd-producto.md`;
-- los cinco `.claude/agents/sofka-asdd-ba-*.md`;
+- `.claude/agents/asdd-producto.md`;
+- los cinco `.claude/agents/asdd-ba-*.md`;
 - Tech Lead y Solution Architect por ownership de planeación/diseño;
 - QA por descomposición de aceptación;
 - Domain Expert y Functional SME por fronteras de conocimiento;
@@ -415,7 +415,7 @@ Riesgos:
 
 Impacto directo:
 
-- siete skills `sofka-asdd-producto-*`;
+- siete skills `asdd-producto-*`;
 - dieciocho skills BA;
 - brief, requirements, user story, client validation, spec index y change log;
 - template funcional y reglas de slices;
@@ -461,12 +461,12 @@ Riesgos:
 
 Revisar al menos:
 
-- `/sofka-asdd:specify`;
-- `/sofka-asdd:analyze`;
-- `/sofka-asdd:design`;
-- `/sofka-asdd:build`;
-- `/sofka-asdd:verify`;
-- `/sofka-asdd:document`;
+- `/asdd:specify`;
+- `/asdd:analyze`;
+- `/asdd:design`;
+- `/asdd:build`;
+- `/asdd:verify`;
+- `/asdd:document`;
 - comandos de ejecución ligera que resuelvan specs o agentes;
 - workflow general y workflow Build;
 - checkpoints y handoffs.
@@ -535,7 +535,7 @@ Hallazgos ya conocidos que deben revalidarse:
 Superficies:
 
 - `.asdd-run.json`;
-- `.sofka-asdd/asdd-run.schema.json`;
+- `.asdd/asdd-run.schema.json`;
 - run bootstrap;
 - artifact-name helper;
 - artifact runtime;
@@ -558,11 +558,11 @@ Riesgos:
 
 Revisar:
 
-- `.sofka-asdd/capability-loading.json`;
-- `.sofka-asdd/coordinator-loading.json`;
-- `.sofka-asdd/rule-loading.json`;
-- `.sofka-asdd/sofka-asdd.lock`;
-- `.sofka-asdd/cli-contract.json`;
+- `.asdd/capability-loading.json`;
+- `.asdd/coordinator-loading.json`;
+- `.asdd/rule-loading.json`;
+- `.asdd/asdd.lock`;
+- `.asdd/cli-contract.json`;
 - package version;
 - scripts de distribución e instalación;
 - archivos embebidos del CLI;
@@ -864,8 +864,8 @@ excepción.
 - `docs/specs/2026-07-25-001-ANALYZE-014-unified-spec-package-contract.md`
 - `docs/tech/2026-07-25-001-ANALYZE-015-producto-capability-migration.md`
 - `docs/tech/2026-07-25-001-ANALYZE-016-unified-spec-package-impact-migration-plan.md`
-- `.claude/reference/ba/sofka-asdd-ba-specs-layout.md`
-- `.claude/references/rules/sofka-asdd-ba-layer-routing.md`
+- `.claude/reference/ba/asdd-ba-specs-layout.md`
+- `.claude/references/rules/asdd-ba-layer-routing.md`
 - `docs/adoption/ADR-004-spec-per-area-model.md`
 - `docs/adoption/ADR-006-integracion-capa-ba-analista-funcional.md`
 - `docs/adoption/ADR-010-refactor-consolidador-capa-ba.md`
@@ -896,6 +896,6 @@ producir los artefactos de Analyze/Design del nuevo run.
 - [x] Deja decisiones desconocidas como pendientes.
 - [x] No autoriza implementación.
 
-**Handoff:** el equipo receptor debe iniciar `/sofka-asdd:analyze` para el run
+**Handoff:** el equipo receptor debe iniciar `/asdd:analyze` para el run
 `2026-07-28-001`, regenerar el baseline sobre su HEAD efectivo y detenerse ante
 cualquier divergencia material respecto a este brief.

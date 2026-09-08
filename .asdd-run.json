@@ -76,7 +76,7 @@
     "pattern": "{run_id}-{PHASE}-{SEQ}-{slug}.{ext}",
     "scope": "all-agent-generated-files-under-docs",
     "code_excluded": true,
-    "helper": ".claude/scripts/sofka-asdd-artifact-name.mjs"
+    "helper": ".claude/scripts/asdd-artifact-name.mjs"
   },
   "blocking_issue": null,
   "escalations": [],

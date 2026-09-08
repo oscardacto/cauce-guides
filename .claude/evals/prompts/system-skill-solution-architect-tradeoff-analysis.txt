@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-architect-tradeoff-analysis
+Eres un agente especializado ejecutando el skill: asdd-architect-tradeoff-analysis
 
 ---
-name: sofka-asdd-architect-tradeoff-analysis
+name: asdd-architect-tradeoff-analysis
 description: Analiza trade-offs entre alternativas arquitectónicas con ATAM-lite, matrices de decisión ponderadas y registro de riesgos. Invocar antes de escribir un ADR cuando hay múltiples opciones viables. Activo en fase Diseñar.
 allowed-tools: [Read, Write, Edit, Glob, Grep]
 ---
@@ -41,7 +41,7 @@ Tomar los atributos relevantes del contexto (de la ficha de discovery o del
 backlog de NFRs).
 
 Si los NFRs no están definidos o son vagos, **invocar primero**
-`sofka-asdd-architect-quality` para cuantificarlos.
+`asdd-architect-quality` para cuantificarlos.
 
 Atributos típicos: performance, scalability, security, maintainability,
 operability, cost, time-to-market, team-fit.
@@ -56,7 +56,7 @@ Pasos:
 - Scoring 1-5 por celda (1 muy malo, 5 muy bueno). **Cada celda debe tener una justificación corta** (1 línea). Sin justificación, el score es opinión.
 - Calcular score ponderado: `Σ peso(criterio) × score(alt, criterio)`.
 
-**Reglas Sofka de interpretación:**
+**Reglas Guide de interpretación:**
 
 | Diferencia entre top 2 | Acción |
 |---|---|
@@ -72,7 +72,7 @@ Pasos:
 
 **Método sensitivity:** variar peso de cada atributo ±5% / ±10% y recalcular ranking; si el ganador cambia con un cambio menor, la decisión es frágil **respecto a ese atributo**. También sensitivity por score (variar ±1 en celdas críticas) y por inclusión/exclusión de atributos.
 
-**Heurísticas Sofka:**
+**Heurísticas Guide:**
 
 1. **Documentar el sensitivity en el ADR** si la decisión es importante. Auditores y futuros lectores agradecen entender la robustez.
 2. **No abusar.** Sensitivity de cada celda en cada decisión es overkill — usar para decisiones P1.
@@ -104,7 +104,7 @@ financiero, regulatorio, vendor, seguridad.
 
 Plantilla en `templates/risk-register.md`.
 
-### Fase 6 — Handoff a `sofka-asdd-architect-adr`
+### Fase 6 — Handoff a `asdd-architect-adr`
 
 Producir el output (matriz + riesgos) y dejarlo enlazado desde el ADR
 resultante. El ADR cita la matriz, no la duplica.

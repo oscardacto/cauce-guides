@@ -7,7 +7,7 @@ routing, seguridad, aprobación de challenges ni recuperación post-compact.
 
 ## Implementación
 
-`sofka-asdd-user-prompt-submit.mjs` clasifica cada prompt en tres modos:
+`asdd-user-prompt-submit.mjs` clasifica cada prompt en tres modos:
 
 | Modo | Condición | Salida |
 |---|---|---|

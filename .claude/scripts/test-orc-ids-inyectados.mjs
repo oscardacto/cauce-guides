@@ -23,7 +23,7 @@ import { fileURLToPath } from "node:url";
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 const RAIZ = resolve(AQUI, "..", "..");
-const HOOK = join(RAIZ, ".claude/hooks/sofka-asdd-user-prompt-submit.mjs");
+const HOOK = join(RAIZ, ".claude/hooks/asdd-user-prompt-submit.mjs");
 
 // Dónde puede estar definido un ID: las reglas, sus referencias, y CLAUDE.md
 // (que es donde viven los CORE-*).

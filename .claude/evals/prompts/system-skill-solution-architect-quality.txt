@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-architect-quality
+Eres un agente especializado ejecutando el skill: asdd-architect-quality
 
 ---
-name: sofka-asdd-architect-quality
+name: asdd-architect-quality
 description: Convierte NFRs vagos ("rápido", "seguro") en atributos de calidad medibles ISO/IEC 25010 con SLOs/SLIs y fitness functions ejecutables en CI. Activo en Analizar (definir), Diseñar (priorizar), Verificar (validar).
 allowed-tools: [Read, Write, Edit, Glob, Grep]
 ---
@@ -36,7 +36,7 @@ review (verificación) y se ejecuta en CI como quality gate.
 
 ### Fase 1 — NFR elicitation
 
-**Workflow Sofka — 3 preguntas por NFR vago:**
+**Workflow Guide — 3 preguntas por NFR vago:**
 
 1. ¿Bajo qué condiciones / volumen?
 2. ¿Qué métrica lo expresa?
@@ -55,7 +55,7 @@ review (verificación) y se ejecuta en CI como quality gate.
 | Scalability | "Escalable" | Crece linealmente hasta 10× carga actual (escalado horizontal) |
 | Cost | "Costo controlado" | Cloud spend ≤ USD X/mes con budget alerts a 80% / 100% |
 
-**Anti-patrones Sofka — NFRs:**
+**Anti-patrones Guide — NFRs:**
 
 1. **NFR sin contexto:** "P95 ≤ 200ms" sin decir en qué endpoint, bajo qué carga, en qué entorno.
 2. **Umbrales arbitrarios:** "5 9s" sin justificar el costo.
@@ -126,5 +126,5 @@ Cada fitness function en CI = quality gate. Falla = build rojo.
 | Plantilla priority matrix de atributos | `templates/priority-matrix.md` |
 | Plantilla SLO/SLI | `templates/slo-sli.md` |
 | Ejemplo SLO/SLI checkout | `examples/slo-sli-checkout.md` |
-| Ejemplo ArchUnit (invariantes Sofka) | `examples/archunit-example.md` |
-| Ejemplo dependency-cruiser (reglas Sofka) | `examples/dependency-cruiser-example.md` |
+| Ejemplo ArchUnit (invariantes Guide) | `examples/archunit-example.md` |
+| Ejemplo dependency-cruiser (reglas Guide) | `examples/dependency-cruiser-example.md` |

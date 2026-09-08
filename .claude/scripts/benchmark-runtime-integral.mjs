@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { arch, platform, release } from "node:os";
 import { resolve } from "node:path";
-import { readNormalized } from "./lib/sofka-asdd-hash-normalize-lib.mjs";
+import { readNormalized } from "./lib/asdd-hash-normalize-lib.mjs";
 
 const root = resolve(import.meta.dirname, "..", "..");
 const scripts = resolve(root, ".claude/scripts");
@@ -32,7 +32,7 @@ for (const tool of ["Bash", "Edit"]) {
 
 const prompt = runJson("benchmark-prompt-injection.mjs", ["--warmups", "5", "--samples", "30"]);
 const budget = runJson("benchmark-subagent-budget.mjs", ["1000"]);
-const context = runJson("sofka-asdd-runtime-metrics.mjs");
+const context = runJson("asdd-runtime-metrics.mjs");
 const consumer = runJson("test-runtime-efficiency-consumer-e2e.mjs");
 const original = JSON.parse(readFileSync(resolve(root, "docs/baselines/asdd-runtime-baseline-v2.json"), "utf8"));
 const provider = providerPath ? JSON.parse(readFileSync(providerPath, "utf8")) : null;

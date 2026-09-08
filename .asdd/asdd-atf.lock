@@ -1,0 +1,50 @@
+{
+  "schema": "1.0",
+  "spec": "agentic-spec-driven-development",
+  "variant": "atf-api-qa",
+  "version": "1.0.0",
+  "created_at": "2026-05-27",
+  "updated_at": "2026-05-27",
+  "locked": false,
+  "description": "Configuración específica del framework ATF API QA. Complementa asdd.lock — no duplica routing.hard_exclusions, routing.mode ni model_strategy de las fases ASDD principales.",
+  "model_strategy": {
+    "phase_default": {
+      "bootstrap": "sonnet",
+      "analyze": "sonnet",
+      "design": "opus",
+      "automate": "sonnet",
+      "execute": "sonnet",
+      "report": "sonnet"
+    },
+    "agent_pinning": {
+      "asdd-atf-api-qa-engineer": "opus",
+      "asdd-atf-reporting-qa-engineer": "sonnet"
+    },
+    "skill_override": {}
+  },
+  "checkpoint": {
+    "auto_save_after_steps": [2, 4, 6],
+    "context_summary_after_steps": [2, 4, 6],
+    "rate_limit_partial_status": "partial",
+    "resume_prompt_filename": "resume-prompt.md"
+  },
+  "defect_classification": {
+    "categories": ["bug", "precondition", "env_issue", "script_issue"],
+    "default_when_unclassified": "bug",
+    "require_classification_before_backlog": true
+  },
+  "routing": {
+    "light_max_agent_count": 1,
+    "full_min_phases": 3
+  },
+  "project": {
+    "domain": "qa-api-testing",
+    "stack": ["node/typescript", "bun", "playwright", "newman", "k6"]
+  },
+  "repository": {
+    "agents": 2,
+    "skills": 32,
+    "commands": 11,
+    "rules": 5
+  }
+}

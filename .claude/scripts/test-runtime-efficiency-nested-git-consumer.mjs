@@ -14,7 +14,7 @@ const init = (path, branch) => {
   execFileSync("git", ["init", "-q", path]);
   execFileSync("git", ["-C", path, "checkout", "-q", "-b", branch]);
 };
-const dispatch = (command) => spawnSync(process.execPath, [resolve(root, ".claude/hooks/sofka-asdd-pre-tool-dispatcher.mjs")], {
+const dispatch = (command) => spawnSync(process.execPath, [resolve(root, ".claude/hooks/asdd-pre-tool-dispatcher.mjs")], {
   cwd: root,
   encoding: "utf8",
   env: { ...process.env, CLAUDE_PROJECT_DIR: root },

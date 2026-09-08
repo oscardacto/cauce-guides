@@ -11,11 +11,11 @@ import {
   isAuthorizationError,
   issueChallenge,
   RUNTIME_DIR,
-} from "./lib/sofka-asdd-plan-authorization-lib.mjs";
-import { readNormalized } from "./lib/sofka-asdd-hash-normalize-lib.mjs";
+} from "./lib/asdd-plan-authorization-lib.mjs";
+import { readNormalized } from "./lib/asdd-hash-normalize-lib.mjs";
 
 const root = resolve(import.meta.dirname, "..", "..");
-const manifest = JSON.parse(readFileSync(resolve(root, ".sofka-asdd/capability-loading.json"), "utf8"));
+const manifest = JSON.parse(readFileSync(resolve(root, ".asdd/capability-loading.json"), "utf8"));
 // Todo agente del manifiesto, no una lista fija: un agente nuevo entra al
 // manifiesto y queda cubierto sin tocar esta suite.
 const migrated = Object.keys(manifest.agents).sort();
@@ -87,7 +87,7 @@ try {
       agent_type: agent,
       tool_name: capability ? "Bash" : "Edit",
       tool_input: capability
-        ? { command: `node .claude/scripts/sofka-asdd-load-capability.mjs ${capability}` }
+        ? { command: `node .claude/scripts/asdd-load-capability.mjs ${capability}` }
         : { file_path: `.claude/agents/${agent}.md` },
     });
 
@@ -95,7 +95,7 @@ try {
     const dependencyAuth = authorizeAgentOperation(operation(dependency));
     assert.ok(dependencyAuth.loaded_capabilities.includes(dependency));
     const dependencyDelivered = spawnSync(process.execPath, [
-      resolve(root, ".claude/scripts/sofka-asdd-load-capability.mjs"), dependency,
+      resolve(root, ".claude/scripts/asdd-load-capability.mjs"), dependency,
     ], { cwd: root, encoding: "utf8", timeout: 30_000 });
     assert.equal(dependencyDelivered.status, 0, dependencyDelivered.stderr);
     assert.match(dependencyDelivered.stdout, new RegExp(`ASDD capability loaded: ${dependency}`));
@@ -105,7 +105,7 @@ try {
     assert.deepEqual(primaryAuth.loaded_capabilities.sort(), [dependency, primary].sort());
 
     const delivered = spawnSync(process.execPath, [
-      resolve(root, ".claude/scripts/sofka-asdd-load-capability.mjs"), primary,
+      resolve(root, ".claude/scripts/asdd-load-capability.mjs"), primary,
     ], { cwd: root, encoding: "utf8", timeout: 30_000 });
     assert.equal(delivered.status, 0, delivered.stderr);
     assert.match(delivered.stdout, new RegExp(`ASDD capability loaded: ${primary}`));
@@ -137,7 +137,7 @@ try {
     const path = resolve(rollback, `${agent}.md`);
     // Normalizado CRLF→LF antes de operar (agentes del template usan CRLF en
     // disco por core.autocrlf; sin esto `/^---\n/` nunca matchea y el
-    // .replace() se vuelve un no-op silencioso — ver sofka-asdd-hash-normalize-lib.mjs).
+    // .replace() se vuelve un no-op silencioso — ver asdd-hash-normalize-lib.mjs).
     let text = readNormalized(resolve(root, ".claude/agents", `${agent}.md`));
     text = text.replace(/^---\n/u, `---\nskills: [${config.agents[agent].capabilities.join(", ")}]\n`);
     writeFileSync(path, text);

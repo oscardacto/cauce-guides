@@ -1,4 +1,4 @@
-description: "sofka-asdd-explorer: discovery de codebase sin modificar"
+description: "asdd-explorer: discovery de codebase sin modificar"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

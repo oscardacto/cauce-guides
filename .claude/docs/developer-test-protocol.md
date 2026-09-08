@@ -2,7 +2,7 @@
 
 > Doc normativo on-demand (#3644). Referenciado por las skills que lo requieren; no se carga always-loaded (criterio #3671).
 
-Aplica a `sofka-asdd-developer-frontend` y `sofka-asdd-developer-backend` en la fase Construir.
+Aplica a `asdd-developer-frontend` y `asdd-developer-backend` en la fase Construir.
 **Sin Test Coverage Declaration publicada → NO declarar done.**
 
 ---

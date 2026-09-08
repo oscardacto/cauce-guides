@@ -2,7 +2,7 @@
 
 **Tipo de documento**: Reporte de defectos preexistentes (fase Verificar)
 **Run ID**: `2026-08-03-001` · feature `os-compatibility`
-**Autor**: `sofka-asdd-tech-lead` (skill `sofka-asdd-tech-lead-new-bug`)
+**Autor**: `asdd-tech-lead` (skill `asdd-tech-lead-new-bug`)
 **Fecha**: 2026-08-03
 **Rama de detección**: `fix/os-compatibility`
 **Plataforma de ejecución**: Windows 11 Pro 10.0.26200 · Node.js · Git Bash
@@ -37,7 +37,7 @@ la remediación de portabilidad**. Su propósito es triple:
 > tenían una única causa (GS-003) y que todos eran independientes de plataforma.
 > Se verificó que **11 son GS-003 e independientes de plataforma**, pero **1
 > (`F0.9`) es un defecto de portabilidad Windows en código de producción** —
-> `.claude/hooks/sofka-asdd-pre-push-gate.mjs`. Ese caso **pertenece al lote de
+> `.claude/hooks/asdd-pre-push-gate.mjs`. Ese caso **pertenece al lote de
 > portabilidad**, no a este documento, y se detalla en §2.4 para que sea
 > reasignado.
 
@@ -45,7 +45,7 @@ la remediación de portabilidad**. Su propósito es triple:
 
 | # | Suite | Resultado actual | Causa raíz (una línea) | Severidad | Prioridad | Esfuerzo |
 |---|---|---|---|---|---|---|
-| 1 | `.claude/scripts/test-orc-tier-c-hooks.mjs` | `0 PASS / 15 FAIL`, exit 1 | Apunta a 4 hooks que fueron **movidos** a `.claude/scripts/legacy-hooks/` y consolidados en `sofka-asdd-session-start-dispatcher.mjs` (commit `59975b2`, 2026-07-17) | MEDIUM | P1 | 3–4 h (reescritura) |
+| 1 | `.claude/scripts/test-orc-tier-c-hooks.mjs` | `0 PASS / 15 FAIL`, exit 1 | Apunta a 4 hooks que fueron **movidos** a `.claude/scripts/legacy-hooks/` y consolidados en `asdd-session-start-dispatcher.mjs` (commit `59975b2`, 2026-07-17) | MEDIUM | P1 | 3–4 h (reescritura) |
 | 2 | `.claude/scripts/test-git-guards-cwd.mjs` | `53 pasaron, 12 fallaron`, exit 1 · **82 s** | 11 casos "commit permitido" nunca emiten la autorización GS-003, así que el guard bloquea antes de que la resolución de cwd se evalúe. (+1 caso `F0.9` de causa distinta → §2.4) | MEDIUM | P1 | 2–3 h |
 | 3 | `.claude/scripts/test-pretool-dispatcher-prototype.mjs` | `9/11 fixtures FAIL`, exit 1 | El adaptador del spike (`loadLegacyGuard`) exige que cada hook legacy termine en `main();` incondicional; los 10 hooks que carga dinámicamente ya usan el patrón `if (process.argv[1] && …) main();` (necesario para que sus propios tests los importen sin ejecutar el proceso) → el spike lanza excepción no capturada en el primer hook cargado y el proceso crashea con exit 1 para casi todo evento bien formado | LOW | P3 | No aplica — spike congelado, ver recomendación §3.5 |
 
@@ -84,21 +84,21 @@ y construye cuatro rutas de hook a partir de él:
 
 | Línea | Constante | Hook referenciado |
 |---|---|---|
-| `test-orc-tier-c-hooks.mjs:87` | `codesizeHook` | `sofka-asdd-codebase-size.mjs` |
-| `test-orc-tier-c-hooks.mjs:142` | `modelHook` | `sofka-asdd-model-strategy.mjs` |
-| `test-orc-tier-c-hooks.mjs:186` | `tddHook` | `sofka-asdd-tdd-state.mjs` |
-| `test-orc-tier-c-hooks.mjs:227` | `stateHook` | `sofka-asdd-state-freshness.mjs` |
+| `test-orc-tier-c-hooks.mjs:87` | `codesizeHook` | `asdd-codebase-size.mjs` |
+| `test-orc-tier-c-hooks.mjs:142` | `modelHook` | `asdd-model-strategy.mjs` |
+| `test-orc-tier-c-hooks.mjs:186` | `tddHook` | `asdd-tdd-state.mjs` |
+| `test-orc-tier-c-hooks.mjs:227` | `stateHook` | `asdd-state-freshness.mjs` |
 
 Los cuatro archivos **no existen** en `.claude/hooks/`, pero **sí existen** en
 `.claude/scripts/legacy-hooks/`. Es decir: **fueron movidos, no eliminados**.
 Contenido actual de `.claude/scripts/legacy-hooks/`:
 
 ```
-sofka-asdd-codebase-size.mjs      (128 líneas)
-sofka-asdd-model-strategy.mjs     ( 84 líneas)
-sofka-asdd-session-start.mjs      ( 67 líneas)
-sofka-asdd-state-freshness.mjs    ( 84 líneas)
-sofka-asdd-tdd-state.mjs          (102 líneas)
+asdd-codebase-size.mjs      (128 líneas)
+asdd-model-strategy.mjs     ( 84 líneas)
+asdd-session-start.mjs      ( 67 líneas)
+asdd-state-freshness.mjs    ( 84 líneas)
+asdd-tdd-state.mjs          (102 líneas)
 ```
 
 > **Corrección de un análisis previo.** Si en algún reporte anterior se afirmó
@@ -121,7 +121,7 @@ coincidencias por nombre en `.claude/settings.json`. El único hook registrado e
         "hooks": [
             {
                 "type": "command",
-                "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-session-start-dispatcher.mjs"
+                "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/asdd-session-start-dispatcher.mjs"
             },
 ```
 
@@ -140,12 +140,12 @@ Autor: Andrés Mauricio Jiménez Peñaranda <andres.jimenez@sofka.com.co>
 `git show --stat 59975b2` (extracto):
 
 ```
- .../hooks/sofka-asdd-session-start-dispatcher.mjs  |  35 +++++
- .../legacy-hooks}/sofka-asdd-codebase-size.mjs     |   0
- .../legacy-hooks}/sofka-asdd-model-strategy.mjs    |   0
- .../legacy-hooks}/sofka-asdd-session-start.mjs     |   0
- .../legacy-hooks}/sofka-asdd-state-freshness.mjs   |   0
- .../legacy-hooks}/sofka-asdd-tdd-state.mjs         |   0
+ .../hooks/asdd-session-start-dispatcher.mjs  |  35 +++++
+ .../legacy-hooks}/asdd-codebase-size.mjs     |   0
+ .../legacy-hooks}/asdd-model-strategy.mjs    |   0
+ .../legacy-hooks}/asdd-session-start.mjs     |   0
+ .../legacy-hooks}/asdd-state-freshness.mjs   |   0
+ .../legacy-hooks}/asdd-tdd-state.mjs         |   0
  .claude/scripts/test-session-start-hook.mjs        | 168 +--------------------
  .claude/settings.json                              |  20 +--
  13 files changed, 54 insertions(+), 188 deletions(-)
@@ -153,7 +153,7 @@ Autor: Andrés Mauricio Jiménez Peñaranda <andres.jimenez@sofka.com.co>
 
 Lectura: **retiro deliberado por rendimiento** (5 procesos Node en SessionStart →
 1 dispatcher). El commit actualizó `settings.json`, `ADR-001` y
-`sofka-asdd-orchestration.md`, pero **no tocó `test-orc-tier-c-hooks.mjs`** — de
+`asdd-orchestration.md`, pero **no tocó `test-orc-tier-c-hooks.mjs`** — de
 ahí que la suite quedara huérfana. Fue una mudanza a medias en el plano de tests,
 no un retiro accidental del código.
 
@@ -185,13 +185,13 @@ Mapa de los 15 asserts contra el comportamiento vivo del dispatcher:
 
 | Assert | Comportamiento | ¿Vive en el dispatcher? | Evidencia |
 |---|---|---|---|
-| `T11`,`T15`,`T18`,`T21` | Escape hatch → `stdout` vacío | **Semántica cambiada** | El dispatcher suprime solo *su sección* (`dispatcher:19,23,27,31`); el bloque de sesión sigue emitiéndose (`dispatcher:13-18`). El assert `stdout.trim()===""` ya no aplica sin desactivar también `SOFKA_ASDD_SESSION_START_DISABLE` |
+| `T11`,`T15`,`T18`,`T21` | Escape hatch → `stdout` vacío | **Semántica cambiada** | El dispatcher suprime solo *su sección* (`dispatcher:19,23,27,31`); el bloque de sesión sigue emitiéndose (`dispatcher:13-18`). El assert `stdout.trim()===""` ya no aplica sin desactivar también `ASDD_SESSION_START_DISABLE` |
 | `T12`,`T13` | Lock override `maturity=large\|small` | **Sí** | `dispatcher:20-21` emite `codebase_size: ${maturity} (lock override)` |
 | `T14` | **Auto-detección** emite `large\|small` | **NO — comportamiento ausente** | El dispatcher solo lee el override del lock (`dispatcher:20-21`). No hay detección 2-de-3 |
 | `T16` | Sin lock → sin output | **Semántica cambiada** | Igual que los escape hatches: el core de sesión se emite siempre |
 | `T17` | Tabla de fases con modelos | **Sí (formato distinto)** | `dispatcher:23-26` emite `## ORC-002-B — modelos: specify=…`; el assert espera el literal `"Model Strategy"` |
 | `T19` | `strict_tdd=false` → sin output | **Semántica cambiada** | `dispatcher:27-30` no emite sección; el core sí |
-| `T20` | `STRICT TDD MODE ACTIVO` **+ test runner** | **Parcial** | `dispatcher:29` emite `## ORC-009 — STRICT TDD MODE ACTIVO` pero **omite el comando del runner**. El legacy sí lo emitía (`legacy-hooks/sofka-asdd-tdd-state.mjs:81,85`: `Test runner: ${testCommand}`) |
+| `T20` | `STRICT TDD MODE ACTIVO` **+ test runner** | **Parcial** | `dispatcher:29` emite `## ORC-009 — STRICT TDD MODE ACTIVO` pero **omite el comando del runner**. El legacy sí lo emitía (`legacy-hooks/asdd-tdd-state.mjs:81,85`: `Test runner: ${testCommand}`) |
 | `T22`,`T23`,`T24`,`T25` | Freshness ORC-007 | **Sí** | `dispatcher:31-34` emite `## ORC-007 — run ${run_id}: ${status} / ${phase}` y omite cuando `status==="complete"` |
 
 **Conclusión de cobertura**: 6 asserts (`T12`,`T13`,`T17`,`T22`–`T25`) cubren
@@ -205,11 +205,11 @@ Además hay dos deltas funcionales que la pérdida de estos tests dejó invisibl
 1. **Auto-detección de `codebase_size` no implementada en el dispatcher.**
    `ORC-001-D` sigue vigente y define la cadena de precedencia: override del lock
    → cache del run → detección 2-de-3
-   (`.claude/references/rules/sofka-asdd-orchestration-routing.md:23-70`). El
-   lock actual tiene `"maturity": null` (`.sofka-asdd/sofka-asdd.lock:88`) y
-   conserva `detection_thresholds` (`.sofka-asdd/sofka-asdd.lock:71`), así que
+   (`.claude/references/rules/asdd-orchestration-routing.md:23-70`). El
+   lock actual tiene `"maturity": null` (`.asdd/asdd.lock:88`) y
+   conserva `detection_thresholds` (`.asdd/asdd.lock:71`), así que
    hoy el dispatcher **no emite nada** sobre `codebase_size`. El hook legacy sí
-   implementaba el algoritmo (`legacy-hooks/sofka-asdd-codebase-size.mjs:44`
+   implementaba el algoritmo (`legacy-hooks/asdd-codebase-size.mjs:44`
    `detectSize()`, emisión en `:110`).
 2. **Deriva documental en ADR-001.** El commit actualizó el nombre del hook pero
    conservó la afirmación de que el dispatcher
@@ -234,7 +234,7 @@ prueba **código archivado y no registrado en `settings.json`** — es decir, c�
 muerto que ningún flujo ejecuta. Verde sin valor de protección: un cambio que
 rompiera el dispatcher real seguiría pasando inadvertido. Agravante: la
 auto-detección del hook legacy depende de `find … | wc -l`
-(`legacy-hooks/sofka-asdd-codebase-size.mjs:55-56,66`), sintaxis POSIX que
+(`legacy-hooks/asdd-codebase-size.mjs:55-56,66`), sintaxis POSIX que
 **tampoco funciona en Windows**, así que la opción reintroduciría fallos de
 portabilidad en el lote que se está limpiando. **Descartada.**
 
@@ -265,7 +265,7 @@ Asserts a portar, con su adaptación:
 - `T14` → **no portar** hasta resolver la hipótesis de §1.5. Si la detección debe
   volver, el assert se escribe contra la nueva implementación; si no, se elimina
   con nota en ADR-001.
-- **Assert nuevo sugerido**: `SOFKA_ASDD_SESSION_START_DISABLE=1` + los otros
+- **Assert nuevo sugerido**: `ASDD_SESSION_START_DISABLE=1` + los otros
   cuatro `*_DISABLE` → `stdout` vacío (`dispatcher:35` solo escribe si
   `lines.length`).
 
@@ -300,7 +300,7 @@ Exit code 1. Duración medida: **82 segundos** (ver §6). Fallo representativo,
 literal:
 
 ```
-FAIL F0.2 feature branch permite commit — exit 2, stderr: BLOQUEADO GS-003: este git commit no tiene autorización explícita vigente. Mostrá el comando exacto, emití el challenge con sofka-asdd-commit-authorization.mjs issue y esperá confirmación del usuario.
+FAIL F0.2 feature branch permite commit — exit 2, stderr: BLOQUEADO GS-003: este git commit no tiene autorización explícita vigente. Mostrá el comando exacto, emití el challenge con asdd-commit-authorization.mjs issue y esperá confirmación del usuario.
 ```
 
 Los 12 casos que fallan, capturados de la corrida:
@@ -326,7 +326,7 @@ misma GS-003.
 
 ### 2.2 Causa raíz con evidencia (los 11 casos GS-003)
 
-En `.claude/hooks/sofka-asdd-guard-branch.mjs:157-168`, incluso cuando la rama
+En `.claude/hooks/asdd-guard-branch.mjs:157-168`, incluso cuando la rama
 **no** es protegida, el guard devuelve `allow` con un efecto que exige
 autorización explícita:
 
@@ -340,13 +340,13 @@ autorización explícita:
       execute: () => consumeCommitAuthorization({ branch, command }),
       failureReason:
         "BLOQUEADO GS-003: este git commit no tiene autorización explícita vigente. " +
-        "Mostrá el comando exacto, emití el challenge con sofka-asdd-commit-authorization.mjs issue y esperá confirmación del usuario.",
+        "Mostrá el comando exacto, emití el challenge con asdd-commit-authorization.mjs issue y esperá confirmación del usuario.",
     }],
   };
 ```
 
 `main()` ejecuta el efecto y, si lanza, escribe `failureReason` en `stderr` y sale
-con **exit 2** (`sofka-asdd-guard-branch.mjs:176`):
+con **exit 2** (`asdd-guard-branch.mjs:176`):
 
 ```js
     try { effect.execute(); } catch { process.stderr.write(`${effect.failureReason}\n`); process.exit(2); }
@@ -389,8 +389,8 @@ FAIL F0.9 fast-track config/docs permite push sin marcador — exit 2, stderr: B
 El caso (`test-git-guards-cwd.mjs:223-235`) crea un repo con un único cambio
 `docs/nota.md` en la rama `docs/actualiza-readme` y espera que el fast-track de
 config/docs permita el push sin marcador. El fast-track se decide en
-`.claude/hooks/sofka-asdd-pre-push-gate.mjs:190-194` a partir de `isConfigOnly()`,
-definida en `sofka-asdd-pre-push-gate.mjs:132-138`:
+`.claude/hooks/asdd-pre-push-gate.mjs:190-194` a partir de `isConfigOnly()`,
+definida en `asdd-pre-push-gate.mjs:132-138`:
 
 ```js
     const raw = execSync(
@@ -421,16 +421,16 @@ de producción**, no en la suite.
 
 > **HIPÓTESIS — REQUIERE VALIDACIÓN**: que en Linux/macOS este caso pase.
 > El razonamiento es sólido (con `sh` el comando devuelve el archivo esperado y
-> `.md` no está en `SOURCE_EXTS_DEFAULT`, `sofka-asdd-pre-push-gate.mjs:36`), pero
+> `.md` no está en `SOURCE_EXTS_DEFAULT`, `asdd-pre-push-gate.mjs:36`), pero
 > la verificación se hizo emulando el shell POSIX en Windows, **no** en una
 > corrida real sobre Linux/macOS. **Cómo cerrarlo**: ejecutar la suite en CI Linux.
 
 ### 2.5 Por qué los 11 casos GS-003 son independientes de plataforma
 
 La rama `allow` + `consume-commit-authorization` de
-`sofka-asdd-guard-branch.mjs:157-168` no tiene ninguna condición por sistema
+`asdd-guard-branch.mjs:157-168` no tiene ninguna condición por sistema
 operativo, y la biblioteca de autorización opera sobre JSON y `sha256` sin
-invocar shell (`.claude/scripts/lib/sofka-asdd-commit-authorization-lib.mjs`). La
+invocar shell (`.claude/scripts/lib/asdd-commit-authorization-lib.mjs`). La
 ausencia de emisión de autorización en la suite es estructural. Fallan igual en
 Linux y macOS.
 
@@ -439,7 +439,7 @@ Linux y macOS.
 Hay que emitir la autorización antes de cada caso que espere `allow`, para que el
 gate deje pasar y **el assert de resolución de cwd vuelva a ser el que decide**.
 
-**Cómo se emite** (`.claude/scripts/lib/sofka-asdd-commit-authorization-lib.mjs`):
+**Cómo se emite** (`.claude/scripts/lib/asdd-commit-authorization-lib.mjs`):
 
 | Paso | Función | Línea | Efecto |
 |---|---|---|---|
@@ -497,13 +497,13 @@ Implicaciones que el fix debe respetar:
 los 11 casos GS-003**, copiando el patrón de `test-commit-authorization.mjs:6`,
 con la rama del repo efectivo y el comando exacto. **`F0.9` se excluye de este
 fix** y se reasigna al lote de portabilidad cross-OS, donde corresponde corregir
-`sofka-asdd-pre-push-gate.mjs:134-137` para no depender de sintaxis POSIX.
+`asdd-pre-push-gate.mjs:134-137` para no depender de sintaxis POSIX.
 
 ---
 
 ## 3. `test-pretool-dispatcher-prototype.mjs` — el adaptador del spike crashea contra hooks que ya migraron su patrón de invocación
 
-**Archivo bajo prueba**: `.claude/scripts/sofka-asdd-pre-tool-dispatcher-prototype.mjs`
+**Archivo bajo prueba**: `.claude/scripts/asdd-pre-tool-dispatcher-prototype.mjs`
 (spike, no registrado en runtime) · **Test**: `.claude/scripts/test-pretool-dispatcher-prototype.mjs`
 **Categoría preliminar**: `script_issue` (defecto en el adaptador del spike, no
 en los hooks de producción que carga) · **Severidad**: LOW · **Prioridad**: P3
@@ -513,29 +513,29 @@ en los hooks de producción que carga) · **Severidad**: LOW · **Prioridad**: P
 La evidencia de entrada de esta tarea afirmaba que la causa era una brecha de
 paridad deliberada: "el spike solo adapta 2 de los 12 guards de producción
 (`plan-authorization-operation`, `orchestrator-guard`), importados de forma
-estática (`sofka-asdd-pre-tool-dispatcher-prototype.mjs:9-10`)". Eso describe
+estática (`asdd-pre-tool-dispatcher-prototype.mjs:9-10`)". Eso describe
 correctamente los **2 `import` estáticos** del archivo, pero omite que el mismo
 archivo también carga **dinámicamente los 10 hooks restantes** vía
-`loadLegacyGuard()` (`sofka-asdd-pre-tool-dispatcher-prototype.mjs:42-59,61-74`):
+`loadLegacyGuard()` (`asdd-pre-tool-dispatcher-prototype.mjs:42-59,61-74`):
 
 ```js
 const legacyFiles = [
-  "sofka-asdd-pre-tool-use-dangerous-bash.mjs",
-  "sofka-asdd-guard-branch.mjs",
-  "sofka-asdd-pre-push-gate.mjs",
-  "sofka-asdd-pre-pr-gate.mjs",
-  "sofka-asdd-pre-tool-use-spec-check.mjs",
-  "sofka-asdd-pre-tool-use-dep-check.mjs",
-  "sofka-asdd-pre-tool-use-analyze-guard.mjs",
-  "sofka-asdd-pre-tool-use-artifact-name-guard.mjs",
-  "sofka-asdd-pre-tool-use-design-guard.mjs",
-  "sofka-asdd-pre-tool-use-coauthorship-guard.mjs",
+  "asdd-pre-tool-use-dangerous-bash.mjs",
+  "asdd-guard-branch.mjs",
+  "asdd-pre-push-gate.mjs",
+  "asdd-pre-pr-gate.mjs",
+  "asdd-pre-tool-use-spec-check.mjs",
+  "asdd-pre-tool-use-dep-check.mjs",
+  "asdd-pre-tool-use-analyze-guard.mjs",
+  "asdd-pre-tool-use-artifact-name-guard.mjs",
+  "asdd-pre-tool-use-design-guard.mjs",
+  "asdd-pre-tool-use-coauthorship-guard.mjs",
 ];
 const legacy = await Promise.all(legacyFiles.map(loadLegacyGuard));
 ```
 
 10 dinámicos + 2 estáticos = **12**, el mismo total que
-`.claude/hooks/sofka-asdd-pre-tool-dispatcher.mjs` importa
+`.claude/hooks/asdd-pre-tool-dispatcher.mjs` importa
 (verificado: 14 líneas de `import`, de las cuales 2 son módulos nativos de
 Node — `node:fs`, `node:url` — y 12 son guards). **El spike sí intenta
 adaptar los 12.** La brecha real no es de cobertura declarada, es de
@@ -544,7 +544,7 @@ adaptar los 12.** La brecha real no es de cobertura declarada, es de
 ### 3.2 Causa raíz con evidencia
 
 `loadLegacyGuard()` reescribe cada hook legacy en memoria para poder
-`import()`-arlo como módulo de datos (`sofka-asdd-pre-tool-dispatcher-prototype.mjs:42-58`)
+`import()`-arlo como módulo de datos (`asdd-pre-tool-dispatcher-prototype.mjs:42-58`)
 y exige que el archivo termine en una llamada **incondicional** a `main()`:
 
 ```js
@@ -558,7 +558,7 @@ source = source.replace(mainCall, "\nexport { main as __asddMain };\n");
 Los **10 hooks legacy** que `loadLegacyGuard` carga ya no terminan así. Todos
 usan el patrón guardado que permite que el propio hook sea importado por su
 test de regresión sin ejecutar el proceso — por ejemplo, la última línea de
-`.claude/hooks/sofka-asdd-pre-tool-use-dangerous-bash.mjs`:
+`.claude/hooks/asdd-pre-tool-use-dangerous-bash.mjs`:
 
 ```js
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();
@@ -574,15 +574,15 @@ es la convención vigente del repo, no una excepción aislada.
 `Edit` válido (fuera de la suite, sin tocar ningún archivo):
 
 ```
-$ node .claude/scripts/sofka-asdd-pre-tool-dispatcher-prototype.mjs < evento-edit.json
-file:///…/.claude/scripts/sofka-asdd-pre-tool-dispatcher-prototype.mjs:53
+$ node .claude/scripts/asdd-pre-tool-dispatcher-prototype.mjs < evento-edit.json
+file:///…/.claude/scripts/asdd-pre-tool-dispatcher-prototype.mjs:53
     throw new Error("prototype adapter cannot find unconditional main() in " + file);
-Error: prototype adapter cannot find unconditional main() in sofka-asdd-pre-tool-use-dangerous-bash.mjs
-    at loadLegacyGuard (…/sofka-asdd-pre-tool-dispatcher-prototype.mjs:53:11)
+Error: prototype adapter cannot find unconditional main() in asdd-pre-tool-use-dangerous-bash.mjs
+    at loadLegacyGuard (…/asdd-pre-tool-dispatcher-prototype.mjs:53:11)
 Node.js v24.18.0
 ```
 
-`sofka-asdd-pre-tool-use-dangerous-bash.mjs` es el **primer** elemento de
+`asdd-pre-tool-use-dangerous-bash.mjs` es el **primer** elemento de
 `legacyFiles` (línea 62), así que la excepción ocurre en el primer `Promise.all`
 (línea 74), **antes** de que el dispatcher llegue a evaluar ningún guard, para
 prácticamente cualquier evento con JSON bien formado.
@@ -623,9 +623,9 @@ deniega, el otro porque el proceso crasheó.
 ### 3.4 Por qué el spike quedó desalineado — drift documentado, no regresión de esta rama
 
 El patrón guardado (`if (process.argv[1] && …) main();`) ya existía en
-`.claude/hooks/sofka-asdd-pre-tool-use-dangerous-bash.mjs` en el commit
+`.claude/hooks/asdd-pre-tool-use-dangerous-bash.mjs` en el commit
 `65fa180` ("feat(perf): consolidate pretool guards", 2026-07-18), y el spike
-(`sofka-asdd-pre-tool-dispatcher-prototype.mjs` + su test) se creó **después**,
+(`asdd-pre-tool-dispatcher-prototype.mjs` + su test) se creó **después**,
 en el commit `d843534` ("docs(perf): validate single-process hook dispatcher",
 mismo día). Es decir: el adaptador nació ya incompatible con la forma real de
 los hooks que dice adaptar. Confirmado que ninguno de los 26 archivos tocados
@@ -639,14 +639,14 @@ registra `"differential": {"fixtures": 7, "passed": 7, "failed": 0}` sobre
 `source.branch: "feature/asdd-runtime-efficiency-v2"`,
 `source.base_commit: "a941930"` — una rama y un commit **distintos** de los
 que hoy contiene `dev`/`fix/os-compatibility`, y con **7** fixtures, mientras
-que el corpus vigente (`.claude/scripts/fixtures/sofka-asdd-pretool-dispatcher-s1.json`)
+que el corpus vigente (`.claude/scripts/fixtures/asdd-pretool-dispatcher-s1.json`)
 tiene **11**. El baseline es una fotografía válida de *ese* momento — no es
 falso — pero mide un estado del repositorio (hooks + corpus) que ya no existe.
 
 > **HIPÓTESIS — REQUIERE VALIDACIÓN**: que el commit exacto que migró los 10
 > hooks legacy al patrón guardado sea el mismo `65fa180`, y no uno posterior.
 > Se verificó que `65fa180` ya contenía el patrón guardado en
-> `sofka-asdd-pre-tool-use-dangerous-bash.mjs` (`git show 65fa180:… | tail -3`),
+> `asdd-pre-tool-use-dangerous-bash.mjs` (`git show 65fa180:… | tail -3`),
 > y que el spike se creó después (`d843534`, mismo día) — pero no se recorrió
 > el historial completo de los 9 hooks legacy restantes commit a commit.
 > **Cómo cerrarlo**: `git log --follow -p` sobre cada uno de los 10 archivos de
@@ -664,7 +664,7 @@ exactamente el antipatrón que la sección 4.2 de este documento condena
 causa raíz corregida.**
 
 **(B) Retirar spike + test.** ADR-018 ya concluyó con la decisión de
-consolidar en un único dispatcher de producción (`sofka-asdd-pre-tool-dispatcher.mjs`,
+consolidar en un único dispatcher de producción (`asdd-pre-tool-dispatcher.mjs`,
 registrado y en uso), y ese dispatcher ya tiene su propia cobertura viva
 (`test-pretool-dispatcher-registration.mjs`, `PASS` — verificado en esta
 misma sesión: *"PASS registration: exactly one production ASDD dispatcher
@@ -683,7 +683,7 @@ histórico manual, no una dependencia activa.
 
 **(C) Agregar los guards faltantes / arreglar el adaptador del spike.**
 **Descartada explícitamente** por instrucción directa de esta tarea: tocar
-`sofka-asdd-pre-tool-dispatcher-prototype.mjs` (sea para actualizar
+`asdd-pre-tool-dispatcher-prototype.mjs` (sea para actualizar
 `loadLegacyGuard` al patrón guardado, sea para "agregar" guards que en
 realidad ya intenta cargar) invalidaría la medición de rendimiento congelada
 en el baseline — el valor del spike es justamente que quedó fijo en el tiempo.
@@ -854,7 +854,7 @@ el tiempo, pero debe considerarse el estado compartido en
   `rev-parse`.
 - No se propusieron cambios fuera del alcance de estas 3 suites, salvo la
   reasignación de `F0.9` y la corrección puntual señalada en
-  `sofka-asdd-pre-push-gate.mjs:134-137`, que el lote de portabilidad debe evaluar.
+  `asdd-pre-push-gate.mjs:134-137`, que el lote de portabilidad debe evaluar.
 - No se verificó el comportamiento en Linux/macOS (ver hipótesis abiertas en
   §1.5, §2.4 y §2.6).
 - No se implementó ningún fix. Todas las propuestas de las secciones §1.6, §1.7,

@@ -1,6 +1,6 @@
 # Checklist de Adopción — ASDD Template
 
-**Propósito:** confirmar que la adopción del template quedó correcta, paso a paso. Cubre desde pre-requisitos hasta validación final. Es la versión humana de la checklist ejecutable que el CLI corre durante la instalación (`.sofka-asdd/checklist.json`, que vive en el repositorio template y no se copia a tu proyecto).
+**Propósito:** confirmar que la adopción del template quedó correcta, paso a paso. Cubre desde pre-requisitos hasta validación final. Es la versión humana de la checklist ejecutable que el CLI corre durante la instalación (`.asdd/checklist.json`, que vive en el repositorio template y no se copia a tu proyecto).
 
 ## Pre-instalación
 
@@ -60,7 +60,7 @@ Verificar manualmente:
       esta capa toda su aceptación de riesgo, así que sin ella los guards locales
       —que tienen escape hatch por diseño— quedan como única protección.
       Registrar quién la configuró y cuándo.
-- [ ] **Hooks nativos instalados** — `node .claude/scripts/sofka-asdd-install-githooks.mjs`
+- [ ] **Hooks nativos instalados** — `node .claude/scripts/asdd-install-githooks.mjs`
       (agregar `--recurse` si el workspace tiene repos anidados). Verificar con
       `--check` que devuelve `OK`. Enforzan GS-001/002/004/005/007/008/010,
       CORE-009 y ART-001 sin depender del parseo de comandos.
@@ -70,9 +70,9 @@ Verificar manualmente:
 
 ### Artefactos del template
 
-- [ ] **`.sofka-asdd/sofka-asdd.lock` existe** con el manifiesto versionado del template.
-- [ ] **`.sofka-asdd/cli-contract.json` existe** con el contrato v1.0.
-- [ ] **Disclaimer removido de `CLAUDE.md`** — el bloque entre `<!-- sofka-asdd:template-disclaimer:start -->` y `<!-- sofka-asdd:template-disclaimer:end -->` ya no está.
+- [ ] **`.asdd/asdd.lock` existe** con el manifiesto versionado del template.
+- [ ] **`.asdd/cli-contract.json` existe** con el contrato v1.0.
+- [ ] **Disclaimer removido de `CLAUDE.md`** — el bloque entre `<!-- asdd:template-disclaimer:start -->` y `<!-- asdd:template-disclaimer:end -->` ya no está.
 - [ ] **Estructura `docs/` creada:**
   - [ ] `docs/specs/`
   - [ ] `docs/architecture/decisions/`
@@ -118,7 +118,7 @@ Si el error no aparece en esta tabla:
 Adopción confirmada. Correr:
 
 ```bash
-/sofka-asdd:specify
+/asdd:specify
 ```
 
 Para iniciar el ciclo ASDD con la primera spec.

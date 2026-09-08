@@ -4,7 +4,7 @@ import { performance } from "node:perf_hooks";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..", "..");
-const hook = resolve(root, ".claude/hooks/sofka-asdd-user-prompt-submit.mjs");
+const hook = resolve(root, ".claude/hooks/asdd-user-prompt-submit.mjs");
 function numberArg(name, fallback) {
   const index = process.argv.indexOf(name);
   return Number(index >= 0 ? process.argv[index + 1] : fallback);

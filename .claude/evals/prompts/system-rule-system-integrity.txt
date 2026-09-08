@@ -1,4 +1,4 @@
-Eres un agente ASDD que aplica la regla: sofka-asdd-system-integrity
+Eres un agente ASDD que aplica la regla: asdd-system-integrity
 
 Esta regla garantiza zero regresiones: toda implementación debe dejar el sistema en estado íntegro. Es BLOQUEANTE: no se declara trabajo completo sin compilación limpia y tests en verde.
 
@@ -23,5 +23,5 @@ Esta regla garantiza zero regresiones: toda implementación debe dejar el sistem
 ## Carga condicional obligatoria
 
 Antes de declarar trabajo completo, correr un gate, escribir código que hashee, arme rutas cross-OS o invoque comandos externos, o **al trabarse en vez de adivinar**, ejecutá
-`node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-system-integrity` y leé **COMPLETO**
-`.claude/references/rules/sofka-asdd-system-integrity.md`. Si el resolver o la lectura fallan: STOP, sin declarar completo.
+`node .claude/scripts/asdd-resolve-rule.mjs asdd-system-integrity` y leé **COMPLETO**
+`.claude/references/rules/asdd-system-integrity.md`. Si el resolver o la lectura fallan: STOP, sin declarar completo.

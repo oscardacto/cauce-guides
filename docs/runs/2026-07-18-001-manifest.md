@@ -40,7 +40,7 @@
 - `docs/baselines/2026-07-18-001-spike-1r-parallel-hooks.json`
 - `.claude/scripts/benchmark-pretool-hooks.mjs`
 - `docs/baselines/2026-07-18-001-spike-1r-dispatcher-prototype.json`
-- `.claude/scripts/sofka-asdd-pre-tool-dispatcher-prototype.mjs`
+- `.claude/scripts/asdd-pre-tool-dispatcher-prototype.mjs`
 - `.claude/scripts/test-pretool-dispatcher-prototype.mjs`
 - `.claude/scripts/test-dispatcher-collector-coexistence.mjs`
 
@@ -49,55 +49,55 @@
 **Completados:** SPIKE-1 contexto/fan-out: reconciliado con INDEX, SPIKE-1R dispatcher: reconciliado con INDEX, D1: ADR-017 y Enmienda 2 de ADR-005 aprobados, D2: ADR-018 aprobado tras SPIKE-1R-B, D3: ADR-019 aprobado, S1: contrato de seguridad, corpus diferencial y rollback cerrados, B1: parser YAML compartido y gate de contexto efectivo por capas, B2: reconciliación consciente de fase y H-09 corregido, B3: dispatcher único PreToolUse, DFX-001 y rollback cerrados, B4: routing e inyección ORC condicional con turno normal de cero palabras
 
 - `docs/tech/2026-07-18-001-BUILD-010-runtime-efficiency-s1-security-contract.md`
-- `.claude/hooks/sofka-asdd-pre-tool-use-dangerous-bash.mjs`
-- `.claude/scripts/fixtures/sofka-asdd-pretool-dispatcher-s1.json`
+- `.claude/hooks/asdd-pre-tool-use-dangerous-bash.mjs`
+- `.claude/scripts/fixtures/asdd-pretool-dispatcher-s1.json`
 - `.claude/scripts/test-pretool-dispatcher-contract.mjs`
 - `.claude/scripts/test-pretool-dispatcher-prototype.mjs`
 - `docs/tech/2026-07-18-001-BUILD-011-runtime-efficiency-b1-context-budget.md`
 - `docs/baselines/2026-07-18-001-b1-context-budget.json`
-- `.claude/scripts/lib/sofka-asdd-frontmatter-lib.mjs`
-- `.claude/scripts/lib/sofka-asdd-context-budget-lib.mjs`
+- `.claude/scripts/lib/asdd-frontmatter-lib.mjs`
+- `.claude/scripts/lib/asdd-context-budget-lib.mjs`
 - `.claude/scripts/test-frontmatter-parser.mjs`
 - `.claude/scripts/test-context-budget.mjs`
-- `.claude/scripts/sofka-asdd-runtime-metrics.mjs`
+- `.claude/scripts/asdd-runtime-metrics.mjs`
 - `.claude/scripts/validate-template.mjs`
-- `.sofka-asdd/context-budget.json`
+- `.asdd/context-budget.json`
 - `docs/baselines/asdd-runtime-baseline.json`
 - `docs/tech/2026-07-18-001-BUILD-012-runtime-efficiency-b2-phase-reconciliation.md`
 - `docs/baselines/2026-07-18-001-b2-reconciliation-matrix.json`
-- `.claude/scripts/lib/sofka-asdd-run-reconciliation-lib.mjs`
-- `.claude/scripts/sofka-asdd-reconcile-run-state.mjs`
+- `.claude/scripts/lib/asdd-run-reconciliation-lib.mjs`
+- `.claude/scripts/asdd-reconcile-run-state.mjs`
 - `.claude/scripts/test-reconcile-run-state.mjs`
-- `.sofka-asdd/asdd-run.schema.json`
+- `.asdd/asdd-run.schema.json`
 - `docs/tech/2026-07-18-001-BUILD-013-runtime-efficiency-b3-pretool-dispatcher.md`
 - `docs/baselines/2026-07-18-001-b3-pretool-dispatcher.json`
-- `.claude/hooks/sofka-asdd-pre-tool-dispatcher.mjs`
-- `.claude/scripts/fixtures/sofka-asdd-pretool-legacy-hooks.json`
-- `.claude/scripts/sofka-asdd-pretool-mode.mjs`
+- `.claude/hooks/asdd-pre-tool-dispatcher.mjs`
+- `.claude/scripts/fixtures/asdd-pretool-legacy-hooks.json`
+- `.claude/scripts/asdd-pretool-mode.mjs`
 - `.claude/scripts/test-pretool-dispatcher.mjs`
 - `.claude/scripts/test-dispatcher-dfx-001.mjs`
 - `.claude/scripts/test-pretool-dispatcher-registration.mjs`
 - `docs/tech/2026-07-18-001-BUILD-014-runtime-efficiency-b4-conditional-orc-injection.md`
 - `docs/baselines/2026-07-18-001-b4-conditional-orc-injection.json`
-- `.claude/hooks/sofka-asdd-user-prompt-submit.mjs`
+- `.claude/hooks/asdd-user-prompt-submit.mjs`
 - `.claude/scripts/test-conditional-orc-injection.mjs`
 - `.claude/scripts/benchmark-prompt-injection.mjs`
 - `docs/tech/2026-07-18-001-BUILD-015-runtime-efficiency-b5-always-on-rules.md`
 - `docs/baselines/2026-07-18-001-b5-always-on-rules.json`
-- `.sofka-asdd/rule-loading.json`
+- `.asdd/rule-loading.json`
 - `.claude/scripts/test-conditional-rule-loading.mjs`
 - `.claude/scripts/test-rule-resolver.mjs`
 - `docs/tech/2026-07-18-001-BUILD-016-runtime-efficiency-b6-lazy-capabilities.md`
 - `docs/baselines/2026-07-18-001-b6-lazy-capabilities.json`
-- `.sofka-asdd/capability-loading.json`
+- `.asdd/capability-loading.json`
 - `.claude/scripts/test-lazy-capability-loading.mjs`
 - `docs/tech/2026-07-18-001-BUILD-017-runtime-efficiency-b7-thin-coordinators.md`
 - `docs/baselines/2026-07-18-001-b7-thin-coordinators.json`
-- `.sofka-asdd/coordinator-loading.json`
+- `.asdd/coordinator-loading.json`
 - `.claude/scripts/test-thin-coordinator-loading.mjs`
 - `docs/tech/2026-07-18-001-BUILD-018-runtime-efficiency-b8-model-routing-subagent-budgets.md`
 - `docs/baselines/2026-07-18-001-b8-model-routing-subagent-budgets.json`
-- `.sofka-asdd/subagent-budget.json`
+- `.asdd/subagent-budget.json`
 - `.claude/scripts/test-subagent-budget-routing.mjs`
 - `.claude/scripts/benchmark-subagent-budget.mjs`
 - `docs/tech/2026-07-18-001-BUILD-019-runtime-efficiency-b9-integral-benchmark.md`
@@ -136,5 +136,5 @@
 - Reportes QA ATF: `docs/qa/atf/2026-07-18-001/` (si existe)
 
 ---
-_Generado automáticamente por `sofka-asdd-run-manifest.mjs` (hook SessionStart, Tier C)._
+_Generado automáticamente por `asdd-run-manifest.mjs` (hook SessionStart, Tier C)._
 _No editar manualmente — se sobrescribe en cada sesión mientras el run esté activo._

@@ -20,7 +20,7 @@
  * bajo las dos raíces declaradas entra por la excepción.
  */
 
-import { getOrchestratorGuardDecision } from "../hooks/sofka-asdd-orchestrator-guard.mjs";
+import { getOrchestratorGuardDecision } from "../hooks/asdd-orchestrator-guard.mjs";
 
 let passed = 0;
 let failed = 0;

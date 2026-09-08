@@ -9,7 +9,7 @@ import {
   parseIndex,
   sliceId,
   writeReconciledState,
-} from "./lib/sofka-asdd-run-reconciliation-lib.mjs";
+} from "./lib/asdd-run-reconciliation-lib.mjs";
 
 const root = mkdtempSync(join(tmpdir(), "asdd-reconciliation-"));
 const put = (path, content) => {

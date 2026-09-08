@@ -35,9 +35,9 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const HOOKS_DIR = join(__dirname, "..", "hooks");
 const CHAIN = [
-  "sofka-asdd-pre-tool-use-analyze-guard.mjs",
-  "sofka-asdd-pre-tool-use-artifact-name-guard.mjs",
-].map((n) => ({ name: n.replace(/^sofka-asdd-pre-tool-use-|\.mjs$/g, ""), path: join(HOOKS_DIR, n) }));
+  "asdd-pre-tool-use-analyze-guard.mjs",
+  "asdd-pre-tool-use-artifact-name-guard.mjs",
+].map((n) => ({ name: n.replace(/^asdd-pre-tool-use-|\.mjs$/g, ""), path: join(HOOKS_DIR, n) }));
 
 let passed = 0;
 let failed = 0;

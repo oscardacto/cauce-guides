@@ -82,9 +82,9 @@ dispatcher:
 
 Git, specs y run-state se resuelven lazy y como máximo una vez por evento.
 
-El dispatcher solo consolida comandos `sofka-asdd-*` del proyecto. No descubre,
+El dispatcher solo consolida comandos `asdd-*` del proyecto. No descubre,
 invoca ni reescribe hooks globales/locales de telemetría o terceros.
-`sofka-collector emit` conserva handlers independientes para `PreToolUse` y
+`guide-collector emit` conserva handlers independientes para `PreToolUse` y
 `PostToolUse`, y recibe el payload original directamente de Claude Code.
 
 ### 5.4 Inyección condicional

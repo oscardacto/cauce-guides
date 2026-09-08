@@ -17,7 +17,7 @@
  * Excepción a doctrina MCP black-box: estos helpers usan Playwright Node
  * directo porque inyectar el bundle de 589KB de axe-core via MCP
  * `browser_evaluate` es prohibitivo en transcript size. Excepción acotada
- * a la fase visual_ux_a11y; /sofka-asdd:qa-web-exec y /sofka-asdd:qa-web-run mantienen MCP-only.
+ * a la fase visual_ux_a11y; /asdd:qa-web-exec y /asdd:qa-web-run mantienen MCP-only.
  */
 
 const fs = require('fs');

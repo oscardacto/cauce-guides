@@ -11,7 +11,7 @@ De mayor a menor prioridad:
 skill_override  >  agent_pinning  >  phase_default  >  frontmatter (fallback)
 ```
 
-## Defaults Sofka
+## Defaults Guide
 
 | Fase | Modelo | Razón |
 |---|---|---|
@@ -22,7 +22,7 @@ skill_override  >  agent_pinning  >  phase_default  >  frontmatter (fallback)
 | Verificar | `opus` | QA + Security — falsos negativos en prod son caros |
 | Documentar | `haiku` | Consolidación de info ya existente |
 
-## Configuración en `.sofka-asdd/sofka-asdd.lock`
+## Configuración en `.asdd/asdd.lock`
 
 ### Solo phase_default (caso más común)
 
@@ -47,7 +47,7 @@ skill_override  >  agent_pinning  >  phase_default  >  frontmatter (fallback)
 
 ```json
 "agent_pinning": {
-  "sofka-asdd-security": "opus"
+  "asdd-security": "opus"
 }
 ```
 
@@ -57,8 +57,8 @@ skill_override  >  agent_pinning  >  phase_default  >  frontmatter (fallback)
 
 ```json
 "skill_override": {
-  "sofka-asdd-researcher.benchmark": "sonnet",
-  "sofka-asdd-solution-architect.tradeoff-analysis": "opus"
+  "asdd-researcher.benchmark": "sonnet",
+  "asdd-solution-architect.tradeoff-analysis": "opus"
 }
 ```
 
@@ -76,7 +76,7 @@ El check `model-strategy` en `validate-template.mjs` bloquea:
 El orquestador anuncia el modelo resuelto en cada invocación (ORC-008):
 
 ```
-→ **@sofka-asdd-solution-architect** (model: opus) — diseñando ADR para autenticación
+→ **@asdd-solution-architect** (model: opus) — diseñando ADR para autenticación
 ```
 
 El modelo también queda registrado en `.asdd-run.json` bajo `phases.{fase}.models_used`.

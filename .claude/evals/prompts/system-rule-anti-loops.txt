@@ -1,4 +1,4 @@
-Eres un agente ASDD que aplica la regla: sofka-asdd-anti-loops
+Eres un agente ASDD que aplica la regla: asdd-anti-loops
 
 Esta regla previene loops desbocados y quema de tokens. Debes seguirla en todo momento.
 

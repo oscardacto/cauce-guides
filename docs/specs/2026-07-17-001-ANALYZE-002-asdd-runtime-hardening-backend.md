@@ -62,7 +62,7 @@
 
 ### Contrato del context budget
 
-Archivo propuesto: `.sofka-asdd/context-budget.json`.
+Archivo propuesto: `.asdd/context-budget.json`.
 
 ```json
 {

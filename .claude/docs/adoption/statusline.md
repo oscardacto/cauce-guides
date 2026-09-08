@@ -1,12 +1,12 @@
 # Guía de activación — Statusline en Claude Code
 
-Cómo activar un indicador visual de porcentaje de contexto en Claude Code para implementar los umbrales de compactación proactiva definidos en `sofka-asdd-anti-loops.md`.
+Cómo activar un indicador visual de porcentaje de contexto en Claude Code para implementar los umbrales de compactación proactiva definidos en `asdd-anti-loops.md`.
 
 ## Por qué: feedback visual del límite de atención del modelo
 
 Los LLMs tienen presupuesto de atención finito. A medida que el contexto crece, la precisión del razonamiento cae. **El % de contexto usado es el feedback NO-CIEGO para decidir cuándo compactar** antes de que se desgrade la calidad.
 
-Regla de oro (`sofka-asdd-anti-loops.md`):
+Regla de oro (`asdd-anti-loops.md`):
 
 | Contexto usado | Estado | Acción obligatoria |
 |---|---|---|
@@ -166,17 +166,17 @@ Comentar o eliminar la sección `"statusLine"` en `settings.json`. Vuelve a apar
 
 ## Integración con la cultura ASDD
 
-El statusline es **herramienta de concientización**, no gate automático. El umbrales de `sofka-asdd-anti-loops.md` son guías de conducta para el agente (y tú, leyendo el reporte):
+El statusline es **herramienta de concientización**, no gate automático. El umbrales de `asdd-anti-loops.md` son guías de conducta para el agente (y tú, leyendo el reporte):
 
 - **< 60%**: operá con libertad — contexto sobra
 - **60–70%**: sé selectivo — usa Grep + offset/limit en Read, no files completos
 - **70–80%**: prepárate — cierra el paso/fase actual, compacta al terminar
 - **80–100%**: **STOP** — compacta antes de continuar, sin excepciones
 
-Estos umbrales están codificados en `sofka-asdd-anti-loops.md` como **recordatorio activo**, no como garantía dura (el harness no frena automáticamente si ignoras la regla). **Tú decides respetar el guardrail.**
+Estos umbrales están codificados en `asdd-anti-loops.md` como **recordatorio activo**, no como garantía dura (el harness no frena automáticamente si ignoras la regla). **Tú decides respetar el guardrail.**
 
 ## Referencias
 
-- `sofka-asdd-anti-loops.md` — "Compactación Proactiva — Prevenir Alucinaciones por Contexto Lleno"
-- `sofka-asdd-anti-loops.md` — "Token Management — Patrón de 3 Capas"
+- `asdd-anti-loops.md` — "Compactación Proactiva — Prevenir Alucinaciones por Contexto Lleno"
+- `asdd-anti-loops.md` — "Token Management — Patrón de 3 Capas"
 - Official Claude Code docs: `code.claude.com/docs/en/statusline.md`

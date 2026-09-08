@@ -35,7 +35,7 @@ auth:
   session_state_file: ""                # Ej: "docs/testing/atf-web/config/session_state_qa.json"
   session_health_check_selector: ""     # CSS selector visible solo si autenticado (ej: ".user-menu")
 
-  # Login por formulario (opcional) — solo usado por scripts Node (ej. /sofka-asdd:qa-web-perf)
+  # Login por formulario (opcional) — solo usado por scripts Node (ej. /asdd:qa-web-perf)
   # cuando NO hay session_state_file y el login es no estándar. Vacío = selectores
   # genéricos (username/email + password + submit). Para SSO/MFA: pre-capturar
   # sesión con save-session.js en vez de configurar selectores.
@@ -72,9 +72,9 @@ security:
   compliance: []                         # Ej: ["OWASP-Top10"], ["PCI-DSS"], ["HIPAA","HITECH"]
 
 # --- Visual + Usabilidad + Accesibilidad ---
-# Controla el comando /sofka-asdd:qa-web-visual-ux-a11y. Las 3 aristas ejecutan SIEMPRE cuando enabled=true.
+# Controla el comando /asdd:qa-web-visual-ux-a11y. Las 3 aristas ejecutan SIEMPRE cuando enabled=true.
 visual_ux_a11y:
-  enabled: false                         # true para activar /sofka-asdd:qa-web-visual-ux-a11y
+  enabled: false                         # true para activar /asdd:qa-web-visual-ux-a11y
   axe_standards: ["wcag2a", "wcag2aa"]   # WCAG 2.1 AA estándar; agregar "wcag21aa" para AAA
   axe_rules_disabled: []                 # IDs de axe-core a omitir (ej: ["color-contrast"] si app es dark mode)
   severity_threshold: "serious"          # critical | serious | moderate | minor
@@ -83,10 +83,10 @@ visual_ux_a11y:
   pages_per_flow_max: 10                 # Anti-runaway en discovery dinámico
 
 # --- Performance (Core Web Vitals) ---
-# Controla /sofka-asdd:qa-web-perf. Mide Core Web Vitals sobre los flujos del
+# Controla /asdd:qa-web-perf. Mide Core Web Vitals sobre los flujos del
 # execution_plan. Umbrales y repeticiones → config.yaml → performance.
 performance:
-  enabled: false                         # true para activar /sofka-asdd:qa-web-perf
+  enabled: false                         # true para activar /asdd:qa-web-perf
   flow_scope: "critical"                 # critical | critical_and_high | all — qué e2e_flows medir
   flows: []                              # opcional: subset explícito de e2e_ids (vacío = usar flow_scope)
 
@@ -150,7 +150,7 @@ pipeline:
 # Format: "{AppName}-v{version}-{YYYYMMDD}-{HHMM}"
 run_id: ""
 
-# --- Fast-path (/sofka-asdd:qa-web-exec) ---
+# --- Fast-path (/asdd:qa-web-exec) ---
 fast_path:
   batch_size: 3                          # Máx CPs por invocación del executor en fast-path
 

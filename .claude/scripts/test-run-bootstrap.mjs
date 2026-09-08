@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 const sourceRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const root = mkdtempSync(join(tmpdir(), "asdd-bootstrap-"));
 cpSync(join(sourceRoot, ".claude"), join(root, ".claude"), { recursive: true });
-const script = join(root, ".claude/scripts/sofka-asdd-run-bootstrap.mjs");
+const script = join(root, ".claude/scripts/asdd-run-bootstrap.mjs");
 let pass = 0;
 const check = (condition, message) => { if (!condition) throw new Error(message); pass += 1; };
 const run = () => spawnSync(process.execPath, [script,

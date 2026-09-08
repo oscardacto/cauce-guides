@@ -4,14 +4,14 @@ import { spawn } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
 import { resolve } from "node:path";
-import { hookEntryRef, hookEntryTokens, isCommandHook } from "./lib/sofka-asdd-hook-entry-lib.mjs";
+import { hookEntryRef, hookEntryTokens, isCommandHook } from "./lib/asdd-hook-entry-lib.mjs";
 
 const root = resolve(import.meta.dirname, "..", "..");
 const settings = JSON.parse(
   await readFile(resolve(root, ".claude", "settings.json"), "utf8"),
 );
 const legacy = JSON.parse(
-  await readFile(resolve(root, ".claude", "scripts", "fixtures", "sofka-asdd-pretool-legacy-hooks.json"), "utf8"),
+  await readFile(resolve(root, ".claude", "scripts", "fixtures", "asdd-pretool-legacy-hooks.json"), "utf8"),
 );
 
 function numberArg(name, fallback) {
@@ -52,7 +52,7 @@ const groups = mode === "legacy"
   ? legacy.pre_tool_use_groups
   : settings.hooks?.PreToolUse ?? [];
 // Entradas de hook completas: hookEntryRef tolera forma shell y forma exec
-// (`command: "node"` + ruta en `args`), ver lib/sofka-asdd-hook-entry-lib.mjs.
+// (`command: "node"` + ruta en `args`), ver lib/asdd-hook-entry-lib.mjs.
 const currentCommands = groups.flatMap((group) => {
   const alternatives = String(group.matcher ?? "")
     .split("|")
@@ -62,14 +62,14 @@ const currentCommands = groups.flatMap((group) => {
     .filter(
       (hook) =>
         isCommandHook(hook) &&
-        /\.claude\/hooks\/sofka-asdd-[\w.-]+\.mjs(?:\s|$)/.test(hookEntryRef(hook)),
+        /\.claude\/hooks\/asdd-[\w.-]+\.mjs(?:\s|$)/.test(hookEntryRef(hook)),
     );
 });
 const commands = mode === "prototype"
   ? [{
       type: "command",
       command: "node",
-      args: ["${CLAUDE_PROJECT_DIR}/.claude/scripts/sofka-asdd-pre-tool-dispatcher-prototype.mjs"],
+      args: ["${CLAUDE_PROJECT_DIR}/.claude/scripts/asdd-pre-tool-dispatcher-prototype.mjs"],
     }]
   : currentCommands;
 

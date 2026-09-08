@@ -308,7 +308,7 @@ function main() {
   // produzca el mismo sourceSha en Windows y en Linux/CI. Con core.autocrlf=true el
   // working tree materializa CRLF en Windows, y hashear bytes crudos daría dos huellas
   // distintas para el mismo blob de Git. Criterio idéntico a
-  // scripts/lib/sofka-asdd-hash-normalize-lib.mjs (ESM, no importable desde este .js CJS).
+  // scripts/lib/asdd-hash-normalize-lib.mjs (ESM, no importable desde este .js CJS).
   const sourceText = fs
     .readFileSync(opts.source, 'utf8')
     .replace(/^﻿/, '')

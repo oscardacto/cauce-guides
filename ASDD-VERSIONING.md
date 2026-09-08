@@ -1,6 +1,6 @@
 # Versionado — project-structure (ASDD)
 
-Política formal de versionado para el template ASDD de Sofka. Sigue
+Política formal de versionado para el template ASDD de Guide. Sigue
 [Semantic Versioning 2.0](https://semver.org/lang/es/) y se complementa
 con [Keep a Changelog 1.1.0](https://keepachangelog.com/es/1.1.0/) en
 `ASDD-CHANGELOG.md`.
@@ -14,14 +14,14 @@ disciplina permite a los equipos consumidores actualizar sin sorpresas.
 
 Se versionan **tres artefactos** con ciclos independientes:
 
-1. **Template** — `.sofka-asdd/sofka-asdd.lock` → `version`. Es la unidad
+1. **Template** — `.asdd/asdd.lock` → `version`. Es la unidad
    versionable principal. Agentes, skills, rules y hooks no llevan
    versión individual: bumpean conjuntamente cuando bumpea el template.
-2. **Contrato CLI** — `.sofka-asdd/cli-contract.json` → `contract_version`.
-   Protocolo entre el template y el CLI `sofka-ai`. Evoluciona
+2. **Contrato CLI** — `.asdd/cli-contract.json` → `contract_version`.
+   Protocolo entre el template y el CLI `guide-ai`. Evoluciona
    independiente del template: un template 2.x puede seguir usando
    contrato 1.x mientras los cambios sean aditivos.
-3. **CLI externa `sofka-ai`** — versionada en su propio repo. Fuera del
+3. **CLI externa `guide-ai`** — versionada en su propio repo. Fuera del
    alcance de este archivo, pero la compatibility matrix (§3) la
    referencia.
 
@@ -30,7 +30,7 @@ Se versionan **tres artefactos** con ciclos independientes:
 Los tres artefactos usan `MAJOR.MINOR.PATCH`. Las tablas siguientes dan
 ejemplos concretos con archivos y agentes reales del template actual.
 
-### 2.1 Template (`sofka-asdd.lock.version`)
+### 2.1 Template (`asdd.lock.version`)
 
 | Tipo | Qué dispara el bump | Ejemplo real / hipotético |
 |---|---|---|
@@ -46,7 +46,7 @@ ejemplos concretos con archivos y agentes reales del template actual.
 | MINOR | Agregar nuevo `type` en `personalize`, agregar bloque o campo opcional nuevo | Agregar `type: "enum"` en personalize · agregar bloque `hooks` opcional · agregar `compatibility.min_node` |
 | PATCH | Mejorar mensaje de `prompt`, relajar regex de validación permissive, correcciones de textos | Aclarar prompt de `project_name` · permitir guiones bajos en `team_slug` · fix de typo en `description` |
 
-### 2.3 CLI externa `sofka-ai`
+### 2.3 CLI externa `guide-ai`
 
 La CLI vive en su propio repo. Sigue SemVer con la misma semántica:
 MAJOR si rompe el protocolo de lectura del contrato, MINOR si agrega
@@ -56,7 +56,7 @@ mejora UX. La compatibilidad con este template se declara en §3.
 ## 3. Compatibility Matrix
 
 Esta matriz relaciona versiones del template, la versión de contrato que implementan y el piso
-de CLI que declaran. El CLI es **`sofka`** (repositorio `sofka-ia/cli`), que está en la serie
+de CLI que declaran. El CLI es **`guide`** (repositorio `guide-ia/cli`), que está en la serie
 **0.x** — todavía no llegó a 1.0.
 
 Los valores salen de leer `compatibility.min_cli_version` y `contract_version` en el contrato
@@ -121,7 +121,7 @@ Checklist ejecutable por el release manager:
 
 ```
 - [ ] Determinar bump (MAJOR/MINOR/PATCH) según cambios en [Unreleased]
-- [ ] Actualizar `.sofka-asdd/sofka-asdd.lock` → `version`
+- [ ] Actualizar `.asdd/asdd.lock` → `version`
 - [ ] Revisar el piso de CLI (`compatibility.min_cli_version`) — ver §5.1
 - [ ] Regenerar el provenance: `npm run provenance:regen` y commitear — ver §5.2
 - [ ] En ASDD-CHANGELOG.md: mover [Unreleased] a [X.Y.Z] - YYYY-MM-DD
@@ -178,7 +178,7 @@ proceso preguntaba por él.
 
 ### 5.2 El provenance se regenera una vez por release, no una vez por merge
 
-`.sofka-asdd/sofka-asdd-provenance.json` es lo que le permite al CLI reconocer que un archivo
+`.asdd/asdd-provenance.json` es lo que le permite al CLI reconocer que un archivo
 del consumidor es contenido del template —viejo, pero no editado— y actualizarlo en su lugar
 en vez de preservarlo y dejar un `.asdd-new` al lado. Se genera acá porque el CLI clona con
 `--depth 1` y no tiene historia con qué reconstruirlo.
@@ -197,7 +197,7 @@ nuevo** en rutas distribuidas. En la práctica, una vez por release, justo antes
   **siguiente**, cuando el consumidor tenga en disco contenido que nunca se registró y vuelva
   como `.asdd-new`.
 
-**Por qué el paso no se persigue la cola.** El generador excluye el prefijo `.sofka-asdd/` de
+**Por qué el paso no se persigue la cola.** El generador excluye el prefijo `.asdd/` de
 su propia ventana, así que el commit del regen —que solo toca ese archivo— no introduce
 contenido que el provenance deba cubrir. Cierra en un paso.
 
@@ -256,8 +256,8 @@ contiene solo un `README.md` explicando el formato.
 ## 9. FAQ
 
 **¿Cómo actualizo mi proyecto al último template?**
-Usá `sofka-ai update` si el CLI lo soporta, o compará tu
-`.sofka-asdd/sofka-asdd.lock.version` contra la versión del repo
+Usá `guide-ai update` si el CLI lo soporta, o compará tu
+`.asdd/asdd.lock.version` contra la versión del repo
 fuente. Si el bump es PATCH o MINOR, copiar los archivos modificados
 es seguro. Si es MAJOR, seguí `.claude/docs/migrations/{N-1}-to-{N}.md`.
 
@@ -309,7 +309,7 @@ nomenclatura con tres namespaces disjuntos. Es enforzada por el check 14
 
 | Namespace | Prefijo | Origen |
 |---|---|---|
-| Template ASDD | `sofka-asdd-` | COE Sofka |
+| Template ASDD | `asdd-` | COE Guide |
 | Proyecto consumidor | `{project.name}-` | Dev del proyecto |
 | Plugins externos | propio del plugin | Marketplace Claude Code |
 
@@ -319,9 +319,9 @@ files ni a archivos estándar de Claude Code (`CLAUDE.md`, `settings.json`,
 
 ### Relación con SemVer
 
-- **Agregar un artefacto del template** con prefijo `sofka-asdd-*` → MINOR.
+- **Agregar un artefacto del template** con prefijo `asdd-*` → MINOR.
 - **Renombrar o remover** un artefacto del template → MAJOR.
-- **Cambiar la convención** (p.ej. cambiar `sofka-asdd-` por otro prefijo)
+- **Cambiar la convención** (p.ej. cambiar `asdd-` por otro prefijo)
   → MAJOR, requiere `.claude/docs/migrations/{N}-to-{N+1}.md`.
 - **Artefactos del proyecto consumidor** — fuera del alcance del versionado
   del template. El equipo del proyecto gestiona sus propios cambios.
@@ -342,5 +342,5 @@ puede ejecutar `node .claude/scripts/validate-template.mjs` desde su
 automatización elegida. El check 14 es `strict`: artefactos sin prefijo válido
 hacen que el proceso termine con exit code 1.
 
-El CLI `sofka-ai >= 2.0.0` lee el bloque `naming_convention` de
-`.sofka-asdd/cli-contract.json` y valida consistencia durante la adopción.
+El CLI `guide-ai >= 2.0.0` lee el bloque `naming_convention` de
+`.asdd/cli-contract.json` y valida consistencia durante la adopción.

@@ -1,0 +1,61 @@
+---
+name: asdd-domain-expert-insurance
+description: Dominio Seguros — pólizas, siniestros, cotizadores, actuaría, reaseguro y regulación del sector.
+---
+
+## Dominio activo: Seguros
+
+Skill cargado cuando el proyecto opera en el dominio asegurador. Activo como soporte transversal en todas las fases.
+
+## Ciclo de vida de una póliza
+
+```
+Cotización → Propuesta → Emisión → Vigencia activa → Renovación / Cancelación
+                                        ↓
+                                  Siniestro → Reclamación → Ajuste → Pago / Rechazo
+```
+
+### Estados de una póliza
+`cotización → propuesta → emitida → vigente → suspendida → cancelada → vencida`
+
+### Estados de un siniestro
+`reportado → en investigación → en ajuste → aprobado → pagado | rechazado | en disputa`
+
+## Reglas de negocio frecuentes
+
+- Una póliza solo cubre siniestros ocurridos **durante su vigencia**, no antes ni después
+- El deducible se aplica por evento, no por póliza (salvo condición especial)
+- Endosos que aumenten cobertura generan prima adicional prorrateada por días restantes
+- Cancelación anticipada puede generar devolución de prima prorrateada (short rate o pro rata)
+- Los ramos de vida tienen regulación más estricta que los ramos generales
+- Reaseguro facultativo: caso a caso. Reaseguro proporcional: sobre toda la cartera
+
+## Cuándo NO invocar
+
+- El proyecto no involucra pólizas, siniestros, primas ni regulación aseguradora — contexto genérico.
+- La consulta es sobre pagos genéricos (no primas) — usar `domain-expert-fintech` si aplica.
+- Diseño general de microservicios — usar `architect-bounded-context`; este skill aporta contexto, no diseña.
+
+## Anti-patterns de dominio
+
+- **Fecha de ocurrencia vs. fecha de reporte**: el siniestro cubre la fecha del evento, no cuándo se reportó — crítico para validaciones de vigencia
+- **Suma asegurada ≠ valor a pagar**: el pago depende de cobertura, deducible y ajuste del perito
+- **Infraaseguro**: si el bien vale más que la suma asegurada, la indemnización se paga proporcionalmente
+- **Exclusiones**: cada póliza tiene exclusiones explícitas — validarlas antes de aprobar un siniestro
+- **Reservas técnicas con redondeo libre** — IFRS 17 exige precisión decimal. Usar `decimal`/`numeric`, nunca `float`.
+- **Endoso retroactivo sin trazabilidad** — el sistema debe preservar la cobertura vigente en cada fecha histórica.
+
+## Integración con otros agentes
+
+| Agente | Qué aporta este dominio |
+|---|---|
+| **architect** | Separar motor de cotización del core — alta variabilidad de reglas por ramo |
+| **developer** | Cálculo de primas, reglas de exclusión, prorrateo de días en endosos |
+| **developer** | Casos de siniestro con exclusión, cálculo de deducible, renovación automática |
+| **security** | Protección de datos médicos en seguros de salud/vida (dato sensible) |
+
+## Referencia
+
+Cargar bajo demanda cuando se necesite detalle:
+- `reference/glosario.md` — 13 términos del dominio (Póliza, Prima, Siniestro, Cobertura, Deducible, Reaseguro, etc.)
+- `reference/regulacion.md` — Superintendencia Financiera, IFRS 17, tiempos máximos, reservas técnicas

@@ -49,7 +49,7 @@ agregar según su stack.
 
 **Casos de uso:** (1) consultar API actual de React Server Components antes de implementar; (2) validar config de Next.js, Prisma o Spring Boot en su versión actual; (3) resolver dudas de migración entre versiones mayores.
 
-**Agentes ASDD:** `sofka-asdd-developer-backend` (verificar API, anti-alucinación) · `sofka-asdd-solution-architect` (docs de frameworks al redactar ADRs) · `sofka-asdd-researcher` (capabilities reales durante spikes).
+**Agentes ASDD:** `asdd-developer-backend` (verificar API, anti-alucinación) · `asdd-solution-architect` (docs de frameworks al redactar ADRs) · `asdd-researcher` (capabilities reales durante spikes).
 
 **Instalación:**
 ```json
@@ -72,7 +72,7 @@ agregar según su stack.
 
 **Casos de uso:** (1) traducir componente Figma a código React/Vue/Angular; (2) extraer design tokens para el design system; (3) verificar que la implementación respeta la especificación del diseñador.
 
-**Agentes ASDD:** `sofka-asdd-ux-ui` (leer component specs desde Figma) · `sofka-asdd-developer-frontend` (consultar layout y tokens al implementar pantallas).
+**Agentes ASDD:** `asdd-ux-ui` (leer component specs desde Figma) · `asdd-developer-frontend` (consultar layout y tokens al implementar pantallas).
 
 **Instalación** (variante comunitaria más usada):
 ```json
@@ -103,7 +103,7 @@ Variante oficial (remote OAuth, enterprise):
 
 **Casos de uso:** (1) generar diagramas C4 como acompañamiento de ADRs; (2) bocetar flujos de usuario en fase Analizar; (3) documentar arquitectura ligera sin PlantUML/Mermaid.
 
-**Agentes ASDD:** `sofka-asdd-solution-architect` (diagramas componente/secuencia para ADRs) · `sofka-asdd-producto` (user flows durante refinamiento).
+**Agentes ASDD:** `asdd-solution-architect` (diagramas componente/secuencia para ADRs) · `asdd-producto` (user flows durante refinamiento).
 
 **Instalación:**
 ```json
@@ -128,7 +128,7 @@ Variante oficial (remote OAuth, enterprise):
 
 **Casos de uso:** (1) generar tests E2E navegando la app en vivo; (2) verificar manualmente un bug antes de proponer fix; (3) auditar accesibilidad (axe-core) o performance (Lighthouse) real.
 
-**Agentes ASDD:** `sofka-asdd-qa-engineer` (generar E2E desde criterios de aceptación) · `sofka-asdd-ux-ui` (validar responsive con screenshots en viewports) · `sofka-asdd-developer-frontend` o `sofka-asdd-developer-backend` (reproducir bugs reportados).
+**Agentes ASDD:** `asdd-qa-engineer` (generar E2E desde criterios de aceptación) · `asdd-ux-ui` (validar responsive con screenshots en viewports) · `asdd-developer-frontend` o `asdd-developer-backend` (reproducir bugs reportados).
 
 **Instalación** (oficial Microsoft):
 ```json
@@ -151,7 +151,7 @@ Variante oficial (remote OAuth, enterprise):
 
 **Casos de uso:** (1) revisar issues abiertos antes de crear un PR; (2) verificar que nuevo código no baja coverage global; (3) priorizar refactoring desde hotspots de technical debt.
 
-**Agentes ASDD:** `sofka-asdd-tech-lead` (quality gate antes de merge) · `sofka-asdd-security` (security hotspots y vulnerabilities) · `sofka-asdd-qa-engineer` (analizar coverage antes de test strategy).
+**Agentes ASDD:** `asdd-tech-lead` (quality gate antes de merge) · `asdd-security` (security hotspots y vulnerabilities) · `asdd-qa-engineer` (analizar coverage antes de test strategy).
 
 **Instalación:**
 ```json
@@ -180,7 +180,7 @@ Variante oficial (remote OAuth, enterprise):
 
 **Casos de uso:** (1) diagnosticar incidencias en App Services consultando logs; (2) listar recursos al redactar documentación de infraestructura; (3) validar que una IaC pipeline creó los recursos esperados.
 
-**Agentes ASDD:** `sofka-asdd-platform-engineer` (estado de recursos y pipelines durante IaC) · `sofka-asdd-solution-architect` (validar que la arquitectura es realizable en Azure).
+**Agentes ASDD:** `asdd-platform-engineer` (estado de recursos y pipelines durante IaC) · `asdd-solution-architect` (validar que la arquitectura es realizable en Azure).
 
 **Instalación** (oficial Microsoft, en beta):
 ```json
@@ -205,7 +205,7 @@ Variante oficial (remote OAuth, enterprise):
 
 **Casos de uso:** (1) crear PR desde Claude Code al terminar un feature; (2) consultar issues relacionados antes de implementar; (3) revisar status de GitHub Actions sin salir del terminal.
 
-**Agentes ASDD:** `sofka-asdd-developer-backend` (abrir PR con descripción estándar) · `sofka-asdd-tech-lead` (revisar PRs y dejar comentarios en línea) · `sofka-asdd-solution-architect` (consultar cambios previos para ADRs) · `sofka-asdd-platform-engineer` (status de workflows CI/CD).
+**Agentes ASDD:** `asdd-developer-backend` (abrir PR con descripción estándar) · `asdd-tech-lead` (revisar PRs y dejar comentarios en línea) · `asdd-solution-architect` (consultar cambios previos para ADRs) · `asdd-platform-engineer` (status de workflows CI/CD).
 
 **Instalación** (oficial de GitHub, imagen Docker en Go):
 ```json
@@ -236,7 +236,7 @@ Alternativa remote OAuth (sin Docker):
 
 **Casos de uso:** (1) sincronizar historias de usuario de Jira al refinar specs; (2) leer glosarios de dominio en Confluence; (3) transicionar issue a "In Review" al abrir PR.
 
-**Agentes ASDD:** `sofka-asdd-producto` (leer historias, actualizar estados) · `sofka-asdd-domain-expert` (glosarios y reglas de negocio en Confluence) · `sofka-asdd-tech-lead` (enlazar PRs a issues Jira).
+**Agentes ASDD:** `asdd-producto` (leer historias, actualizar estados) · `asdd-domain-expert` (glosarios y reglas de negocio en Confluence) · `asdd-tech-lead` (enlazar PRs a issues Jira).
 
 **Instalación** (oficial Atlassian, remote OAuth):
 ```json
@@ -274,7 +274,7 @@ Alternativa local `mcp-atlassian` (API token):
 
 **Casos de uso:** (1) diagnosticar por qué una release dispara errores en producción; (2) verificar que un fix desplegado redujo la tasa de errores; (3) priorizar bugs del backlog por frecuencia real.
 
-**Agentes ASDD:** `sofka-asdd-security` (errores con patrones de exploit o fuga de información) · `sofka-asdd-developer-backend` (reproducir bugs desde stacktraces reales) · `sofka-asdd-platform-engineer` (correlacionar errores con deploys y SLOs).
+**Agentes ASDD:** `asdd-security` (errores con patrones de exploit o fuga de información) · `asdd-developer-backend` (reproducir bugs desde stacktraces reales) · `asdd-platform-engineer` (correlacionar errores con deploys y SLOs).
 
 **Instalación** (oficial Sentry):
 ```json
@@ -301,7 +301,7 @@ Alternativa local `mcp-atlassian` (API token):
 
 **Casos de uso:** (1) notificar al canal `#releases` cuando termina un deploy; (2) buscar decisiones de hilos Slack para incluir como contexto en un ADR; (3) publicar reporte de QA sign-off en el canal del feature.
 
-**Agentes ASDD:** `sofka-asdd-producto` (notificar stakeholders al aceptar una spec) · `sofka-asdd-platform-engineer` (status de deploys al canal operativo).
+**Agentes ASDD:** `asdd-producto` (notificar stakeholders al aceptar una spec) · `asdd-platform-engineer` (status de deploys al canal operativo).
 
 **Instalación:**
 ```json
@@ -326,17 +326,17 @@ Alternativa local `mcp-atlassian` (API token):
 
 | Agente | MCPs recomendados |
 |---|---|
-| `sofka-asdd-producto` | Atlassian, Slack |
-| `sofka-asdd-solution-architect` | Excalidraw, GitHub, Context7 |
-| `sofka-asdd-tech-lead` | GitHub, SonarQube |
-| `sofka-asdd-ux-ui` | Figma |
-| `sofka-asdd-developer-frontend` / `sofka-asdd-developer-backend` | Context7, GitHub |
-| `sofka-asdd-security` | SonarQube, Sentry |
-| `sofka-asdd-qa-engineer` | Playwright, SonarQube |
-| `sofka-asdd-domain-expert` | Atlassian (Confluence para glosarios) |
-| `sofka-asdd-platform-engineer` | Azure, GitHub |
-| `sofka-asdd-researcher` | Context7 |
-| `sofka-asdd-meta` | — (ninguno) |
+| `asdd-producto` | Atlassian, Slack |
+| `asdd-solution-architect` | Excalidraw, GitHub, Context7 |
+| `asdd-tech-lead` | GitHub, SonarQube |
+| `asdd-ux-ui` | Figma |
+| `asdd-developer-frontend` / `asdd-developer-backend` | Context7, GitHub |
+| `asdd-security` | SonarQube, Sentry |
+| `asdd-qa-engineer` | Playwright, SonarQube |
+| `asdd-domain-expert` | Atlassian (Confluence para glosarios) |
+| `asdd-platform-engineer` | Azure, GitHub |
+| `asdd-researcher` | Context7 |
+| `asdd-meta` | — (ninguno) |
 
 ---
 
@@ -349,7 +349,7 @@ Alternativa local `mcp-atlassian` (API token):
 ```
 - **ENV:** ninguna · **Costo/sesión:** < 300 · **Cuándo:** siempre (default del template).
 
-### 5.2 Estándar (la mayoría de proyectos Sofka)
+### 5.2 Estándar (la mayoría de proyectos Guide)
 
 ```json
 {"mcpServers": {
@@ -369,7 +369,7 @@ Alternativa local `mcp-atlassian` (API token):
 ```
 - **ENV:** `GITHUB_PERSONAL_ACCESS_TOKEN`, `SLACK_BOT_TOKEN`, `SLACK_TEAM_ID`.
 - **Costo/sesión:** 1.200–2.000.
-- **Cuándo:** stack Sofka con GitHub + Jira/Confluence + Slack.
+- **Cuándo:** stack Guide con GitHub + Jira/Confluence + Slack.
 
 ### 5.3 Completo (los 10 MCPs — proyectos grandes multi-stack)
 

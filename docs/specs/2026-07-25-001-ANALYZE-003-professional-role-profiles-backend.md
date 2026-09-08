@@ -45,7 +45,7 @@ reproducible de:
 - `.claude/rules/` y `.claude/references/`;
 - workflows y phase specs;
 - templates;
-- configuraciones `.sofka-asdd/`;
+- configuraciones `.asdd/`;
 - validadores y artefactos documentales.
 
 La auditoría:
@@ -73,7 +73,7 @@ El formato exacto se decidirá en Design. Debe representar al menos:
   "schema_version": 1,
   "capabilities": [
     {
-      "id": "sofka-asdd-example",
+      "id": "asdd-example",
       "kind": "agent|skill|command|rule|reference|workflow|template|artifact-contract|validator|config|loader",
       "primary_domain": "data",
       "secondary_domains": ["quality"],

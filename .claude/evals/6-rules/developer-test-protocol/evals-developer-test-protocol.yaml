@@ -1,4 +1,4 @@
-description: "Regla: sofka-asdd-developer-test-protocol — Test Coverage Declaration antes de codear, CASO A/B, GAP bloqueante"
+description: "Regla: asdd-developer-test-protocol — Test Coverage Declaration antes de codear, CASO A/B, GAP bloqueante"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

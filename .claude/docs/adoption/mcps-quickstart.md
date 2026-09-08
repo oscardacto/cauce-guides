@@ -8,10 +8,10 @@ extendido en `.claude/docs/mcps-by-domain.md`.
 | Si tu equipo usa… | Activar MCP | Skills/agentes que se desbloquean |
 |---|---|---|
 | **Cualquier stack** (default) | `context7` | Toda la suite (documentación de librerías) |
-| **Jira / Confluence (Atlassian)** | `atlassian` | `sofka-asdd-producto-po`, `producto-pm`, tickets enlazados a specs |
-| **GitHub** (PRs, issues, CI) | `github` | `sofka-asdd-tech-lead-code-review`, comentarios en PR, automatización de issues |
-| **Sentry / observabilidad** | `sentry` | `sofka-asdd-platform-engineer-observability`, SLOs reales con datos vivos |
-| **Figma** (diseño UI) | `figma` (catálogo) | `sofka-asdd-ux-ui-component-spec`, `ux-ui-design-tokens` |
+| **Jira / Confluence (Atlassian)** | `atlassian` | `asdd-producto-po`, `producto-pm`, tickets enlazados a specs |
+| **GitHub** (PRs, issues, CI) | `github` | `asdd-tech-lead-code-review`, comentarios en PR, automatización de issues |
+| **Sentry / observabilidad** | `sentry` | `asdd-platform-engineer-observability`, SLOs reales con datos vivos |
+| **Figma** (diseño UI) | `figma` (catálogo) | `asdd-ux-ui-component-spec`, `ux-ui-design-tokens` |
 | **GitLab** (en lugar de GitHub) | `gitlab` (catálogo) | `tech-lead-code-review` sobre MRs |
 | **Datadog / Grafana** | `datadog` o `grafana` (catálogo) | Métricas y alertas reales en `platform-engineer-observability` |
 
@@ -59,4 +59,4 @@ manualmente y agregar únicamente las entradas relevantes desde
 
 `.claude/docs/mcps-by-domain.md` mantiene el catálogo completo (9+ MCPs por dominio).
 Esta guía es el atajo: el baseline mínimo viable + los 3 add-ons más
-demandados en proyectos enterprise Sofka.
+demandados en proyectos enterprise Guide.

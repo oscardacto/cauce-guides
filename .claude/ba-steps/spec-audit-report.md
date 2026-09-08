@@ -1,13 +1,13 @@
 # spec-audit-report — Template de Reporte de Evaluación BA
 <!-- CONTRACT:spec-audit-report:v1 -->
 
-> Módulo de carga condicional. `sofka-asdd-ba-specification-auditor` lo lee
+> Módulo de carga condicional. `asdd-ba-specification-auditor` lo lee
 > COMPLETO antes de escribir el reporte de evaluación en `docs/specs/`.
 
 ## Formato del reporte de evaluación
 
 El reporte es un **documento de trabajo** que el AF edita (la sección de gaps)
-antes de enviar a `sofka-asdd-ba-specification-lead`. La sección de gaps contiene
+antes de enviar a `asdd-ba-specification-lead`. La sección de gaps contiene
 las brechas con campos en blanco para que el AF escriba su decisión y el contexto
 que necesita el constructor.
 
@@ -48,7 +48,7 @@ debe resolver cada ítem.
 
 > **Para el AF:** completar la columna "Decisión" de cada gap PENDIENTE e IMPLÍCITO
 > (propios y heredados) antes de enviar este reporte a
-> `sofka-asdd-ba-specification-lead`. Un gap sin decisión bloquea la construcción.
+> `asdd-ba-specification-lead`. Un gap sin decisión bloquea la construcción.
 
 ---
 
@@ -136,7 +136,7 @@ _Si no hay gaps PENDIENTE ni IMPLÍCITO → "Sin brechas pendientes. SPEC lista 
 **Decisión del AF:** *(completar — puede ser decisión propia o referencia a stakeholder consultado)*
 >
 
-**Contexto para sofka-asdd-ba-specification-lead:** *(opcional — dato, restricción o referencia que aplique a la decisión)*
+**Contexto para asdd-ba-specification-lead:** *(opcional — dato, restricción o referencia que aplique a la decisión)*
 >
 
 ---
@@ -184,7 +184,7 @@ _[repetir bloque por cada gap IMPLÍCITO]_
 |---|---|
 | Riesgo | CRÍTICO / PENDIENTE / IMPLÍCITO |
 | Origen | {artefacto + sección/línea donde estaba reportado} |
-| Reportado por | {agente o autor — p. ej. sofka-asdd-ba-functional-architect} |
+| Reportado por | {agente o autor — p. ej. asdd-ba-functional-architect} |
 | Descripción | {la brecha tal como fue reportada — sin distorsionarla} |
 | Estado en el origen | {abierto / parcialmente resuelto / bloqueante} |
 | Pregunta para el AF | {qué debe resolver el AF, formulada de forma accionable} |
@@ -192,7 +192,7 @@ _[repetir bloque por cada gap IMPLÍCITO]_
 **Decisión del AF:** *(completar)*
 >
 
-**Contexto para sofka-asdd-ba-specification-lead:** *(opcional)*
+**Contexto para asdd-ba-specification-lead:** *(opcional)*
 >
 
 ---
@@ -248,7 +248,7 @@ Cada solapamiento o vacío como **bloque editable** con el mismo formato que los
 **Decisión del AF:** *(completar — regla que prevalece, o confirmar vacío intencional)*
 >
 
-**Contexto para sofka-asdd-ba-specification-lead:** *(opcional)*
+**Contexto para asdd-ba-specification-lead:** *(opcional)*
 >
 
 ---
@@ -276,7 +276,7 @@ Cada incoherencia como **bloque editable** con citas textuales obligatorias.
 **Decisión del AF:** *(completar — cuál fuente prevalece y cómo se reconcilia)*
 >
 
-**Contexto para sofka-asdd-ba-specification-lead:** *(opcional)*
+**Contexto para asdd-ba-specification-lead:** *(opcional)*
 >
 
 ---

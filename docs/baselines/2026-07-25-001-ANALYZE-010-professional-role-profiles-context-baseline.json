@@ -3,7 +3,7 @@
   "run_id": "2026-07-25-001",
   "artifact": "professional-role-profiles-context-baseline",
   "status": "static-read-only-baseline-no-fresh-runtime-measurement",
-  "warning": "STALE — este baseline refleja el estado del repo al commit 5846fa7 (rama feature/asdd-runtime-efficiency-v2, 2026-07-25), previo al rename data-engineering v1.1 (2026-07-29). El array skills del perfil data lista sofka-asdd-data-{architecture-design,contract,discovery,governance-assessment} (sin -eng-) que ya no corresponden al estado actual del disco. No regenerar sin correr el spike de auditoría completo.",
+  "warning": "STALE — este baseline refleja el estado del repo al commit 5846fa7 (rama feature/asdd-runtime-efficiency-v2, 2026-07-25), previo al rename data-engineering v1.1 (2026-07-29). El array skills del perfil data lista asdd-data-{architecture-design,contract,discovery,governance-assessment} (sin -eng-) que ya no corresponden al estado actual del disco. No regenerar sin correr el spike de auditoría completo.",
   "source_head": {
     "branch": "feature/asdd-runtime-efficiency-v2",
     "commit": "5846fa7703b62e40279f08548708cae939f9206a"
@@ -90,7 +90,7 @@
     "caveat": "This is the authoritative measured baseline for its older commit. It must not be presented as a fresh measurement of the current HEAD."
   },
   "configured_budgets_current_head": {
-    "path": ".sofka-asdd/context-budget.json",
+    "path": ".asdd/context-budget.json",
     "schema_version": 2,
     "unit": "words",
     "limits": {
@@ -126,7 +126,7 @@
     "textual_words": 230510,
     "binary_assets": [
       {
-        "path": ".claude/skills/sofka-asdd-data-eng-governance-assessment/templates/data-dictionary-template.xlsx",
+        "path": ".claude/skills/asdd-data-eng-governance-assessment/templates/data-dictionary-template.xlsx",
         "deleted": true,
         "bytes": 10779,
         "words": null
@@ -226,7 +226,7 @@
       "text_words_specialized_parser": 53756,
       "binary_assets": [
         {
-          "path": ".claude/skills/sofka-asdd-data-eng-governance-assessment/templates/data-dictionary-template.xlsx",
+          "path": ".claude/skills/asdd-data-eng-governance-assessment/templates/data-dictionary-template.xlsx",
           "deleted": true,
           "bytes": 10779,
           "words": null
@@ -257,51 +257,51 @@
       "label": "Software Delivery",
       "status": "provisional_profile",
       "agents": [
-        "sofka-asdd-developer-backend",
-        "sofka-asdd-developer-frontend",
-        "sofka-asdd-solution-architect",
-        "sofka-asdd-tech-lead"
+        "asdd-developer-backend",
+        "asdd-developer-frontend",
+        "asdd-solution-architect",
+        "asdd-tech-lead"
       ],
       "agent_count": 4,
       "agent_words": 3445,
       "skills": [
-        "sofka-asdd-developer-bug-fix",
-        "sofka-asdd-developer-build-validator",
-        "sofka-asdd-developer-continuous-improver",
-        "sofka-asdd-developer-e2e-test",
-        "sofka-asdd-developer-feature",
-        "sofka-asdd-developer-integration-test",
-        "sofka-asdd-developer-merge-conflicts",
-        "sofka-asdd-developer-refactoring-execute",
-        "sofka-asdd-developer-safe-refactor",
-        "sofka-asdd-developer-unit-test",
-        "sofka-asdd-architect-api-contract",
-        "sofka-asdd-architect-bounded-context",
-        "sofka-asdd-solution-architect-component-diagram",
-        "sofka-asdd-solution-architect-cross-impact",
-        "sofka-asdd-solution-architect-dep-audit",
-        "sofka-asdd-solution-architect-diagrams",
-        "sofka-asdd-architect-discovery",
-        "sofka-asdd-architect-patterns",
-        "sofka-asdd-architect-quality",
-        "sofka-asdd-solution-architect-resilience-auditor",
-        "sofka-asdd-architect-review",
-        "sofka-asdd-architect-sofka-docs",
-        "sofka-asdd-architect-tradeoff-analysis",
-        "sofka-asdd-tech-lead-artifact-audit",
-        "sofka-asdd-tech-lead-code-review",
-        "sofka-asdd-tech-lead-commit",
-        "sofka-asdd-tech-lead-create-mr",
-        "sofka-asdd-tech-lead-delivery-report",
-        "sofka-asdd-tech-lead-gitflow",
-        "sofka-asdd-tech-lead-impl-quality-gate",
-        "sofka-asdd-tech-lead-integration-validator",
-        "sofka-asdd-tech-lead-new-bug",
-        "sofka-asdd-tech-lead-pre-push",
-        "sofka-asdd-tech-lead-quality-gate",
-        "sofka-asdd-tech-lead-refactoring-plan",
-        "sofka-asdd-tech-lead-sdd-traceability",
-        "sofka-asdd-unit-test-design"
+        "asdd-developer-bug-fix",
+        "asdd-developer-build-validator",
+        "asdd-developer-continuous-improver",
+        "asdd-developer-e2e-test",
+        "asdd-developer-feature",
+        "asdd-developer-integration-test",
+        "asdd-developer-merge-conflicts",
+        "asdd-developer-refactoring-execute",
+        "asdd-developer-safe-refactor",
+        "asdd-developer-unit-test",
+        "asdd-architect-api-contract",
+        "asdd-architect-bounded-context",
+        "asdd-solution-architect-component-diagram",
+        "asdd-solution-architect-cross-impact",
+        "asdd-solution-architect-dep-audit",
+        "asdd-solution-architect-diagrams",
+        "asdd-architect-discovery",
+        "asdd-architect-patterns",
+        "asdd-architect-quality",
+        "asdd-solution-architect-resilience-auditor",
+        "asdd-architect-review",
+        "asdd-architect-guide-docs",
+        "asdd-architect-tradeoff-analysis",
+        "asdd-tech-lead-artifact-audit",
+        "asdd-tech-lead-code-review",
+        "asdd-tech-lead-commit",
+        "asdd-tech-lead-create-mr",
+        "asdd-tech-lead-delivery-report",
+        "asdd-tech-lead-gitflow",
+        "asdd-tech-lead-impl-quality-gate",
+        "asdd-tech-lead-integration-validator",
+        "asdd-tech-lead-new-bug",
+        "asdd-tech-lead-pre-push",
+        "asdd-tech-lead-quality-gate",
+        "asdd-tech-lead-refactoring-plan",
+        "asdd-tech-lead-sdd-traceability",
+        "asdd-unit-test-design"
       ],
       "skill_count": 37,
       "skill_words": 42211,
@@ -316,21 +316,21 @@
       "label": "Platform/DevOps",
       "status": "provisional_profile",
       "agents": [
-        "sofka-asdd-cloud-architect",
-        "sofka-asdd-devops-engineer"
+        "asdd-cloud-architect",
+        "asdd-devops-engineer"
       ],
       "agent_count": 2,
       "agent_words": 2665,
       "skills": [
-        "sofka-asdd-cloud-architect-design",
-        "sofka-asdd-cloud-architect-finops",
-        "sofka-asdd-cloud-architect-security",
-        "sofka-asdd-devops-engineer-cloud",
-        "sofka-asdd-devops-engineer-devsecops",
-        "sofka-asdd-devops-engineer-iac",
-        "sofka-asdd-devops-engineer-observability",
-        "sofka-asdd-devops-engineer-pipeline",
-        "sofka-asdd-devops-engineer-testing"
+        "asdd-cloud-architect-design",
+        "asdd-cloud-architect-finops",
+        "asdd-cloud-architect-security",
+        "asdd-devops-engineer-cloud",
+        "asdd-devops-engineer-devsecops",
+        "asdd-devops-engineer-iac",
+        "asdd-devops-engineer-observability",
+        "asdd-devops-engineer-pipeline",
+        "asdd-devops-engineer-testing"
       ],
       "skill_count": 9,
       "skill_words": 9499,
@@ -345,100 +345,100 @@
       "label": "QA/ATF",
       "status": "provisional_profile",
       "agents": [
-        "sofka-asdd-atf-api-qa-engineer",
-        "sofka-asdd-atf-reporting-qa-engineer",
-        "sofka-asdd-atf-web-qa-engineer"
+        "asdd-atf-api-qa-engineer",
+        "asdd-atf-reporting-qa-engineer",
+        "asdd-atf-web-qa-engineer"
       ],
       "agent_count": 3,
       "agent_words": 5496,
       "skills": [
-        "sofka-asdd-atf-api-orchestrator-dependency-mapper",
-        "sofka-asdd-atf-api-orchestrator-manifest-writer",
-        "sofka-asdd-atf-api-orchestrator-run-bootstrap",
-        "sofka-asdd-atf-api-orchestrator-work-item-partitioner",
-        "sofka-asdd-atf-api-performance-k6-script-generator",
-        "sofka-asdd-atf-api-performance-perf-threshold-evaluator",
-        "sofka-asdd-atf-api-reporting-backlog-sync",
-        "sofka-asdd-atf-api-reporting-qgs-evaluator",
-        "sofka-asdd-atf-api-reporting-report-renderer",
-        "sofka-asdd-atf-api-security-owasp-api-checks",
-        "sofka-asdd-atf-api-security-zap-runner",
-        "sofka-asdd-atf-api-shared-checkpoint-manager",
-        "sofka-asdd-atf-api-shared-config-loader",
-        "sofka-asdd-atf-api-shared-evidence-collector",
-        "sofka-asdd-atf-api-shared-knowledge-base-writer",
-        "sofka-asdd-atf-api-shared-rate-limit-protocol",
-        "sofka-asdd-atf-api-step-1-acceptance-criteria-normalizer",
-        "sofka-asdd-atf-api-step-1-gap-detector",
-        "sofka-asdd-atf-api-step-1-hu-parser",
-        "sofka-asdd-atf-api-step-2-contract-delta-detector",
-        "sofka-asdd-atf-api-step-2-contract-hasher",
-        "sofka-asdd-atf-api-step-2-openapi-parser",
-        "sofka-asdd-atf-api-step-3-istqb-test-techniques",
-        "sofka-asdd-atf-api-step-3-risk-scorer-api",
-        "sofka-asdd-atf-api-step-4-gherkin-writer-api",
-        "sofka-asdd-atf-api-step-4-test-case-designer",
-        "sofka-asdd-atf-api-step-4-test-data-generator-api",
-        "sofka-asdd-atf-api-step-5-bun-runner-setup",
-        "sofka-asdd-atf-api-step-5-newman-bridge",
-        "sofka-asdd-atf-api-step-5-playwright-api-scaffolder",
-        "sofka-asdd-atf-api-step-6-execution-runner",
-        "sofka-asdd-atf-api-step-6-failure-classifier",
-        "sofka-asdd-atf-web-alm-data-builder",
-        "sofka-asdd-atf-web-auth-handler",
-        "sofka-asdd-atf-web-batch-planner",
-        "sofka-asdd-atf-web-browser-lifecycle",
-        "sofka-asdd-atf-web-checkpoint-writer",
-        "sofka-asdd-atf-web-context-manager",
-        "sofka-asdd-atf-web-data-generator",
-        "sofka-asdd-atf-web-db-validator",
-        "sofka-asdd-atf-web-enrich-deep-cp",
-        "sofka-asdd-atf-web-enrichment-analyzer",
-        "sofka-asdd-atf-web-execution-result-writer",
-        "sofka-asdd-atf-web-gherkin-writer",
-        "sofka-asdd-atf-web-highlight-injector",
-        "sofka-asdd-atf-web-instance-planner",
-        "sofka-asdd-atf-web-knowledge-distiller",
-        "sofka-asdd-atf-web-knowledge-updater",
-        "sofka-asdd-atf-web-lighthouse-validator",
-        "sofka-asdd-atf-web-material-reference-detector",
-        "sofka-asdd-atf-web-navigation-loader",
-        "sofka-asdd-atf-web-notebooklm-query",
-        "sofka-asdd-atf-web-playwright-navigator",
-        "sofka-asdd-atf-web-rate-limit-handler",
-        "sofka-asdd-atf-web-rerun-resolver",
-        "sofka-asdd-atf-web-response-integrator",
-        "sofka-asdd-atf-web-risk-scorer",
-        "sofka-asdd-atf-web-test-data-needs",
-        "sofka-asdd-atf-web-testability-scorer",
-        "sofka-asdd-atf-web-visual-ux-a11y-validator"
+        "asdd-atf-api-orchestrator-dependency-mapper",
+        "asdd-atf-api-orchestrator-manifest-writer",
+        "asdd-atf-api-orchestrator-run-bootstrap",
+        "asdd-atf-api-orchestrator-work-item-partitioner",
+        "asdd-atf-api-performance-k6-script-generator",
+        "asdd-atf-api-performance-perf-threshold-evaluator",
+        "asdd-atf-api-reporting-backlog-sync",
+        "asdd-atf-api-reporting-qgs-evaluator",
+        "asdd-atf-api-reporting-report-renderer",
+        "asdd-atf-api-security-owasp-api-checks",
+        "asdd-atf-api-security-zap-runner",
+        "asdd-atf-api-shared-checkpoint-manager",
+        "asdd-atf-api-shared-config-loader",
+        "asdd-atf-api-shared-evidence-collector",
+        "asdd-atf-api-shared-knowledge-base-writer",
+        "asdd-atf-api-shared-rate-limit-protocol",
+        "asdd-atf-api-step-1-acceptance-criteria-normalizer",
+        "asdd-atf-api-step-1-gap-detector",
+        "asdd-atf-api-step-1-hu-parser",
+        "asdd-atf-api-step-2-contract-delta-detector",
+        "asdd-atf-api-step-2-contract-hasher",
+        "asdd-atf-api-step-2-openapi-parser",
+        "asdd-atf-api-step-3-istqb-test-techniques",
+        "asdd-atf-api-step-3-risk-scorer-api",
+        "asdd-atf-api-step-4-gherkin-writer-api",
+        "asdd-atf-api-step-4-test-case-designer",
+        "asdd-atf-api-step-4-test-data-generator-api",
+        "asdd-atf-api-step-5-bun-runner-setup",
+        "asdd-atf-api-step-5-newman-bridge",
+        "asdd-atf-api-step-5-playwright-api-scaffolder",
+        "asdd-atf-api-step-6-execution-runner",
+        "asdd-atf-api-step-6-failure-classifier",
+        "asdd-atf-web-alm-data-builder",
+        "asdd-atf-web-auth-handler",
+        "asdd-atf-web-batch-planner",
+        "asdd-atf-web-browser-lifecycle",
+        "asdd-atf-web-checkpoint-writer",
+        "asdd-atf-web-context-manager",
+        "asdd-atf-web-data-generator",
+        "asdd-atf-web-db-validator",
+        "asdd-atf-web-enrich-deep-cp",
+        "asdd-atf-web-enrichment-analyzer",
+        "asdd-atf-web-execution-result-writer",
+        "asdd-atf-web-gherkin-writer",
+        "asdd-atf-web-highlight-injector",
+        "asdd-atf-web-instance-planner",
+        "asdd-atf-web-knowledge-distiller",
+        "asdd-atf-web-knowledge-updater",
+        "asdd-atf-web-lighthouse-validator",
+        "asdd-atf-web-material-reference-detector",
+        "asdd-atf-web-navigation-loader",
+        "asdd-atf-web-notebooklm-query",
+        "asdd-atf-web-playwright-navigator",
+        "asdd-atf-web-rate-limit-handler",
+        "asdd-atf-web-rerun-resolver",
+        "asdd-atf-web-response-integrator",
+        "asdd-atf-web-risk-scorer",
+        "asdd-atf-web-test-data-needs",
+        "asdd-atf-web-testability-scorer",
+        "asdd-atf-web-visual-ux-a11y-validator"
       ],
       "skill_count": 60,
       "skill_words": 46509,
       "specialized_commands": [
-        "sofka-asdd:qa-analyze",
-        "sofka-asdd:qa-automate",
-        "sofka-asdd:qa-bootstrap",
-        "sofka-asdd:qa-design",
-        "sofka-asdd:qa-do",
-        "sofka-asdd:qa-execute",
-        "sofka-asdd:qa-fast-track",
-        "sofka-asdd:qa-regression",
-        "sofka-asdd:qa-report",
-        "sofka-asdd:qa-resume",
-        "sofka-asdd:qa-retest",
-        "sofka-asdd:qa-web-design",
-        "sofka-asdd:qa-web-diagnose",
-        "sofka-asdd:qa-web-enrich",
-        "sofka-asdd:qa-web-exec",
-        "sofka-asdd:qa-web-handoff-receive",
-        "sofka-asdd:qa-web-handoff",
-        "sofka-asdd:qa-web-knowledge",
-        "sofka-asdd:qa-web-perf",
-        "sofka-asdd:qa-web-run",
-        "sofka-asdd:qa-web-setup-app",
-        "sofka-asdd:qa-web-strategize",
-        "sofka-asdd:qa-web-visual-ux-a11y"
+        "asdd:qa-analyze",
+        "asdd:qa-automate",
+        "asdd:qa-bootstrap",
+        "asdd:qa-design",
+        "asdd:qa-do",
+        "asdd:qa-execute",
+        "asdd:qa-fast-track",
+        "asdd:qa-regression",
+        "asdd:qa-report",
+        "asdd:qa-resume",
+        "asdd:qa-retest",
+        "asdd:qa-web-design",
+        "asdd:qa-web-diagnose",
+        "asdd:qa-web-enrich",
+        "asdd:qa-web-exec",
+        "asdd:qa-web-handoff-receive",
+        "asdd:qa-web-handoff",
+        "asdd:qa-web-knowledge",
+        "asdd:qa-web-perf",
+        "asdd:qa-web-run",
+        "asdd:qa-web-setup-app",
+        "asdd:qa-web-strategize",
+        "asdd:qa-web-visual-ux-a11y"
       ],
       "specialized_command_count": 23,
       "specialized_command_words": 19081,
@@ -450,26 +450,26 @@
       "label": "Data",
       "status": "provisional_profile",
       "agents": [
-        "sofka-asdd-data-architect",
-        "sofka-asdd-data-eng-databricks",
-        "sofka-asdd-data-governance"
+        "asdd-data-architect",
+        "asdd-data-eng-databricks",
+        "asdd-data-governance"
       ],
       "agent_count": 3,
       "agent_words": 4716,
       "skills": [
-        "sofka-asdd-data-eng-architecture-design",
-        "sofka-asdd-data-eng-contract",
-        "sofka-asdd-data-eng-discovery",
-        "sofka-asdd-data-eng-governance-assessment"
+        "asdd-data-eng-architecture-design",
+        "asdd-data-eng-contract",
+        "asdd-data-eng-discovery",
+        "asdd-data-eng-governance-assessment"
       ],
       "skill_count": 4,
       "skill_words": 8752,
       "specialized_commands": [
-        "sofka-asdd:data-eng-build",
-        "sofka-asdd:data-eng-design",
-        "sofka-asdd:data-eng-discover",
-        "sofka-asdd:data-eng-publish",
-        "sofka-asdd:data-eng-validate"
+        "asdd:data-eng-build",
+        "asdd:data-eng-design",
+        "asdd:data-eng-discover",
+        "asdd:data-eng-publish",
+        "asdd:data-eng-validate"
       ],
       "specialized_command_count": 5,
       "specialized_command_words": 9963,
@@ -481,29 +481,29 @@
       "label": "Management/Functional",
       "status": "provisional_profile",
       "agents": [
-        "sofka-asdd-ba-bitacora",
-        "sofka-asdd-ba-constructor",
-        "sofka-asdd-ba-descomponedor",
-        "sofka-asdd-ba-evaluador",
-        "sofka-asdd-producto"
+        "asdd-ba-bitacora",
+        "asdd-ba-constructor",
+        "asdd-ba-descomponedor",
+        "asdd-ba-evaluador",
+        "asdd-producto"
       ],
       "agent_count": 5,
       "agent_words": 4972,
       "skills": [
-        "sofka-asdd-ba-bitacora-log",
-        "sofka-asdd-ba-constructor-contexto",
-        "sofka-asdd-ba-constructor-extraccion",
-        "sofka-asdd-ba-constructor-gherkin",
-        "sofka-asdd-ba-evaluador-coherencia",
-        "sofka-asdd-ba-evaluador-gaps",
-        "sofka-asdd-ba-evaluador-mece",
-        "sofka-asdd-producto-ba",
-        "sofka-asdd-producto-funcional",
-        "sofka-asdd-producto-new-hu",
-        "sofka-asdd-producto-pm",
-        "sofka-asdd-producto-po",
-        "sofka-asdd-producto-story-planner",
-        "sofka-asdd-producto-templates"
+        "asdd-ba-bitacora-log",
+        "asdd-ba-constructor-contexto",
+        "asdd-ba-constructor-extraccion",
+        "asdd-ba-constructor-gherkin",
+        "asdd-ba-evaluador-coherencia",
+        "asdd-ba-evaluador-gaps",
+        "asdd-ba-evaluador-mece",
+        "asdd-producto-ba",
+        "asdd-producto-funcional",
+        "asdd-producto-new-hu",
+        "asdd-producto-pm",
+        "asdd-producto-po",
+        "asdd-producto-story-planner",
+        "asdd-producto-templates"
       ],
       "skill_count": 14,
       "skill_words": 15188,
@@ -518,27 +518,27 @@
       "label": "Experience/Design",
       "status": "provisional_profile",
       "agents": [
-        "sofka-asdd-ui",
-        "sofka-asdd-ux"
+        "asdd-ui",
+        "asdd-ux"
       ],
       "agent_count": 2,
       "agent_words": 4424,
       "skills": [
-        "sofka-asdd-ui-accessibility",
-        "sofka-asdd-ui-design-audit",
-        "sofka-asdd-ui-design-tokens",
-        "sofka-asdd-ui-figma-impl",
-        "sofka-asdd-ui-hifi-builder",
-        "sofka-asdd-ui-motion",
-        "sofka-asdd-ui-responsive",
-        "sofka-asdd-ui-ux-content",
-        "sofka-asdd-ux-context-core",
-        "sofka-asdd-ux-desk-researcher",
-        "sofka-asdd-ux-executive-storytelling",
-        "sofka-asdd-ux-flows-builder",
-        "sofka-asdd-ux-gap-auditor",
-        "sofka-asdd-ux-qualitative-synthesizer",
-        "sofka-asdd-ux-research-instruments"
+        "asdd-ui-accessibility",
+        "asdd-ui-design-audit",
+        "asdd-ui-design-tokens",
+        "asdd-ui-figma-impl",
+        "asdd-ui-hifi-builder",
+        "asdd-ui-motion",
+        "asdd-ui-responsive",
+        "asdd-ui-ux-content",
+        "asdd-ux-context-core",
+        "asdd-ux-desk-researcher",
+        "asdd-ux-executive-storytelling",
+        "asdd-ux-flows-builder",
+        "asdd-ux-gap-auditor",
+        "asdd-ux-qualitative-synthesizer",
+        "asdd-ux-research-instruments"
       ],
       "skill_count": 15,
       "skill_words": 19185,
@@ -553,15 +553,15 @@
       "label": "Security",
       "status": "transversal_candidate",
       "agents": [
-        "sofka-asdd-security"
+        "asdd-security"
       ],
       "agent_count": 1,
       "agent_words": 562,
       "skills": [
-        "sofka-asdd-security-code-scan",
-        "sofka-asdd-security-compliance",
-        "sofka-asdd-security-dependency-audit",
-        "sofka-asdd-security-secrets-scan"
+        "asdd-security-code-scan",
+        "asdd-security-compliance",
+        "asdd-security-dependency-audit",
+        "asdd-security-secrets-scan"
       ],
       "skill_count": 4,
       "skill_words": 2128,
@@ -576,40 +576,40 @@
       "label": "Cross-domain/Core",
       "status": "transversal_core",
       "agents": [
-        "sofka-asdd-domain-expert",
-        "sofka-asdd-explorer",
-        "sofka-asdd-meta",
-        "sofka-asdd-researcher"
+        "asdd-domain-expert",
+        "asdd-explorer",
+        "asdd-meta",
+        "asdd-researcher"
       ],
       "agent_count": 4,
       "agent_words": 1773,
       "skills": [
-        "sofka-asdd-domain-expert-education",
-        "sofka-asdd-domain-expert-fintech",
-        "sofka-asdd-domain-expert-health",
-        "sofka-asdd-domain-expert-insurance",
-        "sofka-asdd-domain-expert-logistics",
-        "sofka-asdd-domain-expert-retail",
-        "sofka-asdd-meta-platform",
-        "sofka-asdd-researcher-benchmark",
-        "sofka-asdd-researcher-comparison",
-        "sofka-asdd-researcher-spike"
+        "asdd-domain-expert-education",
+        "asdd-domain-expert-fintech",
+        "asdd-domain-expert-health",
+        "asdd-domain-expert-insurance",
+        "asdd-domain-expert-logistics",
+        "asdd-domain-expert-retail",
+        "asdd-meta-platform",
+        "asdd-researcher-benchmark",
+        "asdd-researcher-comparison",
+        "asdd-researcher-spike"
       ],
       "skill_count": 10,
       "skill_words": 5229,
       "specialized_commands": [
-        "sofka-asdd:add-agent",
-        "sofka-asdd:add-skill",
-        "sofka-asdd:analyze",
-        "sofka-asdd:build",
-        "sofka-asdd:design",
-        "sofka-asdd:do",
-        "sofka-asdd:docs-as-is",
-        "sofka-asdd:docs-to-be",
-        "sofka-asdd:document",
-        "sofka-asdd:resume",
-        "sofka-asdd:specify",
-        "sofka-asdd:verify"
+        "asdd:add-agent",
+        "asdd:add-skill",
+        "asdd:analyze",
+        "asdd:build",
+        "asdd:design",
+        "asdd:do",
+        "asdd:docs-as-is",
+        "asdd:docs-to-be",
+        "asdd:document",
+        "asdd:resume",
+        "asdd:specify",
+        "asdd:verify"
       ],
       "specialized_command_count": 12,
       "specialized_command_words": 5014,
@@ -621,105 +621,105 @@
     "groups": {
       "eager-frontmatter-skills": [
         {
-          "agent": "sofka-asdd-atf-api-qa-engineer",
+          "agent": "asdd-atf-api-qa-engineer",
           "declared_frontmatter_skill_count": 1
         },
         {
-          "agent": "sofka-asdd-atf-reporting-qa-engineer",
+          "agent": "asdd-atf-reporting-qa-engineer",
           "declared_frontmatter_skill_count": 7
         },
         {
-          "agent": "sofka-asdd-ba-bitacora",
+          "agent": "asdd-ba-bitacora",
           "declared_frontmatter_skill_count": 1
         },
         {
-          "agent": "sofka-asdd-ba-constructor",
+          "agent": "asdd-ba-constructor",
           "declared_frontmatter_skill_count": 5
         },
         {
-          "agent": "sofka-asdd-ba-evaluador",
+          "agent": "asdd-ba-evaluador",
           "declared_frontmatter_skill_count": 4
         },
         {
-          "agent": "sofka-asdd-cloud-architect",
+          "agent": "asdd-cloud-architect",
           "declared_frontmatter_skill_count": 3
         },
         {
-          "agent": "sofka-asdd-data-architect",
+          "agent": "asdd-data-architect",
           "declared_frontmatter_skill_count": 2
         },
         {
-          "agent": "sofka-asdd-data-eng-databricks",
+          "agent": "asdd-data-eng-databricks",
           "declared_frontmatter_skill_count": 14
         },
         {
-          "agent": "sofka-asdd-data-governance",
+          "agent": "asdd-data-governance",
           "declared_frontmatter_skill_count": 2
         },
         {
-          "agent": "sofka-asdd-meta",
+          "agent": "asdd-meta",
           "declared_frontmatter_skill_count": 1
         },
         {
-          "agent": "sofka-asdd-researcher",
+          "agent": "asdd-researcher",
           "declared_frontmatter_skill_count": 3
         },
         {
-          "agent": "sofka-asdd-security",
+          "agent": "asdd-security",
           "declared_frontmatter_skill_count": 4
         }
       ],
       "thin-core-plus-conditional-phase": [
         {
-          "agent": "sofka-asdd-atf-web-qa-engineer",
+          "agent": "asdd-atf-web-qa-engineer",
           "declared_frontmatter_skill_count": 1
         },
         {
-          "agent": "sofka-asdd-ba-descomponedor",
+          "agent": "asdd-ba-descomponedor",
           "declared_frontmatter_skill_count": 1
         }
       ],
       "on-demand-capability-catalog": [
         {
-          "agent": "sofka-asdd-developer-backend",
+          "agent": "asdd-developer-backend",
           "declared_frontmatter_skill_count": 0
         },
         {
-          "agent": "sofka-asdd-developer-frontend",
+          "agent": "asdd-developer-frontend",
           "declared_frontmatter_skill_count": 0
         },
         {
-          "agent": "sofka-asdd-devops-engineer",
+          "agent": "asdd-devops-engineer",
           "declared_frontmatter_skill_count": 0
         },
         {
-          "agent": "sofka-asdd-producto",
+          "agent": "asdd-producto",
           "declared_frontmatter_skill_count": 0
         },
         {
-          "agent": "sofka-asdd-solution-architect",
+          "agent": "asdd-solution-architect",
           "declared_frontmatter_skill_count": 0
         },
         {
-          "agent": "sofka-asdd-tech-lead",
+          "agent": "asdd-tech-lead",
           "declared_frontmatter_skill_count": 0
         },
         {
-          "agent": "sofka-asdd-ui",
+          "agent": "asdd-ui",
           "declared_frontmatter_skill_count": 0
         },
         {
-          "agent": "sofka-asdd-ux",
+          "agent": "asdd-ux",
           "declared_frontmatter_skill_count": 0
         }
       ],
       "agent-body-only": [
         {
-          "agent": "sofka-asdd-domain-expert",
+          "agent": "asdd-domain-expert",
           "declared_frontmatter_skill_count": 0
         },
         {
-          "agent": "sofka-asdd-explorer",
+          "agent": "asdd-explorer",
           "declared_frontmatter_skill_count": 0
         }
       ]
@@ -731,7 +731,7 @@
       "agent-body-only": 2
     },
     "capability_catalog": {
-      "path": ".sofka-asdd/capability-loading.json",
+      "path": ".asdd/capability-loading.json",
       "strategy": "one-plan-declared-primary-plus-explicit-approved-dependency",
       "agent_count": 8,
       "catalog_links": 76,
@@ -745,72 +745,72 @@
       "unique_ids": 44
     },
     "thin_conditional_coordinators": [
-      "sofka-asdd-atf-web-qa-engineer",
-      "sofka-asdd-ba-descomponedor"
+      "asdd-atf-web-qa-engineer",
+      "asdd-ba-descomponedor"
     ],
     "body_only_agents": [
-      "sofka-asdd-domain-expert",
-      "sofka-asdd-explorer"
+      "asdd-domain-expert",
+      "asdd-explorer"
     ],
     "eager_skill_warning_agents": [
       {
-        "agent": "sofka-asdd-atf-reporting-qa-engineer",
+        "agent": "asdd-atf-reporting-qa-engineer",
         "declared_skill_count": 7,
         "bundled": [
-          "sofka-asdd-atf-api-shared-config-loader",
-          "sofka-asdd-atf-api-shared-checkpoint-manager",
-          "sofka-asdd-atf-api-shared-rate-limit-protocol",
-          "sofka-asdd-atf-api-shared-knowledge-base-writer",
-          "sofka-asdd-atf-api-reporting-qgs-evaluator",
-          "sofka-asdd-atf-api-reporting-report-renderer",
-          "sofka-asdd-atf-api-reporting-backlog-sync"
+          "asdd-atf-api-shared-config-loader",
+          "asdd-atf-api-shared-checkpoint-manager",
+          "asdd-atf-api-shared-rate-limit-protocol",
+          "asdd-atf-api-shared-knowledge-base-writer",
+          "asdd-atf-api-reporting-qgs-evaluator",
+          "asdd-atf-api-reporting-report-renderer",
+          "asdd-atf-api-reporting-backlog-sync"
         ],
         "external_or_unresolved": []
       },
       {
-        "agent": "sofka-asdd-ba-constructor",
+        "agent": "asdd-ba-constructor",
         "declared_skill_count": 5,
         "bundled": [
-          "sofka-asdd-ba-constructor-contexto",
-          "sofka-asdd-ba-constructor-extraccion",
-          "sofka-asdd-ba-constructor-gherkin",
-          "sofka-asdd-ba-evaluador-gaps",
-          "sofka-asdd-ba-bitacora-log"
+          "asdd-ba-constructor-contexto",
+          "asdd-ba-constructor-extraccion",
+          "asdd-ba-constructor-gherkin",
+          "asdd-ba-evaluador-gaps",
+          "asdd-ba-bitacora-log"
         ],
         "external_or_unresolved": []
       },
       {
-        "agent": "sofka-asdd-ba-evaluador",
+        "agent": "asdd-ba-evaluador",
         "declared_skill_count": 4,
         "bundled": [
-          "sofka-asdd-ba-evaluador-mece",
-          "sofka-asdd-ba-evaluador-coherencia",
-          "sofka-asdd-ba-evaluador-gaps",
-          "sofka-asdd-ba-bitacora-log"
+          "asdd-ba-evaluador-mece",
+          "asdd-ba-evaluador-coherencia",
+          "asdd-ba-evaluador-gaps",
+          "asdd-ba-bitacora-log"
         ],
         "external_or_unresolved": []
       },
       {
-        "agent": "sofka-asdd-cloud-architect",
+        "agent": "asdd-cloud-architect",
         "declared_skill_count": 3,
         "bundled": [
-          "sofka-asdd-cloud-architect-design",
-          "sofka-asdd-cloud-architect-finops",
-          "sofka-asdd-cloud-architect-security"
+          "asdd-cloud-architect-design",
+          "asdd-cloud-architect-finops",
+          "asdd-cloud-architect-security"
         ],
         "external_or_unresolved": []
       },
       {
-        "agent": "sofka-asdd-data-architect",
+        "agent": "asdd-data-architect",
         "declared_skill_count": 2,
         "bundled": [
-          "sofka-asdd-data-eng-discovery",
-          "sofka-asdd-data-eng-architecture-design"
+          "asdd-data-eng-discovery",
+          "asdd-data-eng-architecture-design"
         ],
         "external_or_unresolved": []
       },
       {
-        "agent": "sofka-asdd-data-eng-databricks",
+        "agent": "asdd-data-eng-databricks",
         "declared_skill_count": 14,
         "bundled": [],
         "external_or_unresolved": [
@@ -831,32 +831,32 @@
         ]
       },
       {
-        "agent": "sofka-asdd-data-governance",
+        "agent": "asdd-data-governance",
         "declared_skill_count": 2,
         "bundled": [
-          "sofka-asdd-data-eng-governance-assessment",
-          "sofka-asdd-data-eng-contract"
+          "asdd-data-eng-governance-assessment",
+          "asdd-data-eng-contract"
         ],
         "external_or_unresolved": []
       },
       {
-        "agent": "sofka-asdd-researcher",
+        "agent": "asdd-researcher",
         "declared_skill_count": 3,
         "bundled": [
-          "sofka-asdd-researcher-spike",
-          "sofka-asdd-researcher-benchmark",
-          "sofka-asdd-researcher-comparison"
+          "asdd-researcher-spike",
+          "asdd-researcher-benchmark",
+          "asdd-researcher-comparison"
         ],
         "external_or_unresolved": []
       },
       {
-        "agent": "sofka-asdd-security",
+        "agent": "asdd-security",
         "declared_skill_count": 4,
         "bundled": [
-          "sofka-asdd-security-code-scan",
-          "sofka-asdd-security-secrets-scan",
-          "sofka-asdd-security-dependency-audit",
-          "sofka-asdd-security-compliance"
+          "asdd-security-code-scan",
+          "asdd-security-secrets-scan",
+          "asdd-security-dependency-audit",
+          "asdd-security-compliance"
         ],
         "external_or_unresolved": []
       }
@@ -869,7 +869,7 @@
     "word_count_methods": {
       "shell_wc": {
         "words": 33058,
-        "method": "wc -w over .claude/commands/sofka-asdd/*.md at current HEAD",
+        "method": "wc -w over .claude/commands/asdd/*.md at current HEAD",
         "status": "exact-for-method"
       },
       "specialized_parser": {
@@ -962,8 +962,8 @@
     "/tmp/2026-07-25-001-SPIKE-1R-agents-skills-agents.csv",
     "/tmp/2026-07-25-001-SPIKE-1R-agents-skills-skills.csv",
     "/tmp/2026-07-25-001-SPIKE-1R-agents-skills-aux.csv",
-    ".sofka-asdd/capability-loading.json",
-    ".sofka-asdd/context-budget.json",
+    ".asdd/capability-loading.json",
+    ".asdd/context-budget.json",
     ".claude/settings.json",
     "docs/baselines/asdd-runtime-baseline-final-v2.json",
     "read-only runtime-surfaces subaudit at current HEAD"

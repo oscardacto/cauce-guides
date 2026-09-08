@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { routeRequest } from "./lib/sofka-asdd-proportional-router-lib.mjs";
+import { routeRequest } from "./lib/asdd-proportional-router-lib.mjs";
 
 const cases = [
   ["¿dónde está definido el endpoint de health?", "TRIVIAL"],

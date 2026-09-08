@@ -9,12 +9,12 @@
  * Ejemplos:
  *   # Exportar todos los módulos a un solo Excel (una hoja por módulo)
  *   node .claude/tools/export-cp-to-xlsx.js \
- *     output/{run_id}/sofka-asdd:qa-web-design \
+ *     output/{run_id}/asdd:qa-web-design \
  *     output/{run_id}/reports/Matriz_CPs.xlsx
  *
  *   # Exportar solo un módulo
  *   node .claude/tools/export-cp-to-xlsx.js \
- *     output/{run_id}/sofka-asdd:qa-web-design \
+ *     output/{run_id}/asdd:qa-web-design \
  *     output/{run_id}/reports/Matriz_emision.xlsx \
  *     --modulo emision
  *
@@ -254,11 +254,11 @@ async function main() {
       '  Ejemplos:\n' +
       '    # Todos los módulos\n' +
       '    node .claude/tools/export-cp-to-xlsx.js \\\n' +
-      '      output/{run_id}/sofka-asdd:qa-web-design \\\n' +
+      '      output/{run_id}/asdd:qa-web-design \\\n' +
       '      ./Matriz_CPs.xlsx\n\n' +
       '    # Solo un módulo\n' +
       '    node .claude/tools/export-cp-to-xlsx.js \\\n' +
-      '      output/{run_id}/sofka-asdd:qa-web-design \\\n' +
+      '      output/{run_id}/asdd:qa-web-design \\\n' +
       '      ./Matriz_auth.xlsx \\\n' +
       '      --modulo auth'
     );

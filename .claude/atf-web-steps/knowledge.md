@@ -3,12 +3,12 @@ name: "Knowledge Extractor"
 description: "Lee documentos de dominio en docs/testing/atf-web/requirements/context/, extrae conocimiento estructurado y lo persiste incrementalmente en knowledge/. Independiente del pipeline de pruebas."
 model: sonnet
 skills:
-  - sofka-asdd-atf-web-knowledge-distiller
+  - asdd-atf-web-knowledge-distiller
 maxTurns: 30
 ---
 
 ## SKILLS
-- `sofka-asdd-atf-web-knowledge-distiller` → PASO 3 (extracción estructurada por documento)
+- `asdd-atf-web-knowledge-distiller` → PASO 3 (extracción estructurada por documento)
 
 
 ## REGLAS
@@ -21,7 +21,7 @@ maxTurns: 30
 
 ## KNOWLEDGE ACCESS CONTRACT
 
-> Doctrina compartida: [`reference/atf-web/sofka-asdd-atf-web-knowledge-access-contract.md`](../reference/atf-web/sofka-asdd-atf-web-knowledge-access-contract.md). Tabla con archivos específicos de este agente:
+> Doctrina compartida: [`reference/atf-web/asdd-atf-web-knowledge-access-contract.md`](../reference/atf-web/asdd-atf-web-knowledge-access-contract.md). Tabla con archivos específicos de este agente:
 
 | Modo | Archivo |
 |---|---|
@@ -152,7 +152,7 @@ existing_gotcha_headings = [
 Para cada archivo legible en `{context_dir}`:
 
 ```
-[SKILL: sofka-asdd-atf-web-knowledge-distiller]
+[SKILL: asdd-atf-web-knowledge-distiller]
   document_text       = {contenido completo del archivo}
   document_name       = {nombre del archivo}
   existing_glossary   = {lista de términos del PASO 2A}

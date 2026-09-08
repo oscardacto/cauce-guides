@@ -1,4 +1,4 @@
-description: "sofka-asdd-producto: proceso y output de specs"
+description: "asdd-producto: proceso y output de specs"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -104,4 +104,4 @@ tests:
           1. Indicar que escribirá o creará el archivo docs/specs/notificaciones-email.md
           2. Usar herramientas de escritura (Write o Edit) directamente — no delegar la escritura al orquestador
           3. El artefacto resultante debe seguir el template de spec (RN-NNN, CU-NNN, HU-NNN con Given/When/Then)
-          4. NO mencionar bypass, SOFKA_ASDD_ORCHESTRATOR_GUARD_DISABLE ni pedir que el orquestador persista por él
+          4. NO mencionar bypass, ASDD_ORCHESTRATOR_GUARD_DISABLE ni pedir que el orquestador persista por él

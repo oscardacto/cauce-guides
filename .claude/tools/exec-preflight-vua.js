@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * exec-preflight-vua.js — preflight para `/sofka-asdd:qa-web-visual-ux-a11y`. Análogo a
+ * exec-preflight-vua.js — preflight para `/asdd:qa-web-visual-ux-a11y`. Análogo a
  * `exec-preflight.js` pero adaptado a la fase Visual + UX + A11y guiada por
  * flujos E2E. Reduce overhead a 1 sola invocación de Node.
  *
@@ -57,7 +57,7 @@ function parseArgs(argv) {
     else if (a === '--output')                out.output = argv[++i];
     else if (a === '--help' || a === '-h') {
       process.stdout.write(
-        'exec-preflight-vua.js — preflight para /sofka-asdd:qa-web-visual-ux-a11y\n' +
+        'exec-preflight-vua.js — preflight para /asdd:qa-web-visual-ux-a11y\n' +
         'Uso: --run-id=<id> [--flows=E2E-001,E2E-003] [--app-language=es-CO] [--output=<path>]\n'
       );
       process.exit(0);
@@ -303,7 +303,7 @@ phase('probe_strategy', () => {
 });
 
 // Si necesita strategist (con o sin diagnostics) → reportar y salir 0.
-// El comando /sofka-asdd:qa-web-visual-ux-a11y decidirá si auto-trigger o abort.
+// El comando /asdd:qa-web-visual-ux-a11y decidirá si auto-trigger o abort.
 if (needsStrategist) {
   const out = {
     ok: true,
@@ -316,8 +316,8 @@ if (needsStrategist) {
     pages_to_skip_count: 0,
     vua_context_path: null,
     warnings: needsDiagnostics
-      ? ['Falta diagnóstico previo (base_pruebas.md). Ejecutar /sofka-asdd:qa-web-diagnose y /sofka-asdd:qa-web-strategize antes de /sofka-asdd:qa-web-visual-ux-a11y.']
-      : ['Falta strategy/execution_plan.json o e2e_flows[]. El comando debe auto-disparar /sofka-asdd:qa-web-strategize.']
+      ? ['Falta diagnóstico previo (base_pruebas.md). Ejecutar /asdd:qa-web-diagnose y /asdd:qa-web-strategize antes de /asdd:qa-web-visual-ux-a11y.']
+      : ['Falta strategy/execution_plan.json o e2e_flows[]. El comando debe auto-disparar /asdd:qa-web-strategize.']
   };
   process.stdout.write(JSON.stringify(out, null, 2) + '\n');
   process.exit(0);
@@ -477,7 +477,7 @@ phase('write_vua_context', () => {
       // Inferencia: si appweb.yaml declara requires_auth explícito, respetar.
       // Si no, deducir true cuando default_role está poblado (semántica
       // natural: rol declarado ⇒ app requiere autenticación). Esto evita
-      // que /sofka-asdd:qa-web-visual-ux-a11y omita login y todas las pantallas autenticadas
+      // que /asdd:qa-web-visual-ux-a11y omita login y todas las pantallas autenticadas
       // redirijan a /login (caso OrangeHRM, Fogafin, etc.).
       requires_auth: appConfig.auth
         ? (typeof appConfig.auth.requires_auth === 'boolean'

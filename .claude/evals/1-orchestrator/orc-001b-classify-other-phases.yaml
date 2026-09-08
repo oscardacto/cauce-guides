@@ -19,11 +19,11 @@ tests:
       - type: icontains
         value: "Analizar"
       - type: icontains
-        value: "sofka-asdd-producto"
+        value: "asdd-producto"
       - type: llm-rubric
         value: |
           La respuesta debe identificar la fase 'Analizar' a partir de 'historias de usuario' y 'criterios de aceptación',
-          y delegar a sofka-asdd-producto con el orden ba → funcional → po.
+          y delegar a asdd-producto con el orden ba → funcional → po.
 
   - description: "PROCESO: Señal 'ADR' → identifica Diseñar"
     vars:
@@ -32,11 +32,11 @@ tests:
       - type: icontains
         value: "Diseñar"
       - type: icontains
-        value: "sofka-asdd-solution-architect"
+        value: "asdd-solution-architect"
       - type: llm-rubric
         value: |
           La respuesta debe identificar la fase 'Diseñar' a partir de 'ADR' y 'decisión entre alternativas',
-          y delegar a sofka-asdd-solution-architect como primario.
+          y delegar a asdd-solution-architect como primario.
 
   - description: "PROCESO: Señal 'implementar' → identifica Construir"
     vars:
@@ -45,10 +45,10 @@ tests:
       - type: icontains
         value: "Construir"
       - type: icontains
-        value: "sofka-asdd-developer-backend"
+        value: "asdd-developer-backend"
       - type: llm-rubric
         value: |
-          La respuesta debe identificar la fase 'Construir' a partir de 'implementar' y delegar a sofka-asdd-developer-backend.
+          La respuesta debe identificar la fase 'Construir' a partir de 'implementar' y delegar a asdd-developer-backend.
 
   - description: "PROCESO: Señal 'coverage' y 'release' → identifica Verificar"
     vars:
@@ -57,8 +57,8 @@ tests:
       - type: icontains
         value: "Verificar"
       - type: icontains
-        value: "sofka-asdd-qa-engineer"
+        value: "asdd-qa-engineer"
       - type: llm-rubric
         value: |
           La respuesta debe identificar la fase 'Verificar' a partir de 'QA sign-off', 'cobertura' y 'release',
-          e incluir sofka-asdd-security como soporte por ser pre-release.
+          e incluir asdd-security como soporte por ser pre-release.

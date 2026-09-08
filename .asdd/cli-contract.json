@@ -1,0 +1,417 @@
+{
+  "$schema": "https://sofka.com.co/asdd/contract/v2.0/schema.json",
+  "contract_version": "2.5.0",
+  "template": {
+    "id": "claude",
+    "version": "3.7.0",
+    "target_agent": "claude-code",
+    "description": "Template oficial ASDD Guide para proyectos con Claude Code. Convención de nomenclatura universal asdd-*.",
+    "maintainer": "COE Guide"
+  },
+  "compatibility": {
+    "min_cli_version": "0.9.8",
+    "min_cli_version_reviewed_at": "3.7.0",
+    "platforms": ["darwin", "linux", "windows"],
+    "required_tools": ["node>=22", "git>=2.30", "bash"]
+  },
+  "distribution": [
+    ".claude/agents/",
+    ".claude/atf-web-steps/",
+    ".claude/ba-steps/",
+    ".claude/commands/",
+    ".claude/dashboard/",
+    ".claude/docs/",
+    ".claude/hooks/",
+    ".claude/reference/",
+    ".claude/references/",
+    ".claude/rules/",
+    ".claude/scripts/.gitkeep",
+    ".claude/scripts/lib/",
+    ".claude/scripts/asdd-artifact-name.mjs",
+    ".claude/scripts/asdd-commit-authorization.mjs",
+    ".claude/scripts/asdd-install-githooks.mjs",
+    ".claude/scripts/asdd-load-capability.mjs",
+    ".claude/scripts/asdd-plan-authorization.mjs",
+    ".claude/scripts/asdd-regen-hashes.mjs",
+    ".claude/scripts/asdd-resolve-capability.mjs",
+    ".claude/scripts/asdd-resolve-rule.mjs",
+    ".claude/scripts/asdd-resolve-workspace.mjs",
+    ".claude/scripts/asdd-route-request.mjs",
+    ".claude/scripts/asdd-run-bootstrap.mjs",
+    ".claude/scripts/validate-template.mjs",
+    ".claude/settings.json",
+    ".claude/skills/",
+    ".claude/tools/",
+    ".asdd/asdd-run.schema.json",
+    ".asdd/capability-loading.json",
+    ".asdd/cli-contract.json",
+    ".asdd/context-budget.json",
+    ".asdd/coordinator-loading.json",
+    ".asdd/extract-xlsx.ps1",
+    ".asdd/githooks/",
+    ".asdd/rule-loading.json",
+    ".asdd/asdd-atf-web.lock",
+    ".asdd/asdd-atf.lock",
+    ".asdd/asdd-smart-data.lock",
+    ".asdd/asdd.lock",
+    ".asdd/subagent-budget.json",
+    ".asdd/testing-capabilities.yaml",
+    ".asdd/workspace.json",
+    ".asdd/workspace.schema.json",
+    "docs/.example/",
+    "docs/.gitkeep",
+    "docs/smart-data/data/smart-data-eng-cliente.xlsx",
+    "docs/testing/atf-web/config/appweb.example.yaml",
+    "docs/testing/atf-web/config/appweb.yaml",
+    "docs/testing/atf-web/config/config.yaml",
+    "docs/testing/atf/config/.gitignore",
+    "docs/testing/atf/config/appapi.yaml",
+    "docs/testing/atf/config/credentials.yaml.example",
+    "ASDD-MEMORY.md",
+    "CLAUDE.md",
+    ".gitattributes",
+    ".gitignore",
+    ".mcp.json",
+    ".mcp.recommended.json",
+    "README.md"
+  ],
+  "naming_convention": {
+    "reference": ".claude/docs/adoption/naming-convention.md",
+    "template_prefix": "asdd-",
+    "project_prefix_source": {
+      "file": ".asdd/asdd.lock",
+      "json_path": "project.name",
+      "suffix": "-"
+    },
+    "artifacts": {
+      "agents": {
+        "location": ".claude/agents/",
+        "pattern": "{namespace}{name}.md",
+        "validation_regex": "^(asdd|${project.name})-[a-z][a-z0-9-]*\\.md$"
+      },
+      "skills": {
+        "location": ".claude/skills/",
+        "pattern": "{namespace}{name}/SKILL.md",
+        "validation_regex": "^(asdd|${project.name})-[a-z][a-z0-9-]*$"
+      },
+      "commands": {
+        "location": ".claude/commands/",
+        "pattern": "{namespace}/{action}.md",
+        "validation_regex": "^(asdd|${project.name})$"
+      },
+      "hooks": {
+        "location": ".claude/hooks/",
+        "pattern": "{namespace}{lifecycle}-{purpose}.mjs",
+        "validation_regex": "^(asdd|${project.name})-[a-z][a-z0-9-]*\\.mjs$"
+      },
+      "rules": {
+        "location": ".claude/rules/",
+        "pattern": "{namespace}{topic}.md",
+        "validation_regex": "^(asdd|${project.name})-[a-z][a-z0-9-]*\\.md$"
+      }
+    },
+    "enforced_by": "check 14 naming-convention (strict) in .claude/scripts/validate-template.mjs"
+  },
+  "personalize": [
+    {
+      "id": "account-name",
+      "file": ".asdd/asdd.lock",
+      "json_path": "project.account",
+      "prompt": "Cuenta (cliente o unidad de negocio)",
+      "required": true,
+      "type": "string",
+      "values": ["cao", "coe", "humana", "grupo-mom", "laboratorio-de-referencia", "otro"],
+      "validate_regex": "^[a-z][a-z0-9-]{1,30}$",
+      "error_message": "Solo minúsculas, números y guiones. 2-31 caracteres. Empieza con letra."
+    },
+    {
+      "id": "solution-name",
+      "file": ".asdd/asdd.lock",
+      "json_path": "project.solution",
+      "prompt": "Solución (iniciativa/producto dentro de la cuenta, en kebab-case — ej. 'cotizador')",
+      "required": true,
+      "type": "string",
+      "validate_regex": "^[a-z][a-z0-9-]{1,30}$",
+      "error_message": "Solo minúsculas, números y guiones. 2-31 caracteres. Empieza con letra."
+    },
+    {
+      "id": "project-name",
+      "file": ".asdd/asdd.lock",
+      "json_path": "project.name",
+      "prompt": "Nombre del proyecto (derivado automáticamente del nombre del directorio en CLI ≥ v0.2.0; este entry mantiene el mapping a project.name del lockfile y la validación)",
+      "required": true,
+      "type": "string",
+      "validate_regex": "^[a-z][a-z0-9-]{1,30}$",
+      "error_message": "Solo minúsculas, números y guiones. 2-31 caracteres. Empieza con letra."
+    },
+    {
+      "id": "project-domain",
+      "file": ".asdd/asdd.lock",
+      "json_path": "project.domain",
+      "prompt": "Dominio del proyecto",
+      "required": true,
+      "type": "enum",
+      "values": ["fintech", "health", "insurance", "retail", "logistics", "education", "other"]
+    },
+    {
+      "id": "project-stack",
+      "file": ".asdd/asdd.lock",
+      "json_path": "project.stack",
+      "prompt": "Stack tecnológico (marca con espacio uno o varios)",
+      "required": true,
+      "type": "multi-select",
+      "values": [
+        "node/typescript",
+        "node/javascript",
+        "python/fastapi",
+        "java/spring",
+        "go",
+        "dotnet",
+        "react/typescript",
+        "react/javascript",
+        "angular/typescript",
+        "other"
+      ]
+    },
+    {
+      "id": "project-description",
+      "file": ".asdd/asdd.lock",
+      "json_path": "project.description",
+      "prompt": "Descripción corta del proyecto",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "id": "data-platform",
+      "file": ".asdd/asdd-smart-data.lock",
+      "json_path": "data_platform",
+      "prompt": "Plataforma de datos objetivo (informativo — no apaga el dominio Data, ver asdd-data-routing.md)",
+      "required": false,
+      "type": "enum",
+      "values": ["none", "azure-databricks", "aws-native", "other"],
+      "default": "none"
+    }
+  ],
+  "conditional_install": [
+    {
+      "id": "databricks-ai-dev-kit",
+      "status": "external-not-bundled",
+      "triggered_by": {
+        "lock_file": ".asdd/asdd-smart-data.lock",
+        "json_path": "data_platform",
+        "equals": "azure-databricks"
+      },
+      "required_for_agents": ["asdd-data-eng-databricks"],
+      "provides_skills": [
+        "databricks-core",
+        "databricks-docs",
+        "databricks-python-sdk",
+        "databricks-unity-catalog",
+        "databricks-pipelines",
+        "databricks-spark-structured-streaming",
+        "databricks-jobs",
+        "databricks-dabs",
+        "databricks-dbsql",
+        "databricks-iceberg",
+        "databricks-zerobus-ingest",
+        "spark-python-data-source",
+        "databricks-metric-views",
+        "databricks-synthetic-data-gen"
+      ],
+      "provides_mcp_servers": ["databricks"],
+      "description": "Skills y MCP del Databricks AI Dev Kit (perfil data-engineer) — paquete externo, no distribuido con este template. asdd-data-eng-databricks falla en runtime si el kit no está instalado. Riesgo aceptado (RR-4, .claude/docs/adoption/smart-data-integration-plan.md). El validador del template (validate-template.mjs) lee provides_skills/provides_mcp_servers de este bloque como allowlist explícita — no valida que el kit exista en disco, solo evita falsos positivos sobre una dependencia externa documentada.",
+      "install_reference": "Instalar el Databricks AI Dev Kit (perfil data-engineer) por separado antes de invocar asdd-data-eng-databricks; ver documentación oficial del kit."
+    },
+    {
+      "id": "aws-native-data-eng",
+      "status": "planned-not-implemented",
+      "triggered_by": {
+        "lock_file": ".asdd/asdd-smart-data.lock",
+        "json_path": "data_platform",
+        "equals": "aws-native"
+      },
+      "required_for_agents": ["asdd-data-eng-aws"],
+      "provides_skills": [],
+      "provides_mcp_servers": [],
+      "description": "Agente asdd-data-eng-aws (Glue/S3/Athena/Redshift) aún no desarrollado — próxima iteración del addon Smart Data. Seleccionar 'aws-native' hoy es informativo para roadmap y no habilita ejecución."
+    }
+  ],
+  "model_strategy": {
+    "description": "Estrategia de selección de modelo por fase ASDD. Definida en .asdd/asdd.lock bajo la clave 'model_strategy'.",
+    "source_file": ".asdd/asdd.lock",
+    "json_path": "model_strategy",
+    "fields": {
+      "orchestrator_default": {
+        "description": "Modelo lógico global del orquestador. ADR-019 fija sonnet.",
+        "default": "sonnet"
+      },
+      "phase_default": {
+        "description": "Modelo por defecto para cada fase ASDD. Valores admitidos: 'haiku', 'sonnet', 'opus'.",
+        "phases": ["specify", "analyze", "design", "build", "verify", "document"]
+      },
+      "agent_pinning": {
+        "description": "Sobrescribe el modelo para un agente específico independientemente de la fase. Formato: { \"<agent-name>\": \"<model>\" }. Vacío en el template — el proyecto consumidor lo llena.",
+        "default": {}
+      },
+      "skill_override": {
+        "description": "Sobrescribe el modelo para un skill específico dentro de un agente. Formato: { \"<agent-name>/<skill-name>\": \"<model>\" }. Vacío en el template — el proyecto consumidor lo llena.",
+        "default": {}
+      }
+    }
+  },
+  "file_copy_as": [
+    {
+      "from": "README.md",
+      "to": "ASDD-README.md",
+      "when_target_exists": "skip",
+      "comment": "README del template se instala como referencia ASDD en el consumidor; no toca el README propio del proyecto. Ver guide-ia/cli#8.",
+      "requires_cli": "0.4.0"
+    }
+  ],
+  "moves": [
+    {
+      "from": "dashboard/",
+      "to": ".claude/dashboard/",
+      "comment": "El dashboard sale de la raiz hacia .claude/. Cubre tambien dashboard/templates/ por prefijo.",
+      "requires_cli": "0.9.8"
+    },
+    {
+      "from": "docs/adoption/",
+      "to": ".claude/docs/adoption/",
+      "comment": "Los docs de adopcion salen a .claude/docs/. La carpeta se partio: los ADR internos del template se quedaron y dejaron de distribuirse, asi que para ellos el CLI descarta este destino y los informa como retirados.",
+      "requires_cli": "0.9.8"
+    },
+    {
+      "from": "docs/migrations/",
+      "to": ".claude/docs/migrations/",
+      "comment": "Las guias de migracion del template salen a .claude/docs/.",
+      "requires_cli": "0.9.8"
+    },
+    {
+      "from": "docs/mcps-by-domain.md",
+      "to": ".claude/docs/mcps-by-domain.md",
+      "requires_cli": "0.9.8"
+    },
+    {
+      "from": "docs/plugins-by-role.md",
+      "to": ".claude/docs/plugins-by-role.md",
+      "requires_cli": "0.9.8"
+    },
+    {
+      "from": "docs/validation.md",
+      "to": ".claude/docs/validation.md",
+      "comment": "Un diff directo entre tags no lo detecta como renombre porque su contenido cambio lo suficiente; el commit que lo movio si. Por eso la declaracion se toma del commit y no de la comparacion entre versiones.",
+      "requires_cli": "0.9.8"
+    },
+    {
+      "from": "docs/smart-data/data/smart-data-cliente.xlsx",
+      "to": "docs/smart-data/data/smart-data-eng-cliente.xlsx",
+      "comment": "Correccion de nomenclatura smart-data-eng-. Mismo directorio, otro nombre.",
+      "requires_cli": "0.9.8"
+    }
+  ],
+  "file_merge": [
+    {
+      "path": ".gitignore",
+      "strategy": "append-unique",
+      "when_exists": "merge",
+      "when_missing": "create",
+      "comment": "Preserva las reglas del consumidor; las del template se agregan sin duplicar. Ver guide-ia/cli#6.",
+      "requires_cli": "0.4.0"
+    }
+  ],
+  "clean": {
+    "markers": [
+      {
+        "id": "template-disclaimer",
+        "file": "CLAUDE.md",
+        "start": "<!-- asdd:template-disclaimer:start -->",
+        "end": "<!-- asdd:template-disclaimer:end -->",
+        "action": "remove",
+        "remove_markers": true,
+        "requires_cli": "0.4.0",
+        "comment": "Elimina el aviso meta-del-template del CLAUDE.md del consumidor. Ver guide-ia/cli#7."
+      }
+    ],
+    "optional_remove": [
+      {
+        "id": "remove-examples",
+        "path": "docs/.example/",
+        "prompt": "Eliminar ejemplos en docs/.example/?",
+        "description": "Se recomienda mantener como referencia, especialmente en adopcion inicial",
+        "default": "keep",
+        "requires_cli": "0.4.0"
+      },
+      {
+        "id": "remove-audit-history",
+        "path": "docs/audit/",
+        "prompt": "Eliminar docs/audit/ del template adoptado?",
+        "description": "La carpeta docs/audit/ contiene historial de auditorias. Se auto-genera cuando el consumidor ejecute su primera auditoria con @qgt-audit-agentic-config.",
+        "default": "remove",
+        "requires_cli": "0.4.0"
+      }
+    ],
+    "_files_to_remove_criterio": "El CLI ejecuta esto con os.RemoveAll INCONDICIONAL despues del copy loop, sin comparar contenido ni hash. Cumple dos funciones a la vez: excluir del destino y limpiar artefactos de instalaciones viejas (no existe remove_on_upgrade). Por eso una entrada solo es admisible si su ruta NO PUEDE contener contenido escrito por el consumidor. Antes de agregar una entrada: (1) que no colisione con distribution -- la anularia; (2) que ningun artefacto distribuido escriba en esa ruta. El check clean-files-to-remove-safety del validador enforza (1).",
+    "files_to_remove": [
+      {
+        "path": ".claude/memory/git-rebase-perdida-codigo.md",
+        "comment": "Memoria interna del mantenedor del template — no debe distribuirse a proyectos consumidores. Ya no existe en el template: la entrada se conserva solo para limpiar instalaciones previas a su retiro"
+      },
+      {
+        "path": ".claude/memory/git-una-rama-por-ciclo.md",
+        "comment": "Memoria interna del mantenedor del template — no debe distribuirse a proyectos consumidores. Ya no existe en el template: la entrada se conserva solo para limpiar instalaciones previas a su retiro"
+      },
+      {
+        "path": "docs/architecture/decisions/ADR-001-codebase-size-autodetection.md",
+        "comment": "ADR de implementación interna del template; causa colisión de numeración en proyectos consumidores que ya tienen su propio ADR-001. Nombre exacto del mantenedor: un ADR del consumidor sigue ART-001 ({run_id}-{PHASE}-{SEQ}-{slug}.md) y nunca colisiona"
+      },
+      {
+        "path": "docs/architecture/decisions/ADR-001-orc-enforcement-3-tiers.md",
+        "comment": "ADR interno del ASDD (enforcement ORC 3-tiers) — reportado por Pipe; no es del proyecto consumidor. Mismo criterio de nombre exacto que la entrada anterior"
+      },
+      {
+        "path": ".claude/evals/",
+        "comment": "Suite de regresión (promptfoo) del template — infraestructura interna del mantenedor. Ningún artefacto distribuido escribe en esta ruta"
+      },
+      {
+        "path": "ASDD-VERSIONING.md",
+        "comment": "Política de versionado del propio template — interna del mantenedor. El consumidor no decide la versión del ASDD, así que nunca escribe este archivo"
+      },
+      {
+        "path": "docs/adoption/cli-integration-guide.md",
+        "comment": "Doc para el equipo que mantiene el CLI/template, no para el usuario del ASDD. Desde la reubicación del manual a .claude/docs/, docs/adoption/ ya no se distribuye; la entrada queda para limpiar instalaciones viejas"
+      },
+      {
+        "path": "docs/adoption/contract-spec.md",
+        "comment": "Especificación del contrato CLI — audiencia mantenedores del template, no el consumidor. Mismo caso que cli-integration-guide.md"
+      }
+    ]
+  },
+  "create_dirs": [
+    { "path": ".claude/memory/", "gitkeep": true },
+    { "path": "docs/specs/", "gitkeep": true },
+    { "path": "docs/architecture/decisions/", "gitkeep": true },
+    { "path": "docs/architecture/diagrams/", "gitkeep": true },
+    { "path": "docs/architecture/contracts/", "gitkeep": true },
+    { "path": "docs/tech/", "gitkeep": true },
+    { "path": "docs/testing/", "gitkeep": true },
+    { "path": "docs/qa/", "gitkeep": true },
+    { "path": "docs/security/", "gitkeep": true },
+    { "path": "docs/smart-data/data/", "gitkeep": true }
+  ],
+  "post_install": {
+    "steps": [
+      {
+        "id": "validate-template",
+        "description": "Correr validador agentico (14 checks, incluye naming-convention strict)",
+        "command": "node .claude/scripts/validate-template.mjs",
+        "must_pass": true,
+        "on_fail": "rollback"
+      }
+    ]
+  },
+  "post_install_message": {
+    "en": "Template adopted successfully. Template artifacts use 'asdd-' prefix; your own artifacts should use '${project.name}-' prefix (see .claude/docs/adoption/naming-convention.md). Next step: run /asdd:specify to create your first spec.",
+    "es": "Template adoptado exitosamente. Los artefactos del template usan prefijo 'asdd-'; tus artefactos propios deben usar prefijo '${project.name}-' (ver .claude/docs/adoption/naming-convention.md). Siguiente paso: correr /asdd:specify para crear tu primera spec."
+  }
+}

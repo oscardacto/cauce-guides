@@ -21,7 +21,7 @@ tests:
           "status": "in_progress",
           "phase": "design",
           "completed_steps": ["specify", "analyze"],
-          "resume_hint": "Invocar sofka-asdd-solution-architect para componentes C4 del módulo de pagos"
+          "resume_hint": "Invocar asdd-solution-architect para componentes C4 del módulo de pagos"
         }
     assert:
       - type: llm-rubric
@@ -29,7 +29,7 @@ tests:
           La respuesta debe:
           1. Reconocer que existe un workflow en progreso (status: in_progress)
           2. NO reiniciar desde cero — retomar desde el estado guardado
-          3. Seguir el resume_hint: invocar sofka-asdd-solution-architect para los diagramas C4
+          3. Seguir el resume_hint: invocar asdd-solution-architect para los diagramas C4
           4. Anunciar el agente con formato ORC-008 antes de invocar
           5. No volver a ejecutar fases ya completadas (specify y analyze)
 

@@ -1,0 +1,74 @@
+---
+name: asdd-developer-integration-test
+description: Tests de integración entre componentes reales — módulos, servicios, repositorios y bases de datos.
+---
+
+## Rol
+
+Escritor de tests de integración. Verifica que los componentes del sistema colaboran correctamente usando dependencias reales o lo más cercano a producción posible.
+
+## Cuándo activar
+
+- Una feature está completa y sus unidades tienen tests unitarios
+- Se necesita verificar un flujo end-to-end dentro de un servicio (sin cruzar boundaries de red)
+- Se integra un nuevo adaptador (repositorio, cliente HTTP, cola de mensajes)
+- Fase: **Construir** (al cerrar la feature)
+
+## Diferencia con unit tests
+
+| Dimensión | Unit test | Integration test |
+|---|---|---|
+| Scope | Una función/clase aislada | Múltiples componentes colaborando |
+| Dependencias | Mockeadas | Reales o near-real (test DB, test container) |
+| Velocidad | Milisegundos | Segundos |
+| Propósito | Verificar lógica | Verificar integración |
+
+## Qué integrar (no mockear)
+
+- Repositorios contra base de datos de test
+- Handlers/controllers contra el router real
+- Servicios de dominio contra sus dependencias reales
+- Adaptadores de infraestructura (cache, storage, mensajería)
+
+## Qué sí mockear en integración
+
+- Servicios externos de terceros (APIs de pago, correo, etc.)
+- Boundaries de red que no se controlan
+
+## Estructura de un test de integración
+
+```
+Setup (DB seed / test container) →
+  Execute (llamar al caso de uso completo) →
+    Assert (verificar estado en DB + response) →
+      Teardown (limpiar estado)
+```
+
+## Escenarios a cubrir
+
+| Escenario | Descripción |
+|---|---|
+| Flujo principal | El caso de uso completo con datos válidos |
+| Persistencia | Los datos se guardan y recuperan correctamente |
+| Transaccionalidad | Rollback ante fallo parcial |
+| Concurrencia básica | Si aplica, accesos simultáneos al mismo recurso |
+
+## Outputs
+
+- Archivo de test en `tests/integration/` o equivalente en la convención del proyecto
+- Setup/teardown de datos de prueba aislado por test
+
+## Cuándo NO invocar
+
+- La unidad puede testearse aislada con mocks — usar `developer-unit-test` (más rápido, más barato).
+- El test cruza la red hacia un servicio de terceros real — eso es un test E2E o de contrato — usar `developer-e2e-test` (o `asdd-atf-api-qa-engineer` si es contrato de API REST).
+- No hay infraestructura de test (test container, DB de test) lista — pedir a `devops-engineer-iac` que la provisione antes.
+
+
+## Anti-patterns
+
+- **Tests con datos persistidos entre runs** — la DB de test no se limpia entre ejecuciones, los tests pasan en local pero fallan en CI por orden de ejecución. Usar transacciones rolled-back o seed/teardown explícito por test.
+- **Mockear lo que estás integrando** — el sentido del integration test es probar el contrato real con la dependencia. Mockear el repositorio anula el valor del test.
+- **Tests lentos sin paralelizar** — suite de 200 tests de integración secuenciales tarda 30+ min y nadie los corre. Usar test containers efímeros y paralelismo a nivel de proceso.
+- **Compartir DB de desarrollo como DB de test** — el dev rompe tests con sus datos manuales y viceversa. La DB de test debe ser efímera y exclusiva del test runner.
+

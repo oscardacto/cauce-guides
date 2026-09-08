@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "strategy": "one-plan-declared-primary-plus-explicit-approved-dependency",
+  "agents": {
+    "asdd-ba-functional-architect": {
+      "capabilities": [
+        "asdd-ba-brief",
+        "asdd-ba-change-log",
+        "asdd-ba-log-lessons-learned"
+      ],
+      "max_eager_skills": 1,
+      "max_dependencies": 1
+    },
+    "asdd-ba-functional-sme": {
+      "capabilities": [
+        "asdd-ba-functional-sme-sector",
+        "asdd-ba-functional-sme-dominio",
+        "asdd-ba-spec-index"
+      ],
+      "max_eager_skills": 1,
+      "max_dependencies": 1
+    },
+    "asdd-ba-scope-manager": {
+      "capabilities": [
+        "asdd-ba-early-scope",
+        "asdd-ba-scope-control",
+        "asdd-ba-uat-classifier",
+        "asdd-ba-change-log",
+        "asdd-ba-spec-index",
+        "asdd-ba-log-lessons-learned"
+      ],
+      "max_eager_skills": 1,
+      "max_dependencies": 1
+    },
+    "asdd-data-architect": {
+      "capabilities": [
+        "asdd-data-eng-discovery",
+        "asdd-data-eng-architecture-design"
+      ],
+      "max_eager_skills": 0,
+      "max_dependencies": 1
+    },
+    "asdd-data-governance": {
+      "capabilities": [
+        "asdd-data-eng-governance-assessment",
+        "asdd-data-eng-contract"
+      ],
+      "max_eager_skills": 0,
+      "max_dependencies": 1
+    },
+    "asdd-developer-backend": {
+      "capabilities": [
+        "asdd-unit-test-design",
+        "asdd-developer-feature",
+        "asdd-developer-unit-test",
+        "asdd-developer-integration-test",
+        "asdd-developer-e2e-test",
+        "asdd-developer-refactoring-execute",
+        "asdd-developer-bug-fix",
+        "asdd-developer-merge-conflicts",
+        "asdd-developer-safe-refactor",
+        "asdd-developer-build-validator",
+        "asdd-developer-continuous-improver"
+      ],
+      "max_eager_skills": 0,
+      "max_dependencies": 1
+    },
+    "asdd-developer-frontend": {
+      "capabilities": [
+        "asdd-unit-test-design",
+        "asdd-developer-feature",
+        "asdd-developer-unit-test",
+        "asdd-developer-integration-test",
+        "asdd-developer-e2e-test",
+        "asdd-developer-refactoring-execute",
+        "asdd-developer-bug-fix",
+        "asdd-developer-merge-conflicts",
+        "asdd-developer-safe-refactor",
+        "asdd-developer-build-validator",
+        "asdd-developer-continuous-improver"
+      ],
+      "max_eager_skills": 0,
+      "max_dependencies": 1
+    },
+    "asdd-devops-engineer": {
+      "capabilities": [
+        "asdd-devops-engineer-pipeline",
+        "asdd-devops-engineer-iac",
+        "asdd-devops-engineer-devsecops",
+        "asdd-devops-engineer-testing",
+        "asdd-devops-engineer-observability",
+        "asdd-devops-engineer-cloud"
+      ],
+      "max_eager_skills": 0,
+      "max_dependencies": 1
+    },
+    "asdd-domain-expert": {
+      "capabilities": [
+        "asdd-domain-expert-fintech",
+        "asdd-domain-expert-insurance",
+        "asdd-domain-expert-retail",
+        "asdd-domain-expert-health",
+        "asdd-domain-expert-logistics",
+        "asdd-domain-expert-education"
+      ],
+      "max_eager_skills": 0,
+      "max_dependencies": 1
+    },
+    "asdd-producto": {
+      "capabilities": [
+        "asdd-producto-po",
+        "asdd-producto-pm",
+        "asdd-producto-ba",
+        "asdd-producto-funcional",
+        "asdd-producto-templates",
+        "asdd-producto-new-hu",
+        "asdd-producto-story-planner"
+      ],
+      "max_eager_skills": 0,
+      "max_dependencies": 1
+    },
+    "asdd-solution-architect": {
+      "capabilities": [
+        "asdd-solution-architect-guide-docs",
+        "asdd-solution-architect-api-contract",
+        "asdd-solution-architect-bounded-context",
+        "asdd-solution-architect-component-diagram",
+        "asdd-solution-architect-discovery",
+        "asdd-solution-architect-tradeoff-analysis",
+        "asdd-solution-architect-quality",
+        "asdd-solution-architect-patterns",
+        "asdd-solution-architect-review",
+        "asdd-solution-architect-dep-audit",
+        "asdd-solution-architect-diagrams",
+        "asdd-solution-architect-cross-impact",
+        "asdd-solution-architect-resilience-auditor"
+      ],
+      "max_eager_skills": 0,
+      "max_dependencies": 1
+    },
+    "asdd-tech-lead": {
+      "capabilities": [
+        "asdd-tech-lead-code-review",
+        "asdd-tech-lead-quality-gate",
+        "asdd-tech-lead-refactoring-plan",
+        "asdd-tech-lead-create-mr",
+        "asdd-tech-lead-new-bug",
+        "asdd-tech-lead-artifact-audit",
+        "asdd-tech-lead-commit",
+        "asdd-tech-lead-delivery-report",
+        "asdd-tech-lead-pre-push",
+        "asdd-tech-lead-impl-quality-gate",
+        "asdd-tech-lead-sdd-traceability",
+        "asdd-tech-lead-gitflow",
+        "asdd-tech-lead-integration-validator"
+      ],
+      "max_eager_skills": 0,
+      "max_dependencies": 1
+    },
+    "asdd-ui": {
+      "capabilities": [
+        "asdd-ui-hifi-builder",
+        "asdd-ui-figma-impl",
+        "asdd-ui-design-tokens",
+        "asdd-ui-ux-content",
+        "asdd-ui-motion",
+        "asdd-ui-accessibility",
+        "asdd-ui-responsive",
+        "asdd-ui-design-audit"
+      ],
+      "max_eager_skills": 0,
+      "max_dependencies": 1
+    },
+    "asdd-ux": {
+      "capabilities": [
+        "asdd-ux-context-core",
+        "asdd-ux-gap-auditor",
+        "asdd-ux-desk-researcher",
+        "asdd-ux-research-instruments",
+        "asdd-ux-qualitative-synthesizer",
+        "asdd-ux-flows-builder",
+        "asdd-ux-executive-storytelling"
+      ],
+      "max_eager_skills": 0,
+      "max_dependencies": 1
+    }
+  },
+  "rollback": "Per agent: restore its skills frontmatter and remove only its manifest entry; developer entries remain.",
+  "security": {
+    "load_tracking": "ephemeral authorization store only",
+    "protected_operations_require_primary_loaded": true,
+    "unapproved_second_capability": "capability-mismatch"
+  }
+}

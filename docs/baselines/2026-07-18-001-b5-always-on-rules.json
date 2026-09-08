@@ -15,8 +15,8 @@
   "method": {
     "before_source": "docs/baselines/2026-07-18-001-b1-context-budget.json",
     "before_b5_effective_context_derivation": "B1 largest effective context 41858 minus B4 normal hook injection reduction 145 = 41713",
-    "after_source": ".claude/scripts/sofka-asdd-runtime-metrics.mjs",
-    "integrity_manifest": ".sofka-asdd/rule-loading.json",
+    "after_source": ".claude/scripts/asdd-runtime-metrics.mjs",
+    "integrity_manifest": ".asdd/rule-loading.json",
     "consumer_test": ".claude/scripts/test-conditional-rule-loading.mjs",
     "word_count": "whitespace-delimited words using the shared context-budget library"
   },

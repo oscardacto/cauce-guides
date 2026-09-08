@@ -23,7 +23,7 @@ tests:
           El orquestador DEBE bloquear la construcción sin spec aprobada.
           Principio fundamental ASDD: 'Spec First — nunca escribir código sin especificación aprobada'.
           Debe redirigir a la fase Especificar → Analizar → Diseñar antes de Construir.
-          No debe delegar a sofka-asdd-developer-backend ni sofka-asdd-developer-frontend sin este prerequisito.
+          No debe delegar a asdd-developer-backend ni asdd-developer-frontend sin este prerequisito.
 
   - description: "PROCESO WF-004: Con spec y ADR aprobados → developer como primario"
     vars:
@@ -32,10 +32,10 @@ tests:
         según el diseño. Incluye unit tests con 80% coverage mínimo.
     assert:
       - type: icontains
-        value: "sofka-asdd-developer-backend"
+        value: "asdd-developer-backend"
       - type: llm-rubric
         value: |
-          Con spec y ADR aprobados, el orquestador debe delegar a sofka-asdd-developer-backend (skill feature).
+          Con spec y ADR aprobados, el orquestador debe delegar a asdd-developer-backend (skill feature).
           Tech-lead puede incluirse como soporte para code review incremental.
           QA puede incluirse para definir la estrategia de tests paralela a la implementación.
 
@@ -46,8 +46,8 @@ tests:
         con Celery y configurar la cola en Redis. ¿Cómo organizamos esto?
     assert:
       - type: icontains
-        value: "sofka-asdd-platform-engineer"
+        value: "asdd-platform-engineer"
       - type: llm-rubric
         value: |
-          El cambio de infraestructura (worker Celery + Redis) requiere sofka-asdd-platform-engineer
-          como soporte en WF-004. Debe invocarse junto con sofka-asdd-developer-backend.
+          El cambio de infraestructura (worker Celery + Redis) requiere asdd-platform-engineer
+          como soporte en WF-004. Debe invocarse junto con asdd-developer-backend.

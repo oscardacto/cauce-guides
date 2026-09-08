@@ -1,13 +1,13 @@
 # ADR-007 — Git guards de repos anidados: reencuadre de threat model y re-enfoque de enforcement
 
-> **Hogar canónico: `docs/adoption/`.** `docs/architecture/decisions/` no se distribuye a los proyectos consumidores (no aparece en `distribution[]` de `.sofka-asdd/cli-contract.json`). Este ADR es referenciado por `sofka-asdd-git-safety.md` (regla distribuida vía `.claude/rules/`), así que debe llegar al consumidor — igual que ADR-002/ADR-003/ADR-005, que por el mismo motivo también viven en `docs/adoption/`. Un ADR sin regla distribuida que lo cite (ej. ADR-001, ADR-004) puede quedarse en `docs/architecture/decisions/` sin romper trazabilidad para el consumidor.
+> **Hogar canónico: `docs/adoption/`.** `docs/architecture/decisions/` no se distribuye a los proyectos consumidores (no aparece en `distribution[]` de `.asdd/cli-contract.json`). Este ADR es referenciado por `asdd-git-safety.md` (regla distribuida vía `.claude/rules/`), así que debe llegar al consumidor — igual que ADR-002/ADR-003/ADR-005, que por el mismo motivo también viven en `docs/adoption/`. Un ADR sin regla distribuida que lo cite (ej. ADR-001, ADR-004) puede quedarse en `docs/architecture/decisions/` sin romper trazabilidad para el consumidor.
 
 - **Estado:** **Aceptada**
 - **Fecha:** 2026-07-08
 - **Deciders:** Andrés Jiménez (maintainer del template) — aprobación explícita al cerrar R3 (MR #225).
-- **Autor:** sofka-asdd-solution-architect (skill sofka-docs)
+- **Autor:** asdd-solution-architect (skill guide-docs)
 - **Rama de trabajo:** `fix/bug-b-git-guards-nested-repos-r3`
-- **Relacionados:** BUG-B (`docs/tech/2026-07-07-001-BUILD-006-bug-b-git-guards-nested-repos.md`), `sofka-asdd-git-safety.md` (GS-001, GS-008, GS-009), ADR-005 (lección `bcdab3f`: no degradar enforcement a fail-open). Complementario — no sustituye a ninguno.
+- **Relacionados:** BUG-B (`docs/tech/2026-07-07-001-BUILD-006-bug-b-git-guards-nested-repos.md`), `asdd-git-safety.md` (GS-001, GS-008, GS-009), ADR-005 (lección `bcdab3f`: no degradar enforcement a fail-open). Complementario — no sustituye a ninguno.
 - **Convención de numeración:** ADR-001…ADR-005 existen en el árbol principal; ADR-006 está en vuelo en un worktree (`agent-a605e92078e015cbc`, integración capa BA/AF). Este es el siguiente secuencial libre → **ADR-007**.
 
 ---
@@ -18,9 +18,9 @@
 
 Los 3 guards de git del template son hooks `PreToolUse:Bash`:
 
-- `sofka-asdd-guard-branch.mjs` (GS-001) — bloquea `git commit` en rama protegida.
-- `sofka-asdd-pre-push-gate.mjs` (GS-008) — exige marcador de validación antes de `git push`.
-- `sofka-asdd-pre-pr-gate.mjs` (GS-009) — valida rama fuente/base antes de `gh pr create` / `glab mr create`.
+- `asdd-guard-branch.mjs` (GS-001) — bloquea `git commit` en rama protegida.
+- `asdd-pre-push-gate.mjs` (GS-008) — exige marcador de validación antes de `git push`.
+- `asdd-pre-pr-gate.mjs` (GS-009) — valida rama fuente/base antes de `gh pr create` / `glab mr create`.
 
 Los tres reciben el **string del comando** (`tool_input.command`) y deben adivinar **en qué repositorio correrá git** para evaluar rama / diff / marcador en el repo correcto. En proyectos con **repos anidados** (config-repo raíz + `projects/{iac,db,drive-sync}/` como sub-repos independientes, cada uno en su propia rama), la suposición histórica "git corre siempre sobre `CLAUDE_PROJECT_DIR`" se rompe: el guard leía la rama del repo raíz (`develop`, protegida) y bloqueaba **el 100% de los commits legítimos** en los sub-repos. La única salida era desactivar los guards por sesión — se perdía la salvaguarda entera por un bug de parseo.
 
@@ -54,7 +54,7 @@ Antes de elegir enfoque hay que responder honestamente **para qué sirven estos 
 
 **Análisis honesto:**
 
-- Ya existe un **escape hatch documentado y auditable**: `SOFKA_ASDD_GUARD_{BRANCH,PUSH,PR}_DISABLE=1`. Cualquiera que quiera evadir deliberadamente **solo setea la variable** — no necesita `--git-dir` ni subshells. Por lo tanto, **contra evasión deliberada estos hooks nunca fueron la herramienta correcta**, y perseguir cada bypass exótico (R3b→R3d) fue esfuerzo mal dirigido: cerraba puertas laterales de una casa cuya puerta principal está abierta por diseño.
+- Ya existe un **escape hatch documentado y auditable**: `ASDD_GUARD_{BRANCH,PUSH,PR}_DISABLE=1`. Cualquiera que quiera evadir deliberadamente **solo setea la variable** — no necesita `--git-dir` ni subshells. Por lo tanto, **contra evasión deliberada estos hooks nunca fueron la herramienta correcta**, y perseguir cada bypass exótico (R3b→R3d) fue esfuerzo mal dirigido: cerraba puertas laterales de una casa cuya puerta principal está abierta por diseño.
 - Los bypass que las auditorías encontraron (`git --git-dir=X`, `(cd X && …)`, `eval`, pipes, `cd $VAR`) **no ocurren por accidente**. Nadie escribe `git --git-dir=X --work-tree=Y commit` sin querer. Un commit accidental en rama protegida se ve como `git commit -m "..."` o `cd sub && git commit` — exactamente el caso que el parser **común** ya resuelve bien.
 - La **barrera real** contra evasión deliberada que llega al remoto **no es un hook local** — es **branch protection server-side** (GitLab/GitHub protected branches + reglas de MR) y el CI. Eso es inevadible por `--no-verify` o por variables de entorno locales, porque corre en el servidor. Un hook local, sea `PreToolUse` o git nativo, siempre es evadible localmente.
 
@@ -72,7 +72,7 @@ Instalar `pre-commit` y `pre-push` nativos en cada repo. Corren **en runtime, en
 
 - **Cobertura de repos anidados:** ✅ estructural. El hook corre en el repo donde git **realmente** opera (post-`cd`, respetando `--git-dir`/`--work-tree` porque git ya los aplicó). El bug de BUG-B **desaparece de raíz**, no se mitiga.
 - **Complejidad del código:** ✅ trivial — `git symbolic-ref --short HEAD` en el cwd del hook, sin helper de 490 líneas. Se puede retirar casi todo `git-command-cwd.mjs`.
-- **Instalación / distribución:** ❌ el punto débil. `.git/hooks/` **no se versiona** ni se comparte. Opciones: (a) `git config core.hooksPath .sofka-asdd/githooks` (directorio versionado) por repo; (b) un instalador que copie/symlinkee los hooks a `.git/hooks` de cada repo. En repos **anidados** hay que configurar **cada sub-repo** — el instalador del template debe recorrer el árbol y detectar cada `.git`. Fricción de adopción real.
+- **Instalación / distribución:** ❌ el punto débil. `.git/hooks/` **no se versiona** ni se comparte. Opciones: (a) `git config core.hooksPath .asdd/githooks` (directorio versionado) por repo; (b) un instalador que copie/symlinkee los hooks a `.git/hooks` de cada repo. En repos **anidados** hay que configurar **cada sub-repo** — el instalador del template debe recorrer el árbol y detectar cada `.git`. Fricción de adopción real.
 - **Bypasseabilidad:** `git commit --no-verify` / `git push --no-verify` saltean los hooks nativos por completo → mismo gap que el escape hatch. **Aceptable** bajo el threat model safety-net.
 - **Cobertura GS-009 (PR gate):** ❌ **no existe hook git nativo para `gh pr create`/`glab mr create`** — no son operaciones git. El PR gate **debe** quedar como hook de Claude Code o moverse a CI. Riesgo bajo: commit/push ya están gateados aguas arriba.
 - **Efecto colateral:** los hooks nativos corren para **todo** uso de git (no solo Claude Code). Puede ser deseable (enforcement consistente para devs) o molesto (fricción fuera del flujo agéntico).
@@ -128,17 +128,17 @@ Justificación por criterio:
 **Fase 1 — Interim safety-net (inmediato, sin instalación nueva):**
 
 1. Mergear R3d como safety-net (ver §5).
-2. Editar `sofka-asdd-git-safety.md` (GS-001): agregar el reencuadre de threat model (safety-net, no barrera) y una lista explícita de **residuales fuera-de-alcance-by-design**: `--git-dir`/`--work-tree`, `GIT_DIR`/`GIT_WORK_TREE` env, `$VAR` sin resolver, symlinks, subshell/eval/pipe. Referenciar este ADR.
+2. Editar `asdd-git-safety.md` (GS-001): agregar el reencuadre de threat model (safety-net, no barrera) y una lista explícita de **residuales fuera-de-alcance-by-design**: `--git-dir`/`--work-tree`, `GIT_DIR`/`GIT_WORK_TREE` env, `$VAR` sin resolver, symlinks, subshell/eval/pipe. Referenciar este ADR.
 3. Agregar a la guía de adopción la recomendación de branch protection server-side (Opción E).
 
 **Fase 2 — Backstop nativo (target):**
 
-4. Crear `.sofka-asdd/githooks/pre-commit` y `.sofka-asdd/githooks/pre-push` (directorio **versionado**), lógica trivial: `git symbolic-ref --short HEAD` en cwd → si ∈ protegidas → `exit 1` con mensaje GS-001/GS-008. Sin parseo de string.
-5. Instalador `.claude/scripts/sofka-asdd-install-githooks.mjs`: recorre el árbol desde `CLAUDE_PROJECT_DIR`, detecta cada `.git` (raíz + sub-repos anidados), setea `git config core.hooksPath` (relativo a cada repo) o copia los hooks. Idempotente. Documentar en la guía de adopción.
+4. Crear `.asdd/githooks/pre-commit` y `.asdd/githooks/pre-push` (directorio **versionado**), lógica trivial: `git symbolic-ref --short HEAD` en cwd → si ∈ protegidas → `exit 1` con mensaje GS-001/GS-008. Sin parseo de string.
+5. Instalador `.claude/scripts/asdd-install-githooks.mjs`: recorre el árbol desde `CLAUDE_PROJECT_DIR`, detecta cada `.git` (raíz + sub-repos anidados), setea `git config core.hooksPath` (relativo a cada repo) o copia los hooks. Idempotente. Documentar en la guía de adopción.
 6. PR gate (GS-009): **permanece** como hook de Claude Code (no hay equivalente git nativo). Opcionalmente moverlo/duplicarlo a CI (Opción E).
 7. Una vez probado en un consumidor real con repos anidados: **simplificar** la capa estática — revertir R3b/R3c/R3d (scan laxo, `forceBlock`, detección de construcciones unsafe, `pushd`/`popd`), dejando solo la resolución común-caso (B1: `cd X &&`, `git -C X`, `input.cwd`) con fail-closed ante ambigüedad simple. El helper baja de ~490 a ~120 líneas. Actualizar la red de tests `test-git-guards-cwd.mjs` retirando los casos R3b/c/d que ya no apliquen y agregando cobertura de los hooks nativos.
 
-**Archivos afectados:** `.claude/rules/sofka-asdd-git-safety.md`, `.claude/hooks/_lib/git-command-cwd.mjs` (adelgaza en Fase 2), `.claude/hooks/sofka-asdd-{guard-branch,pre-push-gate,pre-pr-gate}.mjs` (simplifican consumo en Fase 2), nuevos `.sofka-asdd/githooks/*` + instalador, `.claude/scripts/test-git-guards-cwd.mjs`, guía de adopción.
+**Archivos afectados:** `.claude/rules/asdd-git-safety.md`, `.claude/hooks/_lib/git-command-cwd.mjs` (adelgaza en Fase 2), `.claude/hooks/asdd-{guard-branch,pre-push-gate,pre-pr-gate}.mjs` (simplifican consumo en Fase 2), nuevos `.asdd/githooks/*` + instalador, `.claude/scripts/test-git-guards-cwd.mjs`, guía de adopción.
 
 ---
 

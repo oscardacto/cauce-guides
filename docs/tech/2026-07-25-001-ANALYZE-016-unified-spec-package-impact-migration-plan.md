@@ -26,7 +26,7 @@ y el estado del mismo paquete.
 ### 2.2 Decisiones reemplazadas
 
 - coexistencia de dos layouts;
-- `sofka-asdd-producto` como owner de discovery y toda documentación;
+- `asdd-producto` como owner de discovery y toda documentación;
 - Layout A plano como formato de specs vivas;
 - adopción manual de una spec standalone mediante copia/conversión;
 - INDEX como mezcla de plan congelado y ledger operativo.

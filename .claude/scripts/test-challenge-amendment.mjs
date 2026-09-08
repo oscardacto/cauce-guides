@@ -22,7 +22,7 @@ import {
   markChallengeAmended,
   revokeActiveChallenge,
   RUNTIME_DIR,
-} from "./lib/sofka-asdd-plan-authorization-lib.mjs";
+} from "./lib/asdd-plan-authorization-lib.mjs";
 
 let pass = 0;
 let fail = 0;
@@ -37,7 +37,7 @@ const PLAN = {
   request_id: "amend-test", task: "t", budget_policy_version: 1,
   route: "FULL", phase: "build", risk: "medium", confidence: 0.9, max_concurrent: 1,
   agents: [{
-    agent: "sofka-asdd-developer-backend", capability: "sofka-asdd-developer-feature",
+    agent: "asdd-developer-backend", capability: "asdd-developer-feature",
     scope: ["README.md"], commands: [], model: "sonnet", max_turns: 40, retries: 0,
   }],
 };
@@ -52,7 +52,7 @@ check("AM2", "approveAmendedChallenge devuelve el lote ORIGINAL intacto", () => 
   const challenge = issueChallenge(PLAN);
   markChallengeAmended();
   const [authorization] = approveAmendedChallenge(challenge.challenge_id);
-  assert.equal(authorization.agent, "sofka-asdd-developer-backend");
+  assert.equal(authorization.agent, "asdd-developer-backend");
   assert.deepEqual(authorization.scope, ["README.md"]);
   assert.deepEqual(authorization.commands, []);
   assert.equal(authorization.plan_hash, challenge.plan_hash);

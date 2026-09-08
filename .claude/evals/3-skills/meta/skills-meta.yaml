@@ -1,4 +1,4 @@
-description: "Skills: sofka-asdd-meta — proceso y output por skill"
+description: "Skills: asdd-meta — proceso y output por skill"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -12,7 +12,7 @@ tests:
   - description: "PROCESO platform: responde [ACCION] concisa y no toma decisiones de producto"
     vars:
       system_prompt: "file://../../prompts/system-skill-meta-platform.txt"
-      input: "Contexto al 67%. Quiero invocar sofka-asdd-developer-backend (necesita ~70k) y sofka-asdd-qa-engineer (necesita ~60k) en paralelo."
+      input: "Contexto al 67%. Quiero invocar asdd-developer-backend (necesita ~70k) y asdd-qa-engineer (necesita ~60k) en paralelo."
     assert:
       - type: icontains
         value: "[COMPACT-PRIMERO]"

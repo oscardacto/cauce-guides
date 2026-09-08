@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ATF · sofka_ · Quality Intelligence</title>
+<title>ATF · guide_ · Quality Intelligence</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* ── Sofka Brand Palette 2026 (sofka_style_manual.md §2) ── */
+  /* ── Guide Brand Palette 2026 (guide_style_manual.md §2) ── */
   --orange:    #F47920;
   --orange-bg: rgba(244,121,32,.08);
   --orange-b:  rgba(244,121,32,.22);
-  --sofka-light: #F0EDE8;
-  --sofka-dark:  #B8A894;
+  --guide-light: #F0EDE8;
+  --guide-dark:  #B8A894;
 
   /* ── Backgrounds (Light Professional) ── */
   --bg:    #F7F5F2;
@@ -44,42 +44,42 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 ::-webkit-scrollbar-track{background:var(--bg2)}
 ::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:2px}
 
-/* ── SOFKA PATTERN (diagonal strokes) ── */
-.sofka-bg{position:relative;overflow:hidden}
-.sofka-bg::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(
+/* ── GUIDE PATTERN (diagonal strokes) ── */
+.guide-bg{position:relative;overflow:hidden}
+.guide-bg::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(
   -45deg,
   transparent,transparent 14px,
   rgba(244,121,32,.025) 14px,rgba(244,121,32,.025) 15px
 );pointer-events:none;z-index:0}
-.sofka-bg>*{position:relative;z-index:1}
+.guide-bg>*{position:relative;z-index:1}
 
-/* ── SOFKA ORANGE ACCENT BORDER ── */
+/* ── GUIDE ORANGE ACCENT BORDER ── */
 .accent-l{border-left:3px solid var(--orange) !important}
 .accent-l-go{border-left:3px solid var(--go) !important}
 .accent-l-bad{border-left:3px solid var(--bad) !important}
 
-/* ── SOFKA CLAIM CHIP ── */
+/* ── GUIDE CLAIM CHIP ── */
 .claim-chip{display:inline-flex;align-items:center;gap:6px;background:var(--orange-bg);border:1px solid var(--orange-b);border-radius:20px;padding:3px 10px 3px 7px;font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange)}
 .claim-dot{width:5px;height:5px;border-radius:50%;background:var(--orange)}
 
-/* ── SOFKA SECTION LABELS ── */
+/* ── GUIDE SECTION LABELS ── */
 .slabel{font-size:9px;color:var(--orange);text-transform:uppercase;letter-spacing:.22em;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-family:var(--sans);font-weight:700}
 .slabel::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--orange-b),transparent)}
 
-/* ── CARD: tighter, more Sofka ── */
+/* ── CARD: tighter, more Guide ── */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px;animation:up .4s ease both;transition:border-color .2s,box-shadow .2s}
 .card:hover{border-color:var(--bord2);box-shadow:0 4px 12px rgba(0,0,0,.06)}
 .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:11px;border-bottom:1px solid var(--border)}
 .ct{font-family:var(--sans);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--text2)}
 
-/* ── STILE (stat tile) Sofka ── */
+/* ── STILE (stat tile) Guide ── */
 .stile{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;border-left:3px solid var(--border);transition:border-color .2s,box-shadow .2s}
 .stile:hover{border-left-color:var(--bord2);box-shadow:0 2px 8px rgba(0,0,0,.04)}
 .sv{font-family:var(--sans);font-size:28px;font-weight:900;line-height:1;margin-bottom:4px;letter-spacing:-.02em}
 .sl{font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:.16em;font-family:var(--sans);font-weight:700}
 .ss{font-size:10px;color:var(--text3);margin-top:3px}
 
-/* ── PILLS: Sofka ── */
+/* ── PILLS: Guide ── */
 .pill{font-size:8px;padding:2px 7px;border-radius:10px;font-family:var(--sans);font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:inline-block}
 .p-go  {background:var(--go-bg);color:var(--go);border:1px solid var(--go-b)}
 .p-warn{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-b)}
@@ -87,14 +87,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 .p-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}
 .p-dim {background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
 
-/* ── FRS big number Sofka ── */
+/* ── FRS big number Guide ── */
 .frs-big{font-family:var(--sans);font-size:96px;font-weight:900;line-height:1;letter-spacing:-.06em}
 .frs-meta-item{background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:10px 12px;transition:border-color .2s}
 .frs-meta-item:hover{border-color:var(--orange-b)}
 .frs-mk{font-size:8px;color:var(--orange);text-transform:uppercase;letter-spacing:.14em;margin-bottom:3px;font-family:var(--sans);font-weight:700}
 .frs-mv{font-size:12px;color:var(--text);font-family:var(--body)}
 
-/* ── DIMCARD Sofka ── */
+/* ── DIMCARD Guide ── */
 .dimcard{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:7px;transition:border-color .2s,transform .15s}
 .dimcard:hover{border-color:var(--orange-b);transform:translateY(-1px)}
 .dimn{font-size:8px;color:var(--orange);text-transform:uppercase;letter-spacing:.12em;font-family:var(--sans);font-weight:700}
@@ -103,7 +103,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 .dimbar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:2px}
 .dimfill{height:100%;border-radius:2px;transition:width 1s ease .3s}
 
-/* ── HU TABLE Sofka ── */
+/* ── HU TABLE Guide ── */
 .hu-table th{text-align:left;padding:7px 10px;font-size:8px;color:var(--orange);text-transform:uppercase;letter-spacing:.14em;border-bottom:1px solid var(--border);font-weight:700;white-space:nowrap;background:var(--bg3);font-family:var(--sans)}
 .hu-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;font-family:var(--body)}
 .hu-table tr:hover td{background:var(--bg3)}
@@ -112,7 +112,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 /* ── FINDING SECTION ── */
 .finding-dim{font-family:var(--sans);font-size:11px;font-weight:800;color:var(--text);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.06em}
 
-/* ── RISK ITEM Sofka ── */
+/* ── RISK ITEM Guide ── */
 .risk-item{display:flex;gap:14px;align-items:flex-start;padding:12px;margin-bottom:8px;background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:var(--r);transition:border-left-color .2s}
 .risk-item:hover{border-left-color:var(--orange)}
 .risk-num{font-family:var(--sans);font-size:24px;font-weight:900;line-height:1;letter-spacing:-.03em}
@@ -123,7 +123,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 .de-row:hover{background:var(--bg3)}
 .de-detail.open{display:block !important}
 
-/* ── FEATURE CARDS Sofka ── */
+/* ── FEATURE CARDS Guide ── */
 .feat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
 .feat-card:hover{border-color:var(--bord2)}
 .feat-name{color:var(--orange);font-size:11px;font-weight:700;flex:1;font-family:var(--sans)}
@@ -131,15 +131,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 .feat-head:hover{background:var(--bg4)}
 .feat-arrow{font-size:11px;color:var(--orange);transition:transform .2s;flex-shrink:0;font-weight:700}
 
-/* ── VERDICT Sofka ── */
+/* ── VERDICT Guide ── */
 .verdict{border-radius:8px;border:1px solid var(--border);padding:24px 28px;margin-bottom:22px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:36px;position:relative;overflow:hidden;animation:up .45s ease both}
 .v-stripe{position:absolute;left:0;top:0;bottom:0;width:4px}
 .go  .v-stripe{background:var(--go);box-shadow:2px 0 12px var(--go)}
 .warn .v-stripe{background:var(--orange);box-shadow:2px 0 12px var(--orange)}
 .bad  .v-stripe{background:var(--bad);box-shadow:2px 0 12px var(--bad)}
-.pend .v-stripe{background:var(--sofka-dark)}
+.pend .v-stripe{background:var(--guide-dark)}
 
-/* Sofka diagonal in verdict */
+/* Guide diagonal in verdict */
 .verdict::after{content:'';position:absolute;right:0;top:0;bottom:0;width:200px;background-image:repeating-linear-gradient(-45deg,transparent,transparent 10px,rgba(244,121,32,.025) 10px,rgba(244,121,32,.025) 11px);pointer-events:none}
 
 
@@ -189,7 +189,7 @@ header{position:sticky;top:0;z-index:50;background:var(--bg2);border-bottom:1px 
 .go .v-stripe  {background:var(--go);box-shadow:2px 0 10px var(--go)}
 .warn .v-stripe{background:var(--warn);box-shadow:2px 0 10px var(--warn)}
 .bad .v-stripe {background:var(--bad);box-shadow:2px 0 10px var(--bad)}
-.pend .v-stripe{background:var(--sofka-dark)}
+.pend .v-stripe{background:var(--guide-dark)}
 .v-ey{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
 .v-word{font-family:var(--sans);font-size:38px;font-weight:900;line-height:1;letter-spacing:-.03em;text-transform:uppercase}
 .go .v-word  {color:var(--go)}
@@ -523,9 +523,9 @@ footer{border-top:1px solid var(--border);padding:12px 22px;display:flex;justify
 
 <div id="upload-zone">
   <div class="up-card" id="drop-zone">
-    <div style="font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);margin-bottom:6px">sofka_ · ATF</div>
+    <div style="font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);margin-bottom:6px">guide_ · ATF</div>
     <div class="up-h">Selecciona el run a visualizar</div>
-    <div class="up-sub">Abre la carpeta del run:<br><code>output/{run_id}/</code><br><span style="font-size:10px;color:var(--sofka-dark)">Para el reporte completo usa: <code style="color:var(--blue)">node .claude/dashboard/generate-report.js</code></span></div>
+    <div class="up-sub">Abre la carpeta del run:<br><code>output/{run_id}/</code><br><span style="font-size:10px;color:var(--guide-dark)">Para el reporte completo usa: <code style="color:var(--blue)">node .claude/dashboard/generate-report.js</code></span></div>
     <input type="file" id="folder-input" webkitdirectory multiple>
     <button class="btn" onclick="document.getElementById('folder-input').click()">Abrir carpeta de run</button>
   </div>
@@ -534,7 +534,7 @@ footer{border-top:1px solid var(--border);padding:12px 22px;display:flex;justify
 
 <header>
   <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent,transparent 16px,rgba(244,121,32,.02) 16px,rgba(244,121,32,.02) 17px);pointer-events:none"></div>
-  <div class="h-logo" style="position:relative"><div class="h-dot"></div><span style="color:var(--orange)">ATF</span><span style="color:var(--text3);font-size:9px;font-weight:400;letter-spacing:.05em"> · sofka_</span></div>
+  <div class="h-logo" style="position:relative"><div class="h-dot"></div><span style="color:var(--orange)">ATF</span><span style="color:var(--text3);font-size:9px;font-weight:400;letter-spacing:.05em"> · guide_</span></div>
   <div class="h-sep" style="position:relative"></div>
   <div class="h-run" id="h-run" style="position:relative">—</div>
   <div class="h-right" style="position:relative">
@@ -550,7 +550,7 @@ footer{border-top:1px solid var(--border);padding:12px 22px;display:flex;justify
 
   <!-- pipeline-progress removed -->
 
-  <div class="verdict pend sofka-bg" id="verdict">
+  <div class="verdict pend guide-bg" id="verdict">
     <div class="v-stripe"></div>
     <div>
       <div style="font-family:var(--sans);font-size:8px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:6px">Resumen del Ciclo</div>
@@ -686,7 +686,7 @@ footer{border-top:1px solid var(--border);padding:12px 22px;display:flex;justify
       <div id="perf-stats" class="g4" style="margin-top:8px"></div>
       <div id="perf-coverage-banner" style="margin-top:10px"></div>
     </div>
-    <div id="perf-content"><div class="empty">performance_results.json no encontrado — ejecutar /sofka-asdd:qa-web-perf</div></div>
+    <div id="perf-content"><div class="empty">performance_results.json no encontrado — ejecutar /asdd:qa-web-perf</div></div>
   </div>
 
   <!-- RESPONSIVE -->
@@ -761,7 +761,7 @@ footer{border-top:1px solid var(--border);padding:12px 22px;display:flex;justify
 
 </div>
 <footer style="background:var(--bg2);border-top:2px solid var(--orange);padding:14px 22px;text-align:center">
-  <span style="font-family:var(--sans);font-weight:700;font-size:15px;color:var(--text)">sofka<span style="color:var(--orange);font-weight:800">_</span></span><span style="color:var(--text3)"> · ATF · Agentic Testing Framework</span>
+  <span style="font-family:var(--sans);font-weight:700;font-size:15px;color:var(--text)">guide<span style="color:var(--orange);font-weight:800">_</span></span><span style="color:var(--text3)"> · ATF · Agentic Testing Framework</span>
   <span id="footer-ts" style="margin:0 6px">—</span>
   <span style="color:var(--text3)">·</span> <a href="https://sofka.com.co" style="color:var(--orange);text-decoration:none;font-weight:600">sofka.com.co</a>
 </footer>
@@ -968,10 +968,10 @@ function renderVerdict() {
     vw.textContent = 'CICLO EJECUTADO';
     vs.textContent = `FPY ${fpy} · run ${S.runId||'—'}`;
     document.getElementById('kpi-fpy').textContent = fpy;
-    el.className = 'verdict sofka-bg pend';
+    el.className = 'verdict guide-bg pend';
   } else {
     const frs=extractFRS();
-    el.className='verdict sofka-bg pend'; vw.textContent='EN PROGRESO';
+    el.className='verdict guide-bg pend'; vw.textContent='EN PROGRESO';
     vs.textContent=`Fases 0–1 completadas · run ${S.runId||'—'}`;
     document.getElementById('kpi-fpy').textContent='—';
   }
@@ -2490,14 +2490,14 @@ function renderUX() {
   }
 }
 
-// ── PERFORMANCE / Core Web Vitals (renderiza performance_results.json de /sofka-asdd:qa-web-perf) ─
+// ── PERFORMANCE / Core Web Vitals (renderiza performance_results.json de /asdd:qa-web-perf) ─
 function renderPerf() {
   const perf = pj('performance_results.json');
   const content = document.getElementById('perf-content');
   const stats = document.getElementById('perf-stats');
   const banner = document.getElementById('perf-coverage-banner');
   if (!perf) {
-    if (content) content.innerHTML = emptyOrPending('fase_2c', 'performance_results.json no encontrado — ejecutar /sofka-asdd:qa-web-perf');
+    if (content) content.innerHTML = emptyOrPending('fase_2c', 'performance_results.json no encontrado — ejecutar /asdd:qa-web-perf');
     if (stats) stats.innerHTML = '';
     if (banner) banner.innerHTML = '';
     return;

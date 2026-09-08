@@ -1,4 +1,4 @@
-description: "CMD /sofka-asdd:verify — fase Verificar con sign-offs"
+description: "CMD /asdd:verify — fase Verificar con sign-offs"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -14,12 +14,12 @@ defaultTest:
 tests:
   - description: "CMD verify: tres sign-offs requeridos para completar"
     vars:
-      input: "/sofka-asdd:verify Módulo de pagos completado. Necesitamos verificación pre-release."
+      input: "/asdd:verify Módulo de pagos completado. Necesitamos verificación pre-release."
     assert:
       - type: icontains
-        value: "sofka-asdd-qa-engineer"
+        value: "asdd-qa-engineer"
       - type: icontains
-        value: "sofka-asdd-security"
+        value: "asdd-security"
       - type: llm-rubric
         value: |
           El comando verify debe requerir los tres sign-offs: qa-engineer PASS,

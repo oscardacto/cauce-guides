@@ -80,9 +80,9 @@ auditar el código, revisar el historial de mantenimiento y fijar versión.
 
 | Plugin | Categoría | Agente ASDD beneficiario principal | Costo token estimado |
 |---|---|---|---|
-| `security-guidance` | Seguridad | `sofka-asdd-security` | Medio |
+| `security-guidance` | Seguridad | `asdd-security` | Medio |
 | `claude-md-management` | Governance | (transversal, validación del template) | Bajo |
-| `commit-commands` | Git workflow | `sofka-asdd-developer-frontend` / `sofka-asdd-developer-backend` + `sofka-asdd-tech-lead` | Bajo |
+| `commit-commands` | Git workflow | `asdd-developer-frontend` / `asdd-developer-backend` + `asdd-tech-lead` | Bajo |
 | `hookify` | Hooks library | (transversal, protección) | Bajo |
 
 ---
@@ -114,18 +114,18 @@ Licencia y estado: consultar el marketplace oficial al momento de instalar.
 
 1. **Fase Construir** — Al escribir un endpoint de autenticación, detecta
    `md5()` sobre contraseñas y sugiere `bcrypt`/`argon2`. El agente
-   `sofka-asdd-developer-frontend` / `sofka-asdd-developer-backend` recibe la guía sin necesidad de invocar a `sofka-asdd-security`.
+   `asdd-developer-frontend` / `asdd-developer-backend` recibe la guía sin necesidad de invocar a `asdd-security`.
 2. **Fase Verificar** — Al recibir un PR con cambios de auth, complementa
-   al agente `sofka-asdd-security` detectando automáticamente usos de `http://`,
+   al agente `asdd-security` detectando automáticamente usos de `http://`,
    tokens en logs y secretos en commits.
 3. **Revisión de dependencias** — Combinado con el skill
    `security/dependency-audit`, filtra patrones que las librerías nuevas
    introducen y que no están en el radar del agente.
 4. **Onboarding de devs junior** — El hook actúa como "par de seguridad"
-   inmediato, reduciendo la dependencia del agente `sofka-asdd-security` para issues
+   inmediato, reduciendo la dependencia del agente `asdd-security` para issues
    triviales.
 5. **Proyectos fintech/health** — Donde compliance es crítico, el plugin
-   refuerza el flujo de agente `sofka-asdd-security` + skill `compliance` con
+   refuerza el flujo de agente `asdd-security` + skill `compliance` con
    detecciones tempranas.
 
 #### Instalación
@@ -145,12 +145,12 @@ Licencia y estado: consultar el marketplace oficial al momento de instalar.
 #### Cómo usarlo
 
 - **Activación:** pasiva — los hooks corren automáticamente al editar archivos.
-- **Integración con agente `sofka-asdd-security`:** el plugin no reemplaza al agente,
+- **Integración con agente `asdd-security`:** el plugin no reemplaza al agente,
   lo complementa. El agente sigue siendo responsable de la revisión
   estratégica; el plugin captura issues tácticas.
 - **Ejemplo end-to-end:** en fase Verificar de un feature de login,
   `security-guidance` marca `db.query("SELECT ... WHERE id=" + id)` como
-  inyección SQL. El agente `sofka-asdd-security` lo recoge en su reporte y lo
+  inyección SQL. El agente `asdd-security` lo recoge en su reporte y lo
   escala a hallazgo 🔴 en `docs/security/review-login.md`.
 - **Gotchas de tokens:** los skills de referencia del plugin pueden cargar
   catálogos OWASP extensos. Verificar que usen progressive disclosure.
@@ -224,10 +224,10 @@ Puede incluir **skills de referencia** con el catálogo de límites
 #### Cómo usarlo
 
 - **Activación:** típicamente vía command (`/claude-md:audit` o similar).
-- **Integración con agentes ASDD:** `sofka-asdd-meta` lo usa como herramienta
-  de governance transversal. `sofka-asdd-solution-architect` lo invoca al consolidar
+- **Integración con agentes ASDD:** `asdd-meta` lo usa como herramienta
+  de governance transversal. `asdd-solution-architect` lo invoca al consolidar
   documentación al final de la fase Diseñar.
-- **Ejemplo end-to-end:** `sofka-asdd-tech-lead` ejecuta el command antes de un
+- **Ejemplo end-to-end:** `asdd-tech-lead` ejecuta el command antes de un
   release, recibe reporte con recomendaciones ("extraer sección X a skill",
   "eliminar regla duplicada"), y decide qué aplicar.
 - **Gotchas de tokens:** generalmente bajo. El plugin opera sobre el archivo
@@ -266,11 +266,11 @@ a veces, un agente ligero especializado en escribir mensajes descriptivos.
 
 #### Casos de uso
 
-1. **Fase Construir → cierre de tarea** — El agente `sofka-asdd-developer-frontend` / `sofka-asdd-developer-backend` ejecuta
+1. **Fase Construir → cierre de tarea** — El agente `asdd-developer-frontend` / `asdd-developer-backend` ejecuta
    `/commit` y recibe un mensaje en formato `feat(auth): ...` con el
    cuerpo generado a partir del diff y la spec vinculada.
 2. **Apertura de PR** — `/pr` genera título + descripción con referencia
-   a la spec, lista de cambios y test plan. El agente `sofka-asdd-tech-lead` revisa
+   a la spec, lista de cambios y test plan. El agente `asdd-tech-lead` revisa
    antes de publicar.
 3. **Release** — `/release` genera changelog agregando commits desde la
    última tag siguiendo convenciones.
@@ -296,11 +296,11 @@ a veces, un agente ligero especializado en escribir mensajes descriptivos.
 #### Cómo usarlo
 
 - **Activación:** vía commands de usuario.
-- **Integración con agentes ASDD:** `sofka-asdd-developer-frontend` / `sofka-asdd-developer-backend` es el consumidor principal
-  durante la fase Construir. `sofka-asdd-tech-lead` lo usa al revisar/aprobar PRs.
-  `sofka-asdd-platform-engineer` lo usa durante releases y en pipelines.
+- **Integración con agentes ASDD:** `asdd-developer-frontend` / `asdd-developer-backend` es el consumidor principal
+  durante la fase Construir. `asdd-tech-lead` lo usa al revisar/aprobar PRs.
+  `asdd-platform-engineer` lo usa durante releases y en pipelines.
 - **Ejemplo end-to-end:** al cerrar la implementación del feature `login`,
-  `sofka-asdd-developer-backend` ejecuta `/commit` → mensaje generado →
+  `asdd-developer-backend` ejecuta `/commit` → mensaje generado →
   `/pr` → descripción con link a `docs/specs/login.md` → review.
 - **Gotchas de tokens:** bajo. Los commands se ejecutan bajo demanda; la
   carga base es solo la metadata del command.
@@ -345,11 +345,11 @@ los hooks correspondientes en los eventos del lifecycle (`PreToolUse`,
 2. **Estandarización en monorepo** — Mismos hooks en todos los
    subproyectos vía un único `enabledPlugins`.
 3. **Fase Verificar** — Hook que ejecuta lint/tests tras cada Edit, para
-   que el agente `sofka-asdd-qa-engineer` reciba feedback continuo.
-4. **Agente `sofka-asdd-platform-engineer`** — Activar hooks de notificación a
+   que el agente `asdd-qa-engineer` reciba feedback continuo.
+4. **Agente `asdd-platform-engineer`** — Activar hooks de notificación a
    Slack/Teams tras eventos clave (despliegue, fallo en build).
 5. **Guardia de secretos** — Hook pre-commit que escanea `.env`,
-   complemento al agente `sofka-asdd-security`.
+   complemento al agente `asdd-security`.
 
 #### Instalación
 
@@ -369,10 +369,10 @@ los hooks correspondientes en los eventos del lifecycle (`PreToolUse`,
 #### Cómo usarlo
 
 - **Activación:** declarativa vía archivo de configuración del plugin.
-- **Integración con agentes ASDD:** transversal. `sofka-asdd-security` usa hooks de
-  bloqueo de secretos; `sofka-asdd-qa-engineer` usa hooks de lint/test automáticos;
-  `sofka-asdd-platform-engineer` usa hooks de notificación.
-- **Ejemplo end-to-end:** `sofka-asdd-platform-engineer` activa un hook `dangerous-bash`
+- **Integración con agentes ASDD:** transversal. `asdd-security` usa hooks de
+  bloqueo de secretos; `asdd-qa-engineer` usa hooks de lint/test automáticos;
+  `asdd-platform-engineer` usa hooks de notificación.
+- **Ejemplo end-to-end:** `asdd-platform-engineer` activa un hook `dangerous-bash`
   de `hookify` que bloquea comandos destructivos. Si el equipo quisiera
   customizar, reemplaza ese hook por uno propio en `.claude/hooks/`.
 - **Gotchas de tokens:** bajo — los hooks no cargan contenido al contexto,
@@ -398,17 +398,17 @@ los hooks correspondientes en los eventos del lifecycle (`PreToolUse`,
 
 | Agente | Plugins recomendados |
 |---|---|
-| `sofka-asdd-producto` | — |
-| `sofka-asdd-solution-architect` | `claude-md-management` |
-| `sofka-asdd-tech-lead` | `claude-md-management` · `commit-commands` · `hookify` |
-| `sofka-asdd-ux-ui` | — |
-| `sofka-asdd-developer-frontend` / `sofka-asdd-developer-backend` | `commit-commands` |
-| `sofka-asdd-security` | `security-guidance` · `hookify` |
-| `sofka-asdd-qa-engineer` | `hookify` |
-| `sofka-asdd-domain-expert` | — |
-| `sofka-asdd-platform-engineer` | `commit-commands` · `hookify` |
-| `sofka-asdd-researcher` | — |
-| `sofka-asdd-meta` | `claude-md-management` |
+| `asdd-producto` | — |
+| `asdd-solution-architect` | `claude-md-management` |
+| `asdd-tech-lead` | `claude-md-management` · `commit-commands` · `hookify` |
+| `asdd-ux-ui` | — |
+| `asdd-developer-frontend` / `asdd-developer-backend` | `commit-commands` |
+| `asdd-security` | `security-guidance` · `hookify` |
+| `asdd-qa-engineer` | `hookify` |
+| `asdd-domain-expert` | — |
+| `asdd-platform-engineer` | `commit-commands` · `hookify` |
+| `asdd-researcher` | — |
+| `asdd-meta` | `claude-md-management` |
 
 ---
 
@@ -451,7 +451,7 @@ los hooks correspondientes en los eventos del lifecycle (`PreToolUse`,
 
 | Plugin | Alternativa sin plugin |
 |---|---|
-| `security-guidance` | Usar agente `sofka-asdd-security` del template + skill `security/code-scan` + hook propio de escaneo de secretos en `.claude/hooks/`. |
+| `security-guidance` | Usar agente `asdd-security` del template + skill `security/code-scan` + hook propio de escaneo de secretos en `.claude/hooks/`. |
 | `claude-md-management` | Linter manual + agente `@qgt-audit-agentic-config` del Quality Gate Toolkit. Puede correrse en CI con GitHub Actions custom. |
 | `commit-commands` | Crear commands propios en `.claude/commands/` del proyecto (`commit.md`, `pr.md`, `release.md`) con plantillas alineadas a la convención del equipo. |
 | `hookify` | Escribir hooks propios en `.claude/hooks/` siguiendo el patrón de `pre-tool-use-dangerous-bash.mjs` y `pre-tool-use-spec-check.mjs` ya presentes en el template. |

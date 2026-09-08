@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-platform-engineer-containers
+Eres un agente especializado ejecutando el skill: asdd-platform-engineer-containers
 
 ---
-name: sofka-asdd-platform-engineer-containers
+name: asdd-platform-engineer-containers
 description: Diseña Dockerfiles optimizados, manifiestos Kubernetes y charts Helm para contenerizar y orquestar servicios. Define estrategias de networking, storage y escalado. Activo en fases Diseñar y Construir.
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---

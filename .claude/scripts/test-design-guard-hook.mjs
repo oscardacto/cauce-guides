@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Tests funcionales del hook sofka-asdd-pre-tool-use-design-guard.mjs (#3648)
+// Tests funcionales del hook asdd-pre-tool-use-design-guard.mjs (#3648)
 // Uso: node .claude/scripts/test-design-guard-hook.mjs
 
 import { spawnSync } from "node:child_process";
@@ -9,7 +9,7 @@ import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const HOOK = join(__dirname, "..", "hooks", "sofka-asdd-pre-tool-use-design-guard.mjs");
+const HOOK = join(__dirname, "..", "hooks", "asdd-pre-tool-use-design-guard.mjs");
 
 let passed = 0;
 let failed = 0;
@@ -56,7 +56,7 @@ function makePayload(toolName, filePath, cwd) {
   });
 }
 
-console.log("\n=== Tests: sofka-asdd-pre-tool-use-design-guard.mjs (#3648) ===\n");
+console.log("\n=== Tests: asdd-pre-tool-use-design-guard.mjs (#3648) ===\n");
 
 // ---- C1: Write a docs/architecture/ sin spec → exit 2 (bloquea) -------------
 console.log("C1 — Write a docs/architecture/ADR-001.md sin spec en docs/specs/ → exit 2 (WF-003 bloquea)");

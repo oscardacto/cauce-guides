@@ -27,7 +27,7 @@ autorización, routing ni trazabilidad:
 Antes de construir el primer plan de una iniciativa, ejecutar:
 
 ```bash
-node .claude/scripts/sofka-asdd-run-bootstrap.mjs \
+node .claude/scripts/asdd-run-bootstrap.mjs \
   --feature aid-bancolombia \
   --phase specify \
   --artifact-dir docs/specs \
@@ -52,7 +52,7 @@ El CLI debe copiar junto con hooks, agents y rules:
 - `.claude/ba-steps/`;
 - `.claude/references/`;
 - `.claude/scripts/lib/`;
-- `sofka-asdd-{artifact-name,run-bootstrap,commit-authorization,load-capability,
+- `asdd-{artifact-name,run-bootstrap,commit-authorization,load-capability,
   plan-authorization,resolve-capability,resolve-rule,route-request}.mjs`;
 - `validate-template.mjs`.
 
@@ -64,11 +64,11 @@ la adopción debe fallar antes de entregar un proyecto parcialmente funcional.
 ```bash
 node .claude/scripts/validate-template.mjs
 printf '%s' '{"request":"¿dónde está health?"}' \
-  | node .claude/scripts/sofka-asdd-route-request.mjs
-node .claude/scripts/sofka-asdd-route-request.mjs \
+  | node .claude/scripts/asdd-route-request.mjs
+node .claude/scripts/asdd-route-request.mjs \
   --file docs/contexto/prompts/00-auditoria-contexto.md
-node .claude/scripts/sofka-asdd-resolve-rule.mjs \
-  sofka-asdd-routing-heuristics
+node .claude/scripts/asdd-resolve-rule.mjs \
+  asdd-routing-heuristics
 ```
 
 El primer comando termina con cero errores; el router devuelve `TRIVIAL`; el
@@ -94,7 +94,7 @@ requiere plan nuevo.
 
 Cuando un agente declara `capability`, su prompt de lanzamiento debe contener
 el comando canónico
-`node .claude/scripts/sofka-asdd-load-capability.mjs <capability>` y debe
+`node .claude/scripts/asdd-load-capability.mjs <capability>` y debe
 ejecutarlo antes de cualquier operación protegida. El runtime acepta como
 equivalente únicamente la ruta absoluta de ese mismo loader dentro del proyecto;
 otra ubicación falla como `command-mismatch`. Sí admite un sufijo benigno sobre

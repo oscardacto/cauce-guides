@@ -2,7 +2,7 @@
 
 **Generado**: 2026-07-07
 **Esfuerzo total estimado**: XL (7 releases atómicos)
-**Autor**: sofka-asdd-tech-lead (skill refactoring-plan)
+**Autor**: asdd-tech-lead (skill refactoring-plan)
 **Rama**: fix/3-bugs-consumidor-r1-naming
 **Run ASDD**: 2026-07-07-001
 
@@ -67,7 +67,7 @@ Al redactar este mismo artefacto se reprodujo una variante adicional y más
 directa del síntoma FLUJO / Bug A: el repo tenía un run cerrado
 (`.asdd-run.json` → `run_id: 2026-05-28-001`, `status: "complete"`) sin que
 existiera ningún run nuevo abierto para este ciclo de trabajo. El hook
-`sofka-asdd-pre-tool-use-artifact-name-guard.mjs` leyó ese archivo y, al
+`asdd-pre-tool-use-artifact-name-guard.mjs` leyó ese archivo y, al
 encontrar `status === "complete"`, **bloqueó con `exit 2` la escritura de
 este mismo documento** — incluyendo `docs/tech/` y `docs/specs/`, que no
 están en la lista de exenciones (`isExempt()`) aunque el propio
@@ -93,10 +93,10 @@ del mismo release salvo cuando comparten archivo (ver R1).
   (misma lógica de resolución que ya usa el helper) cuando `current_phase`
   es `null`.
 - **A3**: tabla de mapeo español→inglés documentada en ORC-007
-  (`sofka-asdd-checkpoint-resume.md`) para las fases que el orquestador
+  (`asdd-checkpoint-resume.md`) para las fases que el orquestador
   históricamente escribió en español (copiadas de WF-00x).
 - **A4**: **DECIDIDO — opción b**: agregar `--dry-run` al helper
-  `sofka-asdd-artifact-name.mjs` para pre-validar el nombre sin consumir
+  `asdd-artifact-name.mjs` para pre-validar el nombre sin consumir
   `artifact_seq` (evita quemar secuencia en intentos fallidos).
 - **A5**: test de integración helper → guard (nombre generado por el
   helper siempre pasa el guard).
@@ -117,17 +117,17 @@ del mismo release salvo cuando comparten archivo (ver R1).
   cuando no hay ningún run activo (`status !== "complete"` en ninguno) —
   quick win de la auditoría, mismo archivo que A1-A7.
 - **A8 (nuevo, verificado en vivo el 2026-07-07)**: el hook
-  `sofka-asdd-pre-tool-use-analyze-guard.mjs` aplica fail-closed a **todo**
+  `asdd-pre-tool-use-analyze-guard.mjs` aplica fail-closed a **todo**
   `docs/specs/` cuando no existe brief, sin distinguir:
   (a) spec de feature (que legítimamente requiere brief según WF-002), de
-  (b) bug report (que el skill `sofka-asdd-tech-lead-new-bug` documenta
+  (b) bug report (que el skill `asdd-tech-lead-new-bug` documenta
       escribiendo en `docs/specs/bug-*.md` sin exigir brief), de
   (c) directorio `docs/specs/` inexistente en un template consumidor
       todavía sin proyecto.
   Error literal reproducido: `[ASDD WF-002 Prerrequisito] Intento de Write
   sobre .../docs/specs/2026-07-07-001-BUILD-002-bug-a-....md sin brief:
   no existe el directorio docs/specs. Crear el directorio y ejecutar
-  /sofka-asdd:specify para generar el brief`. Opciones de fix a evaluar
+  /asdd:specify para generar el brief`. Opciones de fix a evaluar
   en R1: (i) exentar el patrón `bug-*.md` del analyze-guard —
   bajo-riesgo, coherente con el skill new-bug; (ii) ampliar
   `naming-convention.md §3.7.2` distinguiendo "spec-de-feature" (requiere
@@ -150,7 +150,7 @@ del mismo release salvo cuando comparten archivo (ver R1).
 - **C3**: registrar el guard también en el matcher `Write`, con filtro de
   paths que excluya `test/`, `spec/`, `__tests__/` (para no bloquear
   fixtures de test que contienen el string a propósito).
-- **C4**: actualizar el skill `sofka-asdd-tech-lead-create-mr` para
+- **C4**: actualizar el skill `asdd-tech-lead-create-mr` para
   reforzar la prohibición con ejemplos de los vectores nuevos.
 - **C5**: tests extendidos cubriendo cada vector de escape identificado en
   el diagnóstico (BUG-C).
@@ -167,11 +167,11 @@ baseline de regresión antes de tocar código de seguridad).
   (incluye el cálculo de `git diff` y la resolución del marcador
   `.claude/.prepush-validated` en el repo efectivo, no en el repo raíz) y
   `pre-pr-gate.mjs`.
-- **B5**: el skill `sofka-asdd-tech-lead-pre-push` escribe el marcador en
+- **B5**: el skill `asdd-tech-lead-pre-push` escribe el marcador en
   el repo correcto (el mismo que resuelve el helper).
 - **B6**: tests con estructura de repos anidados reproduciendo el caso de
   campo (raíz-config + proyectos/{iac,db,drive-sync} como repos propios).
-- **B7**: documentar el comportamiento en `sofka-asdd-git-safety.md`.
+- **B7**: documentar el comportamiento en `asdd-git-safety.md`.
 
 **Mitigación de seguridad obligatoria**: cuando el parseo del comando es
 ambiguo (por ejemplo, `cd` con variable sin resolver), evaluar **tanto** el
@@ -194,8 +194,8 @@ para resolver este bug.
 - Poblar `model_strategy.agent_pinning` (`explorer → haiku`,
   `meta → haiku`) y `skill_override` para skills mecánicos.
 - Corregir `CLAUDE.md` (referencia a `.gitlab-ci.yml` inexistente) y los
-  `sofka-asdd-counts` del lock (hooks 21→20, commands 40→38).
-- Subir el check `sofka-asdd-counts` de `warn` a `error`.
+  `asdd-counts` del lock (hooks 21→20, commands 40→38).
+- Subir el check `asdd-counts` de `warn` a `error`.
 
 ### R5 (v2.29.0) — P1 delegación/routing (palanca #1 de velocidad)
 

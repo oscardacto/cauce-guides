@@ -10,7 +10,7 @@
 // de pantallas como cierre del ciclo design ↔ strategy).
 //
 // Por qué script atómico: el check de cobertura es 100% determinístico y debe
-// ejecutarse incluso cuando `/sofka-asdd:qa-web-strategize` corre standalone (sin re-spawnear el
+// ejecutarse incluso cuando `/asdd:qa-web-strategize` corre standalone (sin re-spawnear el
 // agente). Migrarlo a script asegura que el ciclo design ↔ strategy quede
 // cerrado en cualquier modo de invocación.
 //
@@ -126,7 +126,7 @@ function main() {
 
   const flows = Array.isArray(ep.e2e_flows) ? ep.e2e_flows : [];
   if (flows.length === 0) {
-    process.stderr.write('strategize-coverage: e2e_flows[] vacío. Ejecuta /sofka-asdd:qa-web-strategize primero.\n');
+    process.stderr.write('strategize-coverage: e2e_flows[] vacío. Ejecuta /asdd:qa-web-strategize primero.\n');
     process.stdout.write(JSON.stringify({
       ok: false, reason: 'no_e2e_flows', run_id: runId,
     }, null, 2) + '\n');

@@ -32,7 +32,7 @@
  * Exit codes: 0 = OK (haya o no matado algo). 1 = error inesperado.
  *
  * Invocado por:
- *   - .claude/commands/sofka-asdd/qa-web-exec.md PASO 0 (antes de invocar executor)
+ *   - .claude/commands/asdd/qa-web-exec.md PASO 0 (antes de invocar executor)
  *   - execute.md PASO 0.0 (antes del primer browser_navigate)
  *   - Opcional: skill browser-lifecycle antes de FASES 2A/2B/2C
  */

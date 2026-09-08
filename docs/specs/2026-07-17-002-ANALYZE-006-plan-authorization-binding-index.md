@@ -60,8 +60,8 @@ graph TD
 | 2026-07-17 | Orquestador | V3 carga bajo demanda implementada | Los agentes developer-backend y developer-frontend ya no precargan 11 skills; resuelven solo la capacidad requerida. Sus payloads eager quedaron en 833 y 778 palabras, y la baseline del mayor agente quedó en 12k; falta medición E2E. |
 | 2026-07-17 | Orquestador | V4 enforcement implementado | ADR-016 exige capability declarada, loader que entrega su `SKILL.md` y bloqueo de operaciones protegidas hasta una carga coincidente; regresiones verdes, falta E2E. |
 | 2026-07-17 | Orquestador | V4a alias canonizado | `build-validator` y otros aliases no ambiguos se normalizan al identificador completo permitido antes de hash/issue; evita un intento fallido previo al plan. |
-| 2026-07-17 | Orquestador + E2E autónomo | V4 E2E PASS | En sesión CLI persistente se aprobó el plan canónico, el backend cargó `sofka-asdd-developer-build-validator`, recibió su `SKILL.md` y ejecutó `node .claude/scripts/validate-template.mjs`: 26 OK, 2 warnings conocidos, 0 errores. |
-| 2026-07-17 | Orquestador + E2E autónomo | V4 adversariales PASS | El loader de `sofka-asdd-developer-bug-fix` con capability declarada build-validator recibió `capability-mismatch`; tras cargar la capability correcta, `validate-template.mjs --silent` recibió `command-mismatch`, ambos antes de ejecución. |
+| 2026-07-17 | Orquestador + E2E autónomo | V4 E2E PASS | En sesión CLI persistente se aprobó el plan canónico, el backend cargó `asdd-developer-build-validator`, recibió su `SKILL.md` y ejecutó `node .claude/scripts/validate-template.mjs`: 26 OK, 2 warnings conocidos, 0 errores. |
+| 2026-07-17 | Orquestador + E2E autónomo | V4 adversariales PASS | El loader de `asdd-developer-bug-fix` con capability declarada build-validator recibió `capability-mismatch`; tras cargar la capability correcta, `validate-template.mjs --silent` recibió `command-mismatch`, ambos antes de ejecución. |
 | 2026-07-17 | Orquestador | run in_progress → complete | Scope mismatch, command mismatch, capability mismatch y happy path tienen evidencia E2E; métricas de subagente observadas y validator local verde. |
 
 ## Reglas de actualización

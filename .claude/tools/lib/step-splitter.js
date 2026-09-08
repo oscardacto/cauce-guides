@@ -9,7 +9,7 @@
  *
  * Se usa desde:
  *   - `cp-enricher.js` como aplicador determinista final (single source of truth).
- *   - `sofka-asdd-atf-web-enrichment-analyzer/SKILL.md` documenta el comportamiento para que el
+ *   - `asdd-atf-web-enrichment-analyzer/SKILL.md` documenta el comportamiento para que el
  *     LLM razone sobre el output esperado, pero NO intenta fragmentar por su
  *     cuenta (evita alucinaciones).
  *
@@ -17,7 +17,7 @@
  *   - REGLA 8 (no inventar pasos): NO la viola — la conjunción ya está en el
  *     texto escrito por el diseñador. Sólo explicita sintaxis compuesta.
  *   - REGLA 13 (fragmentación agnóstica): ver
- *     `.claude/reference/atf-web/sofka-asdd-atf-web-cp-enricher-invariants.md`.
+ *     `.claude/reference/atf-web/asdd-atf-web-cp-enricher-invariants.md`.
  *
  * Contrato:
  *   splitStep(text:string) -> string[]             (fragmenta un step individual)

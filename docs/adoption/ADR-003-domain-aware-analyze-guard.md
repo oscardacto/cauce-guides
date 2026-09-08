@@ -5,7 +5,7 @@
 - **Estado:** Propuesta
 - **Fecha:** 2026-07-02
 - **Deciders:** _(pendiente — requiere aprobación explícita del usuario/maintainer del template)_
-- **Autor:** sofka-asdd-solution-architect
+- **Autor:** asdd-solution-architect
 - **Rama de trabajo:** `fix/smart-data-brief-equivalent` (creada desde `dev @ 902ad5b`)
 - **Relacionados:** ADR-001 (ORC enforcement 3-tiers), ADR-002 (Smart Data flow isolation — Aceptada, v2.25.0). Este ADR es **complementario** a ADR-002, no lo sustituye.
 - **Convención de numeración:** ADR-001 y ADR-002 existen; este es el siguiente secuencial → **ADR-003**.
@@ -16,7 +16,7 @@
 
 Smart Data v2.25.0 se mergeó y liberó (MRs !181→dev, !182→qa, !183→main, tag `v2.25.0`). Las 3 capas anti-interferencia diseñadas en ADR-002 pasaron los tests de sesión real (casos A/B/C/D — dev↔data no se contaminan; ante ambigüedad genuina el orquestador desambigua citando ADR-002).
 
-**Gap descubierto en el test del Caso C (flujo Data end-to-end):** el hook `sofka-asdd-pre-tool-use-analyze-guard.mjs` (WF-002) bloquea `Write` sobre `docs/specs/**` si no existe algún `brief-*.md` — comportamiento correcto para software transaccional (donde el brief lo produce `sofka-asdd-producto`), pero **incorrecto para Data**: los agentes Data no pueden persistir sus artefactos (`smart-data-eng-discovery-{cliente}.md`, `smart-data-eng-design-{cliente}.md`, `smart-data-eng-governance-assessment-{cliente}.md`, etc.). El flujo corre pero no escribe → el trabajo se pierde.
+**Gap descubierto en el test del Caso C (flujo Data end-to-end):** el hook `asdd-pre-tool-use-analyze-guard.mjs` (WF-002) bloquea `Write` sobre `docs/specs/**` si no existe algún `brief-*.md` — comportamiento correcto para software transaccional (donde el brief lo produce `asdd-producto`), pero **incorrecto para Data**: los agentes Data no pueden persistir sus artefactos (`smart-data-eng-discovery-{cliente}.md`, `smart-data-eng-design-{cliente}.md`, `smart-data-eng-governance-assessment-{cliente}.md`, etc.). El flujo corre pero no escribe → el trabajo se pierde.
 
 ### Citas de la reunión con el autor de Smart Data (Augusto, científico de datos — 2026-07-02)
 
@@ -34,7 +34,7 @@ Es decir: **guard consciente de dominio**, no exención ciega ni cambio de direc
 
 ### Estructura del Excel (auditada del binario `smart-data-eng-cliente.xlsx` en `origin/feat/smart-data`)
 
-8 pestañas con dropdowns y validaciones: (1) Guía instrucciones para el humano, (2) Stakeholders, (3) Propuesta — "fuente de verdad" del discover, (4) Restricciones, (5) Fuentes, (6) Plataforma, (7) Diccionario (18 columnas Bronze→Silver, exclusivo de `sofka-asdd-data-governance`), (8) Tablas de consumo (Gold). El Excel encapsula lo que en software sería el brief + parte del discovery.
+8 pestañas con dropdowns y validaciones: (1) Guía instrucciones para el humano, (2) Stakeholders, (3) Propuesta — "fuente de verdad" del discover, (4) Restricciones, (5) Fuentes, (6) Plataforma, (7) Diccionario (18 columnas Bronze→Silver, exclusivo de `asdd-data-governance`), (8) Tablas de consumo (Gold). El Excel encapsula lo que en software sería el brief + parte del discovery.
 
 ## Decisiones tomadas antes de este ADR (locked)
 
@@ -46,7 +46,7 @@ Se documentan porque condicionan el diseño de la regla:
 
 ## Decisión
 
-**El hook `sofka-asdd-pre-tool-use-analyze-guard.mjs` se vuelve *domain-aware*, manteniendo su invariante fundamental** ("sin artefacto de entrada de la fase Especificar no se escribe en la carpeta protegida de la fase Analizar"), pero el **artefacto de entrada depende del dominio del archivo que se intenta escribir**:
+**El hook `asdd-pre-tool-use-analyze-guard.mjs` se vuelve *domain-aware*, manteniendo su invariante fundamental** ("sin artefacto de entrada de la fase Especificar no se escribe en la carpeta protegida de la fase Analizar"), pero el **artefacto de entrada depende del dominio del archivo que se intenta escribir**:
 
 | Dominio del `.md` a escribir | Artefacto de entrada requerido | Ubicación |
 |---|---|---|
@@ -126,7 +126,7 @@ Se ejecuta al inicio del hook, antes de la validación existente de brief. **La 
 
 Cambio quirúrgico. **Cinco archivos**, ordenados por dependencia:
 
-1. **`.claude/hooks/sofka-asdd-pre-tool-use-analyze-guard.mjs`** — implementar el algoritmo (~40-60 líneas nuevas: helpers `isSmartDataArtifact`, `listClientesFromInputDir`, `matchesKnownCliente` + orquestación en `main()` antes del check de brief). Preservar la ruta software actual sin modificarla. Agregar variable env `ASDD_SMART_DATA_INPUT_DIR` (default: `docs/smart-data/data`) para consistencia con `ASDD_SPECS_DIR`.
+1. **`.claude/hooks/asdd-pre-tool-use-analyze-guard.mjs`** — implementar el algoritmo (~40-60 líneas nuevas: helpers `isSmartDataArtifact`, `listClientesFromInputDir`, `matchesKnownCliente` + orquestación en `main()` antes del check de brief). Preservar la ruta software actual sin modificarla. Agregar variable env `ASDD_SMART_DATA_INPUT_DIR` (default: `docs/smart-data/data`) para consistencia con `ASDD_SPECS_DIR`.
 
 2. **`docs/smart-data/data/smart-data-eng-cliente.xlsx`** — plantilla sanitizada del Excel (portada desde `origin/feat/smart-data` con las 4 correcciones de PII enumeradas en "Decisiones tomadas antes de este ADR"). La sanitización es responsabilidad del developer, no del arquitecto.
 
@@ -139,15 +139,15 @@ Cambio quirúrgico. **Cinco archivos**, ordenados por dependencia:
    ```
    El patrón `~$*.xlsx` cubre lockfiles temporales de Excel.
 
-4. **`.claude/rules/sofka-asdd-data-workflow.md`** — actualizar la fase D1 (discover) para declarar **explícitamente** el Excel como artefacto de entrada obligatorio de la fase Especificar-Data, con el path canónico `docs/smart-data/data/smart-data-eng-{cliente}.xlsx`. Una sección/línea corta al inicio de D1: *"Artefacto de entrada obligatorio: `docs/smart-data/data/smart-data-eng-{cliente}.xlsx` (equivalente al `brief-*.md` en software transaccional). Referenciado por `sofka-asdd-pre-tool-use-analyze-guard` — ver ADR-003."* Esto convierte la regla del guard en la aplicación del contrato ya declarado por la SSOT del dominio.
+4. **`.claude/rules/asdd-data-workflow.md`** — actualizar la fase D1 (discover) para declarar **explícitamente** el Excel como artefacto de entrada obligatorio de la fase Especificar-Data, con el path canónico `docs/smart-data/data/smart-data-eng-{cliente}.xlsx`. Una sección/línea corta al inicio de D1: *"Artefacto de entrada obligatorio: `docs/smart-data/data/smart-data-eng-{cliente}.xlsx` (equivalente al `brief-*.md` en software transaccional). Referenciado por `asdd-pre-tool-use-analyze-guard` — ver ADR-003."* Esto convierte la regla del guard en la aplicación del contrato ya declarado por la SSOT del dominio.
 
-5. **`.sofka-asdd/sofka-asdd-smart-data.lock`** — resolver la nota stale que aún dice "pendiente PR3" (heredada del port original v2.25.0). Actualizar la sección relevante para reflejar que el port está completo y agregar referencia a este ADR-003 en un campo `related_adrs` o comentario dedicado.
+5. **`.asdd/asdd-smart-data.lock`** — resolver la nota stale que aún dice "pendiente PR3" (heredada del port original v2.25.0). Actualizar la sección relevante para reflejar que el port está completo y agregar referencia a este ADR-003 en un campo `related_adrs` o comentario dedicado.
 
-**No se tocan** el hook `design-guard`, el `artifact-name-guard`, ni ningún archivo bajo `.claude/agents/` o `.claude/references/rules/sofka-asdd-data-routing.md`. Este cambio es aditivo dentro del hook analyze-guard y una línea documental en el workflow Data.
+**No se tocan** el hook `design-guard`, el `artifact-name-guard`, ni ningún archivo bajo `.claude/agents/` o `.claude/references/rules/asdd-data-routing.md`. Este cambio es aditivo dentro del hook analyze-guard y una línea documental en el workflow Data.
 
 ## Actualización de la regla Data — SSOT del requisito
 
-Sí, `sofka-asdd-data-workflow.md` **debe** declarar explícitamente el Excel como artefacto de entrada de D1. Sin esa línea, el guard sería una restricción "sorpresa" imposible de descubrir leyendo la doctrina Data — el usuario que lee el workflow no sabría que necesita el Excel para persistir. Con la línea declarada, el guard **implementa** un contrato ya explícito en la SSOT (patrón que ya usan otros guards del framework).
+Sí, `asdd-data-workflow.md` **debe** declarar explícitamente el Excel como artefacto de entrada de D1. Sin esa línea, el guard sería una restricción "sorpresa" imposible de descubrir leyendo la doctrina Data — el usuario que lee el workflow no sabría que necesita el Excel para persistir. Con la línea declarada, el guard **implementa** un contrato ya explícito en la SSOT (patrón que ya usan otros guards del framework).
 
 ## Criterios de aceptación / tests (para el gate del tech-lead)
 
@@ -167,29 +167,29 @@ Los 5 tests que el tech-lead debe verificar antes de aprobar la implementación:
 
 ## Riesgos residuales
 
-- **RR-1 — Descubrimiento del gate.** Un usuario nuevo del dominio Data puede intentar escribir un artefacto sin el Excel y confundirse ante M2. Mitigación: mensaje accionable con path exacto de la plantilla + `sofka-asdd-data-workflow.md` declara el requisito en su sección D1. Aceptado.
+- **RR-1 — Descubrimiento del gate.** Un usuario nuevo del dominio Data puede intentar escribir un artefacto sin el Excel y confundirse ante M2. Mitigación: mensaje accionable con path exacto de la plantilla + `asdd-data-workflow.md` declara el requisito en su sección D1. Aceptado.
 - **RR-2 — Cliente con nombre que colisiona parcialmente con otro** (ej. `acme` y `acme-retail`). El sufijo-match `-{cliente}.md` es sensible al string completo: `foo-acme.md` matchea solo `acme`, no `acme-retail`. Riesgo real: `foo-acme-retail.md` matchea `acme-retail` (bien) y también matchearía la subcadena `retail` si existiera un cliente `retail` — la regla exige matchear el sufijo completo con guion previo, así que `-acme-retail.md` NO matchea `retail` (falta el guion previo al `retail`: sería `-retail.md`). Aceptado, cubierto por el algoritmo.
-- **RR-3 — Excel del cliente ausente durante ejecuciones automatizadas / CI.** Si un pipeline intenta re-generar artefactos Data sin el `.xlsx` presente (porque está gitignoreado), el guard bloqueará. Mitigación: documentar en `sofka-asdd-data-workflow.md` que las corridas automatizadas del dominio Data requieren el Excel presente en el checkout (secret o mount). Aceptado.
+- **RR-3 — Excel del cliente ausente durante ejecuciones automatizadas / CI.** Si un pipeline intenta re-generar artefactos Data sin el `.xlsx` presente (porque está gitignoreado), el guard bloqueará. Mitigación: documentar en `asdd-data-workflow.md` que las corridas automatizadas del dominio Data requieren el Excel presente en el checkout (secret o mount). Aceptado.
 
 ## Consecuencias
 
-- **Positivas:** desbloquea la persistencia real de los agentes Data (el Caso C ya no falla silenciosamente); el guard sigue siendo verificable y auditable; el contrato "cada fase tiene un artefacto de entrada" se preserva. La doctrina Data queda explícita en su SSOT (`sofka-asdd-data-workflow.md`) sin depender de conocimiento tácito.
+- **Positivas:** desbloquea la persistencia real de los agentes Data (el Caso C ya no falla silenciosamente); el guard sigue siendo verificable y auditable; el contrato "cada fase tiene un artefacto de entrada" se preserva. La doctrina Data queda explícita en su SSOT (`asdd-data-workflow.md`) sin depender de conocimiento tácito.
 - **Negativas / costos:** el `analyze-guard` gana ~50 líneas de lógica (todavía es tratable, <200 líneas totales). Un usuario que renombre incorrectamente su Excel sufre el bloqueo — trade-off aceptado a cambio del gate real.
 - **Compatibilidad:** cambio 100% aditivo para software. Ningún flujo transaccional existente cambia comportamiento. Los 7 casos de no-interferencia de ADR-002 se preservan sin tocar sus fuentes.
 
 ## Referencias
 
 - ADR-002 — Aislamiento del flujo Smart Data (Aceptada, en producción v2.25.0). Este ADR NO lo sustituye — lo complementa cerrando el gap de persistencia identificado durante la validación.
-- `sofka-asdd-pre-tool-use-analyze-guard.mjs` — hook a modificar.
-- `sofka-asdd-data-workflow.md` — SSOT del dominio Data que declara el Excel como artefacto de entrada de D1.
-- `.claude/skills/sofka-asdd-solution-architect-sofka-docs/` — convención de ADR aplicada (naming, estados, ciclo de vida).
+- `asdd-pre-tool-use-analyze-guard.mjs` — hook a modificar.
+- `asdd-data-workflow.md` — SSOT del dominio Data que declara el Excel como artefacto de entrada de D1.
+- `.claude/skills/asdd-solution-architect-guide-docs/` — convención de ADR aplicada (naming, estados, ciclo de vida).
 
 ## Amendment 2026-07-02 — exención de cadena (artifact-name-guard + spec-size-guard)
 
 **Contexto adicional.** Tras publicar el guard domain-aware en 2.25.1–2.25.2 y validar la plantilla en un consumidor real (nova-foods), se detectó un deadlock: el `analyze-guard` permite el Write del artefacto Data, pero otros hooks PreToolUse de la cadena lo siguen bloqueando por reglas propias del dominio software:
 
-- **`sofka-asdd-pre-tool-use-artifact-name-guard.mjs`** exige que todo archivo bajo `docs/**` con ≥ 3 segmentos siga el naming `{YYYY-MM-DD}-{NNN}-{PHASE}-{NNN}-` de run activo. Los artefactos Data (`smart-data-eng-{tipo}-{cliente}.md` en `docs/specs/`, `docs/data/`, etc.) no siguen ese patrón porque el flujo Data no usa el ciclo Especificar→Analizar del dominio software — su ciclo D0–D7 tiene sus propios artefactos.
-- **`sofka-asdd-pre-tool-use-spec-size-guard.mjs`** aplica umbrales de 300 líneas, ≤ 5 CU y ≤ 1 aggregate sobre `docs/specs/*.md`. Las semánticas CU/aggregate no aplican al dominio Data — un discovery o dictionary del cliente puede superar 300 líneas legítimamente (inventario de fuentes, catálogo de campos).
+- **`asdd-pre-tool-use-artifact-name-guard.mjs`** exige que todo archivo bajo `docs/**` con ≥ 3 segmentos siga el naming `{YYYY-MM-DD}-{NNN}-{PHASE}-{NNN}-` de run activo. Los artefactos Data (`smart-data-eng-{tipo}-{cliente}.md` en `docs/specs/`, `docs/data/`, etc.) no siguen ese patrón porque el flujo Data no usa el ciclo Especificar→Analizar del dominio software — su ciclo D0–D7 tiene sus propios artefactos.
+- **`asdd-pre-tool-use-spec-size-guard.mjs`** aplica umbrales de 300 líneas, ≤ 5 CU y ≤ 1 aggregate sobre `docs/specs/*.md`. Las semánticas CU/aggregate no aplican al dominio Data — un discovery o dictionary del cliente puede superar 300 líneas legítimamente (inventario de fuentes, catálogo de campos).
 
 **Decisión.** Ambos hooks agregan una **exención Data** en su función `isExempt()` / `isExemptFile()` que reconoce el patrón `/^smart-data-eng-.+-[a-z0-9][a-z0-9_-]*\.md$/i` sobre el basename (la MISMA regex que `isDataArtifactFile` del analyze-guard). Cuando matchea → `return true` (exento) + log a stderr no-bloqueante:
 
@@ -210,8 +210,8 @@ Los 5 tests que el tech-lead debe verificar antes de aprobar la implementación:
 
 **Referencias.**
 
-- `sofka-asdd-pre-tool-use-artifact-name-guard.mjs` — `isExempt()` con cláusula #8 (exención Data).
-- `sofka-asdd-pre-tool-use-spec-size-guard.mjs` — `isExemptFile()` con verificación smart-data-eng-* antes del match de run naming.
+- `asdd-pre-tool-use-artifact-name-guard.mjs` — `isExempt()` con cláusula #8 (exención Data).
+- `asdd-pre-tool-use-spec-size-guard.mjs` — `isExemptFile()` con verificación smart-data-eng-* antes del match de run naming.
 - `.claude/scripts/test-guards-chain-data.mjs` — harness de cadena (nuevo en 2.25.3).
 - `.claude/scripts/test-analyze-guard-domain-aware.mjs` — 15/15 casos originales del guard preservados.
 
@@ -242,12 +242,12 @@ Cobertura: harness `.claude/scripts/test-guards-chain-data.mjs` extendido a 16 c
 
 ### 2. Permission-mode fuera de los agentes Data
 
-Los agentes `sofka-asdd-data-architect` y `sofka-asdd-data-governance` declaraban `permissionMode: plan` en su frontmatter. Es un **candado mecánico redundante** con:
+Los agentes `asdd-data-architect` y `asdd-data-governance` declaraban `permissionMode: plan` en su frontmatter. Es un **candado mecánico redundante** con:
 
-- **ORC-010-A** (`sofka-asdd-orchestration-plan-gate.md`) — el gate de aprobación del orquestador ya obliga a analizar-primero antes de escritura.
+- **ORC-010-A** (`asdd-orchestration-plan-gate.md`) — el gate de aprobación del orquestador ya obliga a analizar-primero antes de escritura.
 - **Prosa/skills de los propios agentes** — el comportamiento "diseñar, nunca ejecutar" está explícito en su rol y en cada skill.
 
-El permission mechanic los hace inoperables (Write y Edit están en `tools[]` pero el modo restringido bloquea la escritura). Se elimina de ambos. `sofka-asdd-data-eng-databricks` no lo tenía — no se toca.
+El permission mechanic los hace inoperables (Write y Edit están en `tools[]` pero el modo restringido bloquea la escritura). Se elimina de ambos. `asdd-data-eng-databricks` no lo tenía — no se toca.
 
 **Convención del template** (nueva): ningún agente escritor debe fijar `permissionMode` restrictivo. Enforcement mecánico en `validate-template.mjs`:
 
@@ -268,9 +268,9 @@ Los artefactos Data quedan **fuera** del naming de run (`{run_id}-{PHASE}-{SEQ}`
 ### Referencias operativas
 
 - `.claude/hooks/_lib/smart-data-naming.mjs` — SSOT del reconocimiento.
-- `.claude/hooks/sofka-asdd-pre-tool-use-analyze-guard.mjs` — usa `isDataArtifact` + `matchesClient`.
-- `.claude/hooks/sofka-asdd-pre-tool-use-artifact-name-guard.mjs` — usa `isDataArtifact` en `isExempt()` (cláusula #8).
-- `.claude/hooks/sofka-asdd-pre-tool-use-spec-size-guard.mjs` — usa `isDataArtifact` al inicio de `isExemptFile()`.
+- `.claude/hooks/asdd-pre-tool-use-analyze-guard.mjs` — usa `isDataArtifact` + `matchesClient`.
+- `.claude/hooks/asdd-pre-tool-use-artifact-name-guard.mjs` — usa `isDataArtifact` en `isExempt()` (cláusula #8).
+- `.claude/hooks/asdd-pre-tool-use-spec-size-guard.mjs` — usa `isDataArtifact` al inicio de `isExemptFile()`.
 - `.claude/scripts/validate-template.mjs` — check `agent-permission-mode` (severidad `error`).
 - `.claude/scripts/test-guards-chain-data.mjs` — 16 casos incluye contrato semver, multi-palabra y M3 por cliente inexistente.
 

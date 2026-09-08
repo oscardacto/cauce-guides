@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-qa-engineer-coverage
+Eres un agente especializado ejecutando el skill: asdd-qa-engineer-coverage
 
 ---
-name: sofka-asdd-qa-engineer-coverage
+name: asdd-qa-engineer-coverage
 description: Valida que la cobertura de tests cumple los umbrales mínimos por capa. Identifica gaps críticos sin cobertura y genera el reporte de cobertura con recomendaciones. Activo en fases Construir y Verificar.
 allowed-tools: [Read, Glob, Grep, Bash]
 ---

@@ -2,12 +2,12 @@
 /**
  * test-run-manifest-hook.mjs
  *
- * Smoke tests para sofka-asdd-run-manifest.mjs (T6 — Tanda 2).
+ * Smoke tests para asdd-run-manifest.mjs (T6 — Tanda 2).
  *
  * Casos:
  *   (a) Sin .asdd-run.json → exit 0 sin escribir nada en docs/runs/
  *   (b) Con fixture válido → escribe manifest con naming universal y secciones esperadas
- *   (c) Escape hatch SOFKA_ASDD_RUN_MANIFEST_DISABLE=1 → exit 0, no escribe
+ *   (c) Escape hatch ASDD_RUN_MANIFEST_DISABLE=1 → exit 0, no escribe
  *   (d) JSON inválido → exit 0, no rompe (resiliencia del hook)
  *
  * Fixtures en .tmp/ — se limpian al finalizar.
@@ -22,7 +22,7 @@ import { randomBytes } from "node:crypto";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname, "..", "..");
-const HOOK = join(REPO_ROOT, ".claude", "hooks", "sofka-asdd-run-manifest.mjs");
+const HOOK = join(REPO_ROOT, ".claude", "hooks", "asdd-run-manifest.mjs");
 const TMP_BASE = join(REPO_ROOT, ".tmp");
 
 // ---- helpers ----------------------------------------------------------------
@@ -53,11 +53,11 @@ function runHook(env = {}, opts = {}) {
   const mergedEnv = {
     ...process.env,
     // Desactivar otros hooks potenciales que puedan interferir
-    SOFKA_ASDD_SESSION_START_DISABLE: "1",
-    SOFKA_ASDD_TDD_STATE_DISABLE: "1",
-    SOFKA_ASDD_STATE_FRESHNESS_DISABLE: "1",
-    SOFKA_ASDD_CODEBASE_SIZE_DISABLE: "1",
-    SOFKA_ASDD_MODEL_STRATEGY_DISABLE: "1",
+    ASDD_SESSION_START_DISABLE: "1",
+    ASDD_TDD_STATE_DISABLE: "1",
+    ASDD_STATE_FRESHNESS_DISABLE: "1",
+    ASDD_CODEBASE_SIZE_DISABLE: "1",
+    ASDD_MODEL_STRATEGY_DISABLE: "1",
     ...env,
   };
   try {
@@ -90,7 +90,7 @@ const VALID_RUN = {
   started_at: "2026-06-18T10:00:00Z",
   updated_at: "2026-06-18T11:30:00Z",
   models_used: ["claude-opus-4-5", "claude-sonnet-4-6"],
-  agents_used: ["sofka-asdd-developer-backend", "sofka-asdd-tech-lead"],
+  agents_used: ["asdd-developer-backend", "asdd-tech-lead"],
   branch: "feat/run-traceable-naming",
   phases: [
     {
@@ -120,7 +120,7 @@ const VALID_RUN = {
 
 console.log("\nCASO (a): escape hatch DISABLE → exit 0 sin output de manifest");
 {
-  const res = runHook({ SOFKA_ASDD_RUN_MANIFEST_DISABLE: "1" });
+  const res = runHook({ ASDD_RUN_MANIFEST_DISABLE: "1" });
   assert(res.code === 0, "exit 0 con disable");
   assert(!res.stdout.includes("[run-manifest]"), "sin output de manifest con disable");
 }
@@ -171,7 +171,7 @@ console.log("\nCASO (b): con fixture válido → genera manifest completo");
     assert(content.includes("# Run Manifest — 2026-06-18-001"), "encabezado con run_id");
     assert(content.includes("status"), "campo status presente");
     assert(content.includes("claude-opus-4-5"), "modelos usados presentes");
-    assert(content.includes("sofka-asdd-developer-backend"), "agentes usados presentes");
+    assert(content.includes("asdd-developer-backend"), "agentes usados presentes");
     assert(content.includes("feat/run-traceable-naming"), "rama presente");
     assert(content.includes("## Artefactos por fase"), "sección artefactos por fase");
     assert(content.includes("docs/specs/run-traceable-naming-001.md"), "artefacto spec enlazado");

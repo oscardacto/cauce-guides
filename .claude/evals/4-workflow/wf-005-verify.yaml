@@ -19,9 +19,9 @@ tests:
         Necesitamos el sign-off antes del release a producción.
     assert:
       - type: icontains
-        value: "sofka-asdd-qa-engineer"
+        value: "asdd-qa-engineer"
       - type: icontains
-        value: "sofka-asdd-security"
+        value: "asdd-security"
       - type: llm-rubric
         value: |
           WF-005 requiere qa-engineer Y security como primarios pre-release.
@@ -36,7 +36,7 @@ tests:
       - type: llm-rubric
         value: |
           Para declarar WF-005 completo, el orquestador debe exigir los tres sign-offs:
-          1. sofka-asdd-qa-engineer PASS (tests, coverage, regression)
-          2. sofka-asdd-security PASS (SAST, secrets, dependencies, compliance)
-          3. sofka-asdd-producto firma los acceptance criteria
+          1. asdd-qa-engineer PASS (tests, coverage, regression)
+          2. asdd-security PASS (SAST, secrets, dependencies, compliance)
+          3. asdd-producto firma los acceptance criteria
           Sin los tres, el ciclo NO está completo.

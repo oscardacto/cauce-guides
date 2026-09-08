@@ -70,7 +70,7 @@ async function pre(command, toolUseID) {
   const raw = JSON.stringify(event);
   const [dispatcher] = await Promise.all([
     run(process.execPath, [
-      ".claude/hooks/sofka-asdd-pre-tool-dispatcher.mjs",
+      ".claude/hooks/asdd-pre-tool-dispatcher.mjs",
     ], raw),
     run(process.execPath, [fakeCollector], raw, { EVENTS_PATH: eventsPath }),
   ]);

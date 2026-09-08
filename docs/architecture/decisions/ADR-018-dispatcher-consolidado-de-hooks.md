@@ -31,7 +31,7 @@ SPIKE-1R-B probó un adapter de un proceso sin activarlo en settings:
 La justificación primaria es reducción de procesos/CPU y contexto compartido;
 la mejora de wall-clock es secundaria y modesta.
 
-Además, `sofka-collector emit` se instala globalmente como hook independiente.
+Además, `guide-collector emit` se instala globalmente como hook independiente.
 Claude Code lo ejecuta en paralelo con los guards ASDD incluso cuando uno de
 ellos deniega la tool. La consolidación no puede absorber ni eliminar esa
 telemetría.
@@ -41,7 +41,7 @@ telemetría.
 ### 1. Un proceso de enforcement ASDD por evento
 
 `.claude/settings.json` registrará un único
-`sofka-asdd-pre-tool-dispatcher.mjs` para `Bash|Write|Edit`. El dispatcher
+`asdd-pre-tool-dispatcher.mjs` para `Bash|Write|Edit`. El dispatcher
 importará guards como módulos y no creará procesos Node hijos.
 
 Este límite excluye expresamente hooks globales, locales, de plugins, de

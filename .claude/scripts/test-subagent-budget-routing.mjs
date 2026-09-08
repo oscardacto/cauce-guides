@@ -7,15 +7,15 @@ import {
   consumeBudgetedLaunchAuthorization,
   issueChallenge,
   RUNTIME_DIR,
-} from "./lib/sofka-asdd-plan-authorization-lib.mjs";
+} from "./lib/asdd-plan-authorization-lib.mjs";
 import {
   logicalModel,
   normalizeBudgetEnvelope,
   resolveLogicalModel,
   sanitizeInvocationTelemetry,
   SUBAGENT_BUDGET,
-} from "./lib/sofka-asdd-subagent-budget-lib.mjs";
-import { routeRequest } from "./lib/sofka-asdd-proportional-router-lib.mjs";
+} from "./lib/asdd-subagent-budget-lib.mjs";
+import { routeRequest } from "./lib/asdd-proportional-router-lib.mjs";
 
 const root = resolve(import.meta.dirname, "..", "..");
 const clean = () => rmSync(RUNTIME_DIR, { recursive: true, force: true });
@@ -29,40 +29,40 @@ const envelope = (agents, values = {}) => ({
 });
 
 assert.equal(JSON.parse(readFileSync(resolve(root, ".claude/settings.json"), "utf8")).model, SUBAGENT_BUDGET.model_ids.sonnet);
-assert.equal(resolveLogicalModel({ phase: "build", agent: "sofka-asdd-developer-backend" }).model, "sonnet");
-assert.equal(resolveLogicalModel({ phase: "build", agent: "sofka-asdd-explorer" }).model, "haiku");
-assert.equal(resolveLogicalModel({ phase: "build", agent: "sofka-asdd-security", risk: "high" }).model, "opus");
+assert.equal(resolveLogicalModel({ phase: "build", agent: "asdd-developer-backend" }).model, "sonnet");
+assert.equal(resolveLogicalModel({ phase: "build", agent: "asdd-explorer" }).model, "haiku");
+assert.equal(resolveLogicalModel({ phase: "build", agent: "asdd-security", risk: "high" }).model, "opus");
 assert.equal(logicalModel("claude-opus-4-8"), "opus");
 
 const normalizedLight = normalizeBudgetEnvelope(envelope([
-  agent("sofka-asdd-explorer", { model: "haiku" }),
-]), [{ agent: "sofka-asdd-explorer", capability: null, dependencies: [], scope: ["."], commands: [] }]);
+  agent("asdd-explorer", { model: "haiku" }),
+]), [{ agent: "asdd-explorer", capability: null, dependencies: [], scope: ["."], commands: [] }]);
 assert.equal(normalizedLight.agents[0].model_source, "agent_pinning");
 const normalizedHighRisk = normalizeBudgetEnvelope(envelope([
-  agent("sofka-asdd-security", { model: "opus", max_turns: 40 }),
-], { route: "FULL", phase: "verify", risk: "high", max_concurrent: 1 }), [{ agent: "sofka-asdd-security", capability: null, dependencies: [], scope: ["."], commands: [] }]);
+  agent("asdd-security", { model: "opus", max_turns: 40 }),
+], { route: "FULL", phase: "verify", risk: "high", max_concurrent: 1 }), [{ agent: "asdd-security", capability: null, dependencies: [], scope: ["."], commands: [] }]);
 assert.equal(normalizedHighRisk.agents[0].model_source, "high_risk");
 const normalizedSupport = normalizeBudgetEnvelope(envelope([
-  agent("sofka-asdd-domain-expert", { budget_class: "support", max_turns: 15 }),
-], { route: "FULL", phase: "specify", max_concurrent: 1 }), [{ agent: "sofka-asdd-domain-expert", capability: null, dependencies: [], scope: [], commands: [] }]);
+  agent("asdd-domain-expert", { budget_class: "support", max_turns: 15 }),
+], { route: "FULL", phase: "specify", max_concurrent: 1 }), [{ agent: "asdd-domain-expert", capability: null, dependencies: [], scope: [], commands: [] }]);
 assert.equal(normalizedSupport.agents[0].budget_class, "support");
 assert.equal(normalizedSupport.agents[0].max_turns, 15);
 
 assert.throws(() => normalizeBudgetEnvelope(envelope([
-  agent("sofka-asdd-developer-backend"), agent("sofka-asdd-developer-frontend"),
-], { max_concurrent: 1 }), [{ agent: "sofka-asdd-developer-backend" }, { agent: "sofka-asdd-developer-frontend" }]), /at most 1 subagents/);
+  agent("asdd-developer-backend"), agent("asdd-developer-frontend"),
+], { max_concurrent: 1 }), [{ agent: "asdd-developer-backend" }, { agent: "asdd-developer-frontend" }]), /at most 1 subagents/);
 assert.throws(() => normalizeBudgetEnvelope(envelope([
-  agent("sofka-asdd-developer-backend", { max_turns: 21 }),
-]), [{ agent: "sofka-asdd-developer-backend" }]), /max_turns/);
+  agent("asdd-developer-backend", { max_turns: 21 }),
+]), [{ agent: "asdd-developer-backend" }]), /max_turns/);
 assert.throws(() => normalizeBudgetEnvelope(envelope([
-  agent("sofka-asdd-developer-backend", { retries: 2 }),
-]), [{ agent: "sofka-asdd-developer-backend" }]), /retries/);
+  agent("asdd-developer-backend", { retries: 2 }),
+]), [{ agent: "asdd-developer-backend" }]), /retries/);
 assert.throws(() => normalizeBudgetEnvelope(envelope([
-  agent("sofka-asdd-security", { model: "opus", escalation_reason: "auth risk" }),
-], { risk: "high" }), [{ agent: "sofka-asdd-security" }]), /high risk requires FULL/);
+  agent("asdd-security", { model: "opus", escalation_reason: "auth risk" }),
+], { risk: "high" }), [{ agent: "asdd-security" }]), /high risk requires FULL/);
 assert.throws(() => normalizeBudgetEnvelope(envelope([
-  agent("sofka-asdd-developer-backend", { model: "opus" }),
-]), [{ agent: "sofka-asdd-developer-backend" }]), /violates resolved sonnet/);
+  agent("asdd-developer-backend", { model: "opus" }),
+]), [{ agent: "asdd-developer-backend" }]), /violates resolved sonnet/);
 
 const routeCases = [
   ["¿dónde está health?", "TRIVIAL"], ["actualiza src/home.ts", "LIGHT"],
@@ -112,21 +112,21 @@ assert.equal(routeRequest("implementa autenticación OAuth y hacé commit").dept
 clean();
 const plan = {
   request_id: "b8-launch", task: "budget launch", ...envelope([{
-    agent: "sofka-asdd-developer-backend", capability: "sofka-asdd-developer-bug-fix",
+    agent: "asdd-developer-backend", capability: "asdd-developer-bug-fix",
     dependencies: [], scope: [".claude/scripts/test-subagent-budget-routing.mjs"], commands: [],
     model: "sonnet", max_turns: 20, retries: 0,
   }]),
 };
 issueChallenge(plan); approveActiveChallenge();
 const marker = "[ASDD-BUDGET route=LIGHT phase=build model=sonnet max_turns=20 retries=0]";
-const loader = "node .claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-developer-bug-fix";
-assert.equal(consumeBudgetedLaunchAuthorization("sofka-asdd-developer-backend", { model: "sonnet", prompt: `${marker}\n${loader}\nact` }).model, "sonnet");
+const loader = "node .claude/scripts/asdd-load-capability.mjs asdd-developer-bug-fix";
+assert.equal(consumeBudgetedLaunchAuthorization("asdd-developer-backend", { model: "sonnet", prompt: `${marker}\n${loader}\nact` }).model, "sonnet");
 clean(); issueChallenge(plan); approveActiveChallenge();
-assert.throws(() => consumeBudgetedLaunchAuthorization("sofka-asdd-developer-backend", { model: "opus", prompt: marker }), (error) => error.code === "launch-budget-mismatch");
+assert.throws(() => consumeBudgetedLaunchAuthorization("asdd-developer-backend", { model: "opus", prompt: marker }), (error) => error.code === "launch-budget-mismatch");
 clean(); issueChallenge(plan); approveActiveChallenge();
-assert.throws(() => consumeBudgetedLaunchAuthorization("sofka-asdd-developer-backend", { model: "sonnet", prompt: "missing" }), (error) => error.code === "launch-budget-mismatch");
+assert.throws(() => consumeBudgetedLaunchAuthorization("asdd-developer-backend", { model: "sonnet", prompt: "missing" }), (error) => error.code === "launch-budget-mismatch");
 clean(); issueChallenge(plan); approveActiveChallenge();
-assert.throws(() => consumeBudgetedLaunchAuthorization("sofka-asdd-developer-backend", { model: "sonnet", prompt: `${marker} act` }), (error) => error.code === "launch-budget-mismatch");
+assert.throws(() => consumeBudgetedLaunchAuthorization("asdd-developer-backend", { model: "sonnet", prompt: `${marker} act` }), (error) => error.code === "launch-budget-mismatch");
 
 const telemetry = sanitizeInvocationTelemetry({ timestamp: "2026-07-18T00:00:00Z", event: "launch", route: "LIGHT", agent: "x", result: "authorized" });
 assert.deepEqual(Object.keys(telemetry).sort(), ["agent", "event", "result", "route", "timestamp"]);

@@ -12,7 +12,7 @@
  *
  * El "env" se toma de `dbConfig.environment` (inyectado por db-query.js).
  *
- * Alcance del parser SQL-lite (suficiente para sofka-asdd-atf-web-db-validator):
+ * Alcance del parser SQL-lite (suficiente para asdd-atf-web-db-validator):
  *   - SELECT <cols|*> FROM <table> [WHERE <col> = '<val>']
  *   - SELECT COUNT(*) AS total, <group_col> FROM <table> [WHERE <col> = '<val>'] GROUP BY <group_col>
  *   - <val> puede ser string con/sin comillas, número o identificador.

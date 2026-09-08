@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
-import { parseFrontmatter } from "./lib/sofka-asdd-frontmatter-lib.mjs";
+import { parseFrontmatter } from "./lib/asdd-frontmatter-lib.mjs";
 
 const inline = parseFrontmatter(`---\r
 name: demo\r

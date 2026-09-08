@@ -7,10 +7,10 @@ description: Inicialización, checkpoint, recuperación, consolidación y errore
 
 | Skill | Responsabilidad |
 |---|---|
-| `sofka-asdd-atf-web-checkpoint-writer` | Escritura/eliminación de `checkpoint.json` vía `generate-checkpoint.js` |
-| `sofka-asdd-atf-web-rate-limit-handler` | Detectar rate limit, persistir estado, mostrar banner de pausa |
-| `sofka-asdd-atf-web-browser-lifecycle` | Verificación de browser MCP / NotebookLM MCP y cleanup post-ejecución |
-| `sofka-asdd-atf-web-context-manager` | Handoff cross-sesión (`context_summary.json`) |
+| `asdd-atf-web-checkpoint-writer` | Escritura/eliminación de `checkpoint.json` vía `generate-checkpoint.js` |
+| `asdd-atf-web-rate-limit-handler` | Detectar rate limit, persistir estado, mostrar banner de pausa |
+| `asdd-atf-web-browser-lifecycle` | Verificación de browser MCP / NotebookLM MCP y cleanup post-ejecución |
+| `asdd-atf-web-context-manager` | Handoff cross-sesión (`context_summary.json`) |
 
 ## SESSION CONTEXT DAO
 
@@ -30,12 +30,12 @@ description: Inicialización, checkpoint, recuperación, consolidación y errore
 10. `execution_plan.json` es el contrato de instancias — leerlo antes de FASE 1C y FASE 2C.
 11. NUNCA escanees ni leas carpetas de runs anteriores. Scope = SOLO `{run_folder}`.
 12. NUNCA hagas glob/listado de `docs/testing/atf-web/` — solo `{run_folder}`.
-13. RATE LIMIT: Si tool retorna 429/overloaded → `[SKILL: sofka-asdd-atf-web-rate-limit-handler | mode: detect-and-pause]`. NO reintentar.
+13. RATE LIMIT: Si tool retorna 429/overloaded → `[SKILL: asdd-atf-web-rate-limit-handler | mode: detect-and-pause]`. NO reintentar.
 14. **REPORTES — NUNCA HTML manual.** Solo: `node .claude/dashboard/generate-report.js {run_id}` y `node .claude/dashboard/generate-index.js`.
 15. **Atomicidad para apps de alto volumen:** timeout: `45 + (estimated_cps / 10) * 5` min. HU >15 CAs o fórmulas = slot exclusivo. Checkpoint tras CADA módulo en 2C. **Reporte NO se regenera por módulo en 2C** — solo en consolidación.
 16. **ANTI-BYPASS:** NUNCA ejecutar pasos de otro agente. Invocar via Agent tool. Lógica directa = solo estado/scripts/reportes.
 17. **ANTI-EXPLORACIÓN:** NO usar ls/find/head/grep exploratoriamente. Rutas vienen de config.yaml, appweb.yaml y session_context.json. PROHIBIDO: `ls docs/testing/atf-web/requirements/`, `ls docs/testing/atf-web/`, `ls .claude/tools/`, `ls .claude/agents/`, `ls .claude/skills/`, `find . -name`, `head -20`, `cat` ajenos al run.
-18. **ANTI-AGENT-TOOL-PARA-DETERMINÍSTICO:** NUNCA usar `Agent tool` para tareas <10 s. Patrón correcto: `bash → node .claude/tools/{script}.js`. Únicas invocaciones legítimas: diagnostician (FASE 0), strategist (FASE 1), design-team × N (FASE 1C), coverage-fill (FASE 1D), executor (FASE 2C). [Detalle: `reference/atf-web/sofka-asdd-atf-web-orchestrator-fastpath-rules.md` § REGLA 18.]
+18. **ANTI-AGENT-TOOL-PARA-DETERMINÍSTICO:** NUNCA usar `Agent tool` para tareas <10 s. Patrón correcto: `bash → node .claude/tools/{script}.js`. Únicas invocaciones legítimas: diagnostician (FASE 0), strategist (FASE 1), design-team × N (FASE 1C), coverage-fill (FASE 1D), executor (FASE 2C). [Detalle: `reference/atf-web/asdd-atf-web-orchestrator-fastpath-rules.md` § REGLA 18.]
 
 ---
 
@@ -56,9 +56,9 @@ description: Inicialización, checkpoint, recuperación, consolidación y errore
 >   --detected-via "ToolSearch:0_hits"
 > ```
 >
-> Escribe en 1 sola invocación: `execution_blocked.json` + `result.json` BLOCKED por cp_id (shape REGLA 1+3+5+6) + `module_result.json` + `headless_results.json`. Tras esto: validate + verify-no-self-read paralelos + generate-report + generate-index. NO `node -e` inline (escapes Windows fallan), NO Write de scripts temporales, NO Bash ls extras, NO refresh-session-context, NO pausa al usuario. [Ver `reference/atf-web/sofka-asdd-atf-web-orchestrator-fastpath-rules.md` § P26 + § P32 para flujo completo.]
+> Escribe en 1 sola invocación: `execution_blocked.json` + `result.json` BLOCKED por cp_id (shape REGLA 1+3+5+6) + `module_result.json` + `headless_results.json`. Tras esto: validate + verify-no-self-read paralelos + generate-report + generate-index. NO `node -e` inline (escapes Windows fallan), NO Write de scripts temporales, NO Bash ls extras, NO refresh-session-context, NO pausa al usuario. [Ver `reference/atf-web/asdd-atf-web-orchestrator-fastpath-rules.md` § P26 + § P32 para flujo completo.]
 
-`[SKILL: sofka-asdd-atf-web-browser-lifecycle | mode: verify]` → ejecuta `browser_navigate('about:blank')`
+`[SKILL: asdd-atf-web-browser-lifecycle | mode: verify]` → ejecuta `browser_navigate('about:blank')`
 con **hasta 3 intentos** (5s entre cada uno). El skill maneja los reintentos internamente.
 
 - Si **responde OK** (en cualquier intento) → `{browser_verified} = true`. Continuar.
@@ -71,11 +71,11 @@ con **hasta 3 intentos** (5s entre cada uno). El skill maneja los reintentos int
 
 ### 0.0b NotebookLM MCP [CONDICIONAL]
 
-`[SKILL: sofka-asdd-atf-web-browser-lifecycle | mode: verify-notebooklm | enabled: {notebooklm.enabled} | notebook_id: {notebooklm.notebook_id}]` — No bloqueante.
+`[SKILL: asdd-atf-web-browser-lifecycle | mode: verify-notebooklm | enabled: {notebooklm.enabled} | notebook_id: {notebooklm.notebook_id}]` — No bloqueante.
 
 ### 0.0c Knowledge bootstrap gate
 
-> ⚡ **Gate de knowledge — solo ejecutar si `fase_0` o `fase_2c` activas.** Verifica que el knowledge per-app no sea solo placeholder cuando hay docs en `docs/testing/atf-web/requirements/context/`. Si hay drift, sugiere ejecutar `/sofka-asdd:qa-web-knowledge` antes del run.
+> ⚡ **Gate de knowledge — solo ejecutar si `fase_0` o `fase_2c` activas.** Verifica que el knowledge per-app no sea solo placeholder cuando hay docs en `docs/testing/atf-web/requirements/context/`. Si hay drift, sugiere ejecutar `/asdd:qa-web-knowledge` antes del run.
 
 ```bash
 KNOWLEDGE_FILE="docs/testing/atf-web/knowledge/app_behavior.{app_name}.md"
@@ -86,13 +86,13 @@ CONTEXT_DOCS_COUNT=0
 if [ -f "$KNOWLEDGE_FILE" ] && grep -q "$KNOWLEDGE_PLACEHOLDER_MARKER" "$KNOWLEDGE_FILE"; then
   if [ "$CONTEXT_DOCS_COUNT" -gt 0 ]; then
     echo "⚠️ KNOWLEDGE_DRIFT: $KNOWLEDGE_FILE es solo placeholder, pero hay $CONTEXT_DOCS_COUNT docs en docs/testing/atf-web/requirements/context/."
-    echo "   Sugerencia: ejecutar /sofka-asdd:qa-web-knowledge antes de continuar — los agentes carecen de doctrina específica de {app_name}."
+    echo "   Sugerencia: ejecutar /asdd:qa-web-knowledge antes de continuar — los agentes carecen de doctrina específica de {app_name}."
     echo "   Para continuar IGNORANDO: confirmar al usuario y registrar en banner de FASE 2C."
   else
     echo "ℹ️ KNOWLEDGE_PLACEHOLDER: $KNOWLEDGE_FILE vacío y no hay docs en docs/testing/atf-web/requirements/context/ — continuar sin acción."
   fi
 elif [ ! -f "$KNOWLEDGE_FILE" ]; then
-  echo "⚠️ KNOWLEDGE_MISSING: $KNOWLEDGE_FILE no existe. ¿Falta ejecutar /sofka-asdd:qa-web-setup-app {app_name}?"
+  echo "⚠️ KNOWLEDGE_MISSING: $KNOWLEDGE_FILE no existe. ¿Falta ejecutar /asdd:qa-web-setup-app {app_name}?"
 fi
 ```
 
@@ -101,10 +101,10 @@ fi
 | Salida del bash | Acción |
 |---|---|
 | (sin warnings) | Continuar a 0.1 silenciosamente. |
-| `KNOWLEDGE_DRIFT` (placeholder + docs) | Mostrar el warning al usuario UNA vez. Si `--auto-knowledge` flag presente o usuario confirma → invocar `/sofka-asdd:qa-web-knowledge` automáticamente. Si usuario continúa sin extraer → registrar en banner FASE 2C: `⚠️ run sin doctrina de dominio (placeholder activo)`. |
-| `KNOWLEDGE_MISSING` (archivo ausente) | Sugerir `/sofka-asdd:qa-web-setup-app {app_name}` antes de continuar. NO bloquear (puede ser app legacy sin setup). |
+| `KNOWLEDGE_DRIFT` (placeholder + docs) | Mostrar el warning al usuario UNA vez. Si `--auto-knowledge` flag presente o usuario confirma → invocar `/asdd:qa-web-knowledge` automáticamente. Si usuario continúa sin extraer → registrar en banner FASE 2C: `⚠️ run sin doctrina de dominio (placeholder activo)`. |
+| `KNOWLEDGE_MISSING` (archivo ausente) | Sugerir `/asdd:qa-web-setup-app {app_name}` antes de continuar. NO bloquear (puede ser app legacy sin setup). |
 
-**Razón:** sin este gate, un QA podría olvidar ejecutar `/sofka-asdd:qa-web-knowledge` y luego obtener CPs genéricos sin enterarse de la causa. El gate detecta el caso al inicio y advierte explícitamente. No bloquea — el QA puede continuar sabiendo el estado.
+**Razón:** sin este gate, un QA podría olvidar ejecutar `/asdd:qa-web-knowledge` y luego obtener CPs genéricos sin enterarse de la causa. El gate detecta el caso al inicio y advierte explícitamente. No bloquea — el QA puede continuar sabiendo el estado.
 
 ### 0.1 Carga de configuración
 
@@ -135,7 +135,7 @@ Leer `appweb.yaml` → extraer:
 
 ### 0.1.5 Cross-session recovery [solo si checkpoint activo]
 
-Si `{run_id}` con checkpoint: `[SKILL: sofka-asdd-atf-web-context-manager | mode: read | run_folder: {run_folder}]`. Contenido → mostrar resumen. `found: false` → continuar.
+Si `{run_id}` con checkpoint: `[SKILL: asdd-atf-web-context-manager | mode: read | run_folder: {run_folder}]`. Contenido → mostrar resumen. `found: false` → continuar.
 
 ### 0.2 Run ID y continuación
 
@@ -179,7 +179,7 @@ MSYS_NO_PATHCONV=1 node .claude/tools/refresh-session-context.js \
   --mode "{test_run_mode}" --is-continuation true
 ```
 
-[Detalle: ver `reference/atf-web/sofka-asdd-atf-web-orchestrator-fastpath-rules.md` § P4. Para runs NUEVOS, construir session_context desde cero — el script es opt-in para refresh, no para creación.]
+[Detalle: ver `reference/atf-web/asdd-atf-web-orchestrator-fastpath-rules.md` § P4. Para runs NUEVOS, construir session_context desde cero — el script es opt-in para refresh, no para creación.]
 
 ### 0.3.1b pipeline_start.json
 
@@ -248,7 +248,7 @@ Estos pasos ya se ejecutaron en el run original.
      - Exit 1 → fatal (run_folder ausente / design missing / tag inválido / cp_id no encontrado). ⛔ DETENER con el mensaje del stderr.
      - Exit 2 → MFA `needs_reauth` o `parse_error`. Aplicar § P7 (BLOCKED batch + skip executor + consolidación).
 
-[Reglas: ver `reference/atf-web/sofka-asdd-atf-web-orchestrator-fastpath-rules.md` § P25. El script consolida WAVE 0 + WAVE 1 + WAVE 2 + `ls design/` + inject inline en una sola invocación sub-segundo.]
+[Reglas: ver `reference/atf-web/asdd-atf-web-orchestrator-fastpath-rules.md` § P25. El script consolida WAVE 0 + WAVE 1 + WAVE 2 + `ls design/` + inject inline en una sola invocación sub-segundo.]
 
 - Tras pre-flight (exit 0) + probe MCP exitoso → FASE 2C directo (0.5 checkpoint resume sin sub-agente).
   - Las claves del JSON de stdout reemplazan a las variables que antes se derivaban de WAVE 1/2 (`{module_id}`, `{cp_targets_ids_json}`, `cp_targets_resolved`, `mfa_preflight.status`, etc.).
@@ -348,7 +348,7 @@ Saludar al QA con un mensaje genérico ("Hola").
 
 ## CHECKPOINT SYSTEM
 
-Toda gestión via `[SKILL: sofka-asdd-atf-web-checkpoint-writer]`:
+Toda gestión via `[SKILL: asdd-atf-web-checkpoint-writer]`:
 - Tras cada fase: `mode: write` con `{run_id, run_folder, last_phase, pipeline_start}`
 - En 2C tras módulo: `mode: write` + `modules_completed[]`, `modules_remaining[]`
 - Cierre exitoso: `mode: delete`
@@ -373,9 +373,9 @@ Switch ON + artefacto existe → respetar artefacto (skip). QA quiere forzar re-
 
 ## CLEANUP BROWSER
 
-> ⚡ **CONTINUATION SHORTCUT — SKIP `browser-lifecycle` skill duplicado:** Si el run usó CONTINUATION SHORTCUT con 1 batch (típico `/sofka-asdd:qa-web-exec` o `/sofka-asdd:qa-web-run` con `cp_targets ≤ 5`), el executor YA ejecutó `browser_close()` en su PASO 3.C de cada CP. Invocar el skill `browser-lifecycle | mode: cleanup` aquí produce un segundo `browser_close` que retorna `"No open tabs"` — tool call wasteful (~2-3 s + thinking). OMITIR en este modo. Aplica solo en FULL run multi-módulo donde el executor puede dejar tabs abiertos entre módulos.
+> ⚡ **CONTINUATION SHORTCUT — SKIP `browser-lifecycle` skill duplicado:** Si el run usó CONTINUATION SHORTCUT con 1 batch (típico `/asdd:qa-web-exec` o `/asdd:qa-web-run` con `cp_targets ≤ 5`), el executor YA ejecutó `browser_close()` en su PASO 3.C de cada CP. Invocar el skill `browser-lifecycle | mode: cleanup` aquí produce un segundo `browser_close` que retorna `"No open tabs"` — tool call wasteful (~2-3 s + thinking). OMITIR en este modo. Aplica solo en FULL run multi-módulo donde el executor puede dejar tabs abiertos entre módulos.
 
-`[SKILL: sofka-asdd-atf-web-browser-lifecycle | mode: cleanup | browser_phases_ran: {fase_2c_on}]`
+`[SKILL: asdd-atf-web-browser-lifecycle | mode: cleanup | browser_phases_ran: {fase_2c_on}]`
 
 > ⚡ **Cleanup OS-level garantizado (INVIOLABLE):** además del cleanup vía MCP del párrafo anterior, SIEMPRE ejecutar el script `cleanup-mcp-browser.js` al cierre. El `browser_close()` del MCP cierra la tab pero **no garantiza** que el proceso chrome.exe muera a nivel OS — pueden quedar procesos huérfanos pese a múltiples `browser_close()`. El script mata por filtro `mcp-chromium` en cmdline + borra lockfiles del profile dir, sin tocar el navegador personal del usuario. Fast-path interno: ~5-100 ms si no hay residuales — costo despreciable en happy path.
 
@@ -409,7 +409,7 @@ Exit 0 siempre (mata 0..N procesos). NO bloquea si falla — reportar warning y 
 
 ### Checkpoint
 
-`[SKILL: sofka-asdd-atf-web-checkpoint-writer | mode: delete | run_folder: {run_folder}]` — pipeline completo.
+`[SKILL: asdd-atf-web-checkpoint-writer | mode: delete | run_folder: {run_folder}]` — pipeline completo.
 
 Equivale a (si el skill falla, usar directamente):
 ```bash
@@ -422,7 +422,7 @@ Métricas según modo: si execution → sumar passed/failed/blocked. Si no → C
 
 > `context_summary.json` puede existir de una sesión anterior. Usar overwrite (borrar + escribir) — NO append ni Edit.
 
-`[SKILL: sofka-asdd-atf-web-context-manager | mode: write | summary_for_phase: "{next}" | phases_completed | key_facts | next_action]`
+`[SKILL: asdd-atf-web-context-manager | mode: write | summary_for_phase: "{next}" | phases_completed | key_facts | next_action]`
 
 ### runs_index.json
 
@@ -445,7 +445,7 @@ node .claude/dashboard/generate-report.js {run_id}
 node .claude/dashboard/generate-index.js
 ```
 
-[Interpretación de exit codes y dispatch: ver `reference/atf-web/sofka-asdd-atf-web-orchestrator-fastpath-rules.md` § P19. `{run_started_at_iso}` viene de `session_context.pipeline_state.run_started_at` (lo setea `refresh-session-context.js`).]
+[Interpretación de exit codes y dispatch: ver `reference/atf-web/asdd-atf-web-orchestrator-fastpath-rules.md` § P19. `{run_started_at_iso}` viene de `session_context.pipeline_state.run_started_at` (lo setea `refresh-session-context.js`).]
 
 > **`{run_started_at_iso}`** se persiste en `session_context.pipeline_state.run_started_at` desde PASO 0.3 (refresh-session-context.js lo setea automáticamente). Sin él, el script analiza todo el transcript del proyecto y puede dar falsos positivos por sesiones previas.
 

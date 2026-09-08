@@ -3,13 +3,13 @@
 | Campo | Valor |
 |---|---|
 | **Tipo de documento** | Reporte de huecos de gobernanza (fase Verificar) |
-| **Autor** | `sofka-asdd-solution-architect` — capability `sofka-asdd-solution-architect-sofka-docs` |
+| **Autor** | `asdd-solution-architect` — capability `asdd-solution-architect-guide-docs` |
 | **Fecha** | 2026-08-03 |
 | **Rama** | `fix/os-compatibility` |
 | **`run_id`** | `2026-08-03-001` |
 | **Fase** | VERIFY |
 | **Audiencia** | Mantenedor del template ASDD |
-| **Alcance auditado** | `.claude/scripts/lib/sofka-asdd-plan-authorization-lib.mjs`, `.claude/scripts/lib/sofka-asdd-subagent-budget-lib.mjs`, `.claude/scripts/lib/sofka-asdd-run-reconciliation-lib.mjs`, `.claude/scripts/lib/sofka-asdd-proportional-router-lib.mjs`, `.claude/hooks/sofka-asdd-plan-gate.mjs`, `.claude/hooks/sofka-asdd-user-prompt-submit.mjs`, `.claude/hooks/_lib/run-phase-resolver.mjs`, `.claude/scripts/sofka-asdd-run-bootstrap.mjs`, `.claude/scripts/test-proportional-router.mjs`, `.claude/scripts/test-subagent-budget-routing.mjs`, `.sofka-asdd/asdd-run.schema.json` |
+| **Alcance auditado** | `.claude/scripts/lib/asdd-plan-authorization-lib.mjs`, `.claude/scripts/lib/asdd-subagent-budget-lib.mjs`, `.claude/scripts/lib/asdd-run-reconciliation-lib.mjs`, `.claude/scripts/lib/asdd-proportional-router-lib.mjs`, `.claude/hooks/asdd-plan-gate.mjs`, `.claude/hooks/asdd-user-prompt-submit.mjs`, `.claude/hooks/_lib/run-phase-resolver.mjs`, `.claude/scripts/asdd-run-bootstrap.mjs`, `.claude/scripts/test-proportional-router.mjs`, `.claude/scripts/test-subagent-budget-routing.mjs`, `.asdd/asdd-run.schema.json` |
 | **Estado** | Abierto — ningún hueco se corrige en este documento. El residuo del hueco 3 se cierra de forma circunstancial el 2026-08-04 (ver su sección); el modelo que lo causa sigue sin cambiar |
 
 ## Nota de alcance (leer antes que el resto)
@@ -40,10 +40,10 @@ en los puntos donde la decisión es de política, no técnica.
 |---|---|---|---|---|---|
 | **1** | La autorización de plan hereda el `expires_at` del challenge: el tiempo de deliberación del humano se descuenta del tiempo de ejecución de los agentes | **major** | **Bloquea** — dos lanzamientos abortados en este ciclo con `authorization-expired` | Template | 1 |
 | **2** | Un launch rechazado por formato del prompt consume la autorización de un solo uso: ningún agente arranca, pero la autorización queda quemada | **major** | **Bloquea** — obliga a un ciclo completo de challenge nuevo por un error sintáctico | Template | 1 |
-| **3** | `run-bootstrap` abre runs en fases que la reconciliación considera inválidas: no existe la categoría de run de mantenimiento o remediación | **major** | **Fricciona con residuo** — deja el validador en `error` permanente sin salida correcta (cerrado circunstancialmente el 2026-08-04; el modelo sigue igual) | Template + `sofka-asdd-solution-architect` (ADR) | 2 |
-| **4** | El clasificador de routing decide profundidad y dominio por **coincidencia léxica sobre el prompt completo**, bloques de salida pegados incluidos: una consulta de lectura se enrutó como `depth=FULL; domain=data; reason=new_feature` con `confidence=0.95` | **major** | **Fricciona y erosiona la señal** — fuerza plan y challenge para una lectura, nombra agentes del dominio equivocado y entrena al operador a desatender las inyecciones del hook | Template + `sofka-asdd-solution-architect` (ADR) | 2 |
+| **3** | `run-bootstrap` abre runs en fases que la reconciliación considera inválidas: no existe la categoría de run de mantenimiento o remediación | **major** | **Fricciona con residuo** — deja el validador en `error` permanente sin salida correcta (cerrado circunstancialmente el 2026-08-04; el modelo sigue igual) | Template + `asdd-solution-architect` (ADR) | 2 |
+| **4** | El clasificador de routing decide profundidad y dominio por **coincidencia léxica sobre el prompt completo**, bloques de salida pegados incluidos: una consulta de lectura se enrutó como `depth=FULL; domain=data; reason=new_feature` con `confidence=0.95` | **major** | **Fricciona y erosiona la señal** — fuerza plan y challenge para una lectura, nombra agentes del dominio equivocado y entrena al operador a desatender las inyecciones del hook | Template + `asdd-solution-architect` (ADR) | 2 |
 
-Los huecos 1 y 2 son del **mismo subsistema** (`sofka-asdd-plan-authorization-lib.mjs`) y se
+Los huecos 1 y 2 son del **mismo subsistema** (`asdd-plan-authorization-lib.mjs`) y se
 componen en el peor caso: un launch rechazado por formato quema la autorización (hueco 2), y la
 autorización nueva nace con una ventana ya recortada por la deliberación previa (hueco 1). El
 hueco 3 es independiente y de naturaleza distinta: no es un defecto de implementación sino una
@@ -65,7 +65,7 @@ clasificador mide intención con léxico.
 
 ### Evidencia en código
 
-`.claude/scripts/lib/sofka-asdd-plan-authorization-lib.mjs:12` fija el techo del TTL:
+`.claude/scripts/lib/asdd-plan-authorization-lib.mjs:12` fija el techo del TTL:
 
 ```js
 const DEFAULT_TTL_SECONDS = 900;
@@ -128,7 +128,7 @@ no muestran el daño, porque el daño ya se estaba evitando a mano.
 > hipótesis. Lo que **ya no es hipótesis** es que el hueco aborta trabajo real: la sección
 > siguiente documenta un vencimiento medido, ocurrido durante la producción de este mismo
 > documento. **Cómo cerrar el resto**: instrumentar `authorization-expired` en la telemetría de
-> invocaciones (`appendInvocationTelemetry`, `.claude/hooks/sofka-asdd-plan-gate.mjs:107`) para que
+> invocaciones (`appendInvocationTelemetry`, `.claude/hooks/asdd-plan-gate.mjs:107`) para que
 > todo vencimiento por deliberación quede medido y no dependa del relato de una sesión.
 
 ### Evidencia empírica del daño — el hueco 1 abortó la redacción de este documento
@@ -274,7 +274,7 @@ falla dos líneas después, **no hay rollback**: la marca ya está en disco.
 
 ### Qué valida `assertBudgetedLaunch` — y por qué podría correr antes
 
-`.claude/scripts/lib/sofka-asdd-subagent-budget-lib.mjs:89-101`:
+`.claude/scripts/lib/asdd-subagent-budget-lib.mjs:89-101`:
 
 ```js
 export function assertBudgetedLaunch(authorization, toolInput = {}) {
@@ -283,7 +283,7 @@ export function assertBudgetedLaunch(authorization, toolInput = {}) {
   const marker = launchMarker(authorization);
   if (!String(toolInput.prompt ?? "").includes(marker)) throw new Error(`launch prompt missing exact budget marker ${marker}`);
   if (authorization.capability) {
-    const loader = `node .claude/scripts/sofka-asdd-load-capability.mjs ${authorization.capability}`;
+    const loader = `node .claude/scripts/asdd-load-capability.mjs ${authorization.capability}`;
     if (!String(toolInput.prompt ?? "").includes(loader)) {
       throw new Error(`launch prompt missing primary capability loader ${loader}`);
     }
@@ -306,7 +306,7 @@ budget (`:93`) y cargador de capability (`:96-98`).
 
 ### El sitio de invocación confirma que no hay pre-validación
 
-`.claude/hooks/sofka-asdd-plan-gate.mjs` es el único consumidor en runtime, con dos call sites:
+`.claude/hooks/asdd-plan-gate.mjs` es el único consumidor en runtime, con dos call sites:
 
 - `:90` — camino normal del lote aprobado.
 - `:101` — fallback de `LIGHT atomic_scoped_change`, después de sintetizar un plan directo.
@@ -394,7 +394,7 @@ trasladan el costo.
 
 ### Evidencia en código — las dos mitades no se hablan
 
-`.claude/scripts/lib/sofka-asdd-run-reconciliation-lib.mjs:12-21`, completo:
+`.claude/scripts/lib/asdd-run-reconciliation-lib.mjs:12-21`, completo:
 
 ```js
 function indexRequirement(state) {
@@ -415,7 +415,7 @@ orden de `VALID_PHASES` en `.claude/hooks/_lib/run-phase-resolver.mjs:15-22`), o
 y apunte a `docs/specs/*-index.md` (`:34`, `:37`), y emite `build.index_ref — falta o no existe`
 cuando el campo está vacío (`:25`).
 
-Del otro lado, `.claude/scripts/sofka-asdd-run-bootstrap.mjs` **acepta cualquiera de las seis
+Del otro lado, `.claude/scripts/asdd-run-bootstrap.mjs` **acepta cualquiera de las seis
 fases sin condición** (`:149-150`):
 
 ```js
@@ -466,7 +466,7 @@ Las dos salidas disponibles eran ambas incorrectas:
 El framework asume que **todo run que llega a `design` o después pasó por un Analyze completo
 con INDEX**. La asunción está escrita en dos lugares y es coherente entre ellos: la condición de
 `indexRequirement():16` y la descripción del schema
-(`.sofka-asdd/asdd-run.schema.json:80-83`), que dice literalmente que `index_ref` *"es
+(`.asdd/asdd-run.schema.json:80-83`), que dice literalmente que `index_ref` *"es
 obligatorio desde Analyze complete o cualquier fase posterior"*.
 
 La asunción es correcta para el trabajo que el ciclo ASDD fue diseñado para gobernar. Lo que no
@@ -475,7 +475,7 @@ mantenimiento de tooling, portabilidad, corrección de deuda. Ese trabajo tiene 
 verifica, se documenta) pero no tiene backlog descomponible.
 
 **Verificado contra el schema, como se me pidió: no existe ningún campo que distinga tipos de
-run.** El inventario completo de propiedades de primer nivel de `.sofka-asdd/asdd-run.schema.json`
+run.** El inventario completo de propiedades de primer nivel de `.asdd/asdd-run.schema.json`
 es: `run_id`, `feature`, `project`, `started_at`, `last_checkpoint`, `status`, `current_phase`,
 `phases`, `context_summary`, `resume_hint`, `reconciliation`, `artifact_seq`, `manifest_path`,
 `artifact_naming`, `blocking_issue`, `escalations`, `auto_detected`. Ninguno es una categoría de
@@ -559,17 +559,17 @@ depth=FULL; domain=data; risk=medium; confidence=0.95; requires_plan=true; requi
 capabilities=specify,design,build,verify; reason=new_feature
 ```
 
-más **dos bloques de enforcement**: uno de seguridad exigiendo ruta FULL con `sofka-asdd-security` y
-`sofka-asdd-developer-backend` **antes de cualquier `Read`/`Grep`/`Bash`**, y otro de
+más **dos bloques de enforcement**: uno de seguridad exigiendo ruta FULL con `asdd-security` y
+`asdd-developer-backend` **antes de cualquier `Read`/`Grep`/`Bash`**, y otro de
 `ORC-000 / WF-003-B` declarando *señal de plataforma de datos analíticos detectada* y ordenando
-enrutar a `sofka-asdd-data-architect`, con la instrucción explícita de **no** usar
-`sofka-asdd-solution-architect`.
+enrutar a `asdd-data-architect`, con la instrucción explícita de **no** usar
+`asdd-solution-architect`.
 
 No había feature nueva, ni plataforma de datos, ni data lake, ni Databricks, ni Medallion.
 
 ### Punto 1 — qué produjo `domain=data`
 
-`domain` sale de `detectDomain()`, `sofka-asdd-proportional-router-lib.mjs:28-34`. La rama de datos
+`domain` sale de `detectDomain()`, `asdd-proportional-router-lib.mjs:28-34`. La rama de datos
 es una sola línea (`:29`) y su vocabulario es cerrado:
 
 ```js
@@ -586,8 +586,8 @@ vez y que es fácil confundir:
 
 | Clasificador | Dónde | Qué produjo |
 |---|---|---|
-| `detectDomain()` del router | `sofka-asdd-proportional-router-lib.mjs:29` | el campo `domain=data` de la línea de ruta |
-| `DATA_DOMAIN_RE` del hook | `sofka-asdd-user-prompt-submit.mjs:52`, vía `getDomainRouting()` (`:60-63`) y `getPromptInjectionProfile()` (`:92-94`) | el bloque imperativo `ORC-000 / WF-003-B` (`:226-236`) |
+| `detectDomain()` del router | `asdd-proportional-router-lib.mjs:29` | el campo `domain=data` de la línea de ruta |
+| `DATA_DOMAIN_RE` del hook | `asdd-user-prompt-submit.mjs:52`, vía `getDomainRouting()` (`:60-63`) y `getPromptInjectionProfile()` (`:92-94`) | el bloque imperativo `ORC-000 / WF-003-B` (`:226-236`) |
 
 Son **vocabularios distintos y parcialmente solapados**. El del hook es más largo (agrega
 `bigquery`, `snowflake`, `redshift`, `glue`, `athena`, `unity catalog`, `auto loader`, `star schema`,
@@ -605,7 +605,7 @@ esa intersección de seis. Y como el bloque inyectado fue el de `data` y no el d
 > Los candidatos con más superficie son `etl` y `elt`: son tokens de **tres letras** delimitados por
 > `\b`, y en JavaScript `\b` trata `-`, `/`, `.` y los espacios como frontera, de modo que
 > `ETL`, `.etl`, `x/etl/y` o `-elt-` matchean igual. **Cómo cerrarlo**: ejecutar
-> `node .claude/scripts/sofka-asdd-route-request.mjs` con el prompt exacto y ver el `domain`, o
+> `node .claude/scripts/asdd-route-request.mjs` con el prompt exacto y ver el `domain`, o
 > registrar en telemetría el token que disparó la clasificación —hoy la salida informa el
 > resultado (`domain=data`) pero **nunca qué lo causó**, que es justo el dato que haría auditable al
 > clasificador.
@@ -620,7 +620,7 @@ Es el mismo error de alcance que los guards de contención de este ciclo, en otr
 
 ### Punto 2 — qué produjo `reason=new_feature`
 
-`NEW_FEATURE`, `sofka-asdd-proportional-router-lib.mjs:6`:
+`NEW_FEATURE`, `asdd-proportional-router-lib.mjs:6`:
 
 ```js
 const NEW_FEATURE = /\b(nueva? funcionalidad|nuevo módulo|feature|implementar .+ (sistema|módulo|servicio|flujo)|crear .+ (api|servicio|módulo))\b/i;
@@ -645,7 +645,7 @@ Dos consecuencias verificables del **orden** de esa cadena:
 
 Y hay una ironía estructural que conviene registrar: `feature` **es vocabulario propio del
 framework**. `.asdd-run.json` tiene un campo `feature` de primer nivel
-(`.sofka-asdd/asdd-run.schema.json:22-25`, ya inventariado en el hueco 3), la reconciliación lo lee y
+(`.asdd/asdd-run.schema.json:22-25`, ya inventariado en el hueco 3), la reconciliación lo lee y
 el trabajo de este ciclo vale literalmente `feature: os-compatibility`. Es decir: **la salida de las
 propias herramientas del framework contiene el token que fuerza a su clasificador a FULL**. Nota
 menor pero útil para quien escriba el fix: el plural `features` **no** matchea, porque la `s` rompe
@@ -710,7 +710,7 @@ caiga después del corte en un prompt con mucho texto pegado.
 
 ### Punto 4 — de dónde sale `confidence=0.95`
 
-De un literal. `sofka-asdd-proportional-router-lib.mjs:53`: `depth = "FULL"; confidence = 0.95;`.
+De un literal. `asdd-proportional-router-lib.mjs:53`: `depth = "FULL"; confidence = 0.95;`.
 Cada rama de la cadena asigna su propio número fijo (0.96, 0.95, 0.9, 0.82, 0.62, 0.55). **La
 confianza es una constante por rama, no una medida de la fuerza de la evidencia**: no depende de
 cuántas señales matchearon, ni de cuán específicas eran, ni de dónde aparecieron. Su único
@@ -768,7 +768,7 @@ costo:
 
 1. **Impone la ceremonia completa a una lectura.** Plan, challenge, espera de `ok` — y con ello el
    reloj de 900 s del hueco 1, para un trabajo que no escribe nada.
-2. **Nombra agentes del dominio equivocado.** La inyección ordenó `sofka-asdd-data-architect` para
+2. **Nombra agentes del dominio equivocado.** La inyección ordenó `asdd-data-architect` para
    comparar dos salidas de consola. Ese agente tiene un scope check recíproco y habría devuelto
    `fuera_de_dominio`; el resultado de obedecer no era una respuesta peor, era **un rebote**.
 3. **Y sobre todo: entrena al operador a ignorar las inyecciones del hook.** Este es el riesgo de
@@ -779,10 +779,10 @@ costo:
 
 Vale además cuantificar el falso negativo de la dirección opuesta, porque es el argumento con el que
 se defiende el estado actual: si el vocabulario se afina y un pedido real de plataforma de datos
-—formulado de forma oblicua, sin ninguno de los tokens— se enruta a `sofka-asdd-solution-architect`,
+—formulado de forma oblicua, sin ninguno de los tokens— se enruta a `asdd-solution-architect`,
 **existe una segunda línea de defensa y está implementada**: el scope check recíproco de la Capa 3
 (ADR-002) obliga a ese agente a devolver `ESCALAMIENTO REQUERIDO / fuera_de_dominio` y a recomendar
-`sofka-asdd-data-architect`. El costo de un falso negativo es, entonces, **un rebote recuperable y
+`asdd-data-architect`. El costo de un falso negativo es, entonces, **un rebote recuperable y
 observable**. El del falso positivo **no lo detecta ningún control**: nadie reporta "este turno se
 enrutó a FULL sin motivo". Eso hace que afinar el clasificador hacia la precisión sea más barato de
 lo que parece — pero es una decisión de política, y no se decide en este documento.
@@ -795,7 +795,7 @@ la misma respuesta.
 
 **Qué dice el texto que ignoró.** No es un detalle menor: la propia línea de ruta que el hook imprime
 incluye la instrucción `"No sustituyas esta ruta por una clasificación manual"`
-(`sofka-asdd-user-prompt-submit.mjs:112`), y el encabezado del hook explica por qué existe
+(`asdd-user-prompt-submit.mjs:112`), y el encabezado del hook explica por qué existe
 (`:8-13`): la causa raíz del bug original era que *"el enforcement de delegación vivía SOLO como
 regla en el prompt y el modelo NO infería las señales… Reforzar texto no alcanza"*. El mecanismo se
 construyó **precisamente** para sacarle al modelo la decisión que el modelo acaba de retomar.
@@ -820,7 +820,7 @@ constituye un procedimiento**:
 
 **Lo que convierte al desvío en el menor de dos males, y es el hallazgo de esta sección:** el
 framework **no tiene un canal para registrar que el hook se equivocó**. El único escape hatch que
-existe es la variable de entorno `SOFKA_ASDD_DELEGATION_INJECT_DISABLE=1` (`:25`, aplicada en
+existe es la variable de entorno `ASDD_DELEGATION_INJECT_DISABLE=1` (`:25`, aplicada en
 `:138-140`), que es **todo o nada y silenciosa**: apaga *todas* las inyecciones de la sesión, sin
 dejar registro de qué se apagó ni por qué. Frente a una inyección incorrecta, las dos únicas salidas
 sancionadas son **obedecerla** o **desactivar el mecanismo completo**. No existe "esta inyección es
@@ -834,9 +834,9 @@ igual que los vencimientos del hueco 1 antes de instrumentar la telemetría.
 |---|---|---|
 | **A. Excluir del texto clasificado los bloques pegados** — cercas ```` ``` ````, bloques indentados, líneas con forma de log — antes de correr los patrones | Ataca la causa medida en el punto 3 y es la de mejor relación beneficio/costo: no toca ningún vocabulario ni ninguna rama de decisión. Debe **componerse** con `unwrapPromptDocument` (`:17-22`), que hace lo contrario en su caso especial; son dos mecanismos opuestos y hay que decidir la precedencia explícitamente, no dejarla al orden de las llamadas | Un usuario que pegue una spec o una HU **dentro** de una cerca y pida implementarla pierde las señales del contenido. Mitigación: la oración fuera de la cerca casi siempre lleva el verbo de intención, que es lo que la opción B propone exigir de todos modos |
 | **B. Exigir señal de intención, no solo léxico** — combinar el vocabulario de dominio con un verbo de diseño/cambio en proximidad. El patrón **ya existe en el archivo**: `AUTHORIZATION_RISK_RE` (`:74`) usa ventanas `[\s\S]{0,100}` e `isAuthorizationSecurityChange` (`:83`) exige verbo + objeto | Es la corrección conceptualmente correcta: el clasificador dice medir *intención* y hoy mide *presencia de palabras*. Reutiliza una técnica ya validada en el mismo archivo. Costo: los patrones se vuelven más largos y más frágiles de mantener | Pierde prompts telegráficos legítimos ("¿Medallion o Star schema?", "data lake en Databricks — opciones"), que hoy enrutan bien. Es un falso negativo real y frecuente en conversación exploratoria |
-| **C. Separar la confianza del clasificador de la severidad de la inyección** — emitir una confianza derivada de la evidencia (cuántas señales, cuán específicas, si aparecieron en bloque pegado) y modular con ella el **tono** del bloque inyectado: imperativo con evidencia fuerte, informativo con evidencia débil | Ataca la apariencia de certeza, que es el mecanismo por el que el hueco erosiona la señal (punto 4). Permite que el hook siga hablando siempre, pero dejando de gritar cuando tiene poco. Costo: es el cambio más grande, obliga a definir qué cuenta como evidencia y toca el contrato de salida del router que otros consumidores leen (`sofka-asdd-route-request.mjs`, `test-proportional-router.mjs`, `benchmark-subagent-budget.mjs`) | Bajo por sí solo: no cambia qué se detecta, solo cómo se presenta. Riesgo distinto: una señal fuerte presentada con tono suave puede desatenderse igual, y el problema se muda al calibrado del tono |
+| **C. Separar la confianza del clasificador de la severidad de la inyección** — emitir una confianza derivada de la evidencia (cuántas señales, cuán específicas, si aparecieron en bloque pegado) y modular con ella el **tono** del bloque inyectado: imperativo con evidencia fuerte, informativo con evidencia débil | Ataca la apariencia de certeza, que es el mecanismo por el que el hueco erosiona la señal (punto 4). Permite que el hook siga hablando siempre, pero dejando de gritar cuando tiene poco. Costo: es el cambio más grande, obliga a definir qué cuenta como evidencia y toca el contrato de salida del router que otros consumidores leen (`asdd-route-request.mjs`, `test-proportional-router.mjs`, `benchmark-subagent-budget.mjs`) | Bajo por sí solo: no cambia qué se detecta, solo cómo se presenta. Riesgo distinto: una señal fuerte presentada con tono suave puede desatenderse igual, y el problema se muda al calibrado del tono |
 | **D. Que la inyección de dominio sea sugerencia y no orden** — bajar "DEBES enrutar a X" a "considerá X; si no aplica, declaralo con motivo" | Es el cambio más barato y **describe lo que ya está pasando de hecho**: la orden se está desobedeciendo, en silencio y sin registro. Formalizarlo como sugerencia con declaración obligatoria convierte una desobediencia tácita en un desvío auditable. Costo: devuelve al modelo exactamente la decisión que el hook fue creado para quitarle (`:8-13`), con el riesgo de reincidir en la clase de bug que originó el mecanismo | Alto y difícil de acotar: ante una señal **correcta** de Figma o de datos, un modelo que puede "declarar el desvío" tiene una salida barata para no delegar. Es la opción con el peor perfil si se aplica **sola**; es razonable como complemento de A o B, cuando el falso positivo ya sea raro |
-| **E. Escape hatch granular con registro** — permitir marcar una inyección puntual como falso positivo, dejando traza, en vez del `SOFKA_ASDD_DELEGATION_INJECT_DISABLE=1` todo-o-nada de `:25` | No corrige la clasificación: hace **medible** su tasa de error, que hoy es desconocida. Es el prerrequisito para saber si A, B o C valen la pena y para verificar después que funcionaron | No aplica: no cambia ninguna decisión de routing. Su costo es estado nuevo y la tentación de usar el registro como bypass rutinario en lugar de arreglar el clasificador |
+| **E. Escape hatch granular con registro** — permitir marcar una inyección puntual como falso positivo, dejando traza, en vez del `ASDD_DELEGATION_INJECT_DISABLE=1` todo-o-nada de `:25` | No corrige la clasificación: hace **medible** su tasa de error, que hoy es desconocida. Es el prerrequisito para saber si A, B o C valen la pena y para verificar después que funcionaron | No aplica: no cambia ninguna decisión de routing. Su costo es estado nuevo y la tentación de usar el registro como bypass rutinario en lugar de arreglar el clasificador |
 
 **No se emite recomendación cerrada.** Lo que sí es verificable y acota la decisión del mantenedor:
 
@@ -861,10 +861,10 @@ huecos porque explica cómo se degrada la gobernanza sin que nadie tome una mala
 
 El commit `59975b2` (2026-07-17, *"perf(hooks): consolidate session start guards"*) movió cinco
 hooks de `SessionStart` a `.claude/scripts/legacy-hooks/` y los consolidó en
-`.claude/hooks/sofka-asdd-session-start-dispatcher.mjs`. Verificado en este ciclo:
+`.claude/hooks/asdd-session-start-dispatcher.mjs`. Verificado en este ciclo:
 `.claude/scripts/legacy-hooks/` contiene los cinco archivos
-(`sofka-asdd-codebase-size.mjs`, `sofka-asdd-model-strategy.mjs`, `sofka-asdd-session-start.mjs`,
-`sofka-asdd-state-freshness.mjs`, `sofka-asdd-tdd-state.mjs`) y ninguno de ellos existe en
+(`asdd-codebase-size.mjs`, `asdd-model-strategy.mjs`, `asdd-session-start.mjs`,
+`asdd-state-freshness.mjs`, `asdd-tdd-state.mjs`) y ninguno de ellos existe en
 `.claude/hooks/`.
 
 El commit actualizó `settings.json`, pero **dejó atrás dos consumidores de esas rutas**:
@@ -938,7 +938,7 @@ una propiedad de plataforma.** Pero es un dato necesario, y por dos razones conc
 
 - **Cualquier timeout dimensionado con los números de Linux es un generador de flakiness en
   Windows.** Un margen que en Fedora sobra por 8× en `test-git-guards-cwd` queda por debajo del
-  tiempo real en Windows. Y por `sofka-asdd-system-integrity.md`, un timeout intermitente no se
+  tiempo real en Windows. Y por `asdd-system-integrity.md`, un timeout intermitente no se
   tolera como ruido: se investiga. Conviene entonces no crear la condición.
 - **Es el mismo error de calibración que el hueco 1.** Los 900 s fijos de `DEFAULT_TTL_SECONDS` y un
   timeout de tests calibrado en una sola plataforma son la misma clase de defecto: **un presupuesto
@@ -983,7 +983,7 @@ sentencias —opción A— consigue el mismo beneficio sin tocar el invariante.
 
 Es el falso verde exacto que el check existe para impedir: un `build.index_ref` que apunta a un
 archivo sin slices. `parseIndex()` lo rechazaría con `INDEX has no planned slices`
-(`sofka-asdd-run-reconciliation-lib.mjs:57`), así que además no funcionaría — pero la tentación
+(`asdd-run-reconciliation-lib.mjs:57`), así que además no funcionaría — pero la tentación
 de forzarlo hasta que el validador calle es real, y el resultado sería un puntero que miente
 sobre la existencia de un backlog.
 
@@ -1037,8 +1037,8 @@ caso real.
 |---|---|---|---|:-:|---|:-:|
 | 1 | Autorización hereda el `expires_at` del challenge | major | **Bloquea** — aborta lanzamientos en curso | No | Template | **1** |
 | 2 | Rechazo por formato consume la autorización de un solo uso | major | **Bloquea** — obliga a reemitir el challenge | No | Template | **1** |
-| 3 | Sin categoría de run de mantenimiento; `run-bootstrap` abre en fases que la reconciliación invalida | major | **Fricciona con residuo** — `error` permanente en el validador; residuo cerrado el 2026-08-04, modelo sin cambiar | No | Template + ADR (`sofka-asdd-solution-architect`) | **2** |
-| 4 | El clasificador de routing decide profundidad y dominio por coincidencia léxica sobre el prompt completo, evidencia pegada incluida | major | **Fricciona y erosiona la señal** — ceremonia FULL para una lectura, agentes del dominio equivocado, inyecciones que se aprenden a ignorar | No — sobre-dispara, no deja pasar | Template + ADR (`sofka-asdd-solution-architect`) | **2** |
+| 3 | Sin categoría de run de mantenimiento; `run-bootstrap` abre en fases que la reconciliación invalida | major | **Fricciona con residuo** — `error` permanente en el validador; residuo cerrado el 2026-08-04, modelo sin cambiar | No | Template + ADR (`asdd-solution-architect`) | **2** |
+| 4 | El clasificador de routing decide profundidad y dominio por coincidencia léxica sobre el prompt completo, evidencia pegada incluida | major | **Fricciona y erosiona la señal** — ceremonia FULL para una lectura, agentes del dominio equivocado, inyecciones que se aprenden a ignorar | No — sobre-dispara, no deja pasar | Template + ADR (`asdd-solution-architect`) | **2** |
 
 **Los cuatro son de ergonomía y completitud del modelo de gobernanza, no de seguridad.** Ningún
 gate falla abierto, ninguno amplía scope, ninguno deja pasar una operación no autorizada. Lo que
@@ -1075,7 +1075,7 @@ importan:
 - El hueco 4 es el único **parcialmente** detectable por revisión de código —la regex está a la
   vista— y precisamente por eso muestra el límite de esa revisión: leer un patrón no dice **qué texto
   se le va a alimentar**. La prueba es que el mantenedor ya encontró una instancia de esta clase
-  (`sofka-asdd-proportional-router-lib.mjs:14-16`, contaminación desde criterios de aceptación) y la
+  (`asdd-proportional-router-lib.mjs:14-16`, contaminación desde criterios de aceptación) y la
   cerró para ese caso concreto, no para el mecanismo.
 
 Es el argumento operativo para que el mantenedor **use el framework en trabajo real,
@@ -1090,11 +1090,11 @@ logs pegados y preguntas de seguimiento, no solo con prompts limpios de una sola
 ### Qué se hizo en este documento
 
 - Se verificó **en código, línea por línea**, el mecanismo de los cuatro huecos: herencia de
-  `expires_at` (`sofka-asdd-plan-authorization-lib.mjs:221`), consumo previo a la validación de
+  `expires_at` (`asdd-plan-authorization-lib.mjs:221`), consumo previo a la validación de
   formato (`:299-306`), la asimetría entre `indexRequirement()`
-  (`sofka-asdd-run-reconciliation-lib.mjs:12-21`) y `run-bootstrap.mjs:78-98,149-150`, y la
-  clasificación léxica del router (`sofka-asdd-proportional-router-lib.mjs:6,29,37,44,52-53,73-78,85-90`)
-  junto con las dos inyecciones del hook (`sofka-asdd-user-prompt-submit.mjs:52,68-84,86-102,104-125,226-236`).
+  (`asdd-run-reconciliation-lib.mjs:12-21`) y `run-bootstrap.mjs:78-98,149-150`, y la
+  clasificación léxica del router (`asdd-proportional-router-lib.mjs:6,29,37,44,52-53,73-78,85-90`)
+  junto con las dos inyecciones del hook (`asdd-user-prompt-submit.mjs:52,68-84,86-102,104-125,226-236`).
 - Se corrigieron todos los números de línea aproximados del encargo contra los archivos reales y
   se usaron los exactos.
 - Se obtuvo **evidencia empírica** de la herencia del TTL en el store vivo de autorizaciones, con
@@ -1118,7 +1118,7 @@ logs pegados y preguntas de seguimiento, no solo con prompts limpios de una sola
   verificable. Las hipótesis de los huecos 2 y de la sección de causa raíz **se mantienen**: la
   secuencia `launch-budget-mismatch` → `authorization-replay` sigue no siendo reconstruible desde el
   store, y el barrido exhaustivo de referencias colgantes de `59975b2` sigue sin hacerse.
-- Se verificó contra `.sofka-asdd/asdd-run.schema.json` que **no existe** ningún campo de tipo de
+- Se verificó contra `.asdd/asdd-run.schema.json` que **no existe** ningún campo de tipo de
   run, confirmando la afirmación del encargo.
 - Se registró la causa raíz compartida con el fallo baselineado de `test-orc-tier-c-hooks.mjs`.
 - **Agregado el 2026-08-04 — hueco 4.** Se documentó la clasificación incorrecta de una consulta de
@@ -1132,13 +1132,13 @@ logs pegados y preguntas de seguimiento, no solo con prompts limpios de una sola
   `LIGHT/general/0.55` sin ninguna inyección; (d) `confidence` es un **literal por rama** (`:53`) y
   `risk`/`requires_confirmation` se derivan de `depth` (`:86`, `:89`), no de evidencia medida.
 - Se encontró **corroboración independiente** del hueco 4 en el propio router
-  (`sofka-asdd-proportional-router-lib.mjs:14-16` y `test-proportional-router.mjs:27-39`): la clase de
+  (`asdd-proportional-router-lib.mjs:14-16` y `test-proportional-router.mjs:27-39`): la clase de
   defecto ya se había encontrado y se cerró con un allowlist de un encabezado, no con una regla
   general. Se verificó también que existen tests negativos para el vocabulario de software
   (`test-orc-enforcement-hooks.mjs:28`) pero **ninguno** para el de datos ni para `feature`.
 - Se documentó que el orquestador **desvió** las dos inyecciones del hook, con su justificación y sus
   contraargumentos, y se identificó que el único escape hatch existente
-  (`SOFKA_ASDD_DELEGATION_INJECT_DISABLE=1`, `sofka-asdd-user-prompt-submit.mjs:25,138-140`) es
+  (`ASDD_DELEGATION_INJECT_DISABLE=1`, `asdd-user-prompt-submit.mjs:25,138-140`) es
   **todo-o-nada y silencioso**, lo que deja al desvío ad hoc como la única alternativa a obedecer.
 - Se registró la **evidencia de paridad cross-OS** que cierra el ciclo, separando lo verificado en
   Windows de lo reportado por el usuario en WSL Fedora, e incluyendo la brecha de rendimiento
@@ -1152,11 +1152,11 @@ logs pegados y preguntas de seguimiento, no solo con prompts limpios de una sola
 
 ### Qué NO se hizo
 
-- **No se corrigió ningún hueco.** No se tocó `sofka-asdd-plan-authorization-lib.mjs`,
-  `sofka-asdd-subagent-budget-lib.mjs`, `sofka-asdd-run-reconciliation-lib.mjs`,
-  `sofka-asdd-run-bootstrap.mjs`, `asdd-run.schema.json`, `sofka-asdd-plan-gate.mjs`,
-  `sofka-asdd-user-prompt-submit.mjs` ni `sofka-asdd-proportional-router-lib.mjs`. Tampoco se tocó
-  `.asdd-run.json` ni `sofka-asdd-test-baseline.json`, que estaban fuera del alcance autorizado.
+- **No se corrigió ningún hueco.** No se tocó `asdd-plan-authorization-lib.mjs`,
+  `asdd-subagent-budget-lib.mjs`, `asdd-run-reconciliation-lib.mjs`,
+  `asdd-run-bootstrap.mjs`, `asdd-run.schema.json`, `asdd-plan-gate.mjs`,
+  `asdd-user-prompt-submit.mjs` ni `asdd-proportional-router-lib.mjs`. Tampoco se tocó
+  `.asdd-run.json` ni `asdd-test-baseline.json`, que estaban fuera del alcance autorizado.
 - **No se reejecutó el clasificador con el prompt exacto del incidente del hueco 4.** El texto pegado
   no se conserva en ningún artefacto del repositorio, así que la identificación del token concreto
   queda como hipótesis; el mecanismo, en cambio, está verificado en código.
@@ -1180,4 +1180,4 @@ convertir el relato de sesión en hecho; incluye el token que disparó `domain=d
 reportados de Linux) · CORE-005 (deuda de ADR señalada en los huecos 3 y 4) ·
 ORC-000-B (el desvío del orquestador frente a la inyección del hook queda declarado, no implícito) ·
 GS-001 (rama no protegida verificada) · GS-003 (sin commit) ·
-`sofka-asdd-spanish-orthography.md`.
+`asdd-spanish-orthography.md`.

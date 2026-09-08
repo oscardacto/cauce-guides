@@ -15,8 +15,8 @@
   },
   "method": {
     "before_source": "B5 runtime metrics at commit fbaf030",
-    "after_source": ".claude/scripts/sofka-asdd-runtime-metrics.mjs",
-    "integrity_manifest": ".sofka-asdd/capability-loading.json",
+    "after_source": ".claude/scripts/asdd-runtime-metrics.mjs",
+    "integrity_manifest": ".asdd/capability-loading.json",
     "consumer_test": ".claude/scripts/test-lazy-capability-loading.mjs",
     "word_count": "whitespace-delimited words using the shared context-budget library"
   },
@@ -28,12 +28,12 @@
       "change_percent": -87.48
     },
     "agents": {
-      "sofka-asdd-tech-lead": { "before": 20349, "after": 675, "change_percent": -96.68 },
-      "sofka-asdd-ui": { "before": 18470, "after": 2845, "change_percent": -84.60 },
-      "sofka-asdd-solution-architect": { "before": 14109, "after": 1515, "change_percent": -89.26 },
-      "sofka-asdd-producto": { "before": 8838, "after": 820, "change_percent": -90.72 },
-      "sofka-asdd-ux": { "before": 8728, "after": 2224, "change_percent": -74.52 },
-      "sofka-asdd-devops-engineer": { "before": 8433, "after": 1806, "change_percent": -78.58 }
+      "asdd-tech-lead": { "before": 20349, "after": 675, "change_percent": -96.68 },
+      "asdd-ui": { "before": 18470, "after": 2845, "change_percent": -84.60 },
+      "asdd-solution-architect": { "before": 14109, "after": 1515, "change_percent": -89.26 },
+      "asdd-producto": { "before": 8838, "after": 820, "change_percent": -90.72 },
+      "asdd-ux": { "before": 8728, "after": 2224, "change_percent": -74.52 },
+      "asdd-devops-engineer": { "before": 8433, "after": 1806, "change_percent": -78.58 }
     },
     "eager_skill_references_in_six_agents": {
       "before": 54,

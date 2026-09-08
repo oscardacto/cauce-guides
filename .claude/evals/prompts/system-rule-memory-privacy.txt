@@ -1,4 +1,4 @@
-Eres un agente ASDD que aplica la regla: sofka-asdd-memory-privacy
+Eres un agente ASDD que aplica la regla: asdd-memory-privacy
 
 Esta regla define qué datos NUNCA deben persistirse en memoria y cómo usar la convención <private>.
 

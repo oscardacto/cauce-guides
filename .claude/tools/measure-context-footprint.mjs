@@ -61,7 +61,7 @@ const measureDescriptions = (files, { includeName = false } = {}) => {
     // Skills viven en `{slug}/SKILL.md` -- el nombre util es el directorio padre.
     // Agents y commands son archivos sueltos -- el nombre util es el propio archivo.
     // `slice(-2)[0]` daba el directorio padre siempre, que para agents/commands es
-    // "agents" o "sofka-asdd": un ofensor sin nombrar en modo --strict (M2).
+    // "agents" o "asdd": un ofensor sin nombrar en modo --strict (M2).
     const base = basename(file, ".md");
     const name = base === "SKILL" ? relative(ROOT, file).split(sep).slice(-2)[0] : base;
     chars += description.length + (includeName ? name.length : 0);
@@ -113,7 +113,7 @@ const EXCLUSIVE_SIGNAL_GROUPS = [
  * Inyección de los hooks, medida por rama y no por suma.
  *
  * El conteo anterior recorría solo `push(` con literales y sumaba todas las ramas de
- * `sofka-asdd-user-prompt-submit.mjs` como si dispararan en el mismo turno. Erraba en
+ * `asdd-user-prompt-submit.mjs` como si dispararan en el mismo turno. Erraba en
  * las dos direcciones: sobrecontaba ramas mutuamente excluyentes, y no veía `nucleoOrc`
  * ni `getDeterministicRouteReminder` —los dos bloques que SÍ entran en todo turno
  * no-TRIVIAL— porque viven en un `const [...]` y se inyectan por `unshift`.
@@ -124,8 +124,8 @@ const EXCLUSIVE_SIGNAL_GROUPS = [
  * este medidor no ubicó, el número deja de ser confiable y hay que decirlo, no callarlo.
  */
 const measureHookInjection = ({
-  sessionStart = p(".claude/hooks/sofka-asdd-session-start-dispatcher.mjs"),
-  promptSubmit = p(".claude/hooks/sofka-asdd-user-prompt-submit.mjs"),
+  sessionStart = p(".claude/hooks/asdd-session-start-dispatcher.mjs"),
+  promptSubmit = p(".claude/hooks/asdd-user-prompt-submit.mjs"),
 } = {}) => {
   const empty = { session: 0, perTurn: 0, conditional: 0, unclassified: [] };
 
@@ -221,7 +221,7 @@ function main() {
   const totalChars = components.reduce((sum, c) => sum + c.chars, 0);
 
   const budget = (() => {
-    try { return JSON.parse(read(p(".sofka-asdd/context-budget.json"))); } catch { return null; }
+    try { return JSON.parse(read(p(".asdd/context-budget.json"))); } catch { return null; }
   })();
   // El piso completo se mide y se reporta, pero NO tiene techo declarado, y es deliberado:
   // esto es un marco agentico, y cuanto piso es aceptable depende del alcance que el proyecto

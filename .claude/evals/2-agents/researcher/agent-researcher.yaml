@@ -1,4 +1,4 @@
-description: "sofka-asdd-researcher: spikes, benchmarks y matrices"
+description: "asdd-researcher: spikes, benchmarks y matrices"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

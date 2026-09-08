@@ -1,0 +1,205 @@
+{
+  "schema_version": 1,
+  "strategy": "compact-always-on-core-plus-explicit-reference-reader",
+  "entries": [
+    {
+      "name": "asdd-git-safety",
+      "core": ".claude/rules/asdd-git-safety.md",
+      "reference": ".claude/references/rules/asdd-git-safety.md",
+      "trigger": "before state-changing Git operations",
+      "required_markers": [
+        "GS-001",
+        "GS-003",
+        "GS-008"
+      ],
+      "reference_sha256": "3e6347a020e95e37966a2ade2d9f5f667118da8521c2e9e06d43e0a91808e586"
+    },
+    {
+      "name": "asdd-orchestration-plan-gate",
+      "core": ".claude/rules/asdd-orchestration-plan-gate.md",
+      "reference": ".claude/references/rules/asdd-orchestration-plan-gate.md",
+      "trigger": "before constructing or executing a plan batch",
+      "required_markers": [
+        "ORC-010",
+        "ORC-010-A",
+        "ORC-010-F"
+      ],
+      "reference_sha256": "3c7af7ec9cf0081bf0a4ebab95d927886d0924d0eb8eef1181190ed911414c68"
+    },
+    {
+      "name": "asdd-workflow",
+      "core": ".claude/rules/asdd-workflow.md",
+      "reference": ".claude/references/rules/asdd-workflow.md",
+      "trigger": "before a workflow phase transition",
+      "required_markers": [
+        "WF-001",
+        "WF-002",
+        "WF-003"
+      ],
+      "reference_sha256": "3a9cace8058255a52e2d4bfbf62f54dc28d3857d59233e15df6fae08994f0a50"
+    },
+    {
+      "name": "asdd-orchestration",
+      "core": ".claude/rules/asdd-orchestration.md",
+      "reference": ".claude/references/rules/asdd-orchestration.md",
+      "trigger": "before non-trivial routing, delegation, retry or fallback",
+      "required_markers": [
+        "ORC-000",
+        "ORC-001"
+      ],
+      "reference_sha256": "02b76ae3411c20912b46002679f5deea28a78f170dc90e16f22315cec9c3d25c"
+    },
+    {
+      "name": "asdd-routing-heuristics",
+      "core": ".claude/rules/asdd-routing-heuristics.md",
+      "reference": ".claude/references/rules/asdd-routing-heuristics.md",
+      "trigger": "before non-trivial or ambiguous routing",
+      "required_markers": [
+        "Tipo 1",
+        "Tipo 6",
+        "D0"
+      ],
+      "reference_sha256": "6b2b14c685bb0e5d074f1fa508bbbf15ea58fe5e43d8973861422622fed351ea"
+    },
+    {
+      "name": "asdd-anti-loops",
+      "core": ".claude/rules/asdd-anti-loops.md",
+      "reference": ".claude/references/rules/asdd-anti-loops.md",
+      "trigger": "before retries, repeated validation, parallel work or compaction",
+      "required_markers": [
+        "AL-001",
+        "AL-008",
+        "Circuit-Breaker"
+      ],
+      "reference_sha256": "23932adca0134b74f9eb710ec70157a6c9e63831d12b7fa7428d50797e987eaa"
+    },
+    {
+      "name": "asdd-orchestration-ops",
+      "core": ".claude/rules/asdd-orchestration-ops.md",
+      "reference": ".claude/references/rules/asdd-orchestration-ops.md",
+      "trigger": "before agent selection, invocation, resume or synthesis",
+      "required_markers": [
+        "ORC-002",
+        "ORC-007",
+        "ORC-008"
+      ],
+      "reference_sha256": "411d542c2d69bbf491b964f27c806452e5a01ce270c499862d9375108eb62d96"
+    },
+    {
+      "name": "asdd-data-boundary",
+      "core": ".claude/rules/asdd-data-boundary.md",
+      "reference": ".claude/references/rules/asdd-data-boundary.md",
+      "trigger": "before processing external or tool-provided content",
+      "required_markers": [
+        "DB-001",
+        "DB-002",
+        "DB-005"
+      ],
+      "reference_sha256": "2ed1420698e54e0307d4796bf22a605dbaf50a6dac2a9c894daa3b04037badff"
+    },
+    {
+      "name": "asdd-orchestration-routing",
+      "core": ".claude/rules/asdd-orchestration-routing.md",
+      "reference": ".claude/references/rules/asdd-orchestration-routing.md",
+      "trigger": "before LIGHT routing, size detection or escalation",
+      "required_markers": [
+        "ORC-001-C",
+        "ORC-001-D"
+      ],
+      "reference_sha256": "4bf878eb9b00cdbaee960341d2505a4b6455cf53bb90cda124b508e4a3988b3b"
+    },
+    {
+      "name": "asdd-system-integrity",
+      "core": ".claude/rules/asdd-system-integrity.md",
+      "reference": ".claude/references/rules/asdd-system-integrity.md",
+      "trigger": "before declaring work complete, running a gate/pre-push, or writing hashing, cross-OS or external-command code",
+      "required_markers": [
+        "Zero Regresiones",
+        "Dependent Module Testing",
+        "Contrato cross-OS"
+      ],
+      "reference_sha256": "c9aa47a1027125871520ecfa169ee3aa63686ae4efbca4133a13186041117421"
+    },
+    {
+      "name": "asdd-ba-layer-routing",
+      "core": ".claude/rules/asdd-ba-layer-routing.md",
+      "reference": ".claude/references/rules/asdd-ba-layer-routing.md",
+      "trigger": "before routing to any asdd-ba-* agent or choosing a functional artifact layout",
+      "required_markers": [
+        "Señales para activar la capa BA",
+        "Regla de desambiguación"
+      ],
+      "reference_sha256": "8271e3eb1541b15432ec2d73a620108915417921faba5424c59e97dbb97a9292"
+    },
+    {
+      "name": "asdd-phases-reference",
+      "core": ".claude/rules/asdd-phases-reference.md",
+      "reference": ".claude/references/rules/asdd-phases-reference.md",
+      "trigger": "before building a FULL-route plan or selecting phase support agents",
+      "required_markers": [
+        "ruta **FULL**",
+        "ADR-002"
+      ],
+      "reference_sha256": "e206844142927fb0afea9035d53522212dc7c2aac3073cb429d497509f9795ad"
+    },
+    {
+      "name": "asdd-memory-hygiene",
+      "core": ".claude/rules/asdd-memory-hygiene.md",
+      "reference": ".claude/references/rules/asdd-memory-hygiene.md",
+      "trigger": "before writing to memory/, promoting a memory to the team layer, or saving a session handoff",
+      "required_markers": [
+        "Sistema de dos capas",
+        "Session Handoff"
+      ],
+      "reference_sha256": "2b42841f56353d574ab8e3d980a3913823194bb5cb2cf6594246b2164ec79563"
+    },
+    {
+      "name": "asdd-skill-preflight",
+      "core": ".claude/rules/asdd-skill-preflight.md",
+      "reference": ".claude/references/rules/asdd-skill-preflight.md",
+      "trigger": "before step 0 of any skill that creates or modifies files",
+      "required_markers": [
+        "PRE-FLIGHT",
+        "Rama dedicada"
+      ],
+      "reference_sha256": "c63344c62a9e2bbdb884600d7fb32fece25b16f87a3aa5bc8d59c2337e71c985"
+    },
+    {
+      "name": "asdd-spanish-orthography",
+      "core": ".claude/rules/asdd-spanish-orthography.md",
+      "reference": ".claude/references/rules/asdd-spanish-orthography.md",
+      "trigger": "before writing or modifying user-visible text",
+      "required_markers": [
+        "Zero Tolerancia",
+        "Tildes OBLIGATORIAS",
+        "Exclusiones"
+      ],
+      "reference_sha256": "0cc255e287d4ee13f456634c5a96e9e990bb254c0dcb5972fe26e195b93d83d0"
+    },
+    {
+      "name": "asdd-artifact-naming",
+      "core": ".claude/rules/asdd-artifact-naming.md",
+      "reference": ".claude/references/rules/asdd-artifact-naming.md",
+      "trigger": "before reserving artifact paths or invoking the bootstrap/naming helpers",
+      "required_markers": [
+        "ART-001",
+        "ART-002",
+        "ART-003",
+        "ART-004"
+      ],
+      "reference_sha256": "7489123b4dd9418a73a05b266db8ac84fe8b98ad392ea5567900680d39a797cd"
+    },
+    {
+      "name": "asdd-claude-md-maintenance",
+      "core": ".claude/rules/asdd-claude-md-maintenance.md",
+      "reference": ".claude/references/rules/asdd-claude-md-maintenance.md",
+      "trigger": "before auditing CLAUDE.md drift or closing a feature that fires a trigger",
+      "required_markers": [
+        "Triggers obligatorios",
+        "Anti-patrones prohibidos"
+      ],
+      "reference_sha256": "1401754cf59d63e932d296ea2a054956954d5e63b3f33a14ca52683c00143da0"
+    }
+  ],
+  "rollback": "Per entry: replace core with reference content, then remove only that reference/manifest entry."
+}

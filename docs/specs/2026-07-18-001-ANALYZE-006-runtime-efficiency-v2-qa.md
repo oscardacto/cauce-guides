@@ -54,7 +54,7 @@ Scenario: Múltiples denies conservan todas las razones ganadoras
   And ambas razones aparecen en orden determinista
 
 Scenario: El dispatcher coexiste con collector
-  Given un dispatcher ASDD de proyecto y sofka-collector instalado globalmente
+  Given un dispatcher ASDD de proyecto y guide-collector instalado globalmente
   When una tool permitida completa PreToolUse y PostToolUse
   Then se inicia exactamente un proceso de enforcement ASDD
   And collector conserva exactamente un evento Pre y uno Post con el mismo tool_use_id

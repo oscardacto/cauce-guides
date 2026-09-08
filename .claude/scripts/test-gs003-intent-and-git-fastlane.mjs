@@ -20,10 +20,10 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
-import { issueIntentCommitPreauthorization } from "./lib/sofka-asdd-intent-commit-preauth-lib.mjs";
-import { getOperationAuthorizationDecision } from "../hooks/sofka-asdd-plan-authorization-operation.mjs";
-import { getOrchestratorGuardDecision } from "../hooks/sofka-asdd-orchestrator-guard.mjs";
-import { getPlanGateDecision } from "../hooks/sofka-asdd-plan-gate.mjs";
+import { issueIntentCommitPreauthorization } from "./lib/asdd-intent-commit-preauth-lib.mjs";
+import { getOperationAuthorizationDecision } from "../hooks/asdd-plan-authorization-operation.mjs";
+import { getOrchestratorGuardDecision } from "../hooks/asdd-orchestrator-guard.mjs";
+import { getPlanGateDecision } from "../hooks/asdd-plan-gate.mjs";
 import {
   AUTHORIZATIONS_PATH,
   CHALLENGE_PATH,
@@ -31,21 +31,21 @@ import {
   approveActiveChallenge,
   consumeLaunchAuthorization,
   issueChallenge,
-} from "./lib/sofka-asdd-plan-authorization-lib.mjs";
+} from "./lib/asdd-plan-authorization-lib.mjs";
 import {
   DIRECT_LIGHT_AUTHORIZATION_PATH,
   clearDirectLightAuthorization,
   consumeDirectLightAuthorization,
   issueDirectLightAuthorization,
   releaseDirectLightAuthorization,
-} from "./lib/sofka-asdd-direct-light-authorization-lib.mjs";
+} from "./lib/asdd-direct-light-authorization-lib.mjs";
 import {
   authorizationPath as COMMIT_AUTHORIZATION_PATH,
   challengePath as COMMIT_CHALLENGE_PATH,
   consumeCommitAuthorization,
   issueIntentCommitAuthorization,
   issueCommitChallenge,
-} from "./lib/sofka-asdd-commit-authorization-lib.mjs";
+} from "./lib/asdd-commit-authorization-lib.mjs";
 
 let failures = 0;
 const assert = (name, condition) => {
@@ -72,7 +72,7 @@ const RUN_STATE_PATH = resolve(PROJECT_ROOT, ".asdd-run.json");
 const runStateBackup = existsSync(RUN_STATE_PATH) ? readFileSync(RUN_STATE_PATH, "utf8") : null;
 rmSync(RUN_STATE_PATH, { force: true });
 
-const AGENT = "sofka-asdd-tech-lead";
+const AGENT = "asdd-tech-lead";
 const BRANCH = "fix/suite-gs003-intent";
 
 const currentBranchName = () => execFileSync("git", ["symbolic-ref", "--short", "HEAD"], {
@@ -94,7 +94,7 @@ const gitPlan = {
   route: "LIGHT", phase: "build", risk: "low", confidence: 0.93, max_concurrent: 1,
   agents: [{
     agent: AGENT,
-    capability: "sofka-asdd-tech-lead-commit",
+    capability: "asdd-tech-lead-commit",
     scope: [], commands: [],
     model: "sonnet", max_turns: 20, retries: 0,
   }],
@@ -118,7 +118,7 @@ function grantGitOpsAuthorization({ fastLane = "git_ops" } = {}) {
   consumeLaunchAuthorization(AGENT, new Date(), { fastLane });
   // El agente carga su capability aprobada, como exige el propio hook.
   getOperationAuthorizationDecision(
-    operation("node .claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-tech-lead-commit"),
+    operation("node .claude/scripts/asdd-load-capability.mjs asdd-tech-lead-commit"),
   );
 }
 
@@ -176,15 +176,15 @@ try {
   assert("preguntar por commits NO es ordenarlos",
     preauth("¿cuántos commits tiene la rama?") === null);
 
-  const protegidas = process.env.SOFKA_ASDD_PROTECTED_BRANCHES;
+  const protegidas = process.env.ASDD_PROTECTED_BRANCHES;
   try {
     // La rama real de la suite pasa a ser "protegida" para el guard.
-    process.env.SOFKA_ASDD_PROTECTED_BRANCHES = currentBranchName();
+    process.env.ASDD_PROTECTED_BRANCHES = currentBranchName();
     assert("en una rama protegida NO se pre-autoriza (manda GS-001)",
       preauth("commitea los cambios") === null);
   } finally {
-    if (protegidas === undefined) delete process.env.SOFKA_ASDD_PROTECTED_BRANCHES;
-    else process.env.SOFKA_ASDD_PROTECTED_BRANCHES = protegidas;
+    if (protegidas === undefined) delete process.env.ASDD_PROTECTED_BRANCHES;
+    else process.env.ASDD_PROTECTED_BRANCHES = protegidas;
   }
 
   console.log("\nF1-ter: el modo `command` clásico no cambia");
@@ -231,7 +231,7 @@ try {
   }
   assert("un comando NO git tampoco entra por la vía rápida",
     getOperationAuthorizationDecision(
-      operation("node .claude/scripts/sofka-asdd-resolve-workspace.mjs"),
+      operation("node .claude/scripts/asdd-resolve-workspace.mjs"),
     )?.decision === "deny");
 
   // --- F4: cupo por pedido ---------------------------------------------------
@@ -260,7 +260,7 @@ try {
     toolInput: {
       model: "sonnet",
       prompt: "[ASDD-BUDGET route=LIGHT phase=build model=sonnet max_turns=20 retries=0]\n"
-        + "node .claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-tech-lead-commit",
+        + "node .claude/scripts/asdd-load-capability.mjs asdd-tech-lead-commit",
     },
   };
   const usos = [];
@@ -296,7 +296,7 @@ try {
     tool_input: {
       subagent_type: AGENT, model: "sonnet",
       prompt: "[ASDD-BUDGET route=LIGHT phase=build model=sonnet max_turns=20 retries=0]\n"
-        + `node .claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-tech-lead-${skill}`,
+        + `node .claude/scripts/asdd-load-capability.mjs asdd-tech-lead-${skill}`,
     },
   });
   assert("commit, pre-push y create-mr se lanzan en el mismo turno",
@@ -315,7 +315,7 @@ try {
   const guard = (command) => getOrchestratorGuardDecision(
     { tool_name: "Bash", tool_input: { command }, cwd: process.cwd() }, {},
   );
-  const commitAuth = (sub) => `node .claude/scripts/sofka-asdd-commit-authorization.mjs ${sub}`;
+  const commitAuth = (sub) => `node .claude/scripts/asdd-commit-authorization.mjs ${sub}`;
 
   assert("`issue` se permite — es el paso que GS-003 le manda al orquestador",
     guard(commitAuth("issue")) === null);
@@ -330,7 +330,7 @@ try {
   // La clasificación es POR SEGMENTO: encadenar algo peligroso se deniega por
   // el segmento peligroso, no por el hecho de encadenar.
   for (const cola of ["rm -rf /tmp/x", 'git commit -m "x"', "npm publish",
-    "node .claude/scripts/sofka-asdd-regen-hashes.mjs"]) {
+    "node .claude/scripts/asdd-regen-hashes.mjs"]) {
     assert(`encadenar \`${cola.slice(0, 22)}\` se deniega`,
       guard(`${commitAuth("issue")} && ${cola}`)?.decision === "deny");
   }

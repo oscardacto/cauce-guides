@@ -37,7 +37,7 @@ de avance no puede verificarse contra el estado real del artefacto.
 ## Problema
 
 ORC-000 deniega `Edit`/`Write` al hilo principal **sin excepciones**
-(`sofka-asdd-orchestrator-guard.mjs`, deny duro). En el Procedimiento C no hay agente
+(`asdd-orchestrator-guard.mjs`, deny duro). En el Procedimiento C no hay agente
 que medie: la actualización del documento vivo es parte del protocolo de conversación
 del propio orquestador.
 
@@ -70,7 +70,7 @@ Quitar cualquiera de las tres abre la grieta más de lo necesario.
 - **(a) Delegar cada escritura a `data-governance`.** Un subagente por gap, y los
   gaps se presentan uno por vez — multiplica invocaciones para una edición puntual
   cuyo contenido ya está resuelto en la conversación.
-- **(b) `SOFKA_ASDD_ORCHESTRATOR_GUARD_DISABLE=1`.** Apaga el guard **entero**
+- **(b) `ASDD_ORCHESTRATOR_GUARD_DISABLE=1`.** Apaga el guard **entero**
   (también Bash) y sin rastro por archivo — es el escape hatch de emergencia, no una
   política.
 
@@ -105,7 +105,7 @@ La barrera real es la raíz de ruta.
   tiene ahora una excepción de dominio declarada, acotada por ruta y contrato. Se
   dice explícitamente acá, no por omisión. El texto de CORE-009 en `CLAUDE.md` **no
   se modifica**: la excepción se declara en ORC-000
-  (`.claude/rules/sofka-asdd-orchestration.md` y su referencia), que es su
+  (`.claude/rules/asdd-orchestration.md` y su referencia), que es su
   operacionalización.
 - **No se generaliza a otros dominios.** ATF no lo pidió y no lo necesita: escribe
   desde Node, no con `Edit`. Cualquier dominio futuro que necesite documentos vivos
@@ -116,11 +116,11 @@ La barrera real es la raíz de ruta.
 
 ## Enforcement
 
-- **Código:** `.claude/hooks/sofka-asdd-orchestrator-guard.mjs` — la excepción vive
+- **Código:** `.claude/hooks/asdd-orchestrator-guard.mjs` — la excepción vive
   dentro de la rama `isEdit || isWrite` de `getOrchestratorGuardDecision()`, antes
   del deny.
-- **Regla:** `.claude/rules/sofka-asdd-orchestration.md` (núcleo) y
-  `.claude/references/rules/sofka-asdd-orchestration.md` (Límites absolutos) declaran
+- **Regla:** `.claude/rules/asdd-orchestration.md` (núcleo) y
+  `.claude/references/rules/asdd-orchestration.md` (Límites absolutos) declaran
   la excepción — código y norma dicen lo mismo.
 - **Test:** `.claude/scripts/test-orchestrator-guard-data.mjs` protege la excepción y
   su acotamiento (casos permitidos y denegados). Sin ese test, la próxima auditoría

@@ -19,16 +19,16 @@ tests:
         Necesito arrancar la fase de especificación.
     assert:
       - type: icontains
-        value: "sofka-asdd-producto"
+        value: "asdd-producto"
       - type: icontains
-        value: "sofka-asdd-domain-expert"
+        value: "asdd-domain-expert"
       - type: llm-rubric
         value: |
-          El orquestador debe invocar sofka-asdd-producto (skill pm) como primario
-          y sofka-asdd-domain-expert como primario.
+          El orquestador debe invocar asdd-producto (skill pm) como primario
+          y asdd-domain-expert como primario.
           NO debe invocar arquitecto, seguridad ni tech-lead porque no hay señales de integración,
           datos sensibles ni estimación compleja en el brief.
-          Ambos agentes deben anunciarse con formato → **@sofka-asdd-{nombre}**.
+          Ambos agentes deben anunciarse con formato → **@asdd-{nombre}**.
 
   - description: "PROCESO WF-001: Brief con señal de integración → incluye arquitecto como soporte"
     vars:
@@ -37,11 +37,11 @@ tests:
         También necesitamos definir el contrato API con el equipo de mobile.
     assert:
       - type: icontains
-        value: "sofka-asdd-solution-architect"
+        value: "asdd-solution-architect"
       - type: llm-rubric
         value: |
           El brief contiene señales de integración ('integrarse con', 'core bancario legacy', 'contrato API'),
-          por tanto el orquestador debe incluir sofka-asdd-solution-architect como soporte condicional.
+          por tanto el orquestador debe incluir asdd-solution-architect como soporte condicional.
           Debe anunciarlo con el formato correcto.
 
   - description: "PROCESO WF-001: Brief con señal de datos sensibles → incluye security como soporte"
@@ -51,12 +51,12 @@ tests:
         documentos de identidad y debe cumplir con regulaciones PCI-DSS y GDPR.
     assert:
       - type: icontains
-        value: "sofka-asdd-security"
+        value: "asdd-security"
       - type: llm-rubric
         value: |
           El brief tiene señales de seguridad (KYC, datos biométricos, PCI-DSS, GDPR),
-          por tanto sofka-asdd-security debe incluirse como soporte condicional.
-          sofka-asdd-domain-expert también debe invocarse por el dominio fintech/KYC.
+          por tanto asdd-security debe incluirse como soporte condicional.
+          asdd-domain-expert también debe invocarse por el dominio fintech/KYC.
 
   - description: "PROCESO WF-001 (#3598): Brief con nueva API → arquitecto como soporte"
     vars:
@@ -66,13 +66,13 @@ tests:
         y órdenes de compra. Necesitamos definir el stack tecnológico también.
     assert:
       - type: icontains
-        value: "sofka-asdd-solution-architect"
+        value: "asdd-solution-architect"
       - type: llm-rubric
         value: |
           El brief menciona 'nuevas APIs REST' y 'definir el stack tecnológico',
           ambas son señales de activación del arquitecto en WF-001 (señales expandidas en #3598).
-          El orquestador debe incluir sofka-asdd-solution-architect como soporte condicional
-          y anunciarlo con el formato → **@sofka-asdd-solution-architect**.
+          El orquestador debe incluir asdd-solution-architect como soporte condicional
+          y anunciarlo con el formato → **@asdd-solution-architect**.
           No debe omitir al arquitecto solo porque no dice 'integración' o 'migración' explícitamente.
 
   - description: "PROCESO WF-001 (#3598): Brief multi-plataforma → arquitecto como soporte"
@@ -83,12 +83,12 @@ tests:
         Queremos saber si usar microservicios o un monolito.
     assert:
       - type: icontains
-        value: "sofka-asdd-solution-architect"
+        value: "asdd-solution-architect"
       - type: llm-rubric
         value: |
           El brief menciona multi-plataforma (iOS + Android + web), microservicios y
           decisión de arquitectura. Todas son señales expandidas en WF-001 (#3598).
-          El orquestador debe incluir sofka-asdd-solution-architect como soporte condicional.
+          El orquestador debe incluir asdd-solution-architect como soporte condicional.
           El arquitecto aporta la restricción de diseño antes de cerrar el brief.
 
   - description: "OUTPUT WF-001: Brief resultante responde 4 preguntas clave"

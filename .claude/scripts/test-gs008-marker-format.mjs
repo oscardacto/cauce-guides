@@ -23,7 +23,7 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { getPrePushDecision } from "../hooks/sofka-asdd-pre-push-gate.mjs";
+import { getPrePushDecision } from "../hooks/asdd-pre-push-gate.mjs";
 
 let failures = 0;
 const assert = (name, condition) => {

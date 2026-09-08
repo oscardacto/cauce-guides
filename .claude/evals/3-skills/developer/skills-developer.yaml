@@ -1,4 +1,4 @@
-description: "Skills: sofka-asdd-developer-frontend / sofka-asdd-developer-backend — proceso y output por skill"
+description: "Skills: asdd-developer-frontend / asdd-developer-backend — proceso y output por skill"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

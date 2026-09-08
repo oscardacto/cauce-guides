@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "strategy": "thin-core-plus-point-of-use-phase-specs",
+  "coordinators": {
+    "asdd-atf-web-qa-engineer": {
+      "core": ".claude/agents/asdd-atf-web-qa-engineer.md",
+      "max_core_words": 2500,
+      "tools": [
+        "Read",
+        "Write",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Bash",
+        "Task"
+      ],
+      "required_core_markers": [
+        "State machine",
+        "Carga condicional obligatoria",
+        "Invariantes críticas",
+        "Contrato de invocación y salida"
+      ],
+      "routes": [
+        {
+          "name": "orchestrate",
+          "path": ".claude/atf-web-steps/orchestrate.md",
+          "required_markers": [
+            "PASO 0",
+            "CONSOLIDACIÓN FINAL"
+          ],
+          "sha256": "8c3d7bf73fac8764f21033e42eb7e7f9770aa4a9db9c115ce095b9b672aed02e"
+        },
+        {
+          "name": "diagnose",
+          "path": ".claude/atf-web-steps/diagnose.md",
+          "required_markers": [
+            "FRS",
+            "Gate"
+          ],
+          "sha256": "60c9798ae453b467cf794285d2ece501ac911b0e37d309a4827cafee38da887d"
+        },
+        {
+          "name": "strategize",
+          "path": ".claude/atf-web-steps/strategize.md",
+          "required_markers": [
+            "risk_matrix.json",
+            "execution_plan"
+          ],
+          "sha256": "90486fda8c517808a2454a70f1c9e3417d21377f6a4674bd875c33ce705e690c"
+        },
+        {
+          "name": "design",
+          "path": ".claude/atf-web-steps/design.md",
+          "required_markers": [
+            "steps_raw",
+            "cp_modulo_"
+          ],
+          "sha256": "8e8defbade922c8f19cc03826c85bdba712d8074de6cf395e91f62d5623cf2a4"
+        },
+        {
+          "name": "enrich",
+          "path": ".claude/atf-web-steps/enrich.md",
+          "required_markers": [
+            "cp-enricher.js",
+            "notebooklm_query_log"
+          ],
+          "sha256": "5ab62d4f819aebb10bbec42534eb8a8c10ef3b6b269314265d8a6d0815e77638"
+        },
+        {
+          "name": "execute",
+          "path": ".claude/atf-web-steps/execute.md",
+          "required_markers": [
+            "cp_targets",
+            "module_result.json"
+          ],
+          "sha256": "9ad705391518c6a467f138cd5c1f9eca8293660a6608e983702b8bfcd26a72d5"
+        },
+        {
+          "name": "knowledge",
+          "path": ".claude/atf-web-steps/knowledge.md",
+          "required_markers": [
+            "app_behavior",
+            "test_gotchas"
+          ],
+          "sha256": "a822f042e1957eebcd98cc1eca4de9d60401994338cd4b415a85f6bd6cd7fee4"
+        }
+      ],
+      "rollback_source": ".claude/reference/coordinators/asdd-atf-web-qa-engineer-rollback.md",
+      "rollback_sha256": "f55c475a5004a3ce30ed2b53702ec3fccd61e68981c3c50830384c414b14edba"
+    },
+    "asdd-ba-functional-architect": {
+      "core": ".claude/agents/asdd-ba-functional-architect.md",
+      "max_core_words": 2500,
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Write",
+        "Edit",
+        "Bash"
+      ],
+      "required_core_markers": [
+        "State machine",
+        "Carga condicional obligatoria",
+        "Invariantes críticas",
+        "Routing y contrato de salida"
+      ],
+      "routes": [
+        {
+          "name": "edt-build",
+          "path": ".claude/ba-steps/edt-build.md",
+          "required_markers": [
+            "Fuentes de verdad",
+            "Rubric multi-dimensional",
+            "Checklist de salida"
+          ],
+          "sha256": "f19b0f57e611d735e0b32da503bcb6ff8faad5dd7d6bde7088291e045fa2a82c"
+        },
+        {
+          "name": "edt-contract",
+          "path": ".claude/ba-steps/edt-contract.md",
+          "required_markers": [
+            "Formato del entregable",
+            "Contrato de campos"
+          ],
+          "sha256": "eda9de5815117714b3d1e772edb72ed99558584e84a8450bf5432c783506529a"
+        },
+        {
+          "name": "decision-lifecycle",
+          "path": ".claude/ba-steps/decision-lifecycle.md",
+          "required_markers": [
+            "DP-XXX",
+            "asdd-ba-change-log"
+          ],
+          "sha256": "38aeec6575cc8a78ed3fb8d0c96c9b0da0f4a40b24009dd1c81f0fc47bce0544"
+        }
+      ],
+      "rollback_source": ".claude/reference/coordinators/asdd-ba-functional-architect-rollback.md",
+      "rollback_sha256": "6ecb8d4ed75114418e2846b0d369e4b6c01556c6fc15a1432b8772e60464b6e1"
+    }
+  },
+  "rollback": "Per coordinator: restore rollback_source over core and remove only that coordinator manifest entry; sibling remains unchanged."
+}

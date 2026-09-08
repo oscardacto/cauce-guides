@@ -1,7 +1,7 @@
 # spec-lead-build — Protocolo de Construcción de Spec Funcional
 <!-- CONTRACT:spec-lead-build:v1 -->
 
-> Módulo de carga condicional. `sofka-asdd-ba-specification-lead` lo lee COMPLETO
+> Módulo de carga condicional. `asdd-ba-specification-lead` lo lee COMPLETO
 > antes de construir o modificar cualquier spec-funcional.
 
 ## Alcance — qué SÍ y qué NO redacta
@@ -34,28 +34,28 @@
    Ejemplo: `docs/specs/1.1.1-busqueda-unificada/1.1.1-funcional-busqueda-unificada.md`
 
 **Con run ASDD activo (`.asdd-run.json`):** usar nombre resuelto por
-`.claude/scripts/sofka-asdd-artifact-name.mjs` con slug `{codigo}-funcional-{slug-ascii}`.
+`.claude/scripts/asdd-artifact-name.mjs` con slug `{codigo}-funcional-{slug-ascii}`.
 
 Verificar con `Glob` si el archivo ya existe (iteración) o se crea por primera vez.
 
 **Índice del nodo (solo en modo standalone AF):**
 - **Primera construcción** (el Glob confirma que el spec-funcional no existía):
-  tras crear el spec-funcional, invocar skill `sofka-asdd-ba-spec-index` (operación `create`)
+  tras crear el spec-funcional, invocar skill `asdd-ba-spec-index` (operación `create`)
   con `codigo`, `slug`, `nombre`, `spec_funcional` y `fecha`.
 - **Iteración** (el archivo ya existía):
-  invocar skill `sofka-asdd-ba-spec-index` (operación `update-artifact`) para actualizar
+  invocar skill `asdd-ba-spec-index` (operación `update-artifact`) para actualizar
   el estado del spec funcional en la tabla del index.
 
 ### Paso 1 — Contexto (siempre, antes de cualquier sección)
 
-Activar skill `sofka-asdd-ba-specification-lead-contexto`. Si el briefing tiene
+Activar skill `asdd-ba-specification-lead-contexto`. Si el briefing tiene
 vacíos `[ESCALAR_ANTES_DE_CONSTRUIR]` sin respuesta del BA humano → detener y
 esperar. No continuar.
 
 ### Paso 2 — Extracción de fuentes (condicional)
 
 Si hay documentos fuente adicionales junto a la referencia de la EDT (RFP, BRD,
-transcripciones) → activar skill `sofka-asdd-ba-specification-lead-extraccion`.
+transcripciones) → activar skill `asdd-ba-specification-lead-extraccion`.
 
 ### Paso 3 — Crear o abrir el artefacto
 
@@ -70,7 +70,7 @@ Redactar en orden: §1, §2, §3, §4, §6, §7, §14.
 
 **§4 — Flujo de Negocio:** pasos numerados. Si el objeto principal tiene ciclo de vida propio → incluir máquina de estados (diagrama base). Si no aplica → declarar "No aplica" explícitamente.
 
-**§6 — Reglas de Negocio:** si se activó `sofka-asdd-ba-specification-lead-extraccion`, transformar el inventario JSON intermedio en la tabla final del template. Mínimo 3 `RN-NNN [CORE]` + 1 `[EDGE]`. Cada una atomizada, verificable, en presente indicativo.
+**§6 — Reglas de Negocio:** si se activó `asdd-ba-specification-lead-extraccion`, transformar el inventario JSON intermedio en la tabla final del template. Mínimo 3 `RN-NNN [CORE]` + 1 `[EDGE]`. Cada una atomizada, verificable, en presente indicativo.
 
 **§7 — RNFs de negocio:** los 5 RNFs obligatorios del template. Sin placeholders sin reemplazar.
 
@@ -103,13 +103,13 @@ Si ambos aplican → incluir primero el `flowchart TD` y luego el `stateDiagram-
 ### Paso 5 — Borrador de criterios de aceptación (condicional)
 
 Si el feature es complejo y conviene anticipar el borrador para `spec-qa §10` →
-activar skill `sofka-asdd-ba-specification-lead-gherkin`. El resultado va como
+activar skill `asdd-ba-specification-lead-gherkin`. El resultado va como
 **anexo/nota** — NUNCA dentro de §10 del spec-funcional (esa sección es de otro dominio).
 
 ### Paso 6 — Levantar requerimientos formales (condicional)
 
 Si el AF necesita un inventario FR/NFR formal antes de redactar §6/§7 →
-activar skill `sofka-asdd-ba-requirements`.
+activar skill `asdd-ba-requirements`.
 
 ### Paso 7 — Ejecutar el checklist de salida
 
@@ -117,10 +117,10 @@ Ver sección "Checklist de salida" abajo. No marcar como completo sin haberlo re
 
 ### Paso 8 — Registrar en change-log (obligatorio)
 
-Activar skill `sofka-asdd-ba-change-log`:
+Activar skill `asdd-ba-change-log`:
 - Al crear la spec (tipo `ESTADO`: `BORRADOR` creado).
 - En cada versión corregida post-evaluación (tipo según sección modificada: `REGLA` / `FLUJO` / `ACTOR` / `RNF`).
-- Ver `.claude/reference/ba/sofka-asdd-ba-change-log-contract.md`.
+- Ver `.claude/reference/ba/asdd-ba-change-log-contract.md`.
 
 ## Gobernanza de CR sobre SPEC APROBADA
 
@@ -132,31 +132,31 @@ secciones AF:
 3. **Incrementar `Versión` en §0**.
 4. **Agregar marcador `[CR-NNN]` inline** en las líneas modificadas.
 5. Luego aplicar los cambios de contenido.
-6. Activar `sofka-asdd-ba-change-log` con el número CR en la descripción.
+6. Activar `asdd-ba-change-log` con el número CR en la descripción.
 
-Sin este protocolo (SPG-001/SPG-002 en `.claude/references/rules/sofka-asdd-spec-guard.md`),
-no proceder con la edición. Ver también `.claude/reference/ba/sofka-asdd-ba-specification-lead-iteracion.md`.
+Sin este protocolo (SPG-001/SPG-002 en `.claude/references/rules/asdd-spec-guard.md`),
+no proceder con la edición. Ver también `.claude/reference/ba/asdd-ba-specification-lead-iteracion.md`.
 
 ## Outputs post-aprobación
 
-Tras aprobación de `sofka-asdd-ba-specification-auditor`:
+Tras aprobación de `asdd-ba-specification-auditor`:
 
-- **DVF** — Documento de Validación Funcional para firma del negocio → activar skill `sofka-asdd-ba-client-validation`; tras confirmar guardado, invocar `sofka-asdd-ba-spec-index` (operación `update-artifact`, `tipo: DVF`, modo standalone AF).
-- **HU** — Historia de Usuario para el backlog del equipo → activar skill `sofka-asdd-ba-user-story`; tras confirmar guardado, invocar `sofka-asdd-ba-spec-index` (operación `update-artifact`, `tipo: HU`, modo standalone AF).
+- **DVF** — Documento de Validación Funcional para firma del negocio → activar skill `asdd-ba-client-validation`; tras confirmar guardado, invocar `asdd-ba-spec-index` (operación `update-artifact`, `tipo: DVF`, modo standalone AF).
+- **HU** — Historia de Usuario para el backlog del equipo → activar skill `asdd-ba-user-story`; tras confirmar guardado, invocar `asdd-ba-spec-index` (operación `update-artifact`, `tipo: HU`, modo standalone AF).
 
 En modo standalone AF, ambos se escriben dentro de la carpeta del nodo (`docs/specs/{codigo}-{slug}/`): DVF como `{codigo}-dvf-{slug}.md` y HU como `{codigo}-hu-{slug}.md`.
 
 ## Inputs esperados
 
-- Referencia de la EDT: código de nodo hoja (1.X.Y) + nombre del spec + pregunta de negocio, provenientes de `sofka-asdd-ba-functional-architect`.
+- Referencia de la EDT: código de nodo hoja (1.X.Y) + nombre del spec + pregunta de negocio, provenientes de `asdd-ba-functional-architect`.
 - Documentos fuente disponibles en `inputs/{feature}/` — opcionales.
-- `spec-funcional-template.md` (skill `sofka-asdd-producto-templates`) — plantilla canónica.
+- `spec-funcional-template.md` (skill `asdd-producto-templates`) — plantilla canónica.
 - `docs/architecture/decisions/` — ADRs que puedan restringir el diseño funcional.
 
 ## Outputs
 
 - Contenido funcional (§1–§4, §6, §7, §14, §15 si aplica) en `docs/specs/` (naming ART-001).
-- Lista de gaps (§14) para `sofka-asdd-ba-functional-sme` o el cliente.
+- Lista de gaps (§14) para `asdd-ba-functional-sme` o el cliente.
 - Si se activó gherkin: borrador de escenarios como anexo — no en §10.
 - Tras aprobación (standalone AF): DVF como `{codigo}-dvf-{slug}.md` y HU como `{codigo}-hu-{slug}.md` — dentro de la carpeta `docs/specs/{codigo}-{slug}/`.
 
@@ -165,19 +165,19 @@ En modo standalone AF, ambos se escriben dentro de la carpeta del nodo (`docs/sp
 - [ ] §1, §2, §3, §4, §6, §7, §14 completos — sin placeholders del template sin reemplazar
 - [ ] §5, §8, §9, §10, §11, §12, §13 **intactos** — ningún contenido propio en secciones de otros dominios
 - [ ] §0: `Estado` correcto (`BORRADOR` en primera construcción); campo `INDEX de implementación` apuntando al `{codigo}-index.md` del nodo
-- [ ] Skill `sofka-asdd-ba-spec-index` invocado: operación `create` en primera construcción del nodo, `update-artifact` en iteraciones (solo modo standalone AF)
+- [ ] Skill `asdd-ba-spec-index` invocado: operación `create` en primera construcción del nodo, `update-artifact` en iteraciones (solo modo standalone AF)
 - [ ] §3: campos `Nodo EDT`, `Origen` y `Fase` declarados
 - [ ] §6: mínimo 3 `RN-NNN [CORE]` + 1 `[EDGE]`, atomizadas, verificables, en presente indicativo
 - [ ] §7: los 5 RNFs de negocio obligatorios completos
 - [ ] §14: cada gap con impacto + opciones A/B, o declaración "Sin gaps"
 - [ ] §4: si el flujo tiene bifurcaciones → diagrama Mermaid incluido; si flujo lineal → declarar que no aplica
 - [ ] §15: solo tocada si la spec estaba `APROBADA` y se siguió SPG-001/SPG-002
-- [ ] Skill `sofka-asdd-ba-change-log` activado con el tipo correcto
+- [ ] Skill `asdd-ba-change-log` activado con el tipo correcto
 
 ## Anti-patterns
 
 - **Redactar secciones de otro dominio "para completar"** — construir §8, §10 o §11 porque "faltaban". Genera dos fuentes de verdad. Reportar como nota para el AF.
-- **Editar `{codigo}-index.md` directamente** — solo el skill `sofka-asdd-ba-spec-index` escribe este archivo. El INDEX del ciclo ASDD del equipo nunca se crea desde este agente.
+- **Editar `{codigo}-index.md` directamente** — solo el skill `asdd-ba-spec-index` escribe este archivo. El INDEX del ciclo ASDD del equipo nunca se crea desde este agente.
 - **SPEC sin flujo** — solo reglas sin modelar el proceso en §4.
 - **Reglas embebidas en el flujo** — mezclar lógica de reglas dentro de los pasos de §4. Las reglas van en §6; el flujo las referencia.
 - **Gaps sin opciones** — registrar `GAP-NNN` sin alternativas A/B.

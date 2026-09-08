@@ -26,16 +26,16 @@ se desactualiza cada vez que se agrega un check.
 |---|---|---|---|---|
 | 1 | `yaml-frontmatter` | strict | Frontmatter YAML parseable en agentes, skills y commands | Corregir la línea indicada (formato `key: value` o `key: [a, b]`) |
 | 2 | `skills-structure` | strict | Cada skill vive en `.claude/skills/{nombre}/SKILL.md` | Mover `skills/x.md` a `skills/x/SKILL.md` o crear el `SKILL.md` faltante |
-| 3 | `sofka-asdd-counts` | warn | Contadores del manifest `.sofka-asdd/sofka-asdd.lock` coinciden con filesystem | Actualizar `variants.claude.{agents,skills,rules,commands}` en `.sofka-asdd/sofka-asdd.lock` |
+| 3 | `asdd-counts` | warn | Contadores del manifest `.asdd/asdd.lock` coinciden con filesystem | Actualizar `variants.claude.{agents,skills,rules,commands}` en `.asdd/asdd.lock` |
 | 4 | `skill-references` | strict | Todo `skills: [x]` en un agente apunta a un SKILL.md existente | Crear el skill faltante o quitar la referencia del frontmatter del agente |
 | 5 | `mcp-references` | strict | Todo `mcpServers: [name]` en un agente existe en `.mcp.json` | Agregar el server a `.mcp.json` o quitar la referencia del agente |
-| 6 | `json-files` | strict | `.mcp.json`, `.claude/settings*.json`, `.sofka-asdd/sofka-asdd.lock`, `.sofka-asdd/cli-contract.json`, `.sofka-asdd/checklist.json` son JSON válido | Validar sintaxis (comas, comillas, llaves balanceadas) |
+| 6 | `json-files` | strict | `.mcp.json`, `.claude/settings*.json`, `.asdd/asdd.lock`, `.asdd/cli-contract.json`, `.asdd/checklist.json` son JSON válido | Validar sintaxis (comas, comillas, llaves balanceadas) |
 | 7 | `hooks-executable` | strict | Los `.mjs` bajo `.claude/hooks/` están en modo `100755` **en el índice de git** | `git update-index --chmod=+x .claude/hooks/<archivo>.mjs` (funciona en los tres SO) |
 | 8 | `rules-size` | warn | Cada regla en `.claude/rules/*.md` ≤ 100 líneas | Dividir la regla o mover detalles a un skill de reference |
 | 9 | `no-hardcoded-paths` | strict | Ningún archivo de config contiene rutas absolutas del directorio de usuario (macOS `/Users`, Linux `/home`, Windows `C:\Users`) | Reemplazar por rutas relativas o la variable `{project-root}` |
 | 10 | `claude-md-size` | warn | `CLAUDE.md` ≤ 200 líneas | Mover contenido detallado a skills con progressive disclosure |
-| 11 | `cli-contract` | strict | `.sofka-asdd/cli-contract.json` cumple schema v1.0 (bloques requeridos, `personalize[*]` válido) | Corregir el contrato según `docs/adoption/contract-spec.md` |
-| 12 | `markers-integrity` | strict | Todos los markers `<!-- sofka-asdd:ID:start/end -->` están balanceados | Agregar el marker faltante o eliminar el huérfano |
+| 11 | `cli-contract` | strict | `.asdd/cli-contract.json` cumple schema v1.0 (bloques requeridos, `personalize[*]` válido) | Corregir el contrato según `docs/adoption/contract-spec.md` |
+| 12 | `markers-integrity` | strict | Todos los markers `<!-- asdd:ID:start/end -->` están balanceados | Agregar el marker faltante o eliminar el huérfano |
 | 13 | `clean-files-to-remove-safety` | strict | Que ninguna entrada de `clean.files_to_remove` colisione con `distribution` ni nombre una ruta donde escriba un artefacto distribuido. El CLI la aplica con `os.RemoveAll` incondicional después de copiar | Quitar la entrada o restringirla a nombres de archivo exactos del mantenedor — criterio completo en `docs/adoption/contract-spec.md` §3.5.3 |
 
 **Niveles:** `strict` = el proceso termina con exit 1. `warn` = se reporta pero no bloquea, salvo que se corra con `--strict`.
@@ -52,7 +52,7 @@ subagente que arranca en blanco.
 
 | Nombre | Nivel | Qué valida |
 |---|---|---|
-| `skill-description-budget` | warn | Cada descripción de skill, agent y command contra su límite en `.sofka-asdd/context-budget.json` → `targets.{skill,agent,command}_description_chars`. Reporta el promedio por superficie |
+| `skill-description-budget` | warn | Cada descripción de skill, agent y command contra su límite en `.asdd/context-budget.json` → `targets.{skill,agent,command}_description_chars`. Reporta el promedio por superficie |
 
 La medición del piso completo no es un check sino una herramienta:
 
@@ -65,14 +65,14 @@ node .claude/tools/measure-context-footprint.mjs --strict   # exit 1 si excede e
 Cuenta bytes en disco, que es lo reproducible; la medición **autoritativa** de lo
 que el runtime carga de verdad sigue siendo `/context` dentro del proyecto. Los
 valores medidos quedan escritos en `measured_components` de
-`.sofka-asdd/context-budget.json`.
+`.asdd/context-budget.json`.
 
 **Hay dos límites, y miden cosas distintas.** Confundirlos deja el piso sin
 gobernar mientras el validador muestra verde.
 
 | Medición | Qué cubre | Quién la mide | Techo |
 |---|---|---|---|
-| `targets.always_on_core_words` | `CLAUDE.md` + `.claude/rules/**` | `sofka-asdd-context-budget-lib.mjs`, vía el check `context-budget` | 8.000, stage `error` |
+| `targets.always_on_core_words` | `CLAUDE.md` + `.claude/rules/**` | `asdd-context-budget-lib.mjs`, vía el check `context-budget` | 8.000, stage `error` |
 | `measured_components.always_on_floor_words` | el piso completo: núcleo + descripciones always-on de skills, agents y commands + inyección de hooks | `measure-context-footprint.mjs`, que ningún check invoca | **ninguno, a propósito** |
 
 El límite del núcleo se fijó con 5.825 palabras observadas y nunca cubrió el resto.
@@ -110,9 +110,9 @@ Dos checks `strict` adicionales cierran la clase de bugs "artefacto instalado pe
 | `hooks-registration` | Cruza `.claude/hooks/*.mjs` contra los `command` registrados en el bloque `hooks` de `.claude/settings.json`. Falla si un hook en disco **no está registrado** (hook muerto) o si una ruta registrada **no existe** en disco. | Registrar el hook bajo `settings.json` → `hooks` (evento + `command`), o eliminar el `.mjs` si quedó obsoleto. |
 | `agent-skill-references` | En `commands`/`rules`/`agents`/`skills`: detecta **identidades deprecadas** (`qa-engineer`, `ux-ui`, `asdd-expert` y sus sub-formas, podadas en versiones previas) y, en `commands`/`rules`, **invocaciones** de agente/skill que no resuelven a un artefacto instalado. Excluye `.claude/evals/` (fixtures congelados). | Repuntar la referencia al agente/skill sucesor correcto, o eliminarla. |
 
-**Caso de regresión que motivó `hooks-registration` (#3596):** el hook `sofka-asdd-pre-tool-use-analyze-guard.mjs` se creó en v2.16.0 pero quedó **fuera** del bloque `hooks` de `settings.json` → nunca se ejecutaba (hook muerto). Este check lo detecta al ejecutar el validador: reporta `.claude/hooks/sofka-asdd-pre-tool-use-analyze-guard.mjs — on disk but NOT registered`. La misma clase cubre las referencias fantasma de `build.md`/`verify.md` (#3610) y los handoffs rotos a skills inexistentes.
+**Caso de regresión que motivó `hooks-registration` (#3596):** el hook `asdd-pre-tool-use-analyze-guard.mjs` se creó en v2.16.0 pero quedó **fuera** del bloque `hooks` de `settings.json` → nunca se ejecutaba (hook muerto). Este check lo detecta al ejecutar el validador: reporta `.claude/hooks/asdd-pre-tool-use-analyze-guard.mjs — on disk but NOT registered`. La misma clase cubre las referencias fantasma de `build.md`/`verify.md` (#3610) y los handoffs rotos a skills inexistentes.
 
-> **Nota de resolución:** un nombre corto (`developer-frontend`, `developer-backend`, `tech-lead`) resuelve por prefijo (`sofka-asdd-developer-frontend`, `sofka-asdd-developer-backend`); un skill corto (`feature`, `quality-gate`) resuelve por sufijo (`sofka-asdd-developer-feature`). Solo se marcan los que no resuelven por ninguna vía ni son una identidad deprecada conocida.
+> **Nota de resolución:** un nombre corto (`developer-frontend`, `developer-backend`, `tech-lead`) resuelve por prefijo (`asdd-developer-frontend`, `asdd-developer-backend`); un skill corto (`feature`, `quality-gate`) resuelve por sufijo (`asdd-developer-feature`). Solo se marcan los que no resuelven por ninguna vía ni son una identidad deprecada conocida.
 
 ### 2.2. Checks de portabilidad cross-OS
 
@@ -122,7 +122,7 @@ no de una revisión teórica.
 
 | Nombre | Nivel | Qué valida | Por qué |
 |---|---|---|---|
-| `hash-eol-normalization` | error | Que todo hashing de contenido **leído de disco** pase por `.claude/scripts/lib/sofka-asdd-hash-normalize-lib.mjs` (`readNormalized` / `normalizeForHash`), o normalice CRLF→LF inline si es CommonJS y no puede importar la lib | Sin normalizar, el mismo archivo produce hashes distintos según el checkout (CRLF en Windows, LF en Linux) y el manifiesto queda irreproducible |
+| `hash-eol-normalization` | error | Que todo hashing de contenido **leído de disco** pase por `.claude/scripts/lib/asdd-hash-normalize-lib.mjs` (`readNormalized` / `normalizeForHash`), o normalice CRLF→LF inline si es CommonJS y no puede importar la lib | Sin normalizar, el mismo archivo produce hashes distintos según el checkout (CRLF en Windows, LF en Linux) y el manifiesto queda irreproducible |
 | `hook-command-shape` | error | Que los hooks de `.claude/settings.json` usen forma **exec** (`"command": "node"` + `"args": [...]`) y que el script exista | En forma shell, `node $CLAUDE_PROJECT_DIR/...` sin comillas se parte por word-splitting con cualquier ruta que tenga un espacio, y rompe todos los hooks a la vez, en silencio |
 | `path-separator-safety` | warn | Detecta concatenación de rutas nativas con `/` (ej. `join(...) + '/x'`, o `relative(...)` comparado contra un literal con `/`) | En Windows `join()` devuelve `\`, así que la comparación nunca matchea y el guard deja pasar todo sin emitir ningún mensaje |
 
@@ -163,15 +163,15 @@ explicarlo.
 
 ### 2.3. Integridad de hashes SHA-256
 
-Dos manifiestos de `.sofka-asdd/` almacenan hashes SHA-256 del contenido de los
+Dos manifiestos de `.asdd/` almacenan hashes SHA-256 del contenido de los
 archivos que referencian, para que un agente no pueda cargar una referencia
 alterada sin que el validador lo note. Hoy son **29 ítems con hash**:
 
 | Manifiesto | Campo | Cantidad | Check que lo verifica |
 |---|---|---|---|
-| `.sofka-asdd/rule-loading.json` | `entries[].reference_sha256` | 17 | `conditional-rule-loading` |
-| `.sofka-asdd/coordinator-loading.json` | `coordinators.*.rollback_sha256` | 2 | `thin-coordinator-loading` |
-| `.sofka-asdd/coordinator-loading.json` | `coordinators.*.routes[].sha256` | 10 | `thin-coordinator-loading` |
+| `.asdd/rule-loading.json` | `entries[].reference_sha256` | 17 | `conditional-rule-loading` |
+| `.asdd/coordinator-loading.json` | `coordinators.*.rollback_sha256` | 2 | `thin-coordinator-loading` |
+| `.asdd/coordinator-loading.json` | `coordinators.*.routes[].sha256` | 10 | `thin-coordinator-loading` |
 
 Son **2 checks** (con 3 sitios de verificación). Un tercer check,
 `hash-eol-normalization` (§2.2), no verifica estos valores: garantiza que el código
@@ -183,7 +183,7 @@ que los calcula normalice, que es la condición para que sean reproducibles.
 npm run hash:regen
 ```
 
-Es `.claude/scripts/sofka-asdd-regen-hashes.mjs`. Usa la **misma** función de
+Es `.claude/scripts/asdd-regen-hashes.mjs`. Usa la **misma** función de
 normalización que el validador, así que generador y verificador no pueden divergir.
 Es idempotente: correrlo dos veces seguidas no produce diff la segunda vez, porque
 el hash se calcula sobre el contenido normalizado del archivo en disco,
@@ -193,7 +193,7 @@ con código 1 si alguna ruta referenciada no existe.
 > **PROHIBIDO regenerar a mano.** No usar `sha256sum`, `certutil` ni `Get-FileHash`
 > sobre el archivo crudo: hashean los bytes de disco sin normalizar EOL ni quitar el
 > BOM, y contaminan el manifiesto con un valor que solo coincide en la máquina donde
-> se generó. Así entraron 5 hashes de rutas de `sofka-asdd-atf-web-qa-engineer`
+> se generó. Así entraron 5 hashes de rutas de `asdd-atf-web-qa-engineer`
 > almacenados como *rendering* CRLF: pasaban en Windows y fallaban en CI con
 > checkout LF. `.gitattributes` por sí solo no alcanza — depende de que cada
 > checkout lo respete.
@@ -205,7 +205,7 @@ regeneraste, el validador falla con `SHA-256 mismatch` (ver §8).
 
 ### 2.4. Integridad de la distribución
 
-`distribution` en `.sofka-asdd/cli-contract.json` es la lista de lo que el
+`distribution` en `.asdd/cli-contract.json` es la lista de lo que el
 template entrega. El CLI la usa en las dos direcciones: copia lo que está en la
 lista y **retira del proyecto del consumidor lo que dejó de estar**, salvo que el
 archivo tenga ediciones propias. Eso vuelve destructiva una equivocación que antes
@@ -218,7 +218,7 @@ Tres checks cubren la clase. Los tres son `error`.
 |---|---|---|
 | `distribution-regression` | Toda ruta que el template alguna vez entregó sigue cubierta, o está declarada como movida, o tiene una razón escrita de por qué se retiró | Restaurar la entrada en `distribution`; o declarar el `moves` que la reubica; o registrar el retiro con su razón en el mapa `RETIRED` del check |
 | `moves-coherence` | Cada `moves` declarado es coherente con la distribución: la clave va en la raíz del contrato, el origen ya no se entrega y el destino existe | Corregir la declaración según lo que indique el hallazgo |
-| `provenance-freshness` | `.sofka-asdd/sofka-asdd-provenance.json` está al día. Es lo que permite al CLI reconocer contenido viejo del template y actualizarlo en lugar de dejar un `.asdd-new` al lado | `npm run provenance:regen` y commitear |
+| `provenance-freshness` | `.asdd/asdd-provenance.json` está al día. Es lo que permite al CLI reconocer contenido viejo del template y actualizarlo en lugar de dejar un `.asdd-new` al lado | `npm run provenance:regen` y commitear |
 
 `distribution-regression` compara la distribución de hoy contra la de cada release
 publicada y contra los tips de las ramas distribuibles, expandiendo cada entrada
@@ -271,7 +271,7 @@ línea, y por eso el output es la lista autoritativa):
 ```
 [ OK ] yaml-frontmatter — YAML frontmatter valid in 229 files
 [ OK ] skills-structure — skill directories follow {name}/SKILL.md convention
-[ OK ] sofka-asdd-counts — manifest counts match filesystem
+[ OK ] asdd-counts — manifest counts match filesystem
 [ OK ] skill-references — all skill references resolve
 [ OK ] mcp-references — all mcpServers references resolve
 [ OK ] json-files — JSON config files parse correctly
@@ -314,7 +314,7 @@ reemplaza al otro.
 npm test
 ```
 
-Es `.claude/scripts/sofka-asdd-run-test-suites.mjs`. Descubre y ejecuta las **45
+Es `.claude/scripts/asdd-run-test-suites.mjs`. Descubre y ejecuta las **45
 suites** `.claude/scripts/test-*.mjs` (descubrimiento dinámico y alfabético — no hay
 lista que mantener).
 
@@ -337,7 +337,7 @@ Esa varianza de ~2,2× entre el mejor y el peor caso es la razón del margen amp
 Si una suite empieza a acercarse al techo, medirla y reportarla **antes** de subir el
 timeout: un timeout que crece sin explicación esconde un defecto.
 
-**El baseline de fallos conocidos.** `.claude/scripts/sofka-asdd-test-baseline.json`
+**El baseline de fallos conocidos.** `.claude/scripts/asdd-test-baseline.json`
 (`schema_version` 2) declara los **3 fallos conocidos** hoy, cada uno con causa raíz,
 clasificación, severidad y prioridad, duración típica medida, `expected_status` y el
 documento de referencia. Registra también en qué plataforma y fecha se midió.
@@ -448,14 +448,14 @@ Esto mantiene el upgrade path del template limpio: cuando se actualice `validate
 | `mcp-references` reporta MCP indefinido | Agente referencia MCP no declarado | Agregar el server a `.mcp.json` o quitar del agente |
 | `hooks-executable` falla | El hook está en modo `100644` en el índice de git (típico de un hook creado en Windows, donde el bit no existe en el working tree) | `git update-index --chmod=+x .claude/hooks/<archivo>.mjs` y commitear. Funciona en los tres SO; `chmod +x` solo sirve en Linux/macOS. El check lee el índice, no el working tree, justamente para poder fallar en Windows |
 | `no-hardcoded-paths` reporta coincidencia en un archivo de documentación | La doc incluye un path como ejemplo | Si es legítimo, mover el archivo dentro de `docs/` (excluido del check) |
-| `cli-contract` reporta `contract_version must be SemVer` | Formato inválido en `.sofka-asdd/cli-contract.json` | Ajustar a `MAJOR.MINOR.PATCH` según `docs/adoption/contract-spec.md` §2 |
-| `markers-integrity` reporta start sin end | Marker `<!-- sofka-asdd:X:start -->` sin su `<!-- sofka-asdd:X:end -->` | Agregar el end donde corresponde o eliminar el start |
+| `cli-contract` reporta `contract_version must be SemVer` | Formato inválido en `.asdd/cli-contract.json` | Ajustar a `MAJOR.MINOR.PATCH` según `docs/adoption/contract-spec.md` §2 |
+| `markers-integrity` reporta start sin end | Marker `<!-- asdd:X:start -->` sin su `<!-- asdd:X:end -->` | Agregar el end donde corresponde o eliminar el start |
 | `SHA-256 mismatch` en `conditional-rule-loading` o `thin-coordinator-loading` | **Caso 1 (lo habitual):** el archivo referenciado cambió legítimamente y falta regenerar el hash. **Caso 2:** el hash almacenado está contaminado con un *rendering* CRLF, porque se regeneró a mano con `sha256sum` / `certutil` / `Get-FileHash` sobre los bytes crudos | Correr `npm run hash:regen` (§2.3). Para distinguir los casos: si el hash del contenido **normalizado** no coincide pero el del **mismo contenido convertido a CRLF** sí, es el caso 2 — el manifiesto estaba contaminado y la regeneración lo corrige de forma definitiva. Si ninguno de los dos coincide, el archivo cambió de verdad: revisar el diff antes de regenerar |
 | `hash-eol-normalization` falla en un sitio nuevo | Se agregó código que hashea contenido leído de disco sin normalizar | Usar `readNormalized` / `normalizeForHash` de la lib compartida. Si el contenido viene de memoria y el hash **debe** ser byte-sensible, marcar la línea con `asdd-hash-raw-bytes` (§2.2) |
 | `hook-command-shape` reporta forma shell | Un hook de `settings.json` usa `command` con la ruta y los argumentos en un solo string | Pasarlo a forma exec: `"command": "node"` + `"args": [...]` (§2.2) |
 | `path-separator-safety` marca una línea legítima | El `/` es correcto porque el otro lado es un string posix por contrato (manifiesto, config, env var, output de git, regex shell, URL) | Marcar esa línea con `asdd-posix-path`. Si el archivo entero opera sobre strings posix, agregarlo al allowlist **por archivo** del check con su razón — nunca reintroducir una exención por prefijo de directorio |
 | `clean-files-to-remove-safety` falla | Una entrada de `clean.files_to_remove` colisiona con `distribution` (el CLI copia y después borra, anulando la decisión) o nombra una ruta donde escribe un artefacto distribuido (el `os.RemoveAll` del upgrade destruye contenido del consumidor) | Quitar la entrada, o restringirla a nombres de archivo exactos del mantenedor. El criterio completo está en `docs/adoption/contract-spec.md` §3.5.3 |
-| `cli-runtime-distribution` falla con "distribution omite X" | Un artefacto distribuido referencia un script de `.claude/scripts/**` o `.claude/hooks/**` que el CLI no copia: el consumidor recibiría la instrucción sin el script | Agregar la ruta a `distribution` en `.sofka-asdd/cli-contract.json`. Si la omisión es deliberada, declararla en el mapa `DEFERRED` (decisión de distribución pendiente) o `CITED_ONLY` (la ruta es una cita de procedencia, no un comando ejecutable) con su razón — ambos se listan siempre en el mensaje del check |
+| `cli-runtime-distribution` falla con "distribution omite X" | Un artefacto distribuido referencia un script de `.claude/scripts/**` o `.claude/hooks/**` que el CLI no copia: el consumidor recibiría la instrucción sin el script | Agregar la ruta a `distribution` en `.asdd/cli-contract.json`. Si la omisión es deliberada, declararla en el mapa `DEFERRED` (decisión de distribución pendiente) o `CITED_ONLY` (la ruta es una cita de procedencia, no un comando ejecutable) con su razón — ambos se listan siempre en el mensaje del check |
 | `npm test` sale con exit 1 y todos los fallos figuran en el baseline | Una suite baselineada falló en un **modo** distinto al declarado, o una baselineada ahora **pasa** (baseline obsoleto) | Leer el veredicto del runner: distingue las dos situaciones. No reescribir `expected_status` para silenciar un desvío de modo — diagnosticar primero (§3.1) |
 | La automatización externa falla y local pasa | Diferencia de versión de Node o de checkout | Asegurar Node >= 22 y revisar la configuración del consumidor |
 | Un hash falla solo en la automatización externa y localmente pasa | El checkout del runner normaliza EOL distinto que el local | Confirmar que el hash se generó con `npm run hash:regen` y no a mano (§2.3) |

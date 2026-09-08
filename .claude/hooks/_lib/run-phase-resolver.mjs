@@ -2,8 +2,8 @@
 //
 // Single Source of Truth para resolver la fase activa de un run ASDD a
 // partir de .asdd-run.json. Consumido por:
-//   - .claude/scripts/sofka-asdd-artifact-name.mjs (helper de naming)
-//   - .claude/hooks/sofka-asdd-pre-tool-use-artifact-name-guard.mjs (guard)
+//   - .claude/scripts/asdd-artifact-name.mjs (helper de naming)
+//   - .claude/hooks/asdd-pre-tool-use-artifact-name-guard.mjs (guard)
 //
 // Bug A (2026-07-07-001-BUILD-005), ítem A2: antes de este módulo, el
 // helper y el guard tenían estrategias de resolución divergentes — el
@@ -11,7 +11,7 @@
 // current_phase faltaba, pero el guard no. Este módulo centraliza esa
 // lógica para que ambos se mantengan sincronizados.
 
-/** Fases válidas — alineadas con .sofka-asdd/asdd-run.schema.json → current_phase / phases. */
+/** Fases válidas — alineadas con .asdd/asdd-run.schema.json → current_phase / phases. */
 export const VALID_PHASES = Object.freeze([
   "specify",
   "analyze",

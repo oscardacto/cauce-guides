@@ -239,8 +239,8 @@ prompts de permisos quedan pendientes de los benchmarks consumidores previstos.
 - Los cuatro agentes BA existen, pero no aparecen en las tablas principales de
   agentes/skills de `CLAUDE.md`.
 - README, `.claude/docs/plugins-by-role.md` y `.claude/docs/mcps-by-domain.md` todavía
-  referencian `sofka-asdd-ux-ui`, `sofka-asdd-qa-engineer` y
-  `sofka-asdd-platform-engineer`, que no existen con esos IDs.
+  referencian `asdd-ux-ui`, `asdd-qa-engineer` y
+  `asdd-platform-engineer`, que no existen con esos IDs.
 - `CLAUDE.md` lista dos skills UX sin directorio correspondiente.
 - La semántica de activación Data es contradictoria entre ADR, CLI, catálogo y
   lock.

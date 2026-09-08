@@ -20,12 +20,12 @@ tests:
         documentar la decisión en un ADR.
     assert:
       - type: icontains
-        value: "sofka-asdd-solution-architect"
+        value: "asdd-solution-architect"
       - type: llm-rubric
         value: |
-          sofka-asdd-solution-architect es el primario en WF-003. El orquestador debe delegarle
+          asdd-solution-architect es el primario en WF-003. El orquestador debe delegarle
           con los skills: tradeoff-analysis (microservicio vs librería), component-diagram (C4),
-          sofka-docs (ADR). Researcher puede incluirse para el análisis comparativo.
+          guide-docs (ADR). Researcher puede incluirse para el análisis comparativo.
 
   - description: "PROCESO WF-003: Feature con UI → ux-ui también es primario"
     vars:
@@ -34,12 +34,12 @@ tests:
         arquitectura del servicio de carrito y contrato API.
     assert:
       - type: icontains
-        value: "sofka-asdd-ux-ui"
+        value: "asdd-ux-ui"
       - type: icontains
-        value: "sofka-asdd-solution-architect"
+        value: "asdd-solution-architect"
       - type: llm-rubric
         value: |
-          Para features con UI, tanto sofka-asdd-ux-ui como sofka-asdd-solution-architect son primarios.
+          Para features con UI, tanto asdd-ux-ui como asdd-solution-architect son primarios.
           ux-ui produce wireframes y component specs; architect produce ADRs y diagramas C4.
 
   - description: "OUTPUT WF-003: Toda decisión técnica significativa tiene ADR"
@@ -50,7 +50,7 @@ tests:
     assert:
       - type: llm-rubric
         value: |
-          El orquestador debe asegurar que sofka-asdd-solution-architect genere:
+          El orquestador debe asegurar que asdd-solution-architect genere:
           - ADR con al menos 2 alternativas evaluadas (ej: Redis cache-aside vs CDN vs in-memory)
           - Decisión justificada con criterios explícitos (costo, latencia, ops)
           - ADR ubicado en docs/architecture/decisions/ADR-{NNN}-{titulo}.md

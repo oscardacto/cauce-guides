@@ -1,4 +1,4 @@
-description: "sofka-asdd-solution-architect: decisiones técnicas y ADRs"
+description: "asdd-solution-architect: decisiones técnicas y ADRs"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -22,7 +22,7 @@ tests:
         value: |
           Ante múltiples opciones viables antes de un ADR, el arquitecto debe activar
           el skill 'tradeoff-analysis' para evaluar trade-offs antes de decidir.
-          Luego 'sofka-docs' para documentar el ADR resultante.
+          Luego 'guide-docs' para documentar el ADR resultante.
           NO debe hacer el ADR directamente sin el análisis previo.
 
   - description: "PROCESO: ADR — evalúa al menos 2 alternativas con trade-offs concretos"
@@ -40,7 +40,7 @@ tests:
           4. Incluir contexto, decisión, consecuencias
           No puede decir 'otra opción' sin describir trade-offs reales.
 
-  - description: "PROCESO: Credo Sofka — empezar simple, no diseñar para 5 años"
+  - description: "PROCESO: Credo Guide — empezar simple, no diseñar para 5 años"
     vars:
       input: |
         Diseña la arquitectura para una startup fintech con 10 usuarios activos actualmente.
@@ -48,7 +48,7 @@ tests:
     assert:
       - type: llm-rubric
         value: |
-          El arquitecto debe aplicar el credo Sofka: 'Empezar simple, evolucionar bajo presión'.
+          El arquitecto debe aplicar el credo Guide: 'Empezar simple, evolucionar bajo presión'.
           Debe cuestionar la decisión de microservicios para 10 usuarios y proponer
           una alternativa más simple (monolito modular) con un camino claro de evolución.
           NO debe diseñar microservicios desde el día 1 sin justificación de escala real.

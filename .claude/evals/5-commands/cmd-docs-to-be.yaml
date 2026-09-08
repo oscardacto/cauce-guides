@@ -1,4 +1,4 @@
-description: "CMD /sofka-asdd:docs-to-be — documentación TO-BE (5 DA_ADE)"
+description: "CMD /asdd:docs-to-be — documentación TO-BE (5 DA_ADE)"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -14,13 +14,13 @@ defaultTest:
 tests:
   - description: "CMD docs-to-be: genera set TO-BE (5 documentos DA_ADE)"
     vars:
-      input: "/sofka-asdd:docs-to-be Modernización del sistema de créditos: migrar a microservicios con evento-driven. ADR-001 aprobado."
+      input: "/asdd:docs-to-be Modernización del sistema de créditos: migrar a microservicios con evento-driven. ADR-001 aprobado."
     assert:
       - type: icontains
-        value: "sofka-asdd-solution-architect"
+        value: "asdd-solution-architect"
       - type: llm-rubric
         value: |
-          El comando docs-to-be debe invocar sofka-asdd-solution-architect con skill sofka-docs
+          El comando docs-to-be debe invocar asdd-solution-architect con skill guide-docs
           para generar: DA_ADE36 (Business Drivers) + DA_ADE35 (Architecture Drivers) +
           DA_ADE44 (TO-BE) + DA_ADE34 (ADR) + DA_ADE43 (Dependencies).
           El TO-BE debe referenciarse contra los ADRs existentes para trazabilidad.

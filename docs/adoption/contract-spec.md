@@ -1,8 +1,8 @@
 # Contrato CLI ASDD — Especificación Formal v2.5
 
 **Versión del contrato:** `2.5.0`
-**Target audience:** equipos que mantienen templates ASDD (project-structure, copilot-structure, gemini-structure) y equipos que mantienen el CLI `sofka-ai`.
-**Archivo canónico en el template:** `.sofka-asdd/cli-contract.json`
+**Target audience:** equipos que mantienen templates ASDD (project-structure, copilot-structure, gemini-structure) y equipos que mantienen el CLI `guide-ai`.
+**Archivo canónico en el template:** `.asdd/cli-contract.json`
 
 > **Nota de deriva, y por qué esta versión existe.** Esta spec quedó congelada en v1.0 mientras el
 > contrato real llegó a 2.4.0, así que **6 de 15 claves no estaban documentadas en ninguna parte** —
@@ -16,7 +16,7 @@
 
 ## 1. Propósito
 
-El contrato CLI es un **archivo declarativo JSON** que un template ASDD publica para que el CLI `sofka-ai` pueda adoptarlo sin conocimiento previo de su estructura interna.
+El contrato CLI es un **archivo declarativo JSON** que un template ASDD publica para que el CLI `guide-ai` pueda adoptarlo sin conocimiento previo de su estructura interna.
 
 El contrato responde cuatro preguntas:
 
@@ -48,7 +48,7 @@ El CLI debe declarar qué rango de `contract_version` soporta (ej. `>=1.0.0 <2.0
 
 | Campo | Qué representa | Quién lo incrementa |
 |---|---|---|
-| `contract_version` | Versión del **schema** del contrato (esta spec) | COE Sofka al evolucionar el schema |
+| `contract_version` | Versión del **schema** del contrato (esta spec) | COE Guide al evolucionar el schema |
 | `template.version` | Versión del **template** que se publica | El mantenedor de cada template (project-structure, copilot-structure…) |
 
 Un template puede tener `template.version: 3.4.0` consumiendo `contract_version: 2.5.0`. Son dimensiones ortogonales.
@@ -83,8 +83,8 @@ Metadata del template. Obligatorio.
   "id": "project-structure",
   "version": "1.0.1",
   "target_agent": "claude-code",
-  "description": "Template oficial ASDD Sofka para proyectos con Claude Code",
-  "maintainer": "COE Sofka"
+  "description": "Template oficial ASDD Guide para proyectos con Claude Code",
+  "maintainer": "COE Guide"
 }
 ```
 
@@ -127,7 +127,7 @@ Si el entorno no cumple, el CLI aborta antes de copiar.
 > donde toda minor cumple, en vez de un `>=20.11` con una alternación frágil e inauditable. El piso de
 > git (`>=2.30`) es inexpresable por esta vía: el regex solo verifica el major para no rechazar git
 > 3.x cuando exista, y la declaración de `required_tools` es la verdad. La solución de fondo es un
-> `type: "semver_gte"` en el CLI — seguimiento en `sofka-ia/cli`, bump MINOR de contrato.
+> `type: "semver_gte"` en el CLI — seguimiento en `guide-ia/cli`, bump MINOR de contrato.
 >
 > **`bash` va sin piso de versión a propósito.** Reglas y skills emiten pipelines POSIX; en Windows
 > los provee el Git Bash de Git for Windows. Un `git` sin ese shell (MinGit, git de WSL) satisface
@@ -141,7 +141,7 @@ Array de campos que el CLI debe solicitar al usuario y escribir en archivos del 
 "personalize": [
   {
     "id": "project-name",
-    "file": ".sofka-asdd/sofka-asdd.lock",
+    "file": ".asdd/asdd.lock",
     "json_path": "project.name",
     "prompt": "Nombre del proyecto (kebab-case)",
     "required": true,
@@ -189,8 +189,8 @@ Bloques de texto delimitados por comentarios HTML que el CLI debe procesar.
 {
   "id": "template-disclaimer",
   "file": "CLAUDE.md",
-  "start": "<!-- sofka-asdd:template-disclaimer:start -->",
-  "end": "<!-- sofka-asdd:template-disclaimer:end -->",
+  "start": "<!-- asdd:template-disclaimer:start -->",
+  "end": "<!-- asdd:template-disclaimer:end -->",
   "action": "remove",
   "remove_markers": true
 }
@@ -204,7 +204,7 @@ Bloques de texto delimitados por comentarios HTML que el CLI debe procesar.
 | `action` | enum | `remove` · `replace` (con nuevo texto en `with`) |
 | `remove_markers` | boolean | Si `true`, elimina los comentarios además del contenido |
 
-**Convención de markers:** `<!-- sofka-asdd:{id}:start -->` y `<!-- sofka-asdd:{id}:end -->`. Respeta HTML estándar y sobrevive al renderizado Markdown.
+**Convención de markers:** `<!-- asdd:{id}:start -->` y `<!-- asdd:{id}:end -->`. Respeta HTML estándar y sobrevive al renderizado Markdown.
 
 #### 3.5.2 `clean.optional_remove`
 
@@ -247,7 +247,7 @@ Por eso **no se puede vaciar** (perdería la función 2) **ni dejar crecer sin c
 | `ASDD-MEMORY.md` | Colisionaba con `distribution`, y `CLAUDE.md` declara ese archivo como el índice de memoria del consumidor: el upgrade le borraba su índice |
 | `.claude/docs/migrations/` | Colisionaba con `distribution` (`.claude/docs/`): los runbooks de migración nunca llegaban |
 | `.asdd-run.json` | Es el checkpoint operativo de corrida del consumidor (ORC-007). 11 artefactos distribuidos lo leen o escriben; el upgrade destruía el estado de la corrida activa |
-| `docs/runs/` | Los manifiestos de corrida que escribe el hook distribuido `sofka-asdd-run-manifest.mjs`. El upgrade borraba el historial del consumidor |
+| `docs/runs/` | Los manifiestos de corrida que escribe el hook distribuido `asdd-run-manifest.mjs`. El upgrade borraba el historial del consumidor |
 
 Preferir nombres de archivo **exactos** del mantenedor por sobre entradas de directorio: un directorio es donde el consumidor escribe, un nombre exacto no colisiona con la convención ART-001 (`{run_id}-{PHASE}-{SEQ}-{slug}.{ext}`).
 
@@ -386,9 +386,9 @@ Bloques **declarativos que el CLI no ejecuta**: los consume el runtime del templ
 
 | Bloque | Quién lo consume | Para qué |
 |---|---|---|
-| `naming_convention` | Check `naming-convention` del validador (strict) | Prefijo `sofka-asdd-` para el template, `{project.name}-` para artefactos del consumidor, con regex por tipo de artefacto |
-| `conditional_install` | Documentación + `sofka-asdd-context-budget-lib.mjs` | Declara dependencias externas que **no** se empaquetan y el trigger que las vuelve necesarias (ej. el AI Dev Kit de Databricks cuando `data_platform == azure-databricks`) |
-| `model_strategy` | Orquestador vía `.sofka-asdd/sofka-asdd.lock` | Defaults de modelo por fase; la cadena de resolución es `skill_override > agent_pinning > phase_default > frontmatter` |
+| `naming_convention` | Check `naming-convention` del validador (strict) | Prefijo `asdd-` para el template, `{project.name}-` para artefactos del consumidor, con regex por tipo de artefacto |
+| `conditional_install` | Documentación + `asdd-context-budget-lib.mjs` | Declara dependencias externas que **no** se empaquetan y el trigger que las vuelve necesarias (ej. el AI Dev Kit de Databricks cuando `data_platform == azure-databricks`) |
+| `model_strategy` | Orquestador vía `.asdd/asdd.lock` | Defaults de modelo por fase; la cadena de resolución es `skill_override > agent_pinning > phase_default > frontmatter` |
 
 ### 3.13 Semántica de escritura — apply no-destructivo
 
@@ -402,9 +402,9 @@ El CLI **nunca** sobreescribe un archivo del consumidor cuyo contenido difiera d
 | Difiere, y su hash coincide con el baseline registrado | `overwritten` | La versión nueva del template |
 | Difiere, sin baseline o con hash distinto | `preserved` | El archivo del consumidor, **más** `<archivo>.asdd-new` con la versión nueva |
 
-El **baseline** es `.sofka-asdd/sofka-asdd.manifest.json`: `sha256(contenido normalizado entregado)` por ruta, que el CLI escribe en cada init/upgrade. Es lo que permite distinguir "sin tocar, pero de una versión vieja" (se actualiza sin fricción) de "el usuario lo editó" (se preserva).
+El **baseline** es `.asdd/asdd.manifest.json`: `sha256(contenido normalizado entregado)` por ruta, que el CLI escribe en cada init/upgrade. Es lo que permite distinguir "sin tocar, pero de una versión vieja" (se actualiza sin fricción) de "el usuario lo editó" (se preserva).
 
-> **Excepción deliberada:** los archivos bajo `.sofka-asdd/` se sobreescriben **siempre**. Son machine-managed; enrutarlos por la vía no-destructiva congelaba el lock en la versión vieja y producía un bucle infinito de "hay actualización disponible".
+> **Excepción deliberada:** los archivos bajo `.asdd/` se sobreescriben **siempre**. Son machine-managed; enrutarlos por la vía no-destructiva congelaba el lock en la versión vieja y producía un bucle infinito de "hay actualización disponible".
 >
 > **Corolario de esa excepción:** el lock del template no lleva el bloque `project` del consumidor, así que el upgrade **debe** recuperar los valores de `personalize[*].json_path` desde el proyecto destino antes de sobreescribir, o la identidad del proyecto se pierde.
 
@@ -429,7 +429,7 @@ Si alguna validación falla, el CLI no debe tocar el destino.
 
 ## 5. Ejemplo completo
 
-Ver `.sofka-asdd/cli-contract.json` del template `project-structure` para el ejemplo vivo.
+Ver `.asdd/cli-contract.json` del template `project-structure` para el ejemplo vivo.
 
 ## 6. Glosario
 
@@ -439,7 +439,7 @@ Ver `.sofka-asdd/cli-contract.json` del template `project-structure` para el eje
 | **Adopción** | Proceso completo: clonar → personalizar → limpiar → crear dirs → validar |
 | **Contrato** | Archivo `cli-contract.json` que describe la adopción |
 | **Checklist** | Archivo `checklist.json` con verificaciones pre/post-instalación |
-| **Lock** | Archivo `sofka-asdd.lock` con el manifiesto versionado del template |
+| **Lock** | Archivo `asdd.lock` con el manifiesto versionado del template |
 | **Marker** | Par de comentarios HTML que delimitan un bloque procesable |
 | **Personalización** | Respuestas del usuario escritas en archivos del template |
 | **Rollback** | Restauración del destino al estado previo a la adopción |

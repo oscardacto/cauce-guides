@@ -1,4 +1,4 @@
-description: "sofka-asdd-qa-engineer: test strategy y sign-off"
+description: "asdd-qa-engineer: test strategy y sign-off"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

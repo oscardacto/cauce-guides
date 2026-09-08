@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * exec-preflight.js — consolida PASOs 0-3.3 del /sofka-asdd:qa-web-exec en UN solo script.
+ * exec-preflight.js — consolida PASOs 0-3.3 del /asdd:qa-web-exec en UN solo script.
  * Reduce 5 bash calls (~100s overhead) a 1.
  *
  * Ejecuta (en orden):
@@ -418,7 +418,7 @@ runPhase(phases, 'validate_mfa_session', () => {
     if (jwtValid === false) {
       throw new Error(
         `JWT en session_state_file VENCIDO hace ${Math.abs(jwtExpiresInMin)} min. ` +
-        `Regenerar sesión antes de /sofka-asdd:qa-web-exec: node .claude/tools/save-session.js --env ${env} --force`
+        `Regenerar sesión antes de /asdd:qa-web-exec: node .claude/tools/save-session.js --env ${env} --force`
       );
     }
 
@@ -458,7 +458,7 @@ runPhase(phases, 'validate_mfa_session', () => {
     throw new Error(
       `session_state_file NO existe en disco: ${sessionStateFile}. ` +
       `El batch contiene ${nonLiteralCps.length} CP(s) no-literales (${nonLiteralCps.slice(0, 3).join(', ')}${nonLiteralCps.length > 3 ? '…' : ''}) que requieren sesión MFA activa. ` +
-      `Ejecutar ANTES de /sofka-asdd:qa-web-exec: node .claude/tools/save-session.js --env ${env}`
+      `Ejecutar ANTES de /asdd:qa-web-exec: node .claude/tools/save-session.js --env ${env}`
     );
   }
 

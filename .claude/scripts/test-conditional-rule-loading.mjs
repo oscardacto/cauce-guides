@@ -8,7 +8,7 @@ import { dirname, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 
 const root = resolve(import.meta.dirname, "..", "..");
-const manifest = JSON.parse(readFileSync(resolve(root, ".sofka-asdd/rule-loading.json"), "utf8"));
+const manifest = JSON.parse(readFileSync(resolve(root, ".asdd/rule-loading.json"), "utf8"));
 const consumer = mkdtempSync(join(tmpdir(), "asdd-rule-consumer-"));
 const transcript = [];
 
@@ -17,9 +17,9 @@ function words(text) {
 }
 
 try {
-  const scriptTarget = resolve(consumer, ".claude/scripts/sofka-asdd-resolve-rule.mjs");
+  const scriptTarget = resolve(consumer, ".claude/scripts/asdd-resolve-rule.mjs");
   mkdirSync(dirname(scriptTarget), { recursive: true });
-  cpSync(resolve(root, ".claude/scripts/sofka-asdd-resolve-rule.mjs"), scriptTarget);
+  cpSync(resolve(root, ".claude/scripts/asdd-resolve-rule.mjs"), scriptTarget);
   cpSync(resolve(root, ".claude/references/rules"), resolve(consumer, ".claude/references/rules"), { recursive: true });
 
   for (const entry of manifest.entries) {

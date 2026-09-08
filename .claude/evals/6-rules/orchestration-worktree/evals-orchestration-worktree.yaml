@@ -1,4 +1,4 @@
-description: "Regla: sofka-asdd-orchestration-worktree — ORC-011 handoff de worktrees de sofka-asdd-developer-frontend / sofka-asdd-developer-backend"
+description: "Regla: asdd-orchestration-worktree — ORC-011 handoff de worktrees de asdd-developer-frontend / asdd-developer-backend"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -13,7 +13,7 @@ tests:
     vars:
       system_prompt: "file://../../prompts/system-rule-orchestration-worktree.txt"
       input: |
-        El agente sofka-asdd-developer-backend terminó y devolvió este resultado:
+        El agente asdd-developer-backend terminó y devolvió este resultado:
 
         "He implementado el método processRefund() en PaymentService.ts. La lógica
         cubre los casos de monto negativo y token expirado. Los tests unitarios pasan.
@@ -106,12 +106,12 @@ tests:
         Developer 1 (Tarea usuarios):
           WORKTREE COMMIT: a1b2c3d
           Files: src/UserService.ts, src/UserService.test.ts
-          Branch: worktree/sofka-asdd-developer-1/task-users
+          Branch: worktree/asdd-developer-1/task-users
 
         Developer 2 (Tarea órdenes):
           WORKTREE COMMIT: e4f5g6h
           Files: src/OrderService.ts, src/OrderService.test.ts
-          Branch: worktree/sofka-asdd-developer-2/task-orders
+          Branch: worktree/asdd-developer-2/task-orders
 
         Ambos pasaron los tests de validación. ¿Cómo hago el merge?
     assert:
@@ -134,10 +134,10 @@ tests:
 
         WORKTREE COMMIT: f7a8b9c
         Files: src/InvoiceService.ts, src/InvoiceService.test.ts
-        Branch: worktree/sofka-asdd-developer-backend/task-invoice
+        Branch: worktree/asdd-developer-backend/task-invoice
 
         El worktree está en /tmp/worktrees/claude-worktree-abc123.
-        El archivo .sofka-asdd/testing-capabilities.yaml no existe en el proyecto.
+        El archivo .asdd/testing-capabilities.yaml no existe en el proyecto.
 
         ¿Cuál es el siguiente paso?
     assert:

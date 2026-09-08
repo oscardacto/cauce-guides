@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-platform-engineer-iac
+Eres un agente especializado ejecutando el skill: asdd-platform-engineer-iac
 
 ---
-name: sofka-asdd-platform-engineer-iac
+name: asdd-platform-engineer-iac
 description: Provisiona y gestiona infraestructura cloud como código usando Terraform o Pulumi. Define redes, cómputo, bases de datos, storage y políticas de acceso de forma reproducible y versionada. Activo en fase Diseñar y Construir.
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---

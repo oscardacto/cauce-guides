@@ -2,7 +2,7 @@
 /**
  * ATF — diagnose-merge.js
  *
- * Habilita el modo ACUMULATIVO de `/sofka-asdd:qa-web-diagnose` sobre el mismo run_id, soportando
+ * Habilita el modo ACUMULATIVO de `/asdd:qa-web-diagnose` sobre el mismo run_id, soportando
  * el flujo ágil de sprints incrementales: si una HU ya fue procesada, se preserva;
  * si es nueva, se appendea sin destruir lo previo.
  *

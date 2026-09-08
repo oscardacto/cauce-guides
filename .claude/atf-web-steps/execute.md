@@ -7,7 +7,7 @@ tools: all
 # Executor — Contrato de ejecución
 
 > **INVOCACIÓN:** `Agent tool` con `subagent_type: general-purpose`.
-> El caller (`/sofka-asdd:qa-web-exec` preflight o `/sofka-asdd:qa-web-run` orquestador) pre-extrae contexto a
+> El caller (`/asdd:qa-web-exec` preflight o `/asdd:qa-web-run` orquestador) pre-extrae contexto a
 > `{run_folder}/.tmp/exec_context.json` y pasa `cp_targets[]` + paths.
 
 Este spec ejecuta los CPs listados en `cp_targets[]` sobre un run existente
@@ -42,7 +42,7 @@ browser_take_screenshot({ path: "..." }) // path custom rompe batch-evidence-cop
 
 ## CONTRATO DE ENTRADA (único)
 
-Todos los callers del executor (`/sofka-asdd:qa-web-exec` y `/sofka-asdd:qa-web-run`) usan el mismo contrato:
+Todos los callers del executor (`/asdd:qa-web-exec` y `/asdd:qa-web-run`) usan el mismo contrato:
 
 ```yaml
 cp_targets:           [{module_id, cp_id, risk_level}]   # batch heterogéneo (1..N módulos)
@@ -106,17 +106,17 @@ presente en `cp_targets`** vía `aggregate-batch-results.js` (merge incremental
 
 ## SKILLS
 
-- `sofka-asdd-atf-web-auth-handler` → Setup del CP (login clásico o restauración de `storageState` en PASO 1.5a si `mfa_type != ""`)
-- `sofka-asdd-atf-web-highlight-injector` → antes de cada screenshot (verde PASS / rojo FAIL)
-- `sofka-asdd-atf-web-db-validator` → PASO 3.B paso 4 post-step (solo si `db_config !== null` Y CP tiene tag `@bd`)
-- `sofka-asdd-atf-web-alm-data-builder` → cierre del CP (12 campos ALM en `bug_candidate` si FAIL)
+- `asdd-atf-web-auth-handler` → Setup del CP (login clásico o restauración de `storageState` en PASO 1.5a si `mfa_type != ""`)
+- `asdd-atf-web-highlight-injector` → antes de cada screenshot (verde PASS / rojo FAIL)
+- `asdd-atf-web-db-validator` → PASO 3.B paso 4 post-step (solo si `db_config !== null` Y CP tiene tag `@bd`)
+- `asdd-atf-web-alm-data-builder` → cierre del CP (12 campos ALM en `bug_candidate` si FAIL)
 - `tools/nav-learning.js` → PASO 1.c init + PASO 3.B paso 1 lookup/record (solo si `navigation_learning_enabled`)
 - `tools/restore-mfa-session.js` → PASO 2 (solo si `mfa_type != ""`)
 - `tools/cleanup-mcp-browser.js` → PASO 1.a
 - `tools/reset-cp-artifacts.js` → PASO 1.b
 - `tools/batch-evidence-copy.js` → PASO 3.C cierre
 - `tools/aggregate-batch-results.js` → PASO 4
-- `tools/db-query.js` → invocado por `sofka-asdd-atf-web-db-validator`
+- `tools/db-query.js` → invocado por `asdd-atf-web-db-validator`
 
 > Playwright MCP directo (`browser_*` tools). Sin scripts Playwright, sin Page Objects, sin runner.
 
@@ -124,9 +124,9 @@ presente en `cp_targets`** vía `aggregate-batch-results.js` (merge incremental
 
 ## REGLAS
 
-Ante conflicto entre este spec y `sofka-asdd-atf-web-executor-invariants.md`, los invariantes prevalecen.
+Ante conflicto entre este spec y `asdd-atf-web-executor-invariants.md`, los invariantes prevalecen.
 
-**Referenciadas por ID** (leer en [`reference/atf-web/sofka-asdd-atf-web-executor-invariants.md`](../reference/atf-web/sofka-asdd-atf-web-executor-invariants.md)):
+**Referenciadas por ID** (leer en [`reference/atf-web/asdd-atf-web-executor-invariants.md`](../reference/atf-web/asdd-atf-web-executor-invariants.md)):
 - REGLA 1 — Fidelidad 1:1 entre `steps[]` y `steps_raw`
 - REGLA 2 — Aislamiento atómico de source_ids
 - REGLA 2.1 — Slug canónico vía `cpIdToFolderFromKnownModules()`
@@ -156,7 +156,7 @@ Ante conflicto entre este spec y `sofka-asdd-atf-web-executor-invariants.md`, lo
    - `h1_type_reclassification`: guía criterio de evaluación; no modifica `type` del CP.
    - `h3_suspicious_assertions`: si un `step_n` listado falla → marcar CP `BLOCKED` con `assertion_suspicious: true` (no FAIL).
    - `h2_steps_classified`: `kind:"action"` → `browser_click/fill/select/type`; `kind:"assertion"` → `browser_evaluate`.
-   - `auto_inferred.preconditions_playbook[]`: **METADATA HISTÓRICA** — `/sofka-asdd:qa-web-enrich` ya aplanó los pasos del playbook al `steps_raw_enriched` (full flatten en PASO 5.5 del cp-enricher). El executor NO procesa este campo — solo itera `steps_raw` literal.
+   - `auto_inferred.preconditions_playbook[]`: **METADATA HISTÓRICA** — `/asdd:qa-web-enrich` ya aplanó los pasos del playbook al `steps_raw_enriched` (full flatten en PASO 5.5 del cp-enricher). El executor NO procesa este campo — solo itera `steps_raw` literal.
 
    **REGLA 4 (PREVALENCIA LITERAL) siempre prevalece sobre `auto_inferred` cuando el CP especifica el valor.**
 
@@ -168,7 +168,7 @@ Ante conflicto entre este spec y `sofka-asdd-atf-web-executor-invariants.md`, lo
 
 ## KNOWLEDGE ACCESS CONTRACT
 
-> Doctrina compartida: [`reference/atf-web/sofka-asdd-atf-web-knowledge-access-contract.md`](../reference/atf-web/sofka-asdd-atf-web-knowledge-access-contract.md). Tabla con archivos específicos de este agente:
+> Doctrina compartida: [`reference/atf-web/asdd-atf-web-knowledge-access-contract.md`](../reference/atf-web/asdd-atf-web-knowledge-access-contract.md). Tabla con archivos específicos de este agente:
 
 | Modo | Archivo |
 |---|---|
@@ -184,9 +184,9 @@ Ante conflicto entre este spec y `sofka-asdd-atf-web-executor-invariants.md`, lo
 | Write | `{execution_dir}/{module_id}/module_result.json` |
 | Write (merge via `nav-learning.js`) | `{run_folder}/.tmp/nav_session_{module_id}_b{batch_id}.json` |
 
-**NO LEE** artefactos de bugs de runs anteriores (REGLA 1 — verdad por run). **NO escribe directamente** los registros transaccionales (`cp_registry.json`, `cp_index.json`, `module_verdicts.json`) — el orchestrator los actualiza al cierre vía `sofka-asdd-atf-web-knowledge-updater`.
+**NO LEE** artefactos de bugs de runs anteriores (REGLA 1 — verdad por run). **NO escribe directamente** los registros transaccionales (`cp_registry.json`, `cp_index.json`, `module_verdicts.json`) — el orchestrator los actualiza al cierre vía `asdd-atf-web-knowledge-updater`.
 
-**Independencia del executor (anti-design-on-the-fly):** el executor **NUNCA diseña CPs sobre la marcha** (REGLA 6). Requiere `{design_dir}/cp_modulo_{module_id}.json` explícito. Si no existe para el módulo solicitado → escribir `execution_blocked.json` con `reason: "no_cps_for_module"` y DETENER. Mensaje sugerido al QA: "Ejecuta `/sofka-asdd:qa-web-design --module {module_id}` primero para generar los CPs".
+**Independencia del executor (anti-design-on-the-fly):** el executor **NUNCA diseña CPs sobre la marcha** (REGLA 6). Requiere `{design_dir}/cp_modulo_{module_id}.json` explícito. Si no existe para el módulo solicitado → escribir `execution_blocked.json` con `reason: "no_cps_for_module"` y DETENER. Mensaje sugerido al QA: "Ejecuta `/asdd:qa-web-design --module {module_id}` primero para generar los CPs".
 
 ---
 
@@ -219,7 +219,7 @@ MSYS_NO_PATHCONV=1 node .claude/tools/cleanup-mcp-browser.js
 MSYS_NO_PATHCONV=1 node .claude/tools/reset-cp-artifacts.js \
   --cp-ids '<JSON array cp_ids>' \
   --execution-dir "docs/testing/atf-web/{run_id}/execution" \
-  --design-dir "docs/testing/atf-web/{run_id}/sofka-asdd:qa-web-design"
+  --design-dir "docs/testing/atf-web/{run_id}/asdd:qa-web-design"
 
 # 1.c — Init nav-learning session: UNA por module_id ÚNICO del batch.
 # CRÍTICO: pasar `--module-id` EXPLÍCITO. Sin él, nav-learning.js deriva el
@@ -407,7 +407,7 @@ Si OK → persistir en las variables del CP para usarlas en PASO 3.C:
 
 Por cada paso (imprimir `▶️ PASO {i+1}/{N}: {steps_parsed[i]}`):
 
-> ⚡ **REGLA 27 — VISIBILIDAD LITERAL:** si el step contiene `"[A] y [B] visibles"`, `"botones X y Y"`, `"campos A, B, C presentes"`, todos los elementos enumerados deben observarse simultáneamente. PROHIBIDO PASS por *"aparece tras toggle"* o *"disponible eventualmente"*. Ver [`reference/atf-web/sofka-asdd-atf-web-executor-invariants.md` § REGLA 27](../reference/atf-web/sofka-asdd-atf-web-executor-invariants.md#regla-27).
+> ⚡ **REGLA 27 — VISIBILIDAD LITERAL:** si el step contiene `"[A] y [B] visibles"`, `"botones X y Y"`, `"campos A, B, C presentes"`, todos los elementos enumerados deben observarse simultáneamente. PROHIBIDO PASS por *"aparece tras toggle"* o *"disponible eventualmente"*. Ver [`reference/atf-web/asdd-atf-web-executor-invariants.md` § REGLA 27](../reference/atf-web/asdd-atf-web-executor-invariants.md#regla-27).
 
 1. **Resolución de selector — `selector_hints[]` pre-resueltos por preflight:**
 
@@ -490,7 +490,7 @@ Por cada paso (imprimir `▶️ PASO {i+1}/{N}: {steps_parsed[i]}`):
      - `write`: contiene "guardar", "confirmar", "submit", "crear", "actualizar", "eliminar", "registrar", "agregar"
      - `read`: contiene "verificar", "visualizar", "consultar", "filtrar", "listar", "mostrar"
      - Force-invoke: `en BD`, `en base de datos`, `tabla {nombre}`, `db_table:`
-   - Si match → invocar `sofka-asdd-atf-web-db-validator` (ver `.claude/skills/sofka-asdd-atf-web-db-validator/SKILL.md`).
+   - Si match → invocar `asdd-atf-web-db-validator` (ver `.claude/skills/asdd-atf-web-db-validator/SKILL.md`).
    - Push retorno a `db_validations[]` con `step_num: i+1`.
    - Si `DB_FAIL` y `db_required === true` (desde registry) → marcar CP FAIL.
 
@@ -670,7 +670,7 @@ echo '{
 
 > `browser_close()` ya se ejecutó en PASO 3.C de cada CP. NO volver a llamarlo.
 > El merge a knowledge/, nav-learning merge, knowledge-updater los hace el
-> orquestador `/sofka-asdd:qa-web-exec` post-retorno — NO aquí.
+> orquestador `/asdd:qa-web-exec` post-retorno — NO aquí.
 
 ---
 
@@ -683,8 +683,8 @@ Antes de cerrar el batch, verificar que NO hayas hecho ninguna de estas:
 - ❌ `browser_close()` en PASO 5 — ya se cerró en 3.C.
 - ❌ Crear carpetas de CP con nombres ad-hoc (`cp_m3_001/`, `CP-M3-001/`) — siempre `cpIdToFolderFromKnownModules(...)`.
 - ❌ Escribir entradas en `steps[]` que no mapeen 1:1 con `steps_raw` (REGLA 1).
-- ❌ Decidir "no invocar sofka-asdd-atf-web-db-validator porque no aporta valor" — si ambos gates pasan (db_config !== null AND cp.tags incluye `@bd`) y hay match de keywords, el skill se invoca siempre; él decide skip.
-- ❌ Invocar sofka-asdd-atf-web-db-validator en CPs SIN el tag `@bd` aunque los steps contengan keywords — viola el gate CP-level de REGLA 7 (doble opt-in.
+- ❌ Decidir "no invocar asdd-atf-web-db-validator porque no aporta valor" — si ambos gates pasan (db_config !== null AND cp.tags incluye `@bd`) y hay match de keywords, el skill se invoca siempre; él decide skip.
+- ❌ Invocar asdd-atf-web-db-validator en CPs SIN el tag `@bd` aunque los steps contengan keywords — viola el gate CP-level de REGLA 7 (doble opt-in.
 
 ---
 
@@ -701,7 +701,7 @@ Antes de cerrar el batch, verificar que NO hayas hecho ninguna de estas:
 cd "{project_root}" && MSYS_NO_PATHCONV=1 node .claude/tools/reset-cp-artifacts.js \
   --cp-ids '["CP-M2-001"]' \
   --execution-dir "docs/testing/atf-web/{run_id}/execution" \
-  --design-dir "docs/testing/atf-web/{run_id}/sofka-asdd:qa-web-design"
+  --design-dir "docs/testing/atf-web/{run_id}/asdd:qa-web-design"
 ```
 
 ⚠️ `--cp-ids` requiere un **JSON array string**, no un valor plano.
@@ -781,6 +781,6 @@ Donde `<evidence_buffer_deduplicado_json>` es array JSON `[{"src":".playwright-m
 ## MODO `visual_ux_a11y` — movido a referencia
 
 La referencia conceptual del modo vive en
-`.claude/reference/atf-web/sofka-asdd-atf-web-vua-conceptual-reference.md`.
+`.claude/reference/atf-web/asdd-atf-web-vua-conceptual-reference.md`.
 No es spec invocable y no afecta el flujo CP-by-CP: la lógica vigente está inline en
-`.claude/commands/sofka-asdd/qa-web-visual-ux-a11y.md`.
+`.claude/commands/asdd/qa-web-visual-ux-a11y.md`.

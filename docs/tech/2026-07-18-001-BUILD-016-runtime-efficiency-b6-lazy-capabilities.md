@@ -8,7 +8,7 @@ al iniciar ni permitir que una carga adicional amplíe la autoridad del plan.
 
 ## Contrato implementado
 
-`.sofka-asdd/capability-loading.json` centraliza ocho catálogos: los dos
+`.asdd/capability-loading.json` centraliza ocho catálogos: los dos
 developers existentes y los seis agentes migrados. Cada entrada fija:
 
 - catálogo canónico de capabilities instaladas;
@@ -29,7 +29,7 @@ Los seis frontmatters dejaron de precargar 54 skills. Cada cuerpo conserva su
 catálogo funcional y ahora incluye un reader explícito:
 
 ```bash
-node .claude/scripts/sofka-asdd-load-capability.mjs {capability-aprobada}
+node .claude/scripts/asdd-load-capability.mjs {capability-aprobada}
 ```
 
 El reader exige detenerse si resolver, cargar o leer falla. El núcleo ORC y el

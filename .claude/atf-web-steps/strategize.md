@@ -3,15 +3,15 @@ name: "Strategist"
 description: "Transforma la base de pruebas en plan de ataque: módulos, riesgos, flujos E2E, priorización de HUs e instancias paralelas. Produce execution_plan.json, risk_matrix.json y hu_priority.md. Segunda invocación: verifica cobertura de pantallas post-Design Team."
 model: sonnet
 skills:
-  - sofka-asdd-atf-web-risk-scorer
-  - sofka-asdd-atf-web-instance-planner
+  - asdd-atf-web-risk-scorer
+  - asdd-atf-web-instance-planner
 maxTurns: 30
 ---
 
 ## SKILLS
-- `sofka-asdd-atf-web-risk-scorer` → PASO 3
-- `sofka-asdd-atf-web-instance-planner` → PASO 5
-- `sofka-asdd-atf-web-notebooklm-query` → PASO 2/3 (riesgos de dominio)
+- `asdd-atf-web-risk-scorer` → PASO 3
+- `asdd-atf-web-instance-planner` → PASO 5
+- `asdd-atf-web-notebooklm-query` → PASO 2/3 (riesgos de dominio)
 
 ## REGLAS
 1. Sin browser — insumo son archivos del Diagnostician
@@ -22,7 +22,7 @@ maxTurns: 30
 
 ## KNOWLEDGE ACCESS CONTRACT
 
-> Doctrina compartida: [`reference/atf-web/sofka-asdd-atf-web-knowledge-access-contract.md`](../reference/atf-web/sofka-asdd-atf-web-knowledge-access-contract.md). Tabla con archivos específicos de este agente:
+> Doctrina compartida: [`reference/atf-web/asdd-atf-web-knowledge-access-contract.md`](../reference/atf-web/asdd-atf-web-knowledge-access-contract.md). Tabla con archivos específicos de este agente:
 
 | Modo | Archivo |
 |---|---|
@@ -65,13 +65,13 @@ Agrupar HUs por: mismo actor y contexto, mismas entidades, mismo flujo E2E.
 
 ## PASO 3 — Calcular riesgos
 
-Antes de invocar `sofka-asdd-atf-web-risk-scorer`, leer del `appweb.yaml` los dos parámetros que controlan la cobertura cross-cutting:
+Antes de invocar `asdd-atf-web-risk-scorer`, leer del `appweb.yaml` los dos parámetros que controlan la cobertura cross-cutting:
 
 - `enrichment.cross_cutting_mode` → `literal` (default) | `expanded` | `shift_left`. Misma SSoT que `gherkin-writer` para CPs.
 - `security.compliance` (opcional, array) → marcos regulatorios aplicables al dominio. Ej: `["OWASP-Top10"]` para apps web públicas, `["OWASP-Top10","PCI-DSS"]` para checkout, `["HIPAA","HITECH"]` para salud. Si vacío → solo emite riesgos `hu_literal` y `cross_cutting_inferred` según modo.
 
 ```
-[SKILL: sofka-asdd-atf-web-risk-scorer]
+[SKILL: asdd-atf-web-risk-scorer]
 items: HUs con domain_type, description, has_text_inputs, has_financial_data, known_findings, acceptance_criteria
 scoring_context: "hu"
 cross_cutting_mode: <leído de appweb.yaml>
@@ -141,7 +141,7 @@ Campos obligatorios: `e2e_id`, `type`, `category` (`"functional"|"technical"`), 
 Cada `execution_sequence[].action` es una **descripción funcional narrativa** de la acción del actor. NO se exigen URLs literales ni selectores específicos en fases tempranas:
 
 - Las HUs y la documentación funcional **rara vez contienen URLs** (son artefactos de negocio).
-- Las URLs reales se descubren en fases posteriores (`/sofka-asdd:qa-web-design` con `screens_M.json` o `/sofka-asdd:qa-web-exec` con browser MCP).
+- Las URLs reales se descubren en fases posteriores (`/asdd:qa-web-design` con `screens_M.json` o `/asdd:qa-web-exec` con browser MCP).
 - Exigir URLs al strategist en pre-design viola la cronología natural del pipeline.
 
 **Patrón canónico para `action` (KISS):**
@@ -167,7 +167,7 @@ Escribir `{strategy_dir}/hu_priority.md` con tabla: Prioridad | ID | Módulo | T
 ## PASO 5 — Calcular instancias y generar execution_plan
 
 ```
-[SKILL: sofka-asdd-atf-web-instance-planner]
+[SKILL: asdd-atf-web-instance-planner]
 modules, critical_risks, e2e_flows, max_design/executor_instances
 ```
 
@@ -217,7 +217,7 @@ Schema mínimo:
 ⚠️ **Keys obligatorios y exactos** — NO abreviar:
 - `puede_pasar_que` (no `puede_pasar`).
 - `lo_que_provocaria_que` (no `provocaria` ni `lo_que_provocaria`).
-- `risk_score` numérico (1.0–16.0, calculado por sofka-asdd-atf-web-risk-scorer como `severity × probability`). NO omitir — el dashboard cuenta riesgos por score.
+- `risk_score` numérico (1.0–16.0, calculado por asdd-atf-web-risk-scorer como `severity × probability`). NO omitir — el dashboard cuenta riesgos por score.
 - `source` requerido (uno de los 3 buckets — PASO 0bis del skill). NO emitir riesgos sin clasificar.
 - `tags[]` requerido (puede ser `[]` solo si `source: "hu_literal"`). Para `compliance_mandatory` debe incluir `@compliance-mandatory`. Para `cross_cutting_inferred` debe incluir `@cp-derivado` Y `@requiere-validacion`.
 - `evidence` debe ser `null` solo si `source: "cross_cutting_inferred"`. Para `hu_literal` y `compliance_mandatory` es obligatorio.

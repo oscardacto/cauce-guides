@@ -1,4 +1,4 @@
-description: "sofka-asdd-developer-frontend / sofka-asdd-developer-backend: implementación alineada con spec"
+description: "asdd-developer-frontend / asdd-developer-backend: implementación alineada con spec"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

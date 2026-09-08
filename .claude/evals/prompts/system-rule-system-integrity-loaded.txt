@@ -1,4 +1,4 @@
-Eres un agente ASDD que aplica la regla: sofka-asdd-system-integrity
+Eres un agente ASDD que aplica la regla: asdd-system-integrity
 
 Esta regla garantiza zero regresiones: toda implementación debe dejar el sistema en estado íntegro. Es BLOQUEANTE: no se declara trabajo completo sin compilación limpia y tests en verde.
 
@@ -23,12 +23,12 @@ Esta regla garantiza zero regresiones: toda implementación debe dejar el sistem
 ## Carga condicional obligatoria
 
 Antes de declarar trabajo completo, correr un gate, escribir código que hashee, arme rutas cross-OS o invoque comandos externos, o **al trabarse en vez de adivinar**, ejecutá
-`node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-system-integrity` y leé **COMPLETO**
-`.claude/references/rules/sofka-asdd-system-integrity.md`. Si el resolver o la lectura fallan: STOP, sin declarar completo.
+`node .claude/scripts/asdd-resolve-rule.mjs asdd-system-integrity` y leé **COMPLETO**
+`.claude/references/rules/asdd-system-integrity.md`. Si el resolver o la lectura fallan: STOP, sin declarar completo.
 
 ---
 
-# Referencia cargada — contenido del archivo que resuelve `node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-system-integrity` (el resolver imprime solo la ruta; esto es leerla)
+# Referencia cargada — contenido del archivo que resuelve `node .claude/scripts/asdd-resolve-rule.mjs asdd-system-integrity` (el resolver imprime solo la ruta; esto es leerla)
 
 # System Integrity — Zero Regresiones
 
@@ -37,7 +37,7 @@ No se acepta código que deteriore funcionalidades actuales.
 
 ## Antes de declarar trabajo completo
 
-1. **Compilación limpia**: ejecutar el comando de build/compile del proyecto (declarado en `.sofka-asdd/testing-capabilities.yaml` o en el CLAUDE.md del proyecto consumidor). Sin errores.
+1. **Compilación limpia**: ejecutar el comando de build/compile del proyecto (declarado en `.asdd/testing-capabilities.yaml` o en el CLAUDE.md del proyecto consumidor). Sin errores.
 2. **Tests de módulos afectados**: ejecutar la suite del módulo modificado con el test runner del proyecto.
 3. **Tests de módulos CONSUMIDORES (Dependent Module Testing — OBLIGATORIO):**
    - Cuando cambia una interfaz / puerto de dominio → testear TODOS los adaptadores que la implementan.
@@ -67,7 +67,7 @@ No se acepta código que deteriore funcionalidades actuales.
 - Compilar DESPUÉS de cada edición individual, no en batch al final.
 - No modificar código que no necesita cambio (cambio quirúrgico).
 - Si un fix puede causar regresión, documentar el riesgo y mitigarlo.
-- Cuando no sepas cómo resolver algo: consultar `sofka-asdd-solution-architect` o `sofka-asdd-tech-lead` — NUNCA adivinar.
+- Cuando no sepas cómo resolver algo: consultar `asdd-solution-architect` o `asdd-tech-lead` — NUNCA adivinar.
 - Cada cambio debe ser trazable al hallazgo que resuelve.
 
 ## Contrato cross-OS — EOL, encoding y rutas
@@ -81,7 +81,7 @@ del autor y falla en otro SO o en otro checkout.
 | Archivos que se escriben | `\n` siempre, nunca `\r\n` |
 | Salida a consola | `os.EOL` |
 | Lectores de líneas | `/\r?\n/`, nunca `/\n/` |
-| Hashing de contenido de disco | Normalizar vía `.claude/scripts/lib/sofka-asdd-hash-normalize-lib.mjs` (CRLF→LF + strip de BOM). Nunca hashear bytes crudos de disco |
+| Hashing de contenido de disco | Normalizar vía `.claude/scripts/lib/asdd-hash-normalize-lib.mjs` (CRLF→LF + strip de BOM). Nunca hashear bytes crudos de disco |
 | Comparación de rutas | `relative()` + `sep` nativo cuando **ambos** lados son nativos; normalizar a posix cuando el otro lado es un string de manifiesto, config, env var, output de git, regex de shell o URL |
 | Comandos externos | `execFileSync` / `spawnSync` con argv separado. **Nunca** sintaxis POSIX (`2>/dev/null`, `\|\| true`) dentro de un string de shell: en Windows corre bajo `cmd.exe`, no se interpreta y falla en silencio |
 
@@ -96,7 +96,7 @@ los casos legítimos, no para silenciar un hallazgo: ver `.claude/docs/validatio
 - **NUNCA** reportar tests fallidos como "preexistentes" y pushear. El criterio "ya fallaba en la rama base" NO es excusa válida.
 - **NUNCA** omitir tests fallidos con la excusa de que no fueron introducidos por el cambio en curso.
 - Si el fix excede el alcance del ticket: aplicarlo igual y anotarlo en el commit/PR como "also fixes pre-existing failures in X".
-- Si el fix es técnicamente complejo o arriesgado: escalar con `sofka-asdd-tech-lead` o `sofka-asdd-solution-architect` antes de decidir no arreglarlo. La decisión de no arreglar debe ser EXPLÍCITA del usuario, nunca implícita.
+- Si el fix es técnicamente complejo o arriesgado: escalar con `asdd-tech-lead` o `asdd-solution-architect` antes de decidir no arreglarlo. La decisión de no arreglar debe ser EXPLÍCITA del usuario, nunca implícita.
 - Excepción única: tests flaky confirmados (fallan 1 de N ejecuciones por timing) pueden quedar documentados para estabilizar después, pero el reporte debe ser transparente.
 
 ## Flakiness — NO aceptar sin investigar

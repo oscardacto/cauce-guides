@@ -30,7 +30,7 @@ Si la tarea abarca más de un sub-rol, ejecutar secuencialmente en el orden que 
 
 ## Coordinación con roles técnicos
 
-Producto NO invoca directamente a `architect`, `security` ni `tech-lead`. La invocación condicional la hace el orquestador (vía los commands `/sofka-asdd:specify` y `/sofka-asdd:analyze`) cuando detecta señales:
+Producto NO invoca directamente a `architect`, `security` ni `tech-lead`. La invocación condicional la hace el orquestador (vía los commands `/asdd:specify` y `/asdd:analyze`) cuando detecta señales:
 
 - **Architect** → integración, migración, contrato API, escalabilidad
 - **Security** → datos sensibles, auth, regulación (PCI/HIPAA/KYC), pagos
@@ -40,7 +40,7 @@ Producto debe **dejar marcadas** estas señales en el brief/spec (sección "Role
 
 ## Plantillas canónicas
 
-Antes de escribir brief o spec, leer plantillas del skill `sofka-asdd-producto-templates`:
+Antes de escribir brief o spec, leer plantillas del skill `asdd-producto-templates`:
 - `reference/brief-template.md` para `docs/specs/brief-{proyecto}.md`
 - `reference/spec-template.md` para `docs/specs/{feature}.md`
 

@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-developer-refactoring-execute
+Eres un agente especializado ejecutando el skill: asdd-developer-refactoring-execute
 
 ---
-name: sofka-asdd-developer-refactoring-execute
+name: asdd-developer-refactoring-execute
 description: Ejecuta el plan de refactoring producido por el Tech Lead. Mejora la estructura interna del código sin cambiar su comportamiento observable. Activo en fase Construir.
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---

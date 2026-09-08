@@ -479,7 +479,7 @@ function resolveFromSegments(segments, base, { chain = false } = {}) {
  * autorización de sesión real — solo sirve para advertir al usuario.
  *
  * @param {string} command
- * @param {string} varName - nombre de la variable de entorno (ej. SOFKA_ASDD_GUARD_BRANCH_DISABLE)
+ * @param {string} varName - nombre de la variable de entorno (ej. ASDD_GUARD_BRANCH_DISABLE)
  * @returns {boolean}
  */
 export function parseInlineEnvVar(command, varName) {

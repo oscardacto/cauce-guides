@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-security-dependency-audit
+Eres un agente especializado ejecutando el skill: asdd-security-dependency-audit
 
 ---
-name: sofka-asdd-security-dependency-audit
+name: asdd-security-dependency-audit
 description: Evalúa las dependencias del proyecto buscando CVEs conocidos, licencias incompatibles y paquetes desactualizados con vulnerabilidades. Activo en fase Construir y Verificar.
 allowed-tools: [Read, Glob, Grep, Bash, WebFetch]
 ---

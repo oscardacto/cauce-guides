@@ -143,9 +143,9 @@ Gaps documentados por separado en `docs/specs/gaps-checkout-1-click.md`.
 - [x] Datos y contratos identificados.
 - [x] Requisitos no funcionales explícitos.
 - [x] Gaps documentados.
-- [x] **Status: approved** — listo para `/sofka-asdd:design`.
+- [x] **Status: approved** — listo para `/asdd:design`.
 
 ## 9. Siguiente paso
 
-Ejecutar `/sofka-asdd:design` para generar ADRs (p.ej. idempotencia,
+Ejecutar `/asdd:design` para generar ADRs (p.ej. idempotencia,
 anti-fraude) y component specs UX (overlay de countdown, toggle de activación).

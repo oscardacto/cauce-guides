@@ -1,4 +1,4 @@
-Eres un agente ASDD que aplica la regla: sofka-asdd-memory-hygiene
+Eres un agente ASDD que aplica la regla: asdd-memory-hygiene
 
 Esta regla define cómo gestionar la memoria entre sesiones: qué va a la capa de equipo, qué a la personal, cuándo promover y cuándo archivar.
 
@@ -9,7 +9,7 @@ Esta regla define cómo gestionar la memoria entre sesiones: qué va a la capa d
 **Sistema de dos capas.** Equipo: `.claude/memory/`, git-committed, solo
 `feedback` y `reference` perennes. Personal:
 `~/.claude/projects/{project}/memory/`, para estado de sesión, memorias `user` y
-todo lo sensible, que nunca sube a la capa de equipo (`sofka-asdd-memory-privacy.md`).
+todo lo sensible, que nunca sube a la capa de equipo (`asdd-memory-privacy.md`).
 
 - `ASDD-MEMORY.md` se mantiene en ≤30 líneas activas: punteros de ≤150 chars,
   nunca contenido. Archivar es quitar la línea, no borrar el archivo.
@@ -21,12 +21,12 @@ todo lo sensible, que nunca sube a la capa de equipo (`sofka-asdd-memory-privacy
 ## Carga condicional obligatoria
 
 Antes de leer archivos, escribir en `memory/`, promover una memoria al equipo o guardar un handoff, ejecutá
-`node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-memory-hygiene` y leé **COMPLETO**
-`.claude/references/rules/sofka-asdd-memory-hygiene.md`. Si el resolver o la lectura fallan: STOP, sin escribir memoria.
+`node .claude/scripts/asdd-resolve-rule.mjs asdd-memory-hygiene` y leé **COMPLETO**
+`.claude/references/rules/asdd-memory-hygiene.md`. Si el resolver o la lectura fallan: STOP, sin escribir memoria.
 
 ---
 
-# Referencia cargada — contenido del archivo que resuelve `node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-memory-hygiene` (el resolver imprime solo la ruta; esto es leerla)
+# Referencia cargada — contenido del archivo que resuelve `node .claude/scripts/asdd-resolve-rule.mjs asdd-memory-hygiene` (el resolver imprime solo la ruta; esto es leerla)
 
 ---
 description: Memory hygiene, session handoff, agent context declaration — token saving
@@ -44,13 +44,13 @@ globs: "*"
 
 - **Feedback validado** (convenciones confirmadas, anti-patrones documentados) → equipo
 - **Estado de sesión** (sprint en curso, rama, último paso) → personal
-- **Datos sensibles del dominio** → NUNCA en equipo (ver `sofka-asdd-memory-privacy.md`)
+- **Datos sensibles del dominio** → NUNCA en equipo (ver `asdd-memory-privacy.md`)
 
 ## Protocolo de promoción — personal → equipo
 
 Una lección en memoria personal se **promueve** a `.claude/memory/` del equipo cuando:
 1. Se confirmó en **≥2 sesiones distintas** (el mismo error apareció de nuevo, o un compañero lo reportó)
-2. No contiene datos sensibles (ver `sofka-asdd-memory-privacy.md`)
+2. No contiene datos sensibles (ver `asdd-memory-privacy.md`)
 3. Aplica a futuras sesiones del mismo agente, no solo al sprint actual
 
 **Cómo promover:**

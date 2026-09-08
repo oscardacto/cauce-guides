@@ -12,7 +12,7 @@
  *     --click-after false
  *
  * Output: string JS (una línea o con saltos — el MCP acepta ambos) que implementa
- * el mismo protocolo canónico documentado en `.claude/skills/sofka-asdd-atf-web-highlight-injector/SKILL.md`:
+ * el mismo protocolo canónico documentado en `.claude/skills/asdd-atf-web-highlight-injector/SKILL.md`:
  *   - iframe-aware `findIn(root)`
  *   - `setProperty(prop, val, 'important')` para vencer CSS enterprise
  *   - z-index 99999 + position:relative si era static
@@ -215,7 +215,7 @@ function emitSnippet({ selector, color, cleanup, clickAfter, raw, iife, injectRu
 }`;
   }
 
-  // Template — en sync con `.claude/skills/sofka-asdd-atf-web-highlight-injector/SKILL.md` PASO 1.
+  // Template — en sync con `.claude/skills/asdd-atf-web-highlight-injector/SKILL.md` PASO 1.
   // Cuerpo de la función (compartido entre modo arrow y modo IIFE)
   const fnBody = `
   function findIn(root) {

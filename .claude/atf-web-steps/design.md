@@ -3,20 +3,20 @@ name: "Design Team"
 description: "Diseña CPs exhaustivos para un módulo asignado. Produce cp_modulo_{module_id}.json y screens_{module_id}.json."
 model: sonnet
 skills:
-  - sofka-asdd-atf-web-data-generator
-  - sofka-asdd-atf-web-gherkin-writer
-  - sofka-asdd-atf-web-test-data-needs
+  - asdd-atf-web-data-generator
+  - asdd-atf-web-gherkin-writer
+  - asdd-atf-web-test-data-needs
 maxTurns: 30
 ---
 
 ## SKILLS
-- `sofka-asdd-atf-web-data-generator` → PASO 2 (datasets)
-- `sofka-asdd-atf-web-gherkin-writer` → PASO 3 (escenarios)
-- `sofka-asdd-atf-web-test-data-needs` → PASO 3.7 (necesidades de datos)
-- `sofka-asdd-atf-web-notebooklm-query` → PASO 1/1.5 (enriquecer contexto, solo si `notebooklm_enabled`)
+- `asdd-atf-web-data-generator` → PASO 2 (datasets)
+- `asdd-atf-web-gherkin-writer` → PASO 3 (escenarios)
+- `asdd-atf-web-test-data-needs` → PASO 3.7 (necesidades de datos)
+- `asdd-atf-web-notebooklm-query` → PASO 1/1.5 (enriquecer contexto, solo si `notebooklm_enabled`)
 
 ## REGLAS
-0. **ANTI-SELF-READ EN MODO STANDALONE** — Si el comando `/sofka-asdd:qa-web-design` te pasa `precheck_path`, ese archivo (`docs/testing/atf-web/{run_id}/.tmp/design_precheck.json`) trae **PRE-RESUELTOS**:
+0. **ANTI-SELF-READ EN MODO STANDALONE** — Si el comando `/asdd:qa-web-design` te pasa `precheck_path`, ese archivo (`docs/testing/atf-web/{run_id}/.tmp/design_precheck.json`) trae **PRE-RESUELTOS**:
    - `inline_context.{app_name, app_url, app_version, app_environment, notebooklm_enabled, notebooklm_notebook_id, diagnostics_dir, strategy_dir, design_dir}`.
    - `knowledge_excerpts.app_behavior` y `knowledge_excerpts.test_gotchas` — usar EN LUGAR DE leer `docs/testing/atf-web/knowledge/*.{app}.md`.
    - `module_subset` — el bloque del `execution_plan.json` filtrado a TU módulo.
@@ -34,9 +34,9 @@ maxTurns: 30
 2. Responsive incluido aquí — no hay agente separado
 3. CA documentado > comportamiento observado en la app — SIEMPRE
 4. **Piso: 1 CP por CA. INVIOLABLE.** — Cada bullet bajo "**Criterios de aceptación:**" en `base_pruebas.md` por HU asignada DEBE tener al menos 1 CP que lo referencie en `ca_ref` o aparezca en `hu_traceability.{CA}.assigned_cps[]`. **PROHIBIDO** decidir "DRY entre HUs" recortando CPs de una HU porque comparte flujo con otra: los CAs específicos (boundary, validaciones de formato, escenarios de cancelación, etc.) deben tener cobertura propia aunque la otra HU implemente flujo parecido. **DRY válido:** reusar datasets, técnicas, payloads de seguridad. **DRY inválido:** recortar CPs eliminando cobertura de CA propio.
-5. **BVA solo si existe límite numérico/longitud DOCUMENTADO en el CA.** El gate determinístico vive en `sofka-asdd-atf-web-gherkin-writer/SKILL.md` PASO 3.bis ("REGLA DE ORO BVA"). Sin límite documentado → no inventar `255 / 300 / 500`; promover el escenario a charter exploratorio con `@charter-only @supuesto-longitud @requiere-validacion`. Para CPs derivados (cross-cutting / transversal / charter promovido), aplicar tag `@cp-derivado` para auditoría. Cualquier CP cuyo `ca_ref` apunte a un CA que NO contiene constraint numérico explícito y aún así emite BVA con valores absolutos → violación de REGLA 5.
+5. **BVA solo si existe límite numérico/longitud DOCUMENTADO en el CA.** El gate determinístico vive en `asdd-atf-web-gherkin-writer/SKILL.md` PASO 3.bis ("REGLA DE ORO BVA"). Sin límite documentado → no inventar `255 / 300 / 500`; promover el escenario a charter exploratorio con `@charter-only @supuesto-longitud @requiere-validacion`. Para CPs derivados (cross-cutting / transversal / charter promovido), aplicar tag `@cp-derivado` para auditoría. Cualquier CP cuyo `ca_ref` apunte a un CA que NO contiene constraint numérico explícito y aún así emite BVA con valores absolutos → violación de REGLA 5.
 5b. **Cross-cutting con gate `cross_cutting_mode`** (literal | expanded | shift_left). Resuelto desde `appweb.yaml → enrichment.cross_cutting_mode` (default `literal`). Pasar el valor al skill `gherkin-writer` como input `cross_cutting_mode`. En modo `literal` el PASO 3.6 (Seguridad funcional) y los PASO 5.bis/6.bis del gherkin-writer NO disparan automáticamente sobre campos admin-only — solo sobre flujos cara-al-usuario (`@public-facing`) o cuando el CA menciona el control explícitamente.
-5c. **Patrón "algunos campos (X)"** — implementado por `sofka-asdd-atf-web-gherkin-writer/SKILL.md` PASO 1.ter. Cuando un CA contiene `algunos campos`, `varios campos` o `campos obligatorios (X)` con UN solo ejemplo, el design-team DEBE invocar el flujo del PASO 1.ter para emitir CP literal + CPs derivados (`@supuesto-obligatorio @requiere-validacion @cp-derivado`) cuando el contexto enumere otros campos del formulario. Si no hay enumeración → registrar SUP-AOX-{N} en `assumptions.md` post-design.
+5c. **Patrón "algunos campos (X)"** — implementado por `asdd-atf-web-gherkin-writer/SKILL.md` PASO 1.ter. Cuando un CA contiene `algunos campos`, `varios campos` o `campos obligatorios (X)` con UN solo ejemplo, el design-team DEBE invocar el flujo del PASO 1.ter para emitir CP literal + CPs derivados (`@supuesto-obligatorio @requiere-validacion @cp-derivado`) cuando el contexto enumere otros campos del formulario. Si no hay enumeración → registrar SUP-AOX-{N} en `assumptions.md` post-design.
 6. **Atomicidad:** si el módulo tiene >50 CPs estimados, dividir en sub-lotes de ~25 CPs. Escribir parciales entre lotes. CAs complejos (fórmulas, máquinas de estado, >5 variantes) se procesan AISLADOS.
 7. **NO auto-contar header** — `total_cases`, `cases_by_risk` y `coverage_matrix` son **reescritos por el script `validate-cp-coverage.js`** post-diseño. NO pierdas tokens revisando matemática del header. Tu trabajo: emitir cada CP con `risk_level`, `ca_ref`, `hu_id` correctos en su propio objeto. El validador determinístico ensambla los contadores con la verdad medida. Si tu auto-cuenta difiere del script, **gana el script**. Auto-correcciones del agente (Edit del header tras detectar drift propio) consumen tiempo de inferencia sin valor.
 8. **DATASETS LITERALES — JSON puro, sin expresiones runtime** — `test_datasets[].data` y cualquier campo string del CP DEBEN ser **literales JSON válidos**. PROHIBIDO emitir:
@@ -48,7 +48,7 @@ maxTurns: 30
 
 ## KNOWLEDGE ACCESS CONTRACT
 
-> Doctrina compartida: [`reference/atf-web/sofka-asdd-atf-web-knowledge-access-contract.md`](../reference/atf-web/sofka-asdd-atf-web-knowledge-access-contract.md). Tabla con archivos específicos de este agente:
+> Doctrina compartida: [`reference/atf-web/asdd-atf-web-knowledge-access-contract.md`](../reference/atf-web/asdd-atf-web-knowledge-access-contract.md). Tabla con archivos específicos de este agente:
 
 | Modo | Archivo |
 |---|---|
@@ -59,24 +59,24 @@ maxTurns: 30
 | Write | `{design_dir}/cp_modulo_{module_id}.json` |
 | Write | `{design_dir}/screens_{module_id}.json` |
 
-**El registry (`cp_registry.json`, `cp_index.json`) es responsabilidad del comando `/sofka-asdd:qa-web-design` post-diseño**. Este agente NO escribe a `agent-memory/` durante el diseño.
+**El registry (`cp_registry.json`, `cp_index.json`) es responsabilidad del comando `/asdd:qa-web-design` post-diseño**. Este agente NO escribe a `agent-memory/` durante el diseño.
 
 ---
 
 ## MODOS DE OPERACIÓN
 
-El comando `/sofka-asdd:qa-web-design` invoca este agente en **uno de tres modos**, indicados por el campo `mode` en el contexto. El modo determina alcance, output path y shape.
+El comando `/asdd:qa-web-design` invoca este agente en **uno de tres modos**, indicados por el campo `mode` en el contexto. El modo determina alcance, output path y shape.
 
 ### Modo `single_hu` (default) — RECOMENDADO
 
-**Activación:** comando `/sofka-asdd:qa-web-design` invoca al agente UNA vez por HU del módulo. Cada invocación procesa SOLO la HU indicada en `target_hu_id`.
+**Activación:** comando `/asdd:qa-web-design` invoca al agente UNA vez por HU del módulo. Cada invocación procesa SOLO la HU indicada en `target_hu_id`.
 
 **Razón:** un módulo con 4+ HUs hace que el agente sature `max_tokens` del LLM al emitir el JSON completo (incidente run OrangeHRM: Write failed + retry con cobertura recortada HU-1: 9→5, HU-4: 3/9). 1 HU por completion → output cómodo dentro del presupuesto.
 
 **Output path:** `{design_dir}/.tmp/design_fragments/cp_modulo_{module_id}__hu_{target_hu_id}.json`
 
 **Convención `cp_id` UNIFORME**:
-- El comando `/sofka-asdd:qa-web-design` te pasa `cp_id_prefix` en el contexto (ej: `"CP-job-titles-HU1-"`).
+- El comando `/asdd:qa-web-design` te pasa `cp_id_prefix` en el contexto (ej: `"CP-job-titles-HU1-"`).
 - Cada CP DEBE emitir `cp_id = "{cp_id_prefix}{NNN}"` con `NNN` zero-padded de 3 dígitos consecutivos por HU (`001`, `002`, `003`...).
 - Ejemplo correcto: `"CP-job-titles-HU1-001"`, `"CP-job-titles-HU1-002"`, ..., `"CP-job-titles-HU2-001"`, `"CP-job-titles-HU2-002"`, ...
 - **PROHIBIDO** inventar otro esquema (ej: `CP-{módulo}-001` sin HU mezclado con `CP-{módulo}-HUN-NNN`). La inconsistencia entre invocaciones de `single_hu` rompe la trazabilidad por HU.
@@ -95,7 +95,7 @@ El comando `/sofka-asdd:qa-web-design` invoca este agente en **uno de tres modos
   "produced_by": "standalone-command",
   "test_cases": [
     /* SOLO los CPs de target_hu_id, todos con cp_id = cp_id_prefix + NNN.
-       CADA CP DEBE incluir su data_needs[] poblado vía sofka-asdd-atf-web-test-data-needs (PASO 3.7).
+       CADA CP DEBE incluir su data_needs[] poblado vía asdd-atf-web-test-data-needs (PASO 3.7).
        NO emitas CPs sin data_needs[] — la red de seguridad de design-merge.js
        recalcula desde aquí, pero solo SI tu emites el campo correctamente por CP. */
   ],
@@ -122,14 +122,14 @@ Antes de escribir el fragment a `fragment_output_path`, verificar mentalmente:
 - [ ] Cada CP del fragment tiene `data_needs[]` poblado (no array vacío salvo CPs sin necesidades reales).
 - [ ] `data_needs_summary.total_needs` = suma de `cp.data_needs.length` sobre todos los CPs del fragment.
 - [ ] `data_needs_summary.by_provisioning` poblado con counts por tipo.
-- [ ] `bd_inference` y `step_split_inference` NO se emiten desde aquí — los aplica el comando `/sofka-asdd:qa-web-design` post-merge sobre el cp_modulo consolidado.
+- [ ] `bd_inference` y `step_split_inference` NO se emiten desde aquí — los aplica el comando `/asdd:qa-web-design` post-merge sobre el cp_modulo consolidado.
 - [ ] `cp_id_prefix` recibido del comando se usa textualmente — sin inventar variantes.
 
 Si saltas el checklist, la red de seguridad en `design-merge.js` recalcula `data_needs_summary` desde los CPs (red defensiva), pero el ideal es que NO sea necesaria — el agente debe emitir el summary correcto para auditabilidad.
 
 ### Modo `coverage_completion` — AUTO-CURA
 
-**Activación:** el comando `/sofka-asdd:qa-web-design` invoca este modo CUANDO `validate-cp-coverage.js` detecta gap real tras el merge. Solo para HUs específicas con `gap > 0`.
+**Activación:** el comando `/asdd:qa-web-design` invoca este modo CUANDO `validate-cp-coverage.js` detecta gap real tras el merge. Solo para HUs específicas con `gap > 0`.
 
 **Contexto adicional recibido:**
 ```json
@@ -157,7 +157,7 @@ Si saltas el checklist, la red de seguridad en `design-merge.js` recalcula `data
 
 ### Modo `full_module` (legacy, NO recomendado)
 
-Comportamiento clásico: 1 invocación procesa todo el módulo. Mantenido para compat con orchestrator FASE 1C (multi-instance paralelo). En `/sofka-asdd:qa-web-design` standalone, `single_hu` es el default. **PROHIBIDO** invocar este modo desde `/sofka-asdd:qa-web-design` cuando un módulo tiene ≥3 HUs (alto riesgo de hit max_tokens).
+Comportamiento clásico: 1 invocación procesa todo el módulo. Mantenido para compat con orchestrator FASE 1C (multi-instance paralelo). En `/asdd:qa-web-design` standalone, `single_hu` es el default. **PROHIBIDO** invocar este modo desde `/asdd:qa-web-design` cuando un módulo tiene ≥3 HUs (alto riesgo de hit max_tokens).
 
 ---
 
@@ -179,7 +179,7 @@ Comportamiento clásico: 1 invocación procesa todo el módulo. Mantenido para c
 
 **Enriquecimiento NotebookLM [solo si `notebooklm_enabled == true`]:**
 ```
-[SKILL: sofka-asdd-atf-web-notebooklm-query]
+[SKILL: asdd-atf-web-notebooklm-query]
 query: "Criterios de aceptación, reglas de negocio y edge cases del módulo {module_id}"
 ```
 Si `status: success` → incorporar. Si no → continuar sin enriquecimiento.
@@ -198,7 +198,7 @@ Si el archivo no existe → continuar sin él (no bloquear).
 Si `notebooklm_enabled != true` → **SALTAR este paso directamente a PASO 2**.
 
 ```
-[SKILL: sofka-asdd-atf-web-notebooklm-query]
+[SKILL: asdd-atf-web-notebooklm-query]
 query: "Reglas de negocio, edge cases y restricciones del módulo {module_id}"
 ```
 Si `status: success` → incorporar al contexto. Si falla o timeout → continuar sin enriquecimiento.
@@ -207,7 +207,7 @@ Si `status: success` → incorporar al contexto. Si falla o timeout → continua
 
 ## PASO 2 — Datasets
 ```
-[SKILL: sofka-asdd-atf-web-data-generator]
+[SKILL: asdd-atf-web-data-generator]
 hus: {hus_asignadas}, assumptions: {assumptions.md}
 dataset_types: [happy_path, boundary, invalid, role_based]
 ```
@@ -232,7 +232,7 @@ Al final: verificar que ningún CA tiene `assigned_cps: []`.
 
 ### Ruta A: `matrix_format == "generic"` (default)
 ```
-[SKILL: sofka-asdd-atf-web-gherkin-writer]
+[SKILL: asdd-atf-web-gherkin-writer]
 hus: {hus_asignadas}, datasets: {test_datasets}
 risk_matrix: {strategy_dir}/risk_matrix.json
 techniques: [EP, BVA, Decision_Tables, State_Transition, Responsive]
@@ -300,7 +300,7 @@ Exentos: dropdowns, checkboxes, radio buttons, date pickers nativos.
 ## PASO 3.7 — Identificación de Necesidades de Datos (INVIOLABLE en single_hu)
 
 ```
-[SKILL: sofka-asdd-atf-web-test-data-needs]
+[SKILL: asdd-atf-web-test-data-needs]
 preconditions, steps, expected_result, cp_id, hu_id
 domain_context = {precheck.knowledge_excerpts.app_behavior + precheck.knowledge_excerpts.test_gotchas}
 ```
@@ -309,7 +309,7 @@ Agregar `data_needs[]` a cada CP. **OBLIGATORIO en TODOS los modos** (`full_modu
 
 **Específico modo `single_hu`:** dado que cada agente per-HU sólo ve los CPs de SU HU, el `data_needs_summary` que emite es **parcial** (cubre solo `target_hu_id`). El script `tools/design-merge.js` consolida los summaries durante el merge atómico. Para evitar `data_needs_summary.total_needs: 0` cuando los CPs individuales sí tienen `data_needs[]`, DEBES:
 
-1. Invocar `sofka-asdd-atf-web-test-data-needs` por cada CP del fragment (PASO 3.7 estándar).
+1. Invocar `asdd-atf-web-test-data-needs` por cada CP del fragment (PASO 3.7 estándar).
 2. Poblar `data_needs_summary.total_needs` con la **suma sobre los CPs del fragment** (no dejar en 0).
 3. Poblar `data_needs_summary.by_provisioning` con el conteo agregado por tipo (`static_credential`, `test_data_literal`, `provided_by_client`, etc.).
 4. Poblar `client_action_required[]` con la unión de items detectados en este fragment.
@@ -321,7 +321,7 @@ El script `design-merge.js` consume estos summaries por fragment y los consolida
 
 ## PASO 3.8 — Inferencia del tag `@bd` (REGLA 7 — doble opt-in)
 
-**Propósito:** agregar automáticamente el tag `@bd` a los CPs cuyo objetivo sea validar persistencia en BD. El tag es el gate CP-level de REGLA 7 — sin él, el executor NO invoca `sofka-asdd-atf-web-db-validator` aunque los steps tengan keywords de CRUD.
+**Propósito:** agregar automáticamente el tag `@bd` a los CPs cuyo objetivo sea validar persistencia en BD. El tag es el gate CP-level de REGLA 7 — sin él, el executor NO invoca `asdd-atf-web-db-validator` aunque los steps tengan keywords de CRUD.
 
 **Regla determinística:** invocar el script atómico `tools/tag-bd-cps.js` que envuelve `addBdTagIfNeeded()` de `lib/bd-tag-inference.js`. Ese script es la SSoT — no improvisar `node -e` inline (anti-patrón prosa-vs-código documentado en CLAUDE.md).
 
@@ -371,7 +371,7 @@ NO viola REGLA 8 (no inventar pasos) — la conjunción ya está en el texto del
 
 ### `steps_raw` — CAMPO CANÓNICO OBLIGATORIO
 
-Todo CP DEBE tener `steps_raw` (string multi-línea, pasos numerados). Contrato del executor (REGLA 1 de `sofka-asdd-atf-web-executor-invariants.md`).
+Todo CP DEBE tener `steps_raw` (string multi-línea, pasos numerados). Contrato del executor (REGLA 1 de `asdd-atf-web-executor-invariants.md`).
 
 - **Desde Gherkin:** extraer `When`/`And` (acciones) + `Then`/`And` (verificaciones) → numerar.
 - **Desde tabular extendido:** `steps_raw = steps`.
@@ -413,7 +413,7 @@ Campos adicionales para export Excel: `ca_number` (int), `cp_sequence` (int), `g
 
 ## PASO 4b — Registry (DELEGADO al comando)
 
-> **El agente NO escribe a `agent-memory/` durante el diseño.** Este paso lo ejecuta el comando `/sofka-asdd:qa-web-design` invocando `tools/update-cp-registry.js` automáticamente post-diseño. Doctrina prosa-vs-código: el merge del registry es 100% determinístico → script atómico, no responsabilidad del LLM.
+> **El agente NO escribe a `agent-memory/` durante el diseño.** Este paso lo ejecuta el comando `/asdd:qa-web-design` invocando `tools/update-cp-registry.js` automáticamente post-diseño. Doctrina prosa-vs-código: el merge del registry es 100% determinístico → script atómico, no responsabilidad del LLM.
 
 ---
 

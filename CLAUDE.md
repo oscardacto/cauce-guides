@@ -1,23 +1,23 @@
 # ASDD — Agentic Spec Driven Development
 # Claude Code Project Instructions
 
-<!-- sofka-asdd:template-disclaimer:start -->
+<!-- asdd:template-disclaimer:start -->
 > **Este es el CLAUDE.md del repositorio template.** El proyecto que adopta ASDD
 > lo copia como base y lo personaliza con su stack. Las rutas bajo `docs/` que
 > se describen más abajo **no existen en este template**: las crea el consumidor
-> en su primer `/sofka-asdd:specify`. En un proyecto real esta nota ya debería
+> en su primer `/asdd:specify`. En un proyecto real esta nota ya debería
 > estar eliminada y esas rutas deberían existir.
-<!-- sofka-asdd:template-disclaimer:end -->
+<!-- asdd:template-disclaimer:end -->
 
 Este proyecto sigue **Agentic Spec Driven Development (ASDD)**, la metodología de
-Sofka donde agentes de IA especializados guían el desarrollo desde la
+Guide donde agentes de IA especializados guían el desarrollo desde la
 especificación hasta la entrega. Toda acción debe trazarse a una spec aprobada.
 
 ## Principio fundamental: Spec First
 
 Nunca escribir código de implementación sin una especificación aprobada en
 `docs/specs/`. Si no existe spec, invocar primero al agente
-`sofka-asdd-producto` o ejecutar `/sofka-asdd:specify`.
+`asdd-producto` o ejecutar `/asdd:specify`.
 
 ## Workflow ASDD
 
@@ -27,7 +27,7 @@ Especificar → Analizar → Diseñar → Construir → Verificar → Documentar
 
 Cada fase tiene gate propio y no se saltea: brief antes que specs, specs
 aprobadas antes que diseño, ADRs aceptadas antes que implementación, QA
-sign-off antes de cerrar. Detalle en `.claude/rules/sofka-asdd-workflow.md`.
+sign-off antes de cerrar. Detalle en `.claude/rules/asdd-workflow.md`.
 
 ## Agentes, skills y comandos
 
@@ -37,10 +37,10 @@ dos veces por turno.
 
 - **Qué agente existe y cuándo invocarlo** → su propia descripción.
 - **Qué capacidades tiene un agente y cómo se cargan** →
-  `.sofka-asdd/capability-loading.json` para los agentes migrados a carga on-demand;
+  `.asdd/capability-loading.json` para los agentes migrados a carga on-demand;
   el resto declara sus skills eager en el `skills:` de su propio frontmatter.
-- **Qué agente es primario en cada fase** → `.claude/rules/sofka-asdd-phases-reference.md`.
-- **Comandos** → namespace `/sofka-asdd:`: uno por fase, más las familias
+- **Qué agente es primario en cada fase** → `.claude/rules/asdd-phases-reference.md`.
+- **Comandos** → namespace `/asdd:`: uno por fase, más las familias
   `qa-*` (ATF API), `qa-web-*` (ATF Web), `data-eng-*` (Smart Data) y
   `add-agent` / `add-skill`.
 - **Inventario para auditoría** → `node .claude/scripts/validate-template.mjs`.
@@ -49,9 +49,9 @@ dos veces por turno.
 
 Addon opcional para plataformas de datos analíticos (Medallion, Star schema,
 Databricks/AWS), activado por `data_platform` en
-`.sofka-asdd/sofka-asdd-smart-data.lock` (default `none`). Aporta tres agentes
-`sofka-asdd-data-*` con routing propio D0-D7 arbitrado con ORC-001 — ver
-`sofka-asdd-data-routing.md`. Los agentes leen directamente el Excel de trabajo
+`.asdd/asdd-smart-data.lock` (default `none`). Aporta tres agentes
+`asdd-data-*` con routing propio D0-D7 arbitrado con ORC-001 — ver
+`asdd-data-routing.md`. Los agentes leen directamente el Excel de trabajo
 `docs/smart-data/data/smart-data-eng-{cliente}.xlsx`.
 
 ## Estructura de documentación
@@ -90,15 +90,15 @@ El orquestador clasifica cada request antes de activar el workflow de fases
 - **FULL**: feature, HU, spec, solicitud abierta o alto riesgo → workflow completo.
 
 Todo agente en ruta LIGHT puede escalar a FULL si detecta complejidad oculta
-(`ORC-001-C`). Usá `/sofka-asdd:do` para forzar ruta LIGHT explícitamente.
-Ver `.claude/rules/sofka-asdd-routing-heuristics.md` para la taxonomía completa.
+(`ORC-001-C`). Usá `/asdd:do` para forzar ruta LIGHT explícitamente.
+Ver `.claude/rules/asdd-routing-heuristics.md` para la taxonomía completa.
 
 ## Asignación de modelo por fase
 
 El orquestador resuelve el modelo de cada sub-agente antes de invocarlo
 (ORC-002-B), siguiendo la cadena
 `skill_override > agent_pinning > phase_default > frontmatter`. Los defaults por
-fase están en `.sofka-asdd/sofka-asdd.lock` bajo `model_strategy`. Ver
+fase están en `.asdd/asdd.lock` bajo `model_strategy`. Ver
 `.claude/docs/adoption/model-strategy.md`.
 
 ## Integraciones externas y plugins
@@ -112,9 +112,9 @@ agente e instalación en `.claude/docs/mcps-by-domain.md` y
 
 ## Convención de nomenclatura
 
-Los artefactos del template usan prefijo `sofka-asdd-` (agentes, skills, rules,
-hooks; commands bajo `/sofka-asdd:`). Los del proyecto consumidor usan
-`{project.name}-`, tomado de `.sofka-asdd/sofka-asdd.lock`. El check 14 del
+Los artefactos del template usan prefijo `asdd-` (agentes, skills, rules,
+hooks; commands bajo `/asdd:`). Los del proyecto consumidor usan
+`{project.name}-`, tomado de `.asdd/asdd.lock`. El check 14 del
 validador (`naming-convention`, strict) lo verifica; la guía completa está en
 `.claude/docs/adoption/naming-convention.md`.
 
@@ -136,9 +136,9 @@ presupone CI. Ver `.claude/docs/validation.md`.
 - Revisión de seguridad obligatoria antes de producción (CORE-007)
 - Un feature está hecho solo cuando QA emite sign-off (CORE-008).
   Operacionalmente, "sign-off" = veredicto **PASS** de
-  `sofka-asdd-atf-reporting-qa-engineer` en
+  `asdd-atf-reporting-qa-engineer` en
   `docs/qa/atf/{run_id}/qgs-evaluation.json` (pruebas API), o de
-  `sofka-asdd-atf-api-qa-engineer` en `docs/qa/signoff-{feature}.md` para otros
+  `asdd-atf-api-qa-engineer` en `docs/qa/signoff-{feature}.md` para otros
   tipos de prueba.
 - Toda decisión significativa se convierte en ADR (CORE-005)
 - El orquestador nunca escribe ni usa herramientas de dominio directamente:

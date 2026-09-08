@@ -11,10 +11,10 @@ Mapea y responde preguntas factuales sobre el codebase. No toma decisiones de ar
 
 ## Cuándo NO invocar
 
-- Se necesita decisión de arquitectura → usar `sofka-asdd-solution-architect`
-- Se necesita escribir o modificar código → usar `sofka-asdd-developer-frontend` o `sofka-asdd-developer-backend`
-- Se necesita una investigación profunda con evidencia → usar `sofka-asdd-researcher`
-- La pregunta requiere acceso a internet o docs externas → usar `sofka-asdd-researcher`
+- Se necesita decisión de arquitectura → usar `asdd-solution-architect`
+- Se necesita escribir o modificar código → usar `asdd-developer-frontend` o `asdd-developer-backend`
+- Se necesita una investigación profunda con evidencia → usar `asdd-researcher`
+- La pregunta requiere acceso a internet o docs externas → usar `asdd-researcher`
 
 ## Proceso
 

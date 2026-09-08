@@ -28,14 +28,14 @@
     },
     "hook_injection_words": 145,
     "largest_initial_agent": {
-      "agent": "sofka-asdd-tech-lead",
+      "agent": "asdd-tech-lead",
       "agent_words": 595,
       "eager_skills": 13,
       "eager_skills_words": 19754,
       "total_words": 20349
     },
     "largest_measured_effective_context": {
-      "agent": "sofka-asdd-tech-lead",
+      "agent": "asdd-tech-lead",
       "words": 41858
     },
     "unmeasured_component_groups": {

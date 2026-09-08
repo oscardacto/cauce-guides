@@ -12,9 +12,9 @@ demuestra que el modelo leyó esa capacidad antes de modificar código.
 
 ## Decisión
 
-Los planes canónicos de `sofka-asdd-developer-backend` y
-`sofka-asdd-developer-frontend` declaran una única `capability` permitida. El
-agente ejecuta `sofka-asdd-load-capability.mjs {capability}`, que entrega el
+Los planes canónicos de `asdd-developer-backend` y
+`asdd-developer-frontend` declaran una única `capability` permitida. El
+agente ejecuta `asdd-load-capability.mjs {capability}`, que entrega el
 contenido del `SKILL.md` al contexto. El hook de operaciones registra la carga
 por `agent_id` y bloquea Edit, Write o Bash sensible hasta que coincida con la
 capability aprobada.

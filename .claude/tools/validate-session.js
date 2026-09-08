@@ -318,7 +318,7 @@ function main(runId) {
 
   if (requiresAuth === true || requiresAuth === 'true') {
     // B5 — Solo verificación de existencia. El parseo/validación real de
-    // estructura y ambiente lo hace sofka-asdd-atf-web-auth-handler en tiempo de login.
+    // estructura y ambiente lo hace asdd-atf-web-auth-handler en tiempo de login.
     if (!exists(CREDS_PATH)) {
       if (authPhasesActive) {
         err(`requires_auth=true pero credentials.yaml no encontrado en: ${CREDS_PATH}`);

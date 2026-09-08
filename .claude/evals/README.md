@@ -29,7 +29,7 @@ Cada YAML bajo las carpetas de categoría es un **config promptfoo standalone**
 ├── 2-agents/                     # 12 archivos / 61 tests — agentes
 ├── 3-skills/                     # 11 archivos / 47 tests — agrupados por agente
 ├── 4-workflow/                   # 6 archivos / 19 tests — fases WF-001 a WF-006
-├── 5-commands/                   # 9 archivos / 10 tests — comandos /sofka-asdd:*
+├── 5-commands/                   # 9 archivos / 10 tests — comandos /asdd:*
 └── 6-rules/                      # 15 archivos / 58 tests — reglas transversales
 ```
 

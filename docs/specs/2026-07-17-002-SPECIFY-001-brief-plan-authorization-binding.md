@@ -2,7 +2,7 @@
 
 **Proyecto:** project-structure / runtime ASDD  
 **Fecha:** 2026-07-17  
-**Owner:** Maintainers de Sofka ASDD
+**Owner:** Maintainers de Guide ASDD
 
 ## ¿Qué construimos?
 
@@ -13,7 +13,7 @@ escrituras y comandos sensibles permanecen dentro del alcance aprobado.
 
 La evidencia primaria es una prueba E2E: después de aprobar un plan, el runtime
 aceptó que el agente cambiara de archivos declarados a
-`.claude/scripts/lib/sofka-asdd-plan-authorization-lib.mjs`. El plan-gate actual
+`.claude/scripts/lib/asdd-plan-authorization-lib.mjs`. El plan-gate actual
 solo consume por `subagent_type`; no compara `scope[]`, `commands[]`,
 `plan_hash` ni `request_id`.
 

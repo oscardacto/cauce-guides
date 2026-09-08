@@ -3,7 +3,7 @@
  * ATF v2 — db-query.js
  *
  * CLI unificado para ejecutar queries de lectura contra una BD. Invocado por
- * `sofka-asdd-atf-web-db-validator` durante Fase 2C (PASO 3.5 del executor) para verificar
+ * `asdd-atf-web-db-validator` durante Fase 2C (PASO 3.5 del executor) para verificar
  * persistencia post-paso o lecturas contextuales.
  *
  * Solo-lectura: el script rechaza cualquier query que no empiece con SELECT|WITH.

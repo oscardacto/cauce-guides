@@ -1,4 +1,4 @@
-description: "CMD /sofka-asdd:document — fase Documentar"
+description: "CMD /asdd:document — fase Documentar"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -14,12 +14,12 @@ defaultTest:
 tests:
   - description: "CMD document: consolida documentación final del ciclo"
     vars:
-      input: "/sofka-asdd:document Cerrar el ciclo del módulo de pagos. Todos los sign-offs obtenidos."
+      input: "/asdd:document Cerrar el ciclo del módulo de pagos. Todos los sign-offs obtenidos."
     assert:
       - type: icontains
-        value: "sofka-asdd-tech-lead"
+        value: "asdd-tech-lead"
       - type: icontains
-        value: "sofka-asdd-solution-architect"
+        value: "asdd-solution-architect"
       - type: llm-rubric
         value: |
           El comando document debe: invocar tech-lead y architect como primarios,

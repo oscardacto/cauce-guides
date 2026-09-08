@@ -8,7 +8,7 @@ punto de uso y retirar `tools: all` del coordinador ATF.
 
 ## Arquitectura
 
-`.sofka-asdd/coordinator-loading.json` declara para cada coordinador:
+`.asdd/coordinator-loading.json` declara para cada coordinador:
 
 - core, budget stretch de 2.500 palabras y allowlist exacta;
 - rutas condicionales, marcadores contractuales y SHA-256;

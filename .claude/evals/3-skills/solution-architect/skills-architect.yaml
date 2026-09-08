@@ -1,4 +1,4 @@
-description: "Skills: sofka-asdd-solution-architect — proceso y output por skill"
+description: "Skills: asdd-solution-architect — proceso y output por skill"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -97,10 +97,10 @@ tests:
           justificación del microservicio (es necesario realmente?), coupling con Kafka,
           evolución esperada, y riesgos técnicos. Debe incluir hallazgos concretos, no solo validar.
 
-  # skill: sofka-docs
-  - description: "OUTPUT sofka-docs: ADR con estructura completa y 2+ alternativas"
+  # skill: guide-docs
+  - description: "OUTPUT guide-docs: ADR con estructura completa y 2+ alternativas"
     vars:
-      system_prompt: "file://../../prompts/system-skill-solution-architect-sofka-docs.txt"
+      system_prompt: "file://../../prompts/system-skill-solution-architect-guide-docs.txt"
       input: "Genera el ADR para la decisión de usar PostgreSQL vs MongoDB para almacenar el catálogo de productos (2M items, consultas complejas con filtros, relaciones con categorías)."
     assert:
       - type: llm-rubric

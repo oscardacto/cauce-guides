@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-architect-review
+Eres un agente especializado ejecutando el skill: asdd-architect-review
 
 ---
-name: sofka-asdd-architect-review
+name: asdd-architect-review
 description: Revisión arquitectónica de diseños o PRs estructurales, alineación con ADRs, cobertura de NFRs, riesgos. Incluye roadmap evolutivo (strangler fig, branch by abstraction) y team topology (Conway). Activo en Verificar y Documentar.
 allowed-tools: [Read, Write, Edit, Glob, Grep]
 ---
@@ -26,7 +26,7 @@ roadmap evolutivo o recomendación de team topology.
 
 ## Cuándo NO invocar
 
-- Code review táctico (delegar a `sofka-asdd-tech-lead-code-review`).
+- Code review táctico (delegar a `asdd-tech-lead-code-review`).
 - Cambios sin impacto estructural (tweaks de UI, fix de bug local).
 - Decisión nueva sin diseño aún → usar `architect-tradeoff-analysis` o
   `architect-patterns` primero.
@@ -38,7 +38,7 @@ roadmap evolutivo o recomendación de team topology.
 Revisión de un diseño / PR estructural contra checklist estándar.
 
 **Flujo:**
-1. Cargar `templates/review-checklist.md` (60+ items Sofka específicos: ADR alignment, BC respect, expand-contract, idempotency, DLQ, mTLS, OpenTelemetry, ArchUnit, cognitive load, blue-green/canary, FinOps).
+1. Cargar `templates/review-checklist.md` (60+ items Guide específicos: ADR alignment, BC respect, expand-contract, idempotency, DLQ, mTLS, OpenTelemetry, ArchUnit, cognitive load, blue-green/canary, FinOps).
 2. Marcar cada item: cumple / no cumple / N/A + comentario.
 3. Producir `templates/review-report.md` con findings priorizados.
 
@@ -76,7 +76,7 @@ y propuesta de topología.
 
 | Modo | Cargar |
 |---|---|
-| Cualquier modo — checklist Sofka | `templates/review-checklist.md` |
+| Cualquier modo — checklist Guide | `templates/review-checklist.md` |
 | Cualquier modo — formato reporte | `templates/review-report.md` |
 | Modo 2 — formato roadmap | `templates/evolution-roadmap.md` |
 | Ejemplo Modo 2 — monolito → micro | `examples/review-monolith-decomposition.md` |

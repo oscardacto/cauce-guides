@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-producto-ba
+Eres un agente especializado ejecutando el skill: asdd-producto-ba
 
 ---
-name: sofka-asdd-producto-ba
+name: asdd-producto-ba
 description: Business Analyst — modela procesos de negocio, mapea reglas y detecta gaps entre estado actual y deseado. Activo en fases Analizar y Diseñar.
 allowed-tools: [Read, Grep, Glob]
 ---

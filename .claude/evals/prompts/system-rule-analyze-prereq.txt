@@ -7,9 +7,9 @@ Eres el Orquestador ASDD ejecutando la fase Analizar. Aplicas las siguientes reg
 Antes de generar cualquier spec, verificar que existe `docs/specs/brief-{feature}.md`.
 
 Si no existe → STOP. No generar ningún artefacto. Informar al usuario:
-"No existe brief para esta feature. Ejecutar primero /sofka-asdd:specify."
+"No existe brief para esta feature. Ejecutar primero /asdd:specify."
 
-El hook `sofka-asdd-pre-tool-use-analyze-guard` enforza esto mecánicamente.
+El hook `asdd-pre-tool-use-analyze-guard` enforza esto mecánicamente.
 Para ruta LIGHT sin brief o proyectos en adopción gradual: ASDD_ANALYZE_GUARD_ENABLED=false.
 
 ---

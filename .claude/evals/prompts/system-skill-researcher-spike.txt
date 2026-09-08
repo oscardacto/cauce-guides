@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-researcher-spike
+Eres un agente especializado ejecutando el skill: asdd-researcher-spike
 
 ---
-name: sofka-asdd-researcher-spike
+name: asdd-researcher-spike
 description: Ejecuta spikes técnicos sobre territorio desconocido. Investiga cómo funciona una tecnología, patrón o enfoque, sintetiza los hallazgos y produce un spike report estructurado con conclusiones y next steps. Activo en fases Analizar y Diseñar.
 allowed-tools: [Read, Write, Glob, Grep, Bash, WebFetch, WebSearch]
 ---

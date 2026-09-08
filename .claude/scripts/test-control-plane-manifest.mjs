@@ -2,7 +2,7 @@
 // -----------------------------------------------------------------------------
 // test-control-plane-manifest.mjs — P4 y P8 del plan «Clasificar por plano».
 //
-// El manifiesto de `.claude/hooks/_lib/sofka-asdd-command-plane.mjs` reemplazó a
+// El manifiesto de `.claude/hooks/_lib/asdd-command-plane.mjs` reemplazó a
 // cuatro listas del mismo concepto con cuatro membresías distintas. Este archivo
 // existe para que no vuelvan a divergir:
 //
@@ -16,7 +16,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { CONTROL_PLANE, DOMAIN_EXEC } from "../hooks/_lib/sofka-asdd-command-plane.mjs";
+import { CONTROL_PLANE, DOMAIN_EXEC } from "../hooks/_lib/asdd-command-plane.mjs";
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 const RAIZ = resolve(AQUI, "..", "..");
@@ -51,16 +51,16 @@ console.log("Manifiesto de control-plane ↔ archivos en disco");
   // No es «todo .mjs de scripts/»: los `test-*` y el tooling de mantenedor no son
   // control-plane y declararlos sería inventar autoridad que nadie pidió.
   const OBLIGATORIOS = [
-    "sofka-asdd-resolve-rule.mjs",
-    "sofka-asdd-resolve-capability.mjs",
-    "sofka-asdd-load-capability.mjs",
-    "sofka-asdd-route-request.mjs",
-    "sofka-asdd-artifact-name.mjs",
-    "sofka-asdd-run-bootstrap.mjs",
-    "sofka-asdd-plan-authorization.mjs",
-    "sofka-asdd-commit-authorization.mjs",
-    "sofka-asdd-resolve-workspace.mjs",
-    "sofka-asdd-regen-hashes.mjs",
+    "asdd-resolve-rule.mjs",
+    "asdd-resolve-capability.mjs",
+    "asdd-load-capability.mjs",
+    "asdd-route-request.mjs",
+    "asdd-artifact-name.mjs",
+    "asdd-run-bootstrap.mjs",
+    "asdd-plan-authorization.mjs",
+    "asdd-commit-authorization.mjs",
+    "asdd-resolve-workspace.mjs",
+    "asdd-regen-hashes.mjs",
     "validate-template.mjs",
   ];
   const faltantes = OBLIGATORIOS.filter((script) => !CONTROL_PLANE[script]);
@@ -126,10 +126,10 @@ console.log("\nManifiesto de control-plane ↔ permissions.allow de settings.jso
   const crudo = readFileSync(SETTINGS, "utf8");
   const commit = crudo.match(/commit-authorization/g) ?? [];
   assert("commit-authorization aparece exactamente una vez: solo `issue`, nunca `approve`", commit.length === 1, `apariciones: ${commit.length}`);
-  assert("resolve-rule está declarado", crudo.includes("sofka-asdd-resolve-rule.mjs"));
-  assert("resolve-capability está declarado", crudo.includes("sofka-asdd-resolve-capability.mjs"));
-  assert("regen-hashes NO está declarado (D7)", !crudo.includes("sofka-asdd-regen-hashes.mjs"));
-  assert("resolve-workspace NO está declarado (D7)", !crudo.includes("sofka-asdd-resolve-workspace.mjs"));
+  assert("resolve-rule está declarado", crudo.includes("asdd-resolve-rule.mjs"));
+  assert("resolve-capability está declarado", crudo.includes("asdd-resolve-capability.mjs"));
+  assert("regen-hashes NO está declarado (D7)", !crudo.includes("asdd-regen-hashes.mjs"));
+  assert("resolve-workspace NO está declarado (D7)", !crudo.includes("asdd-resolve-workspace.mjs"));
 }
 
 console.log(`\n${"─".repeat(52)}`);

@@ -1,4 +1,4 @@
-description: "Regla: sofka-asdd-anti-loops — AL-001..008 y circuit-breaker se aplican en toda sesión"
+description: "Regla: asdd-anti-loops — AL-001..008 y circuit-breaker se aplican en toda sesión"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

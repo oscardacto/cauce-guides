@@ -10,16 +10,16 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--body,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif);font-size:14px;color:var(--text,#1a1a18);background:var(--bg,#f7f5f2)}
 
-/* ── SOFKA PATTERN ── */
-.sofka-bg{position:relative;overflow:hidden}
-.sofka-bg::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent,transparent 14px,rgba(244,121,32,.018) 14px,rgba(244,121,32,.018) 15px);pointer-events:none;z-index:0}
-.sofka-bg>*{position:relative;z-index:1}
+/* ── GUIDE PATTERN ── */
+.guide-bg{position:relative;overflow:hidden}
+.guide-bg::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent,transparent 14px,rgba(244,121,32,.018) 14px,rgba(244,121,32,.018) 15px);pointer-events:none;z-index:0}
+.guide-bg>*{position:relative;z-index:1}
 
 /* Container */
 .container{max-width:1100px;margin:2rem auto;padding:0 1.5rem}
 
 /* Report header */
-.report-header{background:var(--text,#1a1a18);color:var(--sofka-light,#F0EDE8);border-radius:var(--r,8px);padding:1.5rem 2rem;margin-bottom:2rem;border-bottom:3px solid var(--orange,#F47920);animation:atf-fade-up .35s ease both}
+.report-header{background:var(--text,#1a1a18);color:var(--guide-light,#F0EDE8);border-radius:var(--r,8px);padding:1.5rem 2rem;margin-bottom:2rem;border-bottom:3px solid var(--orange,#F47920);animation:atf-fade-up .35s ease both}
 .header-title{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;position:relative;z-index:1}
 .header-icon{font-size:2rem;display:flex;align-items:center}
 .header-title h1{font-size:1.3rem;font-weight:700;font-family:var(--sans,sans-serif)}
@@ -27,7 +27,7 @@ body{font-family:var(--body,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-ser
 .meta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;position:relative;z-index:1}
 .meta-item{display:flex;flex-direction:column;gap:.2rem}
 .meta-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:rgba(239,234,228,.5);font-family:var(--sans,sans-serif);font-weight:700}
-.meta-value{font-size:.85rem;color:var(--sofka-light,#efeae4)}
+.meta-value{font-size:.85rem;color:var(--guide-light,#efeae4)}
 .verdict-badge{font-weight:700;font-size:.95rem;color:var(--bad,#e02020)}
 .verdict-badge.pass{color:var(--go,#18a34a)}
 
@@ -95,7 +95,7 @@ section h2{font-family:var(--sans,sans-serif);font-size:1rem;font-weight:700;mar
 <div class="container">
 
   <!-- ── REPORT HEADER ── -->
-  <div class="report-header sofka-bg" id="report-header">
+  <div class="report-header guide-bg" id="report-header">
     <div class="header-title">
       <span class="header-icon">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
@@ -197,9 +197,9 @@ section h2{font-family:var(--sans,sans-serif);font-size:1rem;font-weight:700;mar
     <div id="db-validations-container"></div>
   </section>
 
-  <!-- ── SOFKA FOOTER ── -->
-  <div class="sofka-footer">
-    <span class="sofka-brand">sofka<span class="underscore">_</span></span> · Generado por <span style="color:var(--orange,#F47920)">ATF</span> · <span id="gen-date"></span> · <a href="https://sofka.com.co">sofka.com.co</a>
+  <!-- ── GUIDE FOOTER ── -->
+  <div class="guide-footer">
+    <span class="guide-brand">guide<span class="underscore">_</span></span> · Generado por <span style="color:var(--orange,#F47920)">ATF</span> · <span id="gen-date"></span> · <a href="https://sofka.com.co">sofka.com.co</a>
   </div>
 
 </div>
@@ -674,7 +674,7 @@ document.getElementById('atf-modal').addEventListener('click',function(){this.cl
         '<li style="margin-bottom:.2rem">Los <code style="font-family:var(--mono,monospace);font-size:.78rem;background:var(--bg2,#fff);padding:1px 5px;border-radius:3px">steps_raw</code> no contienen keywords <em>write</em> (guardar, confirmar, crear…) ni <em>read</em> (verificar, visualizar, listar…)</li>' +
         '<li>El executor decidió no invocar el skill por semántica (ej. un CP de SQL injection valida el DOM, no la tabla)</li>' +
         '</ol>' +
-        '<div style="color:var(--text3,#8a8478);font-size:.78rem">Si este CP no debería validar BD, retirar <code style="font-family:var(--mono,monospace);background:var(--bg2,#fff);padding:1px 4px;border-radius:3px">@bd</code> del array <code style="font-family:var(--mono,monospace);background:var(--bg2,#fff);padding:1px 4px;border-radius:3px">tags[]</code>. Ver <a href="../../../../.claude/reference/atf-web/sofka-asdd-atf-web-executor-invariants.md" style="color:var(--orange,#F47920);text-decoration:none;font-weight:600">REGLA 7</a>.</div>' +
+        '<div style="color:var(--text3,#8a8478);font-size:.78rem">Si este CP no debería validar BD, retirar <code style="font-family:var(--mono,monospace);background:var(--bg2,#fff);padding:1px 4px;border-radius:3px">@bd</code> del array <code style="font-family:var(--mono,monospace);background:var(--bg2,#fff);padding:1px 4px;border-radius:3px">tags[]</code>. Ver <a href="../../../../.claude/reference/atf-web/asdd-atf-web-executor-invariants.md" style="color:var(--orange,#F47920);text-decoration:none;font-weight:600">REGLA 7</a>.</div>' +
         '</div>';
     } else {
       dbCount.textContent = '(' + dbOrphans.length + ' sin step asociado)';

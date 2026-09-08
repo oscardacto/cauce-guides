@@ -1,0 +1,4 @@
+#!/bin/sh
+# ASDD native git hook — la lógica vive en impl/pre-rebase.mjs
+# Instalado por: node .claude/scripts/asdd-install-githooks.mjs
+exec node "$(dirname "$0")/impl/pre-rebase.mjs" "$@"

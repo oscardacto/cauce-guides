@@ -73,8 +73,8 @@ execution_coordination:
   max_cps_per_executor_round: 30    # CPs máximos por ronda de ejecución MCP antes de descargar contexto
   checkpoint_frequency_cps: 10      # Cada N CPs ejecutados → refresh de checkpoint (protege contra interrupciones)
 
-# --- Fast-path (/sofka-asdd:qa-web-exec) ---
-# Controla cómo `/sofka-asdd:qa-web-exec` divide los CPs en batches para el executor.
+# --- Fast-path (/asdd:qa-web-exec) ---
+# Controla cómo `/asdd:qa-web-exec` divide los CPs en batches para el executor.
 #
 # Patrón de browser lifecycle: cada CP abre browser → ejecuta steps → cierra browser.
 # El executor (IA) infiere si el CP requiere login (lee appweb.yaml + credentials.yaml +
@@ -166,7 +166,7 @@ enrichment:
   cross_cutting_mode: literal       # literal | expanded | shift_left
 
 # --- Performance (Core Web Vitals) ---
-# Controla /sofka-asdd:qa-web-perf (skill lighthouse-validator). Mide Core Web
+# Controla /asdd:qa-web-perf (skill lighthouse-validator). Mide Core Web
 # Vitals reales con Playwright Node + PerformanceObserver sobre los flujos
 # críticos del execution_plan. 3 mediciones por URL → promedio → clasificación.
 # Activación POR APP → appweb.yaml → performance.enabled.

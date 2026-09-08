@@ -3,8 +3,8 @@
 //
 // Single Source of Truth para el reconocimiento de artefactos del flujo
 // Smart Data. Consumido por los hooks PreToolUse de la cadena:
-//   - sofka-asdd-pre-tool-use-analyze-guard.mjs   (gate del dominio Data)
-//   - sofka-asdd-pre-tool-use-artifact-name-guard.mjs (naming universal)
+//   - asdd-pre-tool-use-analyze-guard.mjs   (gate del dominio Data)
+//   - asdd-pre-tool-use-artifact-name-guard.mjs (naming universal)
 //
 // Motivación (ADR-003 §Amendment 2 — 2026-07-02):
 //   La regex del patrón Data estaba triplicada en los 3 hooks. Además, el

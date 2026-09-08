@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-security-compliance
+Eres un agente especializado ejecutando el skill: asdd-security-compliance
 
 ---
-name: sofka-asdd-security-compliance
+name: asdd-security-compliance
 description: Valida el cumplimiento formal de estándares PCI-DSS y OWASP ASVS mediante checklist estructurado. Produce evidencia de cumplimiento o lista de gaps con remediación requerida. Activo en fase Verificar.
 allowed-tools: [Read, Glob, Grep, WebFetch]
 ---

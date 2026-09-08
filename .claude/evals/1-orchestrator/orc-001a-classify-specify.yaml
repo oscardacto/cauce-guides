@@ -19,13 +19,13 @@ tests:
       - type: icontains
         value: "Especificar"
       - type: icontains
-        value: "sofka-asdd-producto"
+        value: "asdd-producto"
       - type: llm-rubric
         value: |
           La respuesta debe:
           1. Identificar la fase 'Especificar' como punto de entrada correcto
-          2. Mencionar al agente sofka-asdd-producto (skill pm) como agente primario
-          3. Anunciar la delegación en formato: → **@sofka-asdd-producto** — [descripción]
+          2. Mencionar al agente asdd-producto (skill pm) como agente primario
+          3. Anunciar la delegación en formato: → **@asdd-producto** — [descripción]
           4. NO ejecutar ninguna tarea directamente
 
   - description: "PROCESO: Señal 'alcance' → identifica Especificar"
@@ -37,7 +37,7 @@ tests:
       - type: llm-rubric
         value: |
           La respuesta debe identificar la fase 'Especificar' a partir de la señal 'alcance' y 'restricciones',
-          y delegar a sofka-asdd-producto con skill pm como primario.
+          y delegar a asdd-producto con skill pm como primario.
 
   - description: "PROCESO: Señal '¿qué construimos?' → identifica Especificar"
     vars:
@@ -48,4 +48,4 @@ tests:
       - type: llm-rubric
         value: |
           La respuesta debe identificar la fase 'Especificar' a partir de '¿qué construimos?'
-          e incluir sofka-asdd-domain-expert como soporte por el contexto de dominio (seguros).
+          e incluir asdd-domain-expert como soporte por el contexto de dominio (seguros).

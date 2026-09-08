@@ -10,11 +10,11 @@ import os from 'node:os';
 import { createHash } from 'node:crypto';
 import { execSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { analyzeContextBudget } from './lib/sofka-asdd-context-budget-lib.mjs';
-import { parseFrontmatter } from './lib/sofka-asdd-frontmatter-lib.mjs';
-import { evaluateRunReconciliation } from './lib/sofka-asdd-run-reconciliation-lib.mjs';
-import { normalizeForHash } from './lib/sofka-asdd-hash-normalize-lib.mjs';
-import { hookEntryRef } from './lib/sofka-asdd-hook-entry-lib.mjs';
+import { analyzeContextBudget } from './lib/asdd-context-budget-lib.mjs';
+import { parseFrontmatter } from './lib/asdd-frontmatter-lib.mjs';
+import { evaluateRunReconciliation } from './lib/asdd-run-reconciliation-lib.mjs';
+import { normalizeForHash } from './lib/asdd-hash-normalize-lib.mjs';
+import { hookEntryRef } from './lib/asdd-hook-entry-lib.mjs';
 
 // CLI parsing
 const ARGS = new Set(process.argv.slice(2));
@@ -56,12 +56,12 @@ const c = { red: paint(31), green: paint(32), yellow: paint(33), gray: paint(90)
 // vive en .claude/scripts/, así que la raíz del proyecto está dos niveles arriba.
 // Con process.cwd() una invocación desde un subdirectorio hacía fallar todos los
 // exists() y muchos checks devolvían '(skipped)' con ok:true — verde sobre un árbol
-// roto. Mismo patrón que sofka-asdd-run-bootstrap.mjs y sofka-asdd-resolve-workspace.mjs.
+// roto. Mismo patrón que asdd-run-bootstrap.mjs y asdd-resolve-workspace.mjs.
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
 const p = (...segs) => path.join(ROOT, ...segs);
 const exists = (f) => fs.existsSync(f);
-// Normalizado cross-OS (CRLF→LF + strip BOM) — ver sofka-asdd-hash-normalize-lib.mjs.
+// Normalizado cross-OS (CRLF→LF + strip BOM) — ver asdd-hash-normalize-lib.mjs.
 // Aplica a TODOS los consumidores de read(): hashing SHA-256, JSON.parse y el
 // parser de frontmatter. Ninguno de esos consumidores depende de line-endings
 // crudos (lines() ya usa split(/\r?\n/), wordCount ya usa split(/\s+/u), y el
@@ -76,7 +76,7 @@ const read = (f) => normalizeForHash(fs.readFileSync(f, 'utf8'));
 // instrucción es ejecutable tanto en el template como en un proyecto consumidor.
 const HASH_REMEDIATION =
   'si el cambio en el archivo es intencional, regenerá los hashes con '
-  + '`node .claude/scripts/sofka-asdd-regen-hashes.mjs` (en el repo template: `npm run hash:regen`). '
+  + '`node .claude/scripts/asdd-regen-hashes.mjs` (en el repo template: `npm run hash:regen`). '
   + 'Nunca calcular el hash a mano con sha256sum/certutil/Get-FileHash: no normalizan EOL ni BOM y '
   + 'contaminan el manifiesto';
 const lines = (s) => s.split(/\r?\n/);
@@ -99,13 +99,13 @@ function walk(dir, filter = () => true) {
 
 // Allowlist data-driven de skills/mcpServers provistos por dependencias
 // externas condicionales (ej. Databricks AI Dev Kit), declaradas en
-// .sofka-asdd/cli-contract.json → conditional_install[]. Estos paquetes NO
+// .asdd/cli-contract.json → conditional_install[]. Estos paquetes NO
 // se distribuyen con el template — están documentados explícitamente para
 // que los checks de referencias no los reporten como rotos, sin debilitar
 // la validación para ningún otro skill/mcpServer no declarado aquí.
 function loadConditionalInstallAllowlist() {
   const allow = { skills: new Set(), mcpServers: new Set() };
-  const f = p('.sofka-asdd/cli-contract.json');
+  const f = p('.asdd/cli-contract.json');
   if (!exists(f)) return allow;
   try {
     const contract = JSON.parse(read(f));
@@ -171,27 +171,27 @@ check('skills-structure', 'error', () => {
   };
 });
 
-// 3. Coherencia .sofka-asdd/sofka-asdd.lock (warn)
-check('sofka-asdd-counts', 'warn', () => {
-  const folder = p('.sofka-asdd');
-  const f = p('.sofka-asdd/sofka-asdd.lock');
+// 3. Coherencia .asdd/asdd.lock (warn)
+check('asdd-counts', 'warn', () => {
+  const folder = p('.asdd');
+  const f = p('.asdd/asdd.lock');
   if (!exists(folder)) {
-    return { ok: false, message: '.sofka-asdd/ folder not present' };
+    return { ok: false, message: '.asdd/ folder not present' };
   }
   if (!exists(f)) {
     return {
       ok: false,
-      message: '.sofka-asdd/sofka-asdd.lock not present (expected inside .sofka-asdd/ folder)',
+      message: '.asdd/asdd.lock not present (expected inside .asdd/ folder)',
     };
   }
   let manifest;
   try {
     manifest = JSON.parse(read(f));
   } catch (e) {
-    return { ok: false, message: `.sofka-asdd/sofka-asdd.lock is not valid JSON: ${e.message}` };
+    return { ok: false, message: `.asdd/asdd.lock is not valid JSON: ${e.message}` };
   }
   const claude = manifest?.variants?.claude;
-  if (!claude) return { ok: true, message: '.sofka-asdd/sofka-asdd.lock has no variants.claude (skip)' };
+  if (!claude) return { ok: true, message: '.asdd/asdd.lock has no variants.claude (skip)' };
   const fsCounts = {
     agents: walk(p('.claude/agents'), (fn) => fn.endsWith('.md')).length,
     skills: listDir(p('.claude/skills')).filter((e) => e.isDirectory()).length,
@@ -221,9 +221,9 @@ check('sofka-asdd-counts', 'warn', () => {
 // La resolución acá es EXACTA a propósito. `agent-skill-references` (check 15h) acepta
 // resolución por sufijo porque mira prosa, donde un `hifi-builder` suelto es una
 // referencia legible a un skill que existe. En un sitio de carga esa tolerancia es un
-// falso OK: `sofka-asdd-load-capability.mjs` y `sofka-asdd-resolve-capability.mjs`
-// exigen `^sofka-asdd-[a-z0-9-]+$` y no truncan, así que un alias que el validador
-// bendecía por sufijo fallaba en runtime con `skill name must use sofka-asdd-* naming`.
+// falso OK: `asdd-load-capability.mjs` y `asdd-resolve-capability.mjs`
+// exigen `^asdd-[a-z0-9-]+$` y no truncan, así que un alias que el validador
+// bendecía por sufijo fallaba en runtime con `skill name must use asdd-* naming`.
 // Ese desacuerdo entre validador y loader es lo que dejó 18 skills — los 6 dominios de
 // `domain-expert` incluidos — invocables solo por un nombre que ningún camino canónico
 // podía cargar (B6). El loader es la autoridad; este check habla su idioma.
@@ -322,9 +322,9 @@ check('json-files', 'error', () => {
     '.mcp.json',
     '.claude/settings.json',
     '.claude/settings.local.json',
-    '.sofka-asdd/sofka-asdd.lock',
-    '.sofka-asdd/cli-contract.json',
-    '.sofka-asdd/checklist.json',
+    '.asdd/asdd.lock',
+    '.asdd/cli-contract.json',
+    '.asdd/checklist.json',
   ];
   const details = [];
   for (const rel of targets) {
@@ -416,7 +416,7 @@ check('hooks-executable', 'error', () => {
 check('rules-size', 'warn', () => {
   let maxLines = 100;
   try {
-    const lock = JSON.parse(read(p('.sofka-asdd/sofka-asdd.lock')));
+    const lock = JSON.parse(read(p('.asdd/asdd.lock')));
     if (typeof lock?.validation?.rules_size_max === 'number') {
       maxLines = lock.validation.rules_size_max;
     }
@@ -487,7 +487,7 @@ check('no-hardcoded-paths', 'error', () => {
     }
   } else {
     // Fallback: filesystem scan (no git)
-    const allowedDots = new Set(['.claude', '.mcp.json', '.sofka-asdd', '.gitlab-ci.yml', '.github']);
+    const allowedDots = new Set(['.claude', '.mcp.json', '.asdd', '.gitlab-ci.yml', '.github']);
 
     function scan(dir) {
       for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -526,15 +526,15 @@ check('claude-md-size', 'warn', () => {
 
 // 11. CLI contract v1.0 (strict)
 check('cli-contract', 'error', () => {
-  const f = p('.sofka-asdd/cli-contract.json');
+  const f = p('.asdd/cli-contract.json');
   if (!exists(f)) {
-    return { ok: false, message: '.sofka-asdd/cli-contract.json not present' };
+    return { ok: false, message: '.asdd/cli-contract.json not present' };
   }
   let contract;
   try {
     contract = JSON.parse(read(f));
   } catch (e) {
-    return { ok: false, message: `.sofka-asdd/cli-contract.json invalid JSON: ${e.message}` };
+    return { ok: false, message: `.asdd/cli-contract.json invalid JSON: ${e.message}` };
   }
   const details = [];
   if (!contract.contract_version || !/^\d+\.\d+\.\d+$/.test(contract.contract_version)) {
@@ -569,7 +569,7 @@ check('cli-contract', 'error', () => {
 });
 
 // validateTemplateVersionSync checks that every place declaring the template version agrees
-// with `.sofka-asdd/sofka-asdd.lock`, which is the authoritative one — the CLI reads it to
+// with `.asdd/asdd.lock`, which is the authoritative one — the CLI reads it to
 // decide whether a project is out of date, and the changelog check below already treats it
 // as the source of truth.
 //
@@ -583,9 +583,9 @@ check('cli-contract', 'error', () => {
 // Reported as details of the contract check rather than as a separate check because the
 // contract is where the drift is introduced and where a maintainer looks to fix it.
 function validateTemplateVersionSync(contractVersion) {
-  const lockPath = p('.sofka-asdd/sofka-asdd.lock');
+  const lockPath = p('.asdd/asdd.lock');
   if (!exists(lockPath)) {
-    return ['.sofka-asdd/sofka-asdd.lock not present — cannot verify template.version sync'];
+    return ['.asdd/asdd.lock not present — cannot verify template.version sync'];
   }
   let lock;
   try {
@@ -596,7 +596,7 @@ function validateTemplateVersionSync(contractVersion) {
   }
   const authoritative = lock?.version;
   if (!authoritative || !/^\d+\.\d+\.\d+$/.test(String(authoritative))) {
-    return [`sofka-asdd.lock version must be strict SemVer X.Y.Z (got: ${authoritative})`];
+    return [`asdd.lock version must be strict SemVer X.Y.Z (got: ${authoritative})`];
   }
 
   const details = [];
@@ -604,7 +604,7 @@ function validateTemplateVersionSync(contractVersion) {
     details.push('cli-contract.json template.version is missing');
   } else if (String(contractVersion) !== String(authoritative)) {
     details.push(
-      `template.version "${contractVersion}" != sofka-asdd.lock version "${authoritative}" ` +
+      `template.version "${contractVersion}" != asdd.lock version "${authoritative}" ` +
         `(the lock is authoritative)`,
     );
   }
@@ -613,7 +613,7 @@ function validateTemplateVersionSync(contractVersion) {
   const variantVersion = lock?.variants?.claude?.version;
   if (variantVersion && String(variantVersion) !== String(authoritative)) {
     details.push(
-      `sofka-asdd.lock variants.claude.version "${variantVersion}" != version "${authoritative}"`,
+      `asdd.lock variants.claude.version "${variantVersion}" != version "${authoritative}"`,
     );
   }
 
@@ -624,7 +624,7 @@ function validateTemplateVersionSync(contractVersion) {
       const pkg = JSON.parse(read(pkgPath));
       if (pkg?.version && String(pkg.version) !== String(authoritative)) {
         details.push(
-          `package.json version "${pkg.version}" != sofka-asdd.lock version "${authoritative}"`,
+          `package.json version "${pkg.version}" != asdd.lock version "${authoritative}"`,
         );
       }
     } catch {
@@ -695,7 +695,7 @@ const MAX_CLI_MAJOR = 0;
 // feeding it — which requires both repositories in one job. Until that exists, this rule is
 // the guardrail: it converts "nobody looked for three releases" into a blocking error.
 function validateMinCliVersionReview(reviewedAt) {
-  const lockPath = p('.sofka-asdd/sofka-asdd.lock');
+  const lockPath = p('.asdd/asdd.lock');
   if (!exists(lockPath)) return [];
   let current;
   try {
@@ -825,13 +825,13 @@ function validateMinCliVersion(value) {
 //      una decisión de distribución. Pasó con `ASDD-MEMORY.md` y `.claude/docs/migrations/`.
 //   2. RUTA QUE EL CONSUMIDOR ESCRIBE: la entrada le destruye trabajo propio en cada
 //      upgrade. Pasó con `.asdd-run.json` (checkpoint de corrida, ORC-007) y `docs/runs/`
-//      (manifiestos que escribe el hook distribuido sofka-asdd-run-manifest.mjs).
+//      (manifiestos que escribe el hook distribuido asdd-run-manifest.mjs).
 //
 // La detección de (2) se limita a los árboles EJECUTABLES distribuidos (`hooks/`,
 // `scripts/`), que son los que escriben. La prosa se deja afuera a propósito: una guía que
 // menciona una ruta no es evidencia de que algo escriba ahí, y meterla solo genera ruido.
 check('clean-files-to-remove-safety', 'error', () => {
-  const contractPath = p('.sofka-asdd/cli-contract.json');
+  const contractPath = p('.asdd/cli-contract.json');
   if (!exists(contractPath)) return { ok: true, message: 'cli-contract not present (skip)' };
   let contract;
   try { contract = JSON.parse(read(contractPath)); } catch {
@@ -928,7 +928,7 @@ check('clean-files-to-remove-safety', 'error', () => {
 // Solo se exigen rutas que EXISTEN en disco: una mención a una ruta inexistente es
 // una referencia colgante — otro defecto, y no el que este check persigue.
 check('cli-runtime-distribution', 'error', () => {
-  const contractPath = p('.sofka-asdd/cli-contract.json');
+  const contractPath = p('.asdd/cli-contract.json');
   if (!exists(contractPath)) return { ok: true, message: 'cli-contract not present (skip)' };
   let contract;
   try { contract = JSON.parse(read(contractPath)); } catch {
@@ -943,13 +943,13 @@ check('cli-runtime-distribution', 'error', () => {
     '.claude/ba-steps/',
     '.claude/references/',
     '.claude/scripts/lib/',
-    '.claude/scripts/sofka-asdd-artifact-name.mjs',
-    '.claude/scripts/sofka-asdd-commit-authorization.mjs',
-    '.claude/scripts/sofka-asdd-load-capability.mjs',
-    '.claude/scripts/sofka-asdd-plan-authorization.mjs',
-    '.claude/scripts/sofka-asdd-resolve-capability.mjs',
-    '.claude/scripts/sofka-asdd-resolve-rule.mjs',
-    '.claude/scripts/sofka-asdd-route-request.mjs',
+    '.claude/scripts/asdd-artifact-name.mjs',
+    '.claude/scripts/asdd-commit-authorization.mjs',
+    '.claude/scripts/asdd-load-capability.mjs',
+    '.claude/scripts/asdd-plan-authorization.mjs',
+    '.claude/scripts/asdd-resolve-capability.mjs',
+    '.claude/scripts/asdd-resolve-rule.mjs',
+    '.claude/scripts/asdd-route-request.mjs',
     '.claude/scripts/validate-template.mjs',
   ];
 
@@ -958,9 +958,9 @@ check('cli-runtime-distribution', 'error', () => {
   // check las lista siempre, porque los `details` solo se imprimen cuando falla.
   // Removerlas de este mapa es la acción que cierra la decisión pendiente.
   const DEFERRED = new Map([
-    ['.claude/scripts/sofka-asdd-run-test-suites.mjs', 'runner de suites: tooling de mantenedor, decidido NO distribuir'],
-    ['.claude/scripts/sofka-asdd-test-baseline.json', 'baseline de suites: tooling de mantenedor, decidido NO distribuir'],
-    ['.claude/scripts/sofka-asdd-gen-provenance.mjs', 'generador de provenance: necesita la historia completa del repo, que un consumidor no tiene — decidido NO distribuir'],
+    ['.claude/scripts/asdd-run-test-suites.mjs', 'runner de suites: tooling de mantenedor, decidido NO distribuir'],
+    ['.claude/scripts/asdd-test-baseline.json', 'baseline de suites: tooling de mantenedor, decidido NO distribuir'],
+    ['.claude/scripts/asdd-gen-provenance.mjs', 'generador de provenance: necesita la historia completa del repo, que un consumidor no tiene — decidido NO distribuir'],
   ]);
 
   // Categoría distinta de DEFERRED: la ruta aparece en un artefacto de runtime, pero
@@ -1036,7 +1036,7 @@ check('cli-runtime-distribution', 'error', () => {
   const details = [];
   for (const target of REQUIRED_FLOOR) {
     if (!covered(target)) {
-      details.push(`.sofka-asdd/cli-contract.json — distribution omite la dependencia de runtime del piso "${target}"`);
+      details.push(`.asdd/cli-contract.json — distribution omite la dependencia de runtime del piso "${target}"`);
     }
   }
 
@@ -1053,7 +1053,7 @@ check('cli-runtime-distribution', 'error', () => {
       continue;
     }
     const from = [...referrers].slice(0, 2).join(', ');
-    details.push(`.sofka-asdd/cli-contract.json — distribution omite "${ref}", referenciada desde ${from}`);
+    details.push(`.asdd/cli-contract.json — distribution omite "${ref}", referenciada desde ${from}`);
   }
 
   // Una exención que ya nadie referencia es basura acumulada: se avisa para que se
@@ -1076,7 +1076,7 @@ check('cli-runtime-distribution', 'error', () => {
 
 // 12. Markers integrity — every start has matching end (strict)
 check('markers-integrity', 'error', () => {
-  const markerRe = /<!--\s*sofka-asdd:([a-z0-9-]+):(start|end)\s*-->/g;
+  const markerRe = /<!--\s*asdd:([a-z0-9-]+):(start|end)\s*-->/g;
   const targets = [
     ...walk(p('.'), (f) => f.endsWith('.md') && !path.relative(ROOT, f).replaceAll('\\', '/').startsWith('docs/audit/')),
   ];
@@ -1105,21 +1105,21 @@ check('markers-integrity', 'error', () => {
   }
   return {
     ok: details.length === 0,
-    message: 'all sofka-asdd markers are balanced',
+    message: 'all asdd markers are balanced',
     details,
   };
 });
 
-// 13. Consistencia CHANGELOG ↔ sofka-asdd.lock (warn)
+// 13. Consistencia CHANGELOG ↔ asdd.lock (warn)
 //    Verifica que la versión declarada en el lock tenga una sección
 //    correspondiente en ASDD-CHANGELOG.md. Permissive: no compara
 //    semánticamente ni valida que el bump sea correcto, solo existencia.
 check('changelog-consistency', 'warn', () => {
-  const lockPath = p('.sofka-asdd/sofka-asdd.lock');
+  const lockPath = p('.asdd/asdd.lock');
   const changelogPath = p('ASDD-CHANGELOG.md');
 
   if (!exists(lockPath)) {
-    return { ok: true, message: '.sofka-asdd/sofka-asdd.lock not present (skip)' };
+    return { ok: true, message: '.asdd/asdd.lock not present (skip)' };
   }
 
   let manifest;
@@ -1163,7 +1163,7 @@ check('changelog-consistency', 'warn', () => {
 
 // 14. Naming convention — template prefix + project prefix (strict)
 check('naming-convention', 'error', () => {
-  const lockPath = p('.sofka-asdd/sofka-asdd.lock');
+  const lockPath = p('.asdd/asdd.lock');
   let manifest;
   try {
     manifest = exists(lockPath) ? JSON.parse(read(lockPath)) : null;
@@ -1172,7 +1172,7 @@ check('naming-convention', 'error', () => {
   }
 
   const projectName = manifest?.project?.name;
-  const templatePrefix = 'sofka-asdd-';
+  const templatePrefix = 'asdd-';
 
   let validPrefixes;
   if (!projectName) {
@@ -1182,7 +1182,7 @@ check('naming-convention', 'error', () => {
       return {
         ok: false,
         message: `project.name "${projectName}" does not match /^[a-z][a-z0-9-]{1,30}$/`,
-        details: [`fix .sofka-asdd/sofka-asdd.lock → project.name`],
+        details: [`fix .asdd/asdd.lock → project.name`],
       };
     }
     validPrefixes = [templatePrefix, `${projectName}-`];
@@ -1209,9 +1209,9 @@ check('naming-convention', 'error', () => {
     for (const ent of listDir(commandsDir)) {
       if (!ent.isDirectory()) continue;
       const ns = ent.name;
-      const validCommandNs = ns === 'sofka-asdd' || (projectName && ns === projectName);
+      const validCommandNs = ns === 'asdd' || (projectName && ns === projectName);
       if (!validCommandNs) {
-        const expected = projectName ? `"sofka-asdd" or "${projectName}"` : `"sofka-asdd"`;
+        const expected = projectName ? `"asdd" or "${projectName}"` : `"asdd"`;
         details.push(`command namespace "${ns}/" — expected: ${expected}`);
       }
     }
@@ -1283,7 +1283,7 @@ check('reference-path-integrity', 'error', () => {
   // Referencias directas a `.claude/rules/*.md` — un solo nivel, sin carpeta de dominio en
   // el medio, así que `refPattern` no las matchea. Sin esto, una regla que se borra o se
   // renombra sin actualizar su lector queda huérfana y ningún check lo atrapa (ver
-  // `.claude/rules/sofka-asdd-spec-guard.md` en el historial).
+  // `.claude/rules/asdd-spec-guard.md` en el historial).
   const rulesRefPattern = /\.claude\/rules\/([\w.-]+\.md)/g;
 
   const targets = [];
@@ -1342,7 +1342,7 @@ check('reference-path-integrity', 'error', () => {
 
 // 15b. Conditional rule loading contract (ADR-017/B5)
 check('conditional-rule-loading', 'error', () => {
-  const manifestPath = p('.sofka-asdd/rule-loading.json');
+  const manifestPath = p('.asdd/rule-loading.json');
   if (!exists(manifestPath)) return { ok: true, message: 'rule-loading manifest not present (skipped)', details: [] };
   const details = [];
   let manifest;
@@ -1367,7 +1367,7 @@ check('conditional-rule-loading', 'error', () => {
     return abs;
   };
   for (const entry of manifest.entries) {
-    if (!entry || !/^sofka-asdd-[a-z0-9-]+$/.test(entry.name ?? '')) {
+    if (!entry || !/^asdd-[a-z0-9-]+$/.test(entry.name ?? '')) {
       details.push('entry has invalid canonical name');
       continue;
     }
@@ -1397,7 +1397,7 @@ check('conditional-rule-loading', 'error', () => {
     if (!coreText.includes(entry.reference) || !/le[ée]\s+\*\*COMPLETO\*\*/iu.test(coreText)) {
       details.push(`${entry.name}: core lacks explicit complete reader for ${entry.reference}`);
     }
-    const invocation = `node .claude/scripts/sofka-asdd-resolve-rule.mjs ${entry.name}`;
+    const invocation = `node .claude/scripts/asdd-resolve-rule.mjs ${entry.name}`;
     if (!coreText.includes(invocation)) {
       details.push(`${entry.name}: core lacks exact resolver invocation`);
     }
@@ -1418,7 +1418,7 @@ check('conditional-rule-loading', 'error', () => {
 
 // 15c. Lazy capability loading contract (ADR-017/B6)
 check('conditional-capability-loading', 'error', () => {
-  const manifestPath = p('.sofka-asdd/capability-loading.json');
+  const manifestPath = p('.asdd/capability-loading.json');
   if (!exists(manifestPath)) return { ok: true, message: 'capability-loading manifest not present (skipped)', details: [] };
   const details = [];
   let manifest;
@@ -1429,7 +1429,7 @@ check('conditional-capability-loading', 'error', () => {
   }
   const globalPairs = new Set();
   for (const [agent, config] of Object.entries(manifest.agents)) {
-    if (!/^sofka-asdd-[a-z0-9-]+$/u.test(agent)) {
+    if (!/^asdd-[a-z0-9-]+$/u.test(agent)) {
       details.push(`${agent}: invalid canonical agent name`);
       continue;
     }
@@ -1463,13 +1463,13 @@ check('conditional-capability-loading', 'error', () => {
       continue;
     }
     if (!text.includes('## Carga bajo demanda de capacidades')
-      || !text.includes('node .claude/scripts/sofka-asdd-load-capability.mjs')
+      || !text.includes('node .claude/scripts/asdd-load-capability.mjs')
       || !text.includes('`dependencies`')) {
       details.push(`${agent}: agent lacks explicit loader/dependency reader contract`);
     }
     const local = new Set();
     for (const capability of config.capabilities) {
-      if (!/^sofka-asdd-[a-z0-9-]+$/u.test(capability)) {
+      if (!/^asdd-[a-z0-9-]+$/u.test(capability)) {
         details.push(`${agent}: invalid capability ${capability}`);
         continue;
       }
@@ -1492,7 +1492,7 @@ check('conditional-capability-loading', 'error', () => {
 
 // 15d. Thin coordinator + point-of-use phase-spec contract (ADR-017/B7)
 check('thin-coordinator-loading', 'error', () => {
-  const manifestPath = p('.sofka-asdd/coordinator-loading.json');
+  const manifestPath = p('.asdd/coordinator-loading.json');
   if (!exists(manifestPath)) return { ok: true, message: 'coordinator-loading manifest not present (skipped)', details: [] };
   const details = [];
   let manifest;
@@ -1501,7 +1501,7 @@ check('thin-coordinator-loading', 'error', () => {
   if (manifest.schema_version !== 1 || !manifest.coordinators || typeof manifest.coordinators !== 'object') {
     return { ok: false, message: 'coordinator-loading manifest must be schema v1 with coordinators', details: [] };
   }
-  const policyPath = p('.sofka-asdd/context-budget.json');
+  const policyPath = p('.asdd/context-budget.json');
   const policy = exists(policyPath) ? JSON.parse(read(policyPath)) : {};
   const configured = new Set(policy.coordinators ?? []);
   const declared = new Set(Object.keys(manifest.coordinators));
@@ -1582,11 +1582,11 @@ check('thin-coordinator-loading', 'error', () => {
   };
 });
 
-// 16. model_strategy en sofka-asdd.lock (error)
+// 16. model_strategy en asdd.lock (error)
 check('model-strategy', 'error', () => {
-  // Valida el bloque model_strategy en sofka-asdd.lock si está presente
+  // Valida el bloque model_strategy en asdd.lock si está presente
   // Si no está presente, el check pasa (es opcional para backwards compat)
-  const lockFile = p('.sofka-asdd/sofka-asdd.lock');
+  const lockFile = p('.asdd/asdd.lock');
   if (!exists(lockFile)) return { ok: true, details: [] };
 
   let lock;
@@ -1652,10 +1652,10 @@ check('model-strategy', 'error', () => {
   return { ok: details.length === 0, message: 'model_strategy configuration is valid', details };
 });
 
-// 17. routing config en sofka-asdd.lock (error)
+// 17. routing config en asdd.lock (error)
 check('routing-config', 'error', () => {
-  const lockFile = p('.sofka-asdd/sofka-asdd.lock');
-  if (!exists(lockFile)) return { ok: true, details: [], message: 'sofka-asdd.lock not found — skipped' };
+  const lockFile = p('.asdd/asdd.lock');
+  if (!exists(lockFile)) return { ok: true, details: [], message: 'asdd.lock not found — skipped' };
 
   let lock;
   try { lock = JSON.parse(read(lockFile)); } catch { return { ok: true, details: [], message: 'lock parse error — skipped' }; }
@@ -1675,8 +1675,8 @@ check('routing-config', 'error', () => {
   }
 
   if (routing.mode === 'adaptive') {
-    if (!exists(p('.claude/rules/sofka-asdd-routing-heuristics.md'))) {
-      details.push(`routing.mode es "adaptive" pero no existe .claude/rules/sofka-asdd-routing-heuristics.md — requerido`);
+    if (!exists(p('.claude/rules/asdd-routing-heuristics.md'))) {
+      details.push(`routing.mode es "adaptive" pero no existe .claude/rules/asdd-routing-heuristics.md — requerido`);
     }
     if (!Array.isArray(routing.hard_exclusions) || routing.hard_exclusions.length === 0) {
       details.push(`routing.hard_exclusions: debe ser un array no vacío cuando mode es "adaptive"`);
@@ -1702,8 +1702,8 @@ check('routing-config', 'error', () => {
 
 // 17a. Runtime budgets for model/fan-out/turns/retries (ADR-019/B8)
 check('subagent-budget', 'error', () => {
-  const policyPath = p('.sofka-asdd/subagent-budget.json');
-  const lockPath = p('.sofka-asdd/sofka-asdd.lock');
+  const policyPath = p('.asdd/subagent-budget.json');
+  const lockPath = p('.asdd/asdd.lock');
   const settingsPath = p('.claude/settings.json');
   if (!exists(policyPath)) return { ok: false, details: ['subagent-budget.json is required'] };
   const details = [];
@@ -1712,11 +1712,11 @@ check('subagent-budget', 'error', () => {
   catch (error) { return { ok: false, details: [`budget configuration invalid JSON: ${error.message}`] }; }
   if (policy.schema_version !== 1 || policy.enforcement !== 'blocking') details.push('budget policy must be schema v1 with blocking enforcement');
   if (settings.model !== policy.model_ids?.sonnet) details.push('settings model must equal the configured Sonnet orchestrator default');
-  if (lock.routing?.subagent_budget_ref !== '.sofka-asdd/subagent-budget.json') details.push('routing must reference subagent-budget.json');
+  if (lock.routing?.subagent_budget_ref !== '.asdd/subagent-budget.json') details.push('routing must reference subagent-budget.json');
   if (JSON.stringify(policy.precedence) !== JSON.stringify(['skill_override', 'agent_pinning', 'phase_default', 'agent_frontmatter'])) details.push('model precedence differs from ADR-019');
   if (policy.high_risk?.required_route !== 'FULL' || policy.high_risk?.required_model !== 'opus' || policy.high_risk?.escalate_before_tools !== true) details.push('high-risk must require FULL/Opus before tools');
   if (policy.launch_marker !== '[ASDD-BUDGET route={route} phase={phase} model={model} max_turns={max_turns} retries={retries}]') details.push('launch marker differs from runtime contract');
-  const gateText = read(p('.claude/hooks/sofka-asdd-plan-gate.mjs'));
+  const gateText = read(p('.claude/hooks/asdd-plan-gate.mjs'));
   if (!gateText.includes('consumeBudgetedLaunchAuthorization')) details.push('plan gate does not enforce budgeted launch binding');
   const expected = {
     TRIVIAL: [0, 0, null, 0], LIGHT: [1, 1, [10, 20], 1],
@@ -1740,8 +1740,8 @@ check('subagent-budget', 'error', () => {
 
 // 17b. budget estático de contexto (error)
 check('context-budget', 'error', () => {
-  const policyPath = p('.sofka-asdd/context-budget.json');
-  if (!exists(policyPath)) return { ok: false, details: ['.sofka-asdd/context-budget.json — política requerida'] };
+  const policyPath = p('.asdd/context-budget.json');
+  if (!exists(policyPath)) return { ok: false, details: ['.asdd/context-budget.json — política requerida'] };
   let policy;
   try { policy = JSON.parse(read(policyPath)); } catch (error) { return { ok: false, details: [`context-budget.json — JSON inválido: ${error.message}`] }; }
   if (policy.schema_version !== 2) return { ok: false, details: ['context-budget.json — schema_version debe ser 2'] };
@@ -1768,11 +1768,11 @@ check('context-budget', 'error', () => {
 // cuerpo. Es el rubro mas caro del piso always-on y hasta esta version no lo
 // medía nadie: la descripcion solo tiene que DISCRIMINAR, el detalle vive en el
 // cuerpo del artefacto. Los limites por tipo salen de
-// `.sofka-asdd/context-budget.json → targets.*_description_chars`; el total
+// `.asdd/context-budget.json → targets.*_description_chars`; el total
 // contra `always_on_words` lo mide `.claude/tools/measure-context-footprint.mjs`.
 check('skill-description-budget', 'error', () => {
   let targets;
-  try { targets = JSON.parse(read(p('.sofka-asdd/context-budget.json')))?.targets; }
+  try { targets = JSON.parse(read(p('.asdd/context-budget.json')))?.targets; }
   catch { /* sin presupuesto declarado */ }
   if (!targets) return { ok: true, message: 'context-budget.json ausente o inválido (skipped)', details: [] };
 
@@ -1818,7 +1818,7 @@ check('skill-description-budget', 'error', () => {
 });
 
 check('context-budget-targets', 'warn', () => {
-  const policyPath = p('.sofka-asdd/context-budget.json');
+  const policyPath = p('.asdd/context-budget.json');
   if (!exists(policyPath)) return { ok: true, message: 'policy missing; reported by context-budget' };
   try {
     const report = analyzeContextBudget(ROOT, JSON.parse(read(policyPath)));
@@ -2013,7 +2013,7 @@ check('run-manifest-naming', 'error', () => {
       if (!candidates.some((candidate) => exists(p(...candidate.split('/'))))) {
         details.push(
           `${candidates[0]} — falta (run activo sin manifest sincronizado). ` +
-          `El hook sofka-asdd-run-manifest.mjs lo genera en SessionStart.`,
+          `El hook asdd-run-manifest.mjs lo genera en SessionStart.`,
         );
       }
     }
@@ -2084,7 +2084,7 @@ check('hooks-registration', 'error', () => {
       for (const h of hs) {
         // Acepta forma shell (`command` con la ruta embebida) y forma exec
         // (`command: "node"` + la ruta en `args`), ver
-        // lib/sofka-asdd-hook-entry-lib.mjs.
+        // lib/asdd-hook-entry-lib.mjs.
         const ref = hookEntryRef(h);
         if (ref) {
           const m = ref.match(/\.claude\/hooks\/([\w.-]+\.mjs)/);
@@ -2103,7 +2103,7 @@ check('hooks-registration', 'error', () => {
   for (const entry of [...registered]) {
     const entryPath = path.join(hooksDir, entry);
     if (!exists(entryPath)) continue;
-    const importRe = /from\s+["']\.\/(sofka-asdd-[\w.-]+\.mjs)["']/g;
+    const importRe = /from\s+["']\.\/(asdd-[\w.-]+\.mjs)["']/g;
     let match;
     const source = read(entryPath);
     while ((match = importRe.exec(source)) !== null) registered.add(match[1]);
@@ -2135,7 +2135,7 @@ check('hooks-registration', 'error', () => {
 
 // 23. Integridad de referencias a agentes/skills (error)
 //     Valida que las invocaciones de agentes/skills y los identificadores
-//     sofka-asdd-* citados en commands/rules/agents/skills resuelvan a un
+//     asdd-* citados en commands/rules/agents/skills resuelvan a un
 //     artefacto instalado. Excluye .claude/evals (fixtures congelados, deuda
 //     aparte). Atrapa la clase de #3596/#3597/#3610: agentes/skills fantasma e
 //     identidades deprecadas (qa-engineer / ux-ui / asdd-expert) que quedaron
@@ -2150,18 +2150,18 @@ check('agent-skill-references', 'error', () => {
 
   // Resolución por prefijo y por sufijo (los skills se nombran {agente}-{skill}).
   const isAgent = (n) =>
-    agentSet.has(n) || agentSet.has(`sofka-asdd-${n}`) || [...agentSet].some((a) => a.endsWith(`-${n}`));
+    agentSet.has(n) || agentSet.has(`asdd-${n}`) || [...agentSet].some((a) => a.endsWith(`-${n}`));
   const skillResolves = (n) =>
     skillSet.has(n) ||
-    skillSet.has(`sofka-asdd-${n}`) ||
+    skillSet.has(`asdd-${n}`) ||
     [...skillSet].some((s) => s.endsWith(`-${n}`)) ||
     CONDITIONAL_INSTALL_ALLOWLIST.skills.has(n);
 
   // Identidades deprecadas tras podas incompletas (qa-engineer/ux-ui/asdd-expert,
-  // en forma bare, con prefijo sofka-asdd-, o con sufijo de skill). El lookbehind
-  // evita falsos positivos por substring (p.ej. sofka-asdd-atf-api-qa-engineer es válido).
+  // en forma bare, con prefijo asdd-, o con sufijo de skill). El lookbehind
+  // evita falsos positivos por substring (p.ej. asdd-atf-api-qa-engineer es válido).
   const depRe =
-    /(?<![a-z0-9-])(?:sofka-asdd-)?(?:qa-engineer|ux-ui|asdd-expert)(?:-[a-z0-9-]+)?(?![a-z0-9-])/g;
+    /(?<![a-z0-9-])(?:asdd-)?(?:qa-engineer|ux-ui|asdd-expert)(?:-[a-z0-9-]+)?(?![a-z0-9-])/g;
 
   const targets = [
     ...walk(p('.claude/commands'), (f) => f.endsWith('.md')),
@@ -2180,7 +2180,7 @@ check('agent-skill-references', 'error', () => {
   };
 
   const isDeprecated = (s) =>
-    /^(?:sofka-asdd-)?(?:qa-engineer|ux-ui|asdd-expert)(?:-[a-z0-9-]+)?$/.test(s);
+    /^(?:asdd-)?(?:qa-engineer|ux-ui|asdd-expert)(?:-[a-z0-9-]+)?$/.test(s);
 
   for (const f of targets) {
     const rel = path.relative(ROOT, f);
@@ -2305,7 +2305,7 @@ check('skill-tools-subset-of-agent', 'warn', () => {
     const allowed = parsed.data['allowed-tools'];
     if (!Array.isArray(allowed)) continue; // el campo es opcional
 
-    // El dueño se deduce del naming `sofka-asdd-{rol}-{skill}`: se busca el
+    // El dueño se deduce del naming `asdd-{rol}-{skill}`: se busca el
     // agente cuyo nombre sea el prefijo más largo del nombre del skill.
     let dueño = null;
     for (const nombre of agentTools.keys()) {
@@ -2341,7 +2341,7 @@ check('skill-tools-subset-of-agent', 'warn', () => {
 // 23a-ter. Los comandos que una regla declara obligatorios deben estar en el
 // allow-list de permisos.
 //
-// `sofka-asdd-git-safety` exige ejecutar su resolver antes de cualquier
+// `asdd-git-safety` exige ejecutar su resolver antes de cualquier
 // operación git que cambie estado. Ese comando no estaba permitido, así que el
 // primer paso mandatorio del protocolo costaba una confirmación al usuario en
 // cada ciclo. Una regla que obliga a correr algo y una capa de permisos que lo
@@ -2360,9 +2360,9 @@ check('mandated-commands-allowlisted', 'error', () => {
 
   // Comandos que las reglas núcleo declaran obligatorios antes de operar.
   const mandados = [
-    'node .claude/scripts/sofka-asdd-resolve-rule.mjs',
-    'node .claude/scripts/sofka-asdd-artifact-name.mjs',
-    'node .claude/scripts/sofka-asdd-load-capability.mjs',
+    'node .claude/scripts/asdd-resolve-rule.mjs',
+    'node .claude/scripts/asdd-artifact-name.mjs',
+    'node .claude/scripts/asdd-load-capability.mjs',
   ];
 
   const details = [];
@@ -2389,8 +2389,8 @@ check('mandated-commands-allowlisted', 'error', () => {
 // 23b. Worktree opt-in contract (ADR-010)
 check('worktree-opt-in-contract', 'error', () => {
   const developerAgents = [
-    p('.claude/agents/sofka-asdd-developer-frontend.md'),
-    p('.claude/agents/sofka-asdd-developer-backend.md'),
+    p('.claude/agents/asdd-developer-frontend.md'),
+    p('.claude/agents/asdd-developer-backend.md'),
   ];
   const details = [];
 
@@ -2407,7 +2407,7 @@ check('worktree-opt-in-contract', 'error', () => {
     }
   }
 
-  const rule = p('.claude/references/rules/sofka-asdd-orchestration-worktree.md');
+  const rule = p('.claude/references/rules/asdd-orchestration-worktree.md');
   if (exists(rule)) {
     const content = read(rule);
     if (!/2 o más developers en paralelo/i.test(content) || !/usuario solicita explícitamente/i.test(content)) {
@@ -2527,7 +2527,7 @@ const lineOf = (text, idx) => text.slice(0, idx).split('\n').length;
 // "no pude correlacionarlo" no es lo mismo que "está normalizado". Las tres formas
 // cubiertas son las que produjeron los defectos reales de esta clase.
 check('hash-eol-normalization', 'error', () => {
-  const libRel = '.claude/scripts/lib/sofka-asdd-hash-normalize-lib.mjs';
+  const libRel = '.claude/scripts/lib/asdd-hash-normalize-lib.mjs';
   if (!exists(p(libRel))) {
     return {
       ok: false,
@@ -2750,14 +2750,14 @@ check('path-separator-safety', 'warn', () => {
   // que NO viene de la API de path del SO.
   const ALLOWLIST = new Map([
     // Rutas de artefacto leídas de .asdd-run.json (posix por contrato del manifiesto).
-    ['.claude/scripts/sofka-asdd-run-manifest.mjs', 'rutas docs/ desde .asdd-run.json'],
+    ['.claude/scripts/asdd-run-manifest.mjs', 'rutas docs/ desde .asdd-run.json'],
     // Ya normaliza a posix antes de comparar prefijos de artifact-dir.
-    ['.claude/scripts/sofka-asdd-run-bootstrap.mjs', 'normaliza a posix antes de comparar'],
-    ['.claude/scripts/lib/sofka-asdd-run-reconciliation-lib.mjs', 'rutas posix del INDEX/manifiesto'],
+    ['.claude/scripts/asdd-run-bootstrap.mjs', 'normaliza a posix antes de comparar'],
+    ['.claude/scripts/lib/asdd-run-reconciliation-lib.mjs', 'rutas posix del INDEX/manifiesto'],
     // Compara output de `git ls-files` (siempre posix) y rutas de manifiestos.
     ['.claude/scripts/validate-template.mjs', 'output de git ls-files y manifiestos, ya posix'],
     // Regexes que deben matchear el allowlist de comandos shell de settings.json.
-    ['.claude/hooks/sofka-asdd-orchestrator-guard.mjs', 'regexes de comandos shell del allowlist'],
+    ['.claude/hooks/asdd-orchestrator-guard.mjs', 'regexes de comandos shell del allowlist'],
   ]);
   // NO hay allowlist por prefijo. Existió una para `.claude/tools/` completo, que
   // dejaba 88 archivos —el runtime ATF Web, el cuerpo de código más grande del repo—
@@ -2839,8 +2839,8 @@ check('path-separator-safety', 'warn', () => {
 // determinar (sin contrato o sin historia). El 2 se salta: un proyecto consumidor no recibe
 // ni el generador ni el provenance, y un clon shallow no tiene con qué responder.
 check('provenance-freshness', 'error', () => {
-  const generatorRel = '.claude/scripts/sofka-asdd-gen-provenance.mjs';
-  const provenanceRel = '.sofka-asdd/sofka-asdd-provenance.json';
+  const generatorRel = '.claude/scripts/asdd-gen-provenance.mjs';
+  const provenanceRel = '.asdd/asdd-provenance.json';
   if (!exists(p(generatorRel))) {
     return { ok: true, message: `${generatorRel} no presente (skipped) — tooling de mantenedor, no se distribuye`, details: [] };
   }
@@ -2890,7 +2890,7 @@ check('provenance-freshness', 'error', () => {
 // la clave estuvo inerte durante meses sin un solo error. Una clave que el CLI no lee es
 // indistinguible de una clave que no existe, y nada lo delata.
 check('moves-coherence', 'error', () => {
-  const contractPath = p('.sofka-asdd/cli-contract.json');
+  const contractPath = p('.asdd/cli-contract.json');
   if (!exists(contractPath)) return { ok: true, message: 'cli-contract not present (skip)', details: [] };
   let contract;
   try {
@@ -2969,7 +2969,7 @@ check('moves-coherence', 'error', () => {
 // El único check que podía verlo exige que otro artefacto distribuido nombre la ruta por su
 // path, así que solo alcanza a dependencias de runtime bajo `.claude/{scripts,hooks,tools}/`:
 // un agente, una skill, una regla o un documento que nadie referencia se cae en silencio.
-// Ya pasó: `.claude/scripts/sofka-asdd-resolve-workspace.mjs` se entregó en v3.3.0, salió de
+// Ya pasó: `.claude/scripts/asdd-resolve-workspace.mjs` se entregó en v3.3.0, salió de
 // la lista al resolver un merge y estuvo ausente tres releases seguidas sin un solo error.
 //
 // LA PREGUNTA
@@ -2989,7 +2989,7 @@ check('moves-coherence', 'error', () => {
 // SE COMPARAN RUTAS, NO ENTRADAS
 //
 // Comparar las dos listas entrada por entrada produce falsos positivos por granularidad:
-// `.sofka-asdd/` dejó de declararse como directorio y pasó a 15 archivos enumerados, lo que
+// `.asdd/` dejó de declararse como directorio y pasó a 15 archivos enumerados, lo que
 // entrada-contra-entrada lee como la caída de todo el árbol. Cada entrada histórica se
 // expande a los archivos que existían en ese ref y la comparación es por ruta exacta.
 //
@@ -3005,7 +3005,7 @@ check('moves-coherence', 'error', () => {
 // Dos etapas, para no pagar la expansión completa: primero se comparan las listas, y solo
 // las entradas que hoy no están cubiertas se expanden, con pathspec. ~1,7 s.
 check('distribution-regression', 'error', () => {
-  const contractRel = '.sofka-asdd/cli-contract.json';
+  const contractRel = '.asdd/cli-contract.json';
   const contractPath = p(contractRel);
   if (!exists(contractPath)) return { ok: true, message: 'cli-contract not present (skip)', details: [] };
 
@@ -3014,7 +3014,7 @@ check('distribution-regression', 'error', () => {
   // viene en la distribución. La comparación daría hallazgos ciertos pero ajenos: son
   // releases del template, no suyas, y no hay nada que él pueda hacer con ellas. La presencia
   // del tooling de mantenedor es lo que distingue un repo del otro.
-  const maintainerOnly = '.claude/scripts/sofka-asdd-gen-provenance.mjs';
+  const maintainerOnly = '.claude/scripts/asdd-gen-provenance.mjs';
   if (!exists(p(maintainerOnly))) {
     return {
       ok: true,
@@ -3041,7 +3041,7 @@ check('distribution-regression', 'error', () => {
   // silenciador; borrarla es lo que reabre el hallazgo. Una clave terminada en `/` cubre todo
   // lo que haya debajo.
   const RETIRED = new Map([
-    ['.sofka-asdd/checklist.json',
+    ['.asdd/checklist.json',
       'checklist ejecutable de la instalación: el CLI la lee del clon del template, el consumidor no necesita una copia — retiro documentado en .claude/docs/migrations/3.3-to-3.4.md'],
     ['ASDD-CHANGELOG.md',
       'historia de versiones del template, no del proyecto que lo adopta'],

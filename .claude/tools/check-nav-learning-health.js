@@ -48,7 +48,7 @@
  *   2 → inert (degradación silenciosa detectada — warning, NO blocker)
  *   1 → error fatal (run_folder corrupto, etc.)
  *
- * Invocación canónica: post-PASO 4.7.a en `/sofka-asdd:qa-web-exec.md` y consolidación en `/sofka-asdd:qa-web-run.md`.
+ * Invocación canónica: post-PASO 4.7.a en `/asdd:qa-web-exec.md` y consolidación en `/asdd:qa-web-run.md`.
  * Es un check de telemetría — NO bloquea el run, solo evidencia el problema al QA.
  */
 'use strict';

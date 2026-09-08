@@ -1,6 +1,6 @@
 # BUG-A: Naming de artefactos de run bloquea escrituras legítimas
 
-**Módulo**: `.claude/hooks/sofka-asdd-pre-tool-use-artifact-name-guard.mjs` + `.claude/scripts/sofka-asdd-artifact-name.mjs` + `.sofka-asdd/asdd-run.schema.json`
+**Módulo**: `.claude/hooks/asdd-pre-tool-use-artifact-name-guard.mjs` + `.claude/scripts/asdd-artifact-name.mjs` + `.asdd/asdd-run.schema.json`
 **Severidad**: HIGH
 **Prioridad**: P1
 **Categoría preliminar**: bug
@@ -11,7 +11,7 @@
 
 > **Nota sobre ubicación**: este reporte vive provisionalmente en
 > `docs/tech/` en lugar de `docs/specs/bug-*.md` (convención del skill
-> `sofka-asdd-tech-lead-new-bug`) porque el hook `analyze-guard`
+> `asdd-tech-lead-new-bug`) porque el hook `analyze-guard`
 > bloquea toda escritura en `docs/specs/` sin brief. Ese bloqueo es el
 > defecto A8 documentado en el refactoring plan hermano; una vez A8
 > resuelto, este archivo se re-ubica con `git mv`.
@@ -37,7 +37,7 @@ reports (variante A8, documentada en el plan).
    `current_phase: "disenar"` en `.asdd-run.json` (copiado literal de
    `WF-003 — Diseñar`).
 2. Un agente invoca el helper:
-   `node .claude/scripts/sofka-asdd-artifact-name.mjs --phase disenar --slug foo`.
+   `node .claude/scripts/asdd-artifact-name.mjs --phase disenar --slug foo`.
 3. El helper rechaza con exit 1: `Fase inválida: "disenar". Fases válidas: specify, analyze, design, build, verify, document`.
 4. Como alternativa, el agente pide `--phase design` — el helper genera
    `{run_id}-DESIGN-{SEQ}-foo.md` y consume `artifact_seq`.
@@ -63,9 +63,9 @@ reports (variante A8, documentada en el plan).
 1. Con run activo válido y nombre generado por el helper (patrón OK),
    intentar `Write` a
    `docs/specs/2026-07-07-001-BUILD-002-bug-a-....md`.
-2. El **segundo** hook `sofka-asdd-pre-tool-use-analyze-guard.mjs`
+2. El **segundo** hook `asdd-pre-tool-use-analyze-guard.mjs`
    bloquea inmediatamente con exit 2:
-   `[ASDD WF-002 Prerrequisito] Intento de Write sobre .../docs/specs/... sin brief: no existe el directorio docs/specs. Crear el directorio y ejecutar /sofka-asdd:specify para generar el brief`.
+   `[ASDD WF-002 Prerrequisito] Intento de Write sobre .../docs/specs/... sin brief: no existe el directorio docs/specs. Crear el directorio y ejecutar /asdd:specify para generar el brief`.
 3. El guard no distingue "bug report" (que el skill `new-bug` documenta
    escribiendo en `docs/specs/bug-*.md` sin brief) de "spec de feature"
    (que sí requiere brief por WF-002).
@@ -108,7 +108,7 @@ la rechazan.
 2026-07-07:
 
 ```
-PreToolUse:Write hook error: [node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-pre-tool-use-artifact-name-guard.mjs]:
+PreToolUse:Write hook error: [node $CLAUDE_PROJECT_DIR/.claude/hooks/asdd-pre-tool-use-artifact-name-guard.mjs]:
 [artifact-name-guard] El run 2026-05-28-001 está cerrado (status: complete). WI #3658
 ```
 
@@ -116,8 +116,8 @@ PreToolUse:Write hook error: [node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-
 vivo el 2026-07-07:
 
 ```
-PreToolUse:Write hook error: [node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-pre-tool-use-analyze-guard.mjs]:
-[ASDD WF-002 Prerrequisito] Intento de Write sobre .../docs/specs/2026-07-07-001-BUILD-002-bug-a-artifact-name-guard-naming-run.md sin brief: no existe el directorio docs/specs. Crear el directorio y ejecutar /sofka-asdd:specify para generar el brief.
+PreToolUse:Write hook error: [node $CLAUDE_PROJECT_DIR/.claude/hooks/asdd-pre-tool-use-analyze-guard.mjs]:
+[ASDD WF-002 Prerrequisito] Intento de Write sobre .../docs/specs/2026-07-07-001-BUILD-002-bug-a-artifact-name-guard-naming-run.md sin brief: no existe el directorio docs/specs. Crear el directorio y ejecutar /asdd:specify para generar el brief.
 ```
 
 ## Ambiente
@@ -130,8 +130,8 @@ PreToolUse:Write hook error: [node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-
 
 ## Evidencia
 
-- **Log relevante (artifact-name-guard)**: `sofka-asdd-pre-tool-use-artifact-name-guard.mjs:167-168` compara `match[2]` con `currentPhase` sin normalizar sinónimos; `:159-163` bloquea con `exit 2` cuando `status === "complete"`.
-- **Log relevante (helper)**: `sofka-asdd-artifact-name.mjs:43` define
+- **Log relevante (artifact-name-guard)**: `asdd-pre-tool-use-artifact-name-guard.mjs:167-168` compara `match[2]` con `currentPhase` sin normalizar sinónimos; `:159-163` bloquea con `exit 2` cuando `status === "complete"`.
+- **Log relevante (helper)**: `asdd-artifact-name.mjs:43` define
   `VALID_PHASES` solo en inglés; `:136` rechaza fases fuera del set;
   `:170-178` consume `artifact_seq` antes de que el guard valide.
 - **Log relevante (schema)**: `asdd-run.schema.json` no incluye
@@ -155,12 +155,12 @@ PreToolUse:Write hook error: [node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-
    `Documentar`). Sin schema, no hay validación.
 
 2. **Helper vs guard con estrategias de resolución distintas** —
-   `sofka-asdd-artifact-name.mjs:43` define
+   `asdd-artifact-name.mjs:43` define
    `VALID_PHASES = new Set(['specify', 'analyze', 'design', 'build', 'verify', 'document'])`.
    Cuando no viene `--phase`, el helper hace fallback (:140-152):
    primero lee `run.current_phase`, si no existe **escanea
    `run.phases.*.status === 'in_progress'`** y toma la primera match. El
-   guard (`sofka-asdd-pre-tool-use-artifact-name-guard.mjs:167-168`)
+   guard (`asdd-pre-tool-use-artifact-name-guard.mjs:167-168`)
    simplemente hace `runJson.current_phase.toUpperCase()` y compara
    string literal contra `match[2]` (:204-210) — no tiene fallback ni
    normalización.
@@ -182,7 +182,7 @@ PreToolUse:Write hook error: [node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-
 5. **Variante A8 (verificada en vivo el 2026-07-07)** — Un **segundo**
    hook (`analyze-guard`) aplica fail-closed a `docs/specs/` sin brief.
    No distingue "bug report" (patrón `bug-*.md` del skill
-   `sofka-asdd-tech-lead-new-bug`) de "spec de feature" (que sí
+   `asdd-tech-lead-new-bug`) de "spec de feature" (que sí
    requiere brief por WF-002), ni maneja el caso "directorio
    `docs/specs/` inexistente" como "template consumidor sin proyecto
    todavía". Interacción con A7: cuando A7 se resuelve, A8 sigue
@@ -204,7 +204,7 @@ Reproducible al 100%.
 - Los tests del helper y del guard (deben cubrir ambos escenarios).
 - La convención de `naming-convention.md §3.7.2` — si el fix cambia
   exenciones, la convención debe actualizarse en el mismo release.
-- El skill `sofka-asdd-tech-lead-new-bug` (si A8 se resuelve moviendo
+- El skill `asdd-tech-lead-new-bug` (si A8 se resuelve moviendo
   bug reports fuera de `docs/specs/`, actualizar el skill).
 
 ## Fix sugerido (propuesta — validar en diagnóstico, ver R1 en el plan)
@@ -217,7 +217,7 @@ Reproducible al 100%.
   (`phases.*.status === "in_progress"`) cuando `current_phase` es `null`
   o inválido. Compartir esa función entre helper y guard vía
   `.claude/hooks/_lib/` (tras el rename E2).
-- **A3** — Documentar en `sofka-asdd-checkpoint-resume.md` (ORC-007) una
+- **A3** — Documentar en `asdd-checkpoint-resume.md` (ORC-007) una
   tabla de mapeo español→inglés para skills legados, con nota de
   deprecación.
 - **A4** (decidido opción b) — Añadir `--dry-run` al helper para
@@ -234,15 +234,15 @@ Reproducible al 100%.
 
 **Archivos candidatos**:
 
-- `.claude/hooks/sofka-asdd-pre-tool-use-artifact-name-guard.mjs` (A2, A7).
-- `.claude/hooks/sofka-asdd-pre-tool-use-analyze-guard.mjs` (A8).
-- `.claude/scripts/sofka-asdd-artifact-name.mjs` (A4).
-- `.sofka-asdd/asdd-run.schema.json` (A1).
+- `.claude/hooks/asdd-pre-tool-use-artifact-name-guard.mjs` (A2, A7).
+- `.claude/hooks/asdd-pre-tool-use-analyze-guard.mjs` (A8).
+- `.claude/scripts/asdd-artifact-name.mjs` (A4).
+- `.asdd/asdd-run.schema.json` (A1).
 - `.claude/hooks/_lib/` nuevo módulo compartido (A2, tras E2).
 - `.claude/scripts/validate-template.mjs` (A6).
-- `.claude/scripts/test-sofka-asdd-artifact-name.mjs` (A5).
-- `.claude/references/rules/sofka-asdd-checkpoint-resume.md` (A3, docs).
-- `.claude/skills/sofka-asdd-tech-lead-new-bug/SKILL.md` (A8, si se
+- `.claude/scripts/test-asdd-artifact-name.mjs` (A5).
+- `.claude/references/rules/asdd-checkpoint-resume.md` (A3, docs).
+- `.claude/skills/asdd-tech-lead-new-bug/SKILL.md` (A8, si se
   migra el patrón).
 - `.claude/docs/adoption/naming-convention.md` (A8, distinguir tipos).
 

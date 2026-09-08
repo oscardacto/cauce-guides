@@ -5,11 +5,11 @@ import { resolve } from "node:path";
 import {
   getDeterministicRouteReminder,
   getPromptInjectionProfile,
-} from "../hooks/sofka-asdd-user-prompt-submit.mjs";
+} from "../hooks/asdd-user-prompt-submit.mjs";
 
 const root = resolve(import.meta.dirname, "..", "..");
-const hookSource = readFileSync(resolve(root, ".claude/hooks/sofka-asdd-user-prompt-submit.mjs"), "utf8");
-const sessionSource = readFileSync(resolve(root, ".claude/hooks/sofka-asdd-session-start-dispatcher.mjs"), "utf8");
+const hookSource = readFileSync(resolve(root, ".claude/hooks/asdd-user-prompt-submit.mjs"), "utf8");
+const sessionSource = readFileSync(resolve(root, ".claude/hooks/asdd-session-start-dispatcher.mjs"), "utf8");
 
 assert.deepEqual(getDeterministicRouteReminder("¿Qué hace este archivo?"), []);
 assert.equal(getPromptInjectionProfile("¿Qué hace este archivo?").mode, "none");

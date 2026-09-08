@@ -429,7 +429,7 @@ function modeReceive() {
   }
   console.log(`   ${manifest.run_id ? '2' : '1'}. Verificar credentials.yaml (cada QA tiene las suyas)`);
   console.log(`   ${manifest.run_id ? '3' : '2'}. Habilitar las fases pendientes en appweb.yaml → pipeline`);
-  console.log(`   ${manifest.run_id ? '4' : '3'}. Ejecutar: @.claude/commands/sofka-asdd/qa-web-run.md`);
+  console.log(`   ${manifest.run_id ? '4' : '3'}. Ejecutar: @.claude/commands/asdd/qa-web-run.md`);
   console.log(`   \u2022  Al terminar: node .claude/tools/handoff.js --mode=cleanup`);
 
   // Actualizar manifest con receptor

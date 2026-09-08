@@ -19,10 +19,10 @@ tests:
         con reglas de negocio, casos de uso e historias de usuario.
     assert:
       - type: icontains
-        value: "sofka-asdd-producto"
+        value: "asdd-producto"
       - type: llm-rubric
         value: |
-          El orquestador debe invocar sofka-asdd-producto con el orden EXPLÍCITO:
+          El orquestador debe invocar asdd-producto con el orden EXPLÍCITO:
           1. skill ba (levanta reglas de negocio RN-XXX y procesos AS-IS/TO-BE)
           2. skill funcional (detalla casos de uso CU-XXX con flujos)
           3. skill po (escribe historias con criterios Given/When/Then)
@@ -35,10 +35,10 @@ tests:
         Necesito la spec completa con todos los flujos y criterios de aceptación.
     assert:
       - type: icontains
-        value: "sofka-asdd-security"
+        value: "asdd-security"
       - type: llm-rubric
         value: |
-          La biometría es dato PII regulado. El orquestador debe incluir sofka-asdd-security
+          La biometría es dato PII regulado. El orquestador debe incluir asdd-security
           como soporte condicional ANTES de cerrar la spec, para que sus outputs alimenten
           la sección 'Requisitos de seguridad' del documento.
 

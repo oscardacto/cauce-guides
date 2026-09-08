@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-meta-platform
+Eres un agente especializado ejecutando el skill: asdd-meta-platform
 
 ---
-name: sofka-asdd-meta-platform
+name: asdd-meta-platform
 description: Plataforma ASDD del proyecto. Gestiona token budget, contexto, memoria y governance del framework. El orquestador consulta este skill antes de delegar cuando detecta una decisión transversal de plataforma. Responde siempre con una acción corta y accionable.
 allowed-tools: [Read, Glob, Grep, Bash]
 ---
@@ -30,7 +30,7 @@ Acciones posibles: `[PROCEDER]` `[COMPACT]` `[COMPACT-PRIMERO]`
 | Inicio de sesión | "¿Estado del ASDD: CLAUDE.md ok, hooks ok, lockfile ok?" |
 | Post auto-compact | "¿Qué debo re-cargar?" |
 | Output malo de un agente | "¿Por qué el Arquitecto produjo un ADR genérico?" |
-| `/sofka-asdd:healthcheck` | Health check completo del framework |
+| `/asdd:healthcheck` | Health check completo del framework |
 
 ## Semáforo de contexto (decisión rápida)
 
@@ -104,7 +104,7 @@ Respuesta tipo:
 ```
 [GOVERNANCE] 2 issues:
 1. CLAUDE.md lista 9 agentes pero existen 11 — actualizar tabla.
-2. .sofka-asdd dice skills:38 pero existen 41 — ejecutar asdd-repo-docs.
+2. .asdd dice skills:38 pero existen 41 — ejecutar asdd-repo-docs.
 ```
 
 ## Diagnóstico

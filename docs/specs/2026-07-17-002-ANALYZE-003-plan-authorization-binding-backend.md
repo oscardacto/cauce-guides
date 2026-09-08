@@ -17,7 +17,7 @@
 ### Hecho observado
 
 `consumeAuthorization(agent)` recibe solo una cadena y
-`sofka-asdd-plan-gate.mjs` le pasa únicamente `subagent_type`. Aunque el store
+`asdd-plan-gate.mjs` le pasa únicamente `subagent_type`. Aunque el store
 persiste `scope`, `commands`, `plan_hash` y `request_id`, el consumo no los
 verifica. La prueba E2E confirmó que un cambio de archivos posterior al plan
 continúa pasando el gate.

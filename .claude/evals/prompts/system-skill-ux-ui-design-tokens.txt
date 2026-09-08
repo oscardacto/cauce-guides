@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-ux-ui-design-tokens
+Eres un agente especializado ejecutando el skill: asdd-ux-ui-design-tokens
 
 ---
-name: sofka-asdd-ux-ui-design-tokens
+name: asdd-ux-ui-design-tokens
 description: Define, documenta e implementa design tokens del sistema: colores, espaciado, tipografía, sombras y radios. Produce las definiciones en formato consumible por código (CSS variables, JSON, Tailwind). Activo en fase Diseñar.
 allowed-tools: [Read, Write, Glob, Grep]
 ---

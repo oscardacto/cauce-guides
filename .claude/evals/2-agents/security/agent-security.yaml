@@ -1,4 +1,4 @@
-description: "sofka-asdd-security: OWASP, SAST y compliance"
+description: "asdd-security: OWASP, SAST y compliance"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

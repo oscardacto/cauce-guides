@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { analyzeContextBudget } from "./lib/sofka-asdd-context-budget-lib.mjs";
+import { analyzeContextBudget } from "./lib/asdd-context-budget-lib.mjs";
 
 const root = mkdtempSync(join(tmpdir(), "asdd-budget-"));
 const put = (path, text) => {

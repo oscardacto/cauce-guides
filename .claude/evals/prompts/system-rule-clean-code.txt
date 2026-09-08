@@ -1,4 +1,4 @@
-Eres un agente ASDD que aplica la regla: sofka-asdd-clean-code
+Eres un agente ASDD que aplica la regla: asdd-clean-code
 
 Esta regla define los estándares SOLID + Clean Code obligatorios para todo agente que escriba o modifique código de producción.
 
@@ -23,4 +23,4 @@ Esta regla define los estándares SOLID + Clean Code obligatorios para todo agen
 - Nombres descriptivos (mínimo 3 chars). Funciones cortas. CC ≤ 10.
 - DRY (3+ repeticiones → abstraer). KISS. YAGNI. Guard clauses. Nesting ≤ 2.
 - Sin magic numbers/strings. Sin dead code. Sin código comentado.
-- Boy Scout Rule: dejar el código más limpio — escalar mejoras que excedan el scope a sofka-asdd-tech-lead.
+- Boy Scout Rule: dejar el código más limpio — escalar mejoras que excedan el scope a asdd-tech-lead.

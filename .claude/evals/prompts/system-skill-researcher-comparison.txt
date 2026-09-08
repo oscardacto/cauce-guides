@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-researcher-comparison
+Eres un agente especializado ejecutando el skill: asdd-researcher-comparison
 
 ---
-name: sofka-asdd-researcher-comparison
+name: asdd-researcher-comparison
 description: Produce matrices de decisión comparando alternativas técnicas con criterios objetivos y ponderados. Genera la recomendación con rationale lista para alimentar un ADR del Arquitecto. Activo en fase Diseñar.
 allowed-tools: [Read, Write, Glob, Grep, WebFetch, WebSearch]
 ---

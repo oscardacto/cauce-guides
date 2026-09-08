@@ -148,9 +148,9 @@ y los casos donde se evaluó fusionar o subdividir.]
 - **Hojas afectadas:** [códigos]
 - **Impacto:** [qué no puede construirse sin esta decisión — específico, no genérico]
 - **Opciones:** (A) [opción] ; (B) [opción] [; (C) ...]
-- **Resuelve:** [AF / Arquitecto / sofka-asdd-ba-functional-sme vía AF / Cliente vía AF]
+- **Resuelve:** [AF / Arquitecto / asdd-ba-functional-sme vía AF / Cliente vía AF]
 
-Si no hay DPs: escribir `"Sin decisiones pendientes — la descomposición es accionable tal cual. Las decisiones específicas que surjan al redactar cada hoja las levantará sofka-asdd-ba-specification-lead en Sección 14 del spec correspondiente."`
+Si no hay DPs: escribir `"Sin decisiones pendientes — la descomposición es accionable tal cual. Las decisiones específicas que surjan al redactar cada hoja las levantará asdd-ba-specification-lead en Sección 14 del spec correspondiente."`
 
 **Tras el primer ciclo de resolución** (protocolo "Ciclo de vida de las DPs") — el título de esta sección cambia a `## 4. Decisiones pendientes — registro activo` y la nota introductoria pasa a:
 
@@ -158,7 +158,7 @@ Si no hay DPs: escribir `"Sin decisiones pendientes — la descomposición es ac
 
 Solo permanecen en §4 las DPs con `Estado: CONFIRMADO-BLOQUEANTE` o `Estado: PARCIALMENTE RESUELTA`. Las `RESUELTA` se eliminan de §4 y su registro histórico queda en §3.5 (Uso B). Las DPs activas añaden dos campos al formato estándar:
 
-- **Decisión adoptada:** [texto de la decisión — suficiente para que sofka-asdd-ba-specification-lead actúe]
+- **Decisión adoptada:** [texto de la decisión — suficiente para que asdd-ba-specification-lead actúe]
 - **Estado:** `CONFIRMADO-BLOQUEANTE` / `PARCIALMENTE RESUELTA`
 ```
 
@@ -201,7 +201,7 @@ Cada hoja **debe** tener exactamente estos 7 campos, en este orden:
 4. `**Tamaño:**` — letra + traza de votación de 7 dimensiones (formato del rubric)
 5. `**Dependencias:**` — códigos de otras hojas o la palabra "ninguna"
 6. `**Dominios sugeridos:**` — los 8 dominios con valor Sí/No/A confirmar y motivo breve
-7. `**Notas para el AF:**` — alertas operativas y consultas previstas a sofka-asdd-ba-functional-sme
+7. `**Notas para el AF:**` — alertas operativas y consultas previstas a asdd-ba-functional-sme
 
 ### Subsecciones obligatorias de §3 (Análisis del conjunto)
 
@@ -227,9 +227,9 @@ Si un campo no puede completarse por falta de información, declararlo explícit
 
 | Valor | Cuándo aplicarlo |
 |---|---|
-| `Listo` | Toda la información necesaria está disponible; la hoja puede entregarse a sofka-asdd-ba-specification-lead sin bloqueos conocidos. |
-| `Bloqueado` | Una o más decisiones pendientes (Sección 4) impiden cerrar partes del alcance; sofka-asdd-ba-specification-lead puede redactar el camino feliz pero encontrará secciones marcadas como incompletas. |
-| `Límite L` | El voto general del rubric es L y ninguna dimensión supera el umbral de Subdividir; el AF debe evaluar si subdividir antes de entregar a sofka-asdd-ba-specification-lead. |
+| `Listo` | Toda la información necesaria está disponible; la hoja puede entregarse a asdd-ba-specification-lead sin bloqueos conocidos. |
+| `Bloqueado` | Una o más decisiones pendientes (Sección 4) impiden cerrar partes del alcance; asdd-ba-specification-lead puede redactar el camino feliz pero encontrará secciones marcadas como incompletas. |
+| `Límite L` | El voto general del rubric es L y ninguna dimensión supera el umbral de Subdividir; el AF debe evaluar si subdividir antes de entregar a asdd-ba-specification-lead. |
 
 El campo `Constructibilidad` (Verde / Ámbar / Rojo) **no existe** en el output de este agente. Nunca usar esa terminología.
 

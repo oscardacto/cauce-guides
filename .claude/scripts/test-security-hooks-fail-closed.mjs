@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Smoke tests — fail-closed JSON malformado en hooks de seguridad (#3639)
- *              + NaN guard en SOFKA_ASDD_MAX_WORKTREES (#3643)
+ *              + NaN guard en ASDD_MAX_WORKTREES (#3643)
  *              + design-guard fail-closed (#3648)
  *
  * Uso: node .claude/scripts/test-security-hooks-fail-closed.mjs
@@ -29,13 +29,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const HOOKS_DIR = join(__dirname, "..", "hooks");
 const TMP_DIR = tmpdir();
 
-const DANGEROUS_BASH = join(HOOKS_DIR, "sofka-asdd-pre-tool-use-dangerous-bash.mjs");
-const ANALYZE_GUARD = join(HOOKS_DIR, "sofka-asdd-pre-tool-use-analyze-guard.mjs");
-const PR_GATE = join(HOOKS_DIR, "sofka-asdd-pre-pr-gate.mjs");
-const DEP_CHECK = join(HOOKS_DIR, "sofka-asdd-pre-tool-use-dep-check.mjs");
-const SPEC_CHECK = join(HOOKS_DIR, "sofka-asdd-pre-tool-use-spec-check.mjs");
-const DESIGN_GUARD = join(HOOKS_DIR, "sofka-asdd-pre-tool-use-design-guard.mjs");
-const COAUTHORSHIP_GUARD = join(HOOKS_DIR, "sofka-asdd-pre-tool-use-coauthorship-guard.mjs");
+const DANGEROUS_BASH = join(HOOKS_DIR, "asdd-pre-tool-use-dangerous-bash.mjs");
+const ANALYZE_GUARD = join(HOOKS_DIR, "asdd-pre-tool-use-analyze-guard.mjs");
+const PR_GATE = join(HOOKS_DIR, "asdd-pre-pr-gate.mjs");
+const DEP_CHECK = join(HOOKS_DIR, "asdd-pre-tool-use-dep-check.mjs");
+const SPEC_CHECK = join(HOOKS_DIR, "asdd-pre-tool-use-spec-check.mjs");
+const DESIGN_GUARD = join(HOOKS_DIR, "asdd-pre-tool-use-design-guard.mjs");
+const COAUTHORSHIP_GUARD = join(HOOKS_DIR, "asdd-pre-tool-use-coauthorship-guard.mjs");
 
 let passed = 0;
 let failed = 0;
@@ -120,8 +120,8 @@ console.log("\nC7 — dangerous-bash: MAX_WORKTREES=abc → NaN guard activo, ca
     tool_name: "Bash",
     tool_input: { command: `git worktree add ${join(TMP_DIR, "test-wt")}` },
   });
-  // Corremos sin SOFKA_ASDD_GUARD_BASH_DISABLE y sin escapar variables sensibles
-  const r = run(DANGEROUS_BASH, payload, { SOFKA_ASDD_MAX_WORKTREES: "abc" });
+  // Corremos sin ASDD_GUARD_BASH_DISABLE y sin escapar variables sensibles
+  const r = run(DANGEROUS_BASH, payload, { ASDD_MAX_WORKTREES: "abc" });
   // El hook puede bloquear por el cap (si hay worktrees) o pasar — lo que importa
   // es que NO produce NaN en la comparación (no sale con código inesperado como 1 por error JS).
   // Exit 0 (permitido) o exit 2 (bloqueado por cap) son ambos válidos.

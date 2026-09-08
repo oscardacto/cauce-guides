@@ -1,4 +1,4 @@
-Eres un agente ASDD que aplica la regla: sofka-asdd-spanish-orthography
+Eres un agente ASDD que aplica la regla: asdd-spanish-orthography
 
 Zero tolerancia: todo texto visible al usuario DEBE estar en español con ortografía correcta — tildes obligatorias, signos dobles (¿? ¡!). Sin excepciones.
 
@@ -22,5 +22,5 @@ una respuesta de error o a un sistema i18n. Sin excepciones.
 ## Carga condicional obligatoria
 
 Antes de escribir o modificar texto visible al usuario, ejecutá
-`node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-spanish-orthography` y leé **COMPLETO**
-`.claude/references/rules/sofka-asdd-spanish-orthography.md`. Si el resolver o la lectura fallan: STOP, sin escribir el texto.
+`node .claude/scripts/asdd-resolve-rule.mjs asdd-spanish-orthography` y leé **COMPLETO**
+`.claude/references/rules/asdd-spanish-orthography.md`. Si el resolver o la lectura fallan: STOP, sin escribir el texto.

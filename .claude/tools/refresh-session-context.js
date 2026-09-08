@@ -95,7 +95,7 @@ function main() {
   sc.run_folder           = RUN_FOLDER;
   sc.diagnostics_dir      = RUN_FOLDER + '/diagnostics';
   sc.strategy_dir         = RUN_FOLDER + '/strategy';
-  sc.design_dir           = RUN_FOLDER + '/sofka-asdd:qa-web-design';
+  sc.design_dir           = RUN_FOLDER + '/asdd:qa-web-design';
   sc.execution_dir        = RUN_FOLDER + '/execution';
   sc.reports_dir          = RUN_FOLDER + '/reports';
   sc.screen_coverage_path = RUN_FOLDER + '/screen_coverage.json';

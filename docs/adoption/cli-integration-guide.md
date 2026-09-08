@@ -1,17 +1,17 @@
 # Guía de Integración CLI — ASDD Templates
 
-**Audiencia:** equipo que mantiene el CLI `sofka-ai` y equipos que publican templates ASDD.
+**Audiencia:** equipo que mantiene el CLI `guide-ai` y equipos que publican templates ASDD.
 **Versión del contrato objetivo:** `1.0.0`
 
 ## 1. Overview arquitectónico
 
-El CLI `sofka-ai` es **genérico y multi-template**. No conoce la estructura interna de cada template: lee un contrato declarativo (`cli-contract.json`) y lo ejecuta.
+El CLI `guide-ai` es **genérico y multi-template**. No conoce la estructura interna de cada template: lee un contrato declarativo (`cli-contract.json`) y lo ejecuta.
 
 ```
 +---------------------+        +-------------------------+
-|  CLI sofka-ai       | reads  |  template               |
-|  (generic executor) | -----> |  .sofka-asdd/           |
-|                     |        |    sofka-asdd.lock      |
+|  CLI guide-ai       | reads  |  template               |
+|  (generic executor) | -----> |  .asdd/           |
+|                     |        |    asdd.lock      |
 |                     |        |    cli-contract.json    |
 |                     |        |    checklist.json       |
 +---------------------+        +-------------------------+
@@ -32,7 +32,7 @@ Templates actuales y futuros:
 | `copilot-structure` | `github-copilot` | Pendiente — misma contract spec |
 | `gemini-structure` | `gemini` | Pendiente — misma contract spec |
 
-Todos exponen la misma interfaz (`.sofka-asdd/cli-contract.json` + `checklist.json`).
+Todos exponen la misma interfaz (`.asdd/cli-contract.json` + `checklist.json`).
 
 ## 2. Responsabilidades
 
@@ -64,8 +64,8 @@ Todos exponen la misma interfaz (`.sofka-asdd/cli-contract.json` + `checklist.js
 ```
 function adoptTemplate(templateSource, destination, options):
     // 1. Leer declaraciones del template
-    contract = readJSON(join(templateSource, ".sofka-asdd/cli-contract.json"))
-    checklist = readJSON(join(templateSource, ".sofka-asdd/checklist.json"))
+    contract = readJSON(join(templateSource, ".asdd/cli-contract.json"))
+    checklist = readJSON(join(templateSource, ".asdd/checklist.json"))
 
     // 2. Validar contract
     validateSchema(contract)
@@ -233,21 +233,21 @@ Si el usuario interrumpe con Ctrl-C a mitad de la adopción, el CLI debe captura
 
 ```bash
 # Setup
-TEMPLATE_DIR=$(git clone https://gitlab.com/sofka/project-structure /tmp/t-source)
+TEMPLATE_DIR=$(git clone https://gitlab.com/guide/project-structure /tmp/t-source)
 DEST_DIR=/tmp/t-dest
 mkdir -p "$DEST_DIR"
 
 # Ejecutar CLI en modo no-interactivo (respuestas predefinidas)
-sofka-ai adopt "$TEMPLATE_DIR" "$DEST_DIR" \
+guide-ai adopt "$TEMPLATE_DIR" "$DEST_DIR" \
   --answer project-name=mi-proyecto-test \
   --answer project-domain=fintech \
   --answer project-stack=node/typescript \
   --no-prompt-optional
 
 # Aserciones
-test -f "$DEST_DIR/.sofka-asdd/sofka-asdd.lock"
-jq -e '.project.name == "mi-proyecto-test"' "$DEST_DIR/.sofka-asdd/sofka-asdd.lock"
-! grep -q "sofka-asdd:template-disclaimer:start" "$DEST_DIR/CLAUDE.md"
+test -f "$DEST_DIR/.asdd/asdd.lock"
+jq -e '.project.name == "mi-proyecto-test"' "$DEST_DIR/.asdd/asdd.lock"
+! grep -q "asdd:template-disclaimer:start" "$DEST_DIR/CLAUDE.md"
 test -d "$DEST_DIR/docs/specs"
 (cd "$DEST_DIR" && node .claude/scripts/validate-template.mjs)
 ```
@@ -261,7 +261,7 @@ mkdir -p "$DEST_DIR"
 echo "preexisting" > "$DEST_DIR/marker.txt"
 
 # Usar un template mock que fuerza failure en post_install
-sofka-ai adopt "$TEMPLATE_MOCK_FAILING" "$DEST_DIR"
+guide-ai adopt "$TEMPLATE_MOCK_FAILING" "$DEST_DIR"
 
 # El archivo preexistente debe seguir ahí (rollback correcto)
 test -f "$DEST_DIR/marker.txt"
@@ -329,4 +329,4 @@ Cambios incompatibles (MAJOR) evitar hasta 2026-Q4:
 - Spec formal: `docs/adoption/contract-spec.md`
 - Schema JSON: `https://sofka.com.co/asdd/contract/v1.0/schema.json` (a publicar)
 - Template de referencia: `project-structure` (este repo)
-- CLI: `sofka-ai` (repo `/IA/ASDD/cli`)
+- CLI: `guide-ai` (repo `/IA/ASDD/cli`)

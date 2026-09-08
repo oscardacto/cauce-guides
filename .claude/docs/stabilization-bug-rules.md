@@ -3,7 +3,7 @@
 > Doc normativo on-demand (#3644). Referenciado por las skills que lo requieren; no se carga always-loaded (criterio #3671).
 
 Aplica a todo agente durante la fase de estabilización (features completas,
-solo fixes y ajustes). Complementa `sofka-asdd-git-safety.md`.
+solo fixes y ajustes). Complementa `asdd-git-safety.md`.
 
 ## SBR-001: Think Before Coding
 
@@ -61,11 +61,11 @@ agente puede "arreglar" un síntoma diferente al bug real.
 
 ```
 Orden obligatorio:
-1. sofka-asdd-explorer o sofka-asdd-tech-lead → diagnóstico con evidencia archivo:línea
-2. Test que FALLA reproduciendo el bug (escrito por sofka-asdd-developer-frontend /
-   sofka-asdd-developer-backend, skill unit-test o integration-test)
+1. asdd-explorer o asdd-tech-lead → diagnóstico con evidencia archivo:línea
+2. Test que FALLA reproduciendo el bug (escrito por asdd-developer-frontend /
+   asdd-developer-backend, skill unit-test o integration-test)
 3. Aprobación del plan por el usuario
-4. sofka-asdd-developer-frontend / sofka-asdd-developer-backend → fix mínimo que hace pasar el test
+4. asdd-developer-frontend / asdd-developer-backend → fix mínimo que hace pasar el test
 5. Verificar que tests pre-existentes no rompen
 ```
 
@@ -80,7 +80,7 @@ En estos casos: documentar por qué se omite y agregar el test después del fix.
 
 ## Diagnóstico Read-Only (NO NEGOCIABLE)
 
-El agente de diagnóstico (`sofka-asdd-explorer`) es **estrictamente de
+El agente de diagnóstico (`asdd-explorer`) es **estrictamente de
 lectura**. Su output es un reporte, nunca código modificado.
 
 Señales de que el diagnóstico está siendo corrompido:
@@ -121,7 +121,7 @@ Publicar en el chat antes del Scope Declaration:
 Impact Map — [SímboloAfectado]:
 - Consumers encontrados: N archivos
 - Módulos afectados: [lista]
-- Decisión: [/sofka-asdd:build continúa | escalar a FULL]
+- Decisión: [/asdd:build continúa | escalar a FULL]
 ```
 
 ---
@@ -159,7 +159,7 @@ usuario.
 | Bug en un solo módulo, sin nueva API ni migración | fix directo (ruta LIGHT) |
 | Bug con causa raíz en lógica interna existente | fix directo (ruta LIGHT) |
 | Bug que requiere nuevo endpoint, migración o cambio cross-módulo | ASDD FULL desde Diseñar |
-| Bug cuya causa raíz requiere cambio arquitectónico | ASDD FULL desde Analizar → `sofka-asdd-solution-architect` primero |
+| Bug cuya causa raíz requiere cambio arquitectónico | ASDD FULL desde Analizar → `asdd-solution-architect` primero |
 
 ---
 
@@ -169,7 +169,7 @@ Ningún agente puede declarar implementación completa sin verificar que el
 código modificado tiene cobertura de tests. Los umbrales exactos dependen
 del stack del proyecto y se declaran en el CLAUDE.md del proyecto consumidor.
 
-**Proceso obligatorio para `sofka-asdd-developer-frontend` / `sofka-asdd-developer-backend` (skill unit-test):**
+**Proceso obligatorio para `asdd-developer-frontend` / `asdd-developer-backend` (skill unit-test):**
 
 1. Escribir tests
 2. Ejecutar coverage del módulo completo (no del archivo individual)
@@ -184,22 +184,22 @@ no está completo. Regresar a implementación con los gaps identificados.
 
 ## Contrato QA Antes de Implementar (OBLIGATORIO en bugfix)
 
-Antes de que el implementador escriba código, `sofka-asdd-atf-api-qa-engineer`
+Antes de que el implementador escriba código, `asdd-atf-api-qa-engineer`
 produce el contrato mínimo:
 
 - **Boundary values** de los campos/condiciones afectados por el fix
 - **Error states** que el fix debe manejar (4xx, 5xx, timeouts)
 - **Áreas de regresión** en riesgo
 
-Este contrato es la especificación de tests que `sofka-asdd-developer-frontend` /
-`sofka-asdd-developer-backend` (skill integration-test) implementa. Cualquier
+Este contrato es la especificación de tests que `asdd-developer-frontend` /
+`asdd-developer-backend` (skill integration-test) implementa. Cualquier
 escenario del contrato sin test = gap de cobertura = BLOQUEANTE.
 
 ---
 
 ## Bugs que los Agentes Introducen — Checklist del Reviewer
 
-`sofka-asdd-tech-lead` (skill code-review) verifica activamente estos patrones:
+`asdd-tech-lead` (skill code-review) verifica activamente estos patrones:
 
 | Bug | Cómo el agente lo introduce | Verificación |
 |---|---|---|

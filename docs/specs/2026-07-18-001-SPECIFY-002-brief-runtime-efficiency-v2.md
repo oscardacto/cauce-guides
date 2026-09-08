@@ -1,8 +1,8 @@
 # Brief: ASDD Runtime Efficiency v2
 
-**Proyecto:** project-structure / Sofka ASDD  
+**Proyecto:** project-structure / Guide ASDD  
 **Fecha:** 2026-07-18  
-**Owner:** Maintainers de Sofka ASDD  
+**Owner:** Maintainers de Guide ASDD  
 **Run:** `2026-07-18-001`
 
 ## ¿Qué construimos?
@@ -122,7 +122,7 @@ Los valores definitivos se fijarán en Analyze/Design después del spike.
   developers.
 - ADR-005: carga condicional de rules.
 - ADR-015: binding de autorización en operaciones.
-- `.sofka-asdd/context-budget.json`: límites estructurales actuales.
+- `.asdd/context-budget.json`: límites estructurales actuales.
 - `docs/baselines/asdd-runtime-baseline.json`: gate anterior.
 
 ## Riesgos principales

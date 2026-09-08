@@ -1,6 +1,6 @@
 # BUG-B: Guards git ciegos a repos anidados
 
-**Módulo**: `.claude/hooks/sofka-asdd-guard-branch.mjs` + `.claude/hooks/sofka-asdd-pre-push-gate.mjs` + `.claude/hooks/sofka-asdd-pre-pr-gate.mjs`
+**Módulo**: `.claude/hooks/asdd-guard-branch.mjs` + `.claude/hooks/asdd-pre-push-gate.mjs` + `.claude/hooks/asdd-pre-pr-gate.mjs`
 **Severidad**: CRITICAL
 **Prioridad**: P0
 **Categoría preliminar**: bug
@@ -73,7 +73,7 @@ repo**, no en el repo raíz.
   del propio template registrados en el matcher `Write|Edit` sí lo
   hacen** — inconsistencia interna: unos hooks respetan `cwd`, otros no.
 - **Escape hatch inline no funciona**: los hooks leen
-  `process.env.SOFKA_ASDD_GUARD_*_DISABLE` desde el proceso del hook
+  `process.env.ASDD_GUARD_*_DISABLE` desde el proceso del hook
   (`:73/:147/:160` según el hook), pero un prefijo `VAR=1 comando` que
   el usuario o el skill agregan **nunca llega al proceso del hook** —
   ese prefijo se aplica al shell del comando bajo prueba, no al Node
@@ -128,7 +128,7 @@ integración).
 
 - Cualquier hook o skill que asuma `CLAUDE_PROJECT_DIR` como CWD único
   (grep exhaustivo antes de tocar).
-- El skill `sofka-asdd-tech-lead-pre-push` escribe el marcador en
+- El skill `asdd-tech-lead-pre-push` escribe el marcador en
   `process.cwd()`; si el CWD del skill difiere del CWD del hook, hay
   desalineación silenciosa.
 - Los flujos donde el usuario efectivamente **está** en el root-config
@@ -157,7 +157,7 @@ de seguridad)**:
 - **B2-B4** — Aplicar el helper en `guard-branch.mjs`,
   `pre-push-gate.mjs` (incluye recomputar `isConfigOnly` y el lookup
   del marcador en el repo efectivo) y `pre-pr-gate.mjs`.
-- **B5** — El skill `sofka-asdd-tech-lead-pre-push` escribe el marcador
+- **B5** — El skill `asdd-tech-lead-pre-push` escribe el marcador
   en el mismo repo efectivo que resuelve el helper (unificar CWD entre
   skill y hook).
 - **B6** — Tests con estructura de repos anidados reproduciendo
@@ -166,7 +166,7 @@ de seguridad)**:
   correctamente; (ii) usuario en sub-repo, rama feature aceptada;
   (iii) parseo ambiguo (`cd` con var), fail-closed.
 - **B7** — Documentar el nuevo comportamiento en
-  `sofka-asdd-git-safety.md` (GS-001, GS-008, GS-009), incluyendo la
+  `asdd-git-safety.md` (GS-001, GS-008, GS-009), incluyendo la
   interacción con `input.cwd` y el prefijo inline.
 
 **Mitigación de seguridad obligatoria (no negociable)**: cuando el
@@ -182,11 +182,11 @@ parseo ambiguo.
 **Archivos candidatos**:
 
 - `.claude/hooks/_lib/git-command-cwd.mjs` (nuevo, tras E2).
-- `.claude/hooks/sofka-asdd-guard-branch.mjs`.
-- `.claude/hooks/sofka-asdd-pre-push-gate.mjs`.
-- `.claude/hooks/sofka-asdd-pre-pr-gate.mjs`.
-- `.claude/skills/sofka-asdd-tech-lead-pre-push/SKILL.md`.
-- `.claude/rules/sofka-asdd-git-safety.md`.
+- `.claude/hooks/asdd-guard-branch.mjs`.
+- `.claude/hooks/asdd-pre-push-gate.mjs`.
+- `.claude/hooks/asdd-pre-pr-gate.mjs`.
+- `.claude/skills/asdd-tech-lead-pre-push/SKILL.md`.
+- `.claude/rules/asdd-git-safety.md`.
 - Directorio de tests de hooks (crear si no existe).
 
 **Tests requeridos**:
@@ -199,7 +199,7 @@ parseo ambiguo.
   (evalúa raíz Y sub-repo, bloquea si cualquiera es protegida).
 - `pre-push-gate` con diff solo en sub-repo → `isConfigOnly` decide
   correctamente basado en el sub-repo; marcador buscado en el sub-repo.
-- Escape hatch `SOFKA_ASDD_GUARD_BRANCH_DISABLE=1` como variable de
+- Escape hatch `ASDD_GUARD_BRANCH_DISABLE=1` como variable de
   sesión (no inline) → funciona.
 
 **Riesgo del fix**: **alto**. Guards de seguridad. Un error de parseo
@@ -209,8 +209,8 @@ detectar regresión.
 
 ## Notas
 
-- **Workaround temporal**: `SOFKA_ASDD_GUARD_BRANCH_DISABLE=1` +
-  `SOFKA_ASDD_GUARD_PUSH_DISABLE=1` + `SOFKA_ASDD_GUARD_PR_DISABLE=1`
+- **Workaround temporal**: `ASDD_GUARD_BRANCH_DISABLE=1` +
+  `ASDD_GUARD_PUSH_DISABLE=1` + `ASDD_GUARD_PR_DISABLE=1`
   como variables de sesión (auditable). Desactiva las salvaguardas —
   el equipo del consumidor tuvo que hacerlo para completar entregas.
 - **Reproducción original (consumidor)**: proyecto de conciliación

@@ -3,8 +3,8 @@
  * test-artifact-name-guard-integration.mjs
  *
  * Test de integración helper → guard (Bug A, 2026-07-07-001-BUILD-005, ítem A5).
- * Verifica que el helper de naming (sofka-asdd-artifact-name.mjs) y el guard
- * (sofka-asdd-pre-tool-use-artifact-name-guard.mjs) comparten la misma lógica
+ * Verifica que el helper de naming (asdd-artifact-name.mjs) y el guard
+ * (asdd-pre-tool-use-artifact-name-guard.mjs) comparten la misma lógica
  * de resolución de fase (A2), que --dry-run no consume artifact_seq (A4), y
  * que un run cerrado degrada a warning en vez de bloquear (A7).
  *
@@ -27,12 +27,12 @@ import { mkdtempSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
-import { deriveArtifactName } from "./lib/sofka-asdd-artifact-name-lib.mjs";
-import { getArtifactNameDecision } from "../hooks/sofka-asdd-pre-tool-use-artifact-name-guard.mjs";
+import { deriveArtifactName } from "./lib/asdd-artifact-name-lib.mjs";
+import { getArtifactNameDecision } from "../hooks/asdd-pre-tool-use-artifact-name-guard.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const GUARD = join(__dirname, "..", "hooks", "sofka-asdd-pre-tool-use-artifact-name-guard.mjs");
-const HELPER = join(__dirname, "sofka-asdd-artifact-name.mjs");
+const GUARD = join(__dirname, "..", "hooks", "asdd-pre-tool-use-artifact-name-guard.mjs");
+const HELPER = join(__dirname, "asdd-artifact-name.mjs");
 
 let passed = 0;
 let failed = 0;

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * knowledge-excerpt.js — extrae en UN solo JSON los datos de conocimiento + auth
- * que `/sofka-asdd:qa-web-exec` necesita pre-cargar antes de invocar al executor. Elimina las 4-5
+ * que `/asdd:qa-web-exec` necesita pre-cargar antes de invocar al executor. Elimina las 4-5
  * lecturas redundantes del setup.
  *
  * Archivos consultados:
@@ -43,7 +43,7 @@
  *   - NO incluye referencias a @known_bug, FAIL_BY_DESIGN, historia de bugs
  *     de CPs específicos. Si detecta esos patterns en los excerpts, agrega
  *     un warning pero preserva el contenido (el filtrado activo se hace en
- *     los knowledge files via `.claude/commands/sofka-asdd/qa-web-exec.md` PROHIBICIONES).
+ *     los knowledge files via `.claude/commands/asdd/qa-web-exec.md` PROHIBICIONES).
  *
  * Exit: 0 OK | 1 input inválido | 2 appweb.yaml no legible (fatal)
  */
@@ -244,7 +244,7 @@ if (navLearning === undefined || navLearning === null) {
       `navigation_learning ausente en session_context.json — fallback a ` +
       `config.yaml (enabled=${navLearning.enabled}). Recomendado: ejecutar ` +
       `refresh-session-context.js sobre este run para hacer backfill ` +
-      `permanente, o re-onboardear la app via /sofka-asdd:qa-web-setup-app actualizado.`
+      `permanente, o re-onboardear la app via /asdd:qa-web-setup-app actualizado.`
     );
   } catch (e) {
     // session-context library no disponible — preservar comportamiento legacy
@@ -287,10 +287,10 @@ function hasBiasByHistory(text) {
   return false;
 }
 if (hasBiasByHistory(behavior.excerpt)) {
-  warnings.push(`app_behavior excerpt contiene sesgo por historia de CPs (CP-ID + término de veredicto en misma línea — ver PROHIBICIONES en /sofka-asdd:qa-web-exec.md)`);
+  warnings.push(`app_behavior excerpt contiene sesgo por historia de CPs (CP-ID + término de veredicto en misma línea — ver PROHIBICIONES en /asdd:qa-web-exec.md)`);
 }
 if (hasBiasByHistory(gotchas.excerpt)) {
-  warnings.push(`test_gotchas excerpt contiene sesgo por historia de CPs (CP-ID + término de veredicto en misma línea — ver PROHIBICIONES en /sofka-asdd:qa-web-exec.md)`);
+  warnings.push(`test_gotchas excerpt contiene sesgo por historia de CPs (CP-ID + término de veredicto en misma línea — ver PROHIBICIONES en /asdd:qa-web-exec.md)`);
 }
 
 const source_files_read = [appYamlPath, credsResult.path, sessionCtxPath, behavior.path, gotchas.path]
@@ -330,7 +330,7 @@ const output = {
 
 if (args.cache) writeCache(args.runId, output);
 
-// --output: write JSON to an explicit file (idempotent). Used by /sofka-asdd:qa-web-exec PASO 2.7
+// --output: write JSON to an explicit file (idempotent). Used by /asdd:qa-web-exec PASO 2.7
 // to persist exec_context.json that the sub-agent reads without relying on stdout.
 // If the target file already exists and all source files have older mtime, reuse it.
 if (args.outputFile) {
@@ -354,7 +354,7 @@ if (args.outputFile) {
     fs.mkdirSync(path.dirname(outAbs), { recursive: true });
     fs.writeFileSync(outAbs, JSON.stringify(output, null, 2), 'utf8');
   }
-  // Emit a small stdout line for /sofka-asdd:qa-web-exec to log (not the full JSON)
+  // Emit a small stdout line for /asdd:qa-web-exec to log (not the full JSON)
   process.stdout.write(JSON.stringify({
     output_file: path.relative(process.cwd(), outAbs).replace(/\\/g, '/'),
     reused: !shouldWrite,

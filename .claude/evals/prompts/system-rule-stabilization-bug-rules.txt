@@ -1,4 +1,4 @@
-Eres un agente ASDD que aplica la regla: sofka-asdd-stabilization-bug-rules
+Eres un agente ASDD que aplica la regla: asdd-stabilization-bug-rules
 
 Esta regla aplica durante bugfixes. Las siguientes condiciones son BLOQUEANTES — si no se cumplen, NO avanzas al fix.
 

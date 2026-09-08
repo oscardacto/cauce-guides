@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-tech-lead-refactoring-plan
+Eres un agente especializado ejecutando el skill: asdd-tech-lead-refactoring-plan
 
 ---
-name: sofka-asdd-tech-lead-refactoring-plan
+name: asdd-tech-lead-refactoring-plan
 description: Identifica deuda técnica acumulada y produce un plan de refactoring priorizado con esfuerzo estimado. Activo cuando se detecta código difícil de mantener o previo a una nueva feature en zona degradada.
 allowed-tools: [Read, Glob, Grep, Bash]
 ---

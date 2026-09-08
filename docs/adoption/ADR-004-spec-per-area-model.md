@@ -5,11 +5,11 @@
 - **Estado:** Propuesta
 - **Fecha:** 2026-07-06
 - **Revisión 2026-07-06 (rev-1):** Ajuste dirigido tras decisión del maintainer — se agrega el área `diseno` como track separado (consume UX+UI). `frontend` queda restringido a código de presentación (Developer split por capa). Se re-encuadra el concepto de "área" para admitir tracks cuyo entregable no es código de runtime. Impacto en §1.2 decisión 2, §3.1, §3.2, §4 (§4.4, §4.5, §4.6), §5.2, §7.1, §8.2, §8.3, §9.3, §10 (Alt-3), §12 y Apéndice A. Estado sigue `Propuesta`.
-- **Revisión 2026-07-06 (rev-2):** Refinamiento dirigido tras auditoría por área del maintainer. Seis ajustes: (1) `seguridad` pasa a **dueño único de §11** (el contrato completo de seguridad); `backend` y `frontend` **consumen §11 por referencia** con notas de implementación server/cliente donde aplique. Se elimina la duplicación de §11 en el slice de backend. (2) §4.6 se completa con las secciones divididas que faltaban: §5 (backend+devops), §7 (funcional+devops+qa) y §11 (seguridad + referencias backend/frontend). Corrige el conteo. (3) §13 se alinea: participación de `backend` **siempre**; participación de `seguridad` **condicional** a señal regulatoria (HIPAA/PCI-DSS/SOX). (4) §8.2 distingue autoría de `spec-qa` en WF-002 (criterios de aceptación §10 + RNFs de calidad §7) del diseño posterior de casos ATF (`step-3-istqb-test-techniques`). (5) §8.2 documenta la condicionalidad de `data` (`sofka-asdd-data-governance` si `data_platform ≠ none`; fallback a `solution-architect` con riesgo de spec liviano; `n/a` en INDEX si el AF marca `Datos Aplica = No`). (6) §4.5 y §8.3 declaran el grafo de dependencias completo del INDEX cubriendo las 7 áreas. Impacto en §3.2, §4.3, §4.4, §4.5, §4.6, §8.2, §8.3. Estado sigue `Propuesta`.
+- **Revisión 2026-07-06 (rev-2):** Refinamiento dirigido tras auditoría por área del maintainer. Seis ajustes: (1) `seguridad` pasa a **dueño único de §11** (el contrato completo de seguridad); `backend` y `frontend` **consumen §11 por referencia** con notas de implementación server/cliente donde aplique. Se elimina la duplicación de §11 en el slice de backend. (2) §4.6 se completa con las secciones divididas que faltaban: §5 (backend+devops), §7 (funcional+devops+qa) y §11 (seguridad + referencias backend/frontend). Corrige el conteo. (3) §13 se alinea: participación de `backend` **siempre**; participación de `seguridad` **condicional** a señal regulatoria (HIPAA/PCI-DSS/SOX). (4) §8.2 distingue autoría de `spec-qa` en WF-002 (criterios de aceptación §10 + RNFs de calidad §7) del diseño posterior de casos ATF (`step-3-istqb-test-techniques`). (5) §8.2 documenta la condicionalidad de `data` (`asdd-data-governance` si `data_platform ≠ none`; fallback a `solution-architect` con riesgo de spec liviano; `n/a` en INDEX si el AF marca `Datos Aplica = No`). (6) §4.5 y §8.3 declaran el grafo de dependencias completo del INDEX cubriendo las 7 áreas. Impacto en §3.2, §4.3, §4.4, §4.5, §4.6, §8.2, §8.3. Estado sigue `Propuesta`.
 - **Deciders:** _(pendiente — requiere aprobación explícita del maintainer del template)_
-- **Autor:** sofka-asdd-solution-architect
+- **Autor:** asdd-solution-architect
 - **Rama de trabajo:** `feature/spec-per-area-model`
-- **Relacionados:** ADR-001 (ORC enforcement 3 tiers), ADR-002 (Smart Data flow isolation), ADR-003 (analyze-guard domain-aware), WF-002/WF-003/WF-004 en `.claude/rules/sofka-asdd-workflow.md`, `.claude/references/rules/sofka-asdd-workflow-build.md`, ORC-011 en `.claude/references/rules/sofka-asdd-orchestration-worktree.md`.
+- **Relacionados:** ADR-001 (ORC enforcement 3 tiers), ADR-002 (Smart Data flow isolation), ADR-003 (analyze-guard domain-aware), WF-002/WF-003/WF-004 en `.claude/rules/asdd-workflow.md`, `.claude/references/rules/asdd-workflow-build.md`, ORC-011 en `.claude/references/rules/asdd-orchestration-worktree.md`.
 - **Reemplaza / complementa:** WF-002 sub-regla #3650 (spec-size-guard) — se **retira**; el particionado pasa a ser **estructural por área**, no cuantitativo por tamaño.
 - **Ship en:** v2.26.0 (MINOR — cambio de shape en un producto interno del template, sin ruptura del contrato con el consumidor final del código de negocio; sí requiere migración de skills consumidores en el propio template).
 
@@ -19,9 +19,9 @@
 
 ### 1.1 Punto de partida
 
-El maintainer entregó `/mnt/c/Users/andres.jimenez/Downloads/plantilla_spec_dominio_rev_1.md` (773 líneas, 15 secciones + Registro de Implementación) como **template corporativo Sofka de "Especificación de Dominio"**. Es un super-spec multi-dominio: su §0 declara un **Mapa de dominios** con 9 dominios (Funcional, Arquitectura, Developer, UX, UI, QA, DevOps, Seguridad, Datos) y por cada dominio lista, campo por campo, las secciones que le corresponden y su estado de completitud independiente. La spec queda "completa" cuando **todos los dominios marcados `Aplica = Sí`** están en `COMPLETO` y el AF emite aprobación final (§0 Gate DOR).
+El maintainer entregó `/mnt/c/Users/andres.jimenez/Downloads/plantilla_spec_dominio_rev_1.md` (773 líneas, 15 secciones + Registro de Implementación) como **template corporativo Guide de "Especificación de Dominio"**. Es un super-spec multi-dominio: su §0 declara un **Mapa de dominios** con 9 dominios (Funcional, Arquitectura, Developer, UX, UI, QA, DevOps, Seguridad, Datos) y por cada dominio lista, campo por campo, las secciones que le corresponden y su estado de completitud independiente. La spec queda "completa" cuando **todos los dominios marcados `Aplica = Sí`** están en `COMPLETO` y el AF emite aprobación final (§0 Gate DOR).
 
-La versión previa del template ASDD (`.claude/skills/sofka-asdd-producto-templates/reference/spec-template.md`, 40 líneas) es la síntesis mínima que se usa hoy en `docs/specs/{feature}-{NNN}.md`: un solo archivo por funcionalidad con secciones planas y marcadores `## Aggregate:` para el `spec-size-guard`.
+La versión previa del template ASDD (`.claude/skills/asdd-producto-templates/reference/spec-template.md`, 40 líneas) es la síntesis mínima que se usa hoy en `docs/specs/{feature}-{NNN}.md`: un solo archivo por funcionalidad con secciones planas y marcadores `## Aggregate:` para el `spec-size-guard`.
 
 ### 1.2 Decisiones tomadas antes de este ADR (locked por el usuario)
 
@@ -31,7 +31,7 @@ Cerradas en la sesión previa a la redacción del ADR. Se documentan porque cond
 2. **Áreas = work streams que producen un entregable consumible.** Las 7 áreas de este proyecto son: **backend, frontend, diseno, devops, seguridad, data, qa**. No todas producen código de runtime: `diseno` produce el contrato de diseño (wireframes, flows, arquetipos, componentes hi-fi, design tokens, WCAG, Figma) que alimenta a `frontend` como insumo aguas abajo. El re-encuadre operativo es explícito — un "área" es un track cuyo entregable (código, diseño, política de seguridad, contrato de datos, plan de QA, etc.) es consumido por otras áreas o por el ciclo de verificación. Cada funcionalidad analizada en WF-002 genera **N specs, una por cada área involucrada** — no las 7, solo las que aplican por el Mapa de dominios (§0). Nota: el super-spec corporativo tiene 9 dominios; el mapeo dominio→área operativa se resuelve en §4.5. La dependencia por defecto `diseno → frontend` (§7.1, §8.3) refleja que el código de presentación consume el contrato de diseño.
 3. **INDEX delgado + `spec-funcional` aparte.** El "índice" es un artefacto por-feature que resume estado de las áreas y grafo de dependencias. La User Story completa, RN, actores, flujo, trazabilidad — todo el contenido cross-área — vive en un **spec-funcional único** referenciado desde el INDEX. Los `spec-{area}` solo llevan lo que cada track necesita para implementar.
 4. **INDEX ↔ `.asdd-run.json` = separados con puntero.** `.asdd-run.json` sigue siendo Single Source of Truth de **fases** (orquestación, checkpoint, resume, ORC-007). El INDEX es SSoT del **progreso de implementación por área** dentro de Construir. **Cero duplicación de estado**: el step Construir de `.asdd-run.json` agrega un campo puntero `index_ref` que apunta al archivo INDEX; el INDEX no re-modela fases.
-5. **Naming = reusar el helper existente** (`.claude/scripts/sofka-asdd-artifact-name.mjs`), plano en `docs/specs/`, fase `analyze`, con slugs canónicos:
+5. **Naming = reusar el helper existente** (`.claude/scripts/asdd-artifact-name.mjs`), plano en `docs/specs/`, fase `analyze`, con slugs canónicos:
    - `{feature}-index` para el INDEX
    - `{feature}-funcional` para el spec-funcional
    - `{feature}-{area}` para cada slice por área
@@ -49,7 +49,7 @@ Con las 6 decisiones locked, quedan **6 preguntas de diseño abiertas** que este
 | **T3** | ¿Cómo se exenta al INDEX y a los `spec-{area}` del `artifact-name-guard`, dado que son **artefactos vivos** editados durante Construir en runs posteriores al de creación? | §5 |
 | **T4** | ¿Cómo se reconcilian los consumidores del template que parsean `CU-\d+`, `HU-\d+`, `AC-\d+` con el nuevo modelo (sin ID en Gherkin, con `GAP-NNN` y `CR-NNN` nuevos, y `RN-\d+` tipado `[CORE]/[EDGE]`)? | §6 |
 | **T5** | ¿Cuál es el **contrato de interacción** durante Construir: loop del agente, resume/post-compact, y concurrencia entre worktrees paralelos que tocan el mismo INDEX? | §7 |
-| **T6** | ¿Cómo cambia **WF-002** para pasar de single-agent (`sofka-asdd-producto`) a autoría multi-dominio coordinada por el **Gate DOR** del super-spec? | §8 |
+| **T6** | ¿Cómo cambia **WF-002** para pasar de single-agent (`asdd-producto`) a autoría multi-dominio coordinada por el **Gate DOR** del super-spec? | §8 |
 
 ---
 
@@ -91,10 +91,10 @@ Archivo Markdown. Se crea en WF-002 (fase Analizar). Se edita en WF-004 (fase Co
 
 | # | Área | Spec | Orden | Depende de | Estado | Agente propuesto | Fecha done | Commit |
 |---|---|---|---|---|---|---|---|---|
-| 1 | backend | {ruta} | 1 | — | pending | sofka-asdd-developer-backend | — | — |
-| 2 | diseno | {ruta} | 1 | — | pending | sofka-asdd-ux + sofka-asdd-ui | — | — |
-| 3 | frontend | {ruta} | 2 | 1,2 | pending | sofka-asdd-developer-frontend | — | — |
-| 4 | qa | {ruta} | 3 | 1,3 | pending | sofka-asdd-atf-api-qa-engineer | — | — |
+| 1 | backend | {ruta} | 1 | — | pending | asdd-developer-backend | — | — |
+| 2 | diseno | {ruta} | 1 | — | pending | asdd-ux + asdd-ui | — | — |
+| 3 | frontend | {ruta} | 2 | 1,2 | pending | asdd-developer-frontend | — | — |
+| 4 | qa | {ruta} | 3 | 1,3 | pending | asdd-atf-api-qa-engineer | — | — |
 
 ## Grafo de dependencias
 
@@ -171,16 +171,16 @@ Secciones **NO incluidas** en spec-funcional (viven en spec-{area}):
 
 | Alt | Descripción | Ventajas | Desventajas |
 |---|---|---|---|
-| **Alt-A — Slice canónico** | Cada `spec-{area}` es una proyección filtrada del super-spec que muestra **exactamente** las secciones asignadas a ese dominio en el Mapa (§0), en el mismo orden, con la misma redacción de headings, instrucciones y responsabilidades. El slicer es una regla mecánica derivada del Mapa. | (a) Máxima fidelidad al template corporativo — el spec-{area} es literalmente un subconjunto del super-spec, palabra por palabra. (b) Cambios al template corporativo propagan automáticamente al slicer sin editar N templates. (c) El consumidor Sofka reconoce cada sección porque el heading es idéntico al del template corporativo que ya conoce. (d) Trazabilidad implícita: cada sección de spec-{area} referencia una sección del super-spec por número. | (a) Los slices heredan la verbosidad del super-spec — cada uno arrastra tablas con muchos campos aunque el área solo use algunos. (b) Requiere un "slicer" (regla o skill) que mantenga la proyección; sin él, un editor humano podría producir slices divergentes. |
-| **Alt-B — Template lean propio por área** | Se diseña un template minimalista por cada área (6 templates nuevos), curado a mano, con secciones específicas del track. `spec-backend` habla el idioma del backend (endpoints, DTOs, migraciones); `spec-frontend` el del frontend (componentes, hooks, tokens); etc. | (a) Cada spec-{area} ocupa menos líneas y tiene solo lo esencial para su implementador. (b) Se puede diseñar cada template al vocabulario del rol destino. | (a) 6 templates nuevos que mantener + drift inevitable contra el super-spec corporativo. (b) Se pierde la trazabilidad 1-a-1 con el template Sofka. (c) Duplicación conceptual: cambios al super-spec obligan a revisar 6 templates. (d) Riesgo de que un template lean omita una restricción crítica que sí estaba en el super-spec (ej. §11 Seguridad "OWASP Top 10" completa). |
+| **Alt-A — Slice canónico** | Cada `spec-{area}` es una proyección filtrada del super-spec que muestra **exactamente** las secciones asignadas a ese dominio en el Mapa (§0), en el mismo orden, con la misma redacción de headings, instrucciones y responsabilidades. El slicer es una regla mecánica derivada del Mapa. | (a) Máxima fidelidad al template corporativo — el spec-{area} es literalmente un subconjunto del super-spec, palabra por palabra. (b) Cambios al template corporativo propagan automáticamente al slicer sin editar N templates. (c) El consumidor Guide reconoce cada sección porque el heading es idéntico al del template corporativo que ya conoce. (d) Trazabilidad implícita: cada sección de spec-{area} referencia una sección del super-spec por número. | (a) Los slices heredan la verbosidad del super-spec — cada uno arrastra tablas con muchos campos aunque el área solo use algunos. (b) Requiere un "slicer" (regla o skill) que mantenga la proyección; sin él, un editor humano podría producir slices divergentes. |
+| **Alt-B — Template lean propio por área** | Se diseña un template minimalista por cada área (6 templates nuevos), curado a mano, con secciones específicas del track. `spec-backend` habla el idioma del backend (endpoints, DTOs, migraciones); `spec-frontend` el del frontend (componentes, hooks, tokens); etc. | (a) Cada spec-{area} ocupa menos líneas y tiene solo lo esencial para su implementador. (b) Se puede diseñar cada template al vocabulario del rol destino. | (a) 6 templates nuevos que mantener + drift inevitable contra el super-spec corporativo. (b) Se pierde la trazabilidad 1-a-1 con el template Guide. (c) Duplicación conceptual: cambios al super-spec obligan a revisar 6 templates. (d) Riesgo de que un template lean omita una restricción crítica que sí estaba en el super-spec (ej. §11 Seguridad "OWASP Top 10" completa). |
 | **Alt-C — Híbrido: slice + wrapper de contexto por área** | Slice canónico del super-spec **más** un pequeño encabezado con contexto específico del área (rol destino, prerequisitos, hallazgos del análisis relevantes para ese track). El wrapper NO agrega secciones nuevas, solo un preámbulo. | (a) Combina fidelidad de Alt-A con orientación de Alt-B. (b) El wrapper puede generarse una sola vez al crear el spec-{area}; no cambia. | (a) Ligera complejidad adicional respecto a Alt-A. |
 
 ### 4.2 Recomendación: **Alt-C (Slice canónico + wrapper de contexto)**
 
 **Justificación:**
 
-1. **Fidelidad no negociable.** El super-spec de Sofka es el estándar corporativo. Duplicar su semántica en 6 templates propios (Alt-B) tarde o temprano diverge — sesgo empírico visto en cada framework que intenta "adaptar" un template maestro (ver el rework de la sub-regla #3650, precisamente porque el mini-template ASDD ya divergió del super-spec).
-2. **Mantenibilidad.** Una regla de slicing centralizada (`.claude/skills/sofka-asdd-producto-templates/reference/spec-slice-rules.md`) es más barata de mantener que 6 templates independientes. Cuando el super-spec cambie (v2 del template corporativo, ampliación del Mapa de dominios), sólo se actualiza el slicer.
+1. **Fidelidad no negociable.** El super-spec de Guide es el estándar corporativo. Duplicar su semántica en 6 templates propios (Alt-B) tarde o temprano diverge — sesgo empírico visto en cada framework que intenta "adaptar" un template maestro (ver el rework de la sub-regla #3650, precisamente porque el mini-template ASDD ya divergió del super-spec).
+2. **Mantenibilidad.** Una regla de slicing centralizada (`.claude/skills/asdd-producto-templates/reference/spec-slice-rules.md`) es más barata de mantener que 6 templates independientes. Cuando el super-spec cambie (v2 del template corporativo, ampliación del Mapa de dominios), sólo se actualiza el slicer.
 3. **Trazabilidad 1-a-1.** Un auditor puede comparar `spec-backend §5` con "template corporativo §5" sin traducción. Alt-B rompe ese pareo.
 4. **Wrapper de contexto** resuelve la única objeción real a Alt-A (verbosidad): el wrapper le dice al developer "estas son las secciones que te tocan, este es tu prerequisito, este es tu output esperado en Construir". No es un template nuevo — es una hoja de instrucciones al comienzo del slice.
 
@@ -189,18 +189,18 @@ Secciones **NO incluidas** en spec-funcional (viven en spec-{area}):
 ```markdown
 # {feature} — spec-{area}
 
-<!-- Slice canónico del template corporativo Sofka. Ver ADR-004 §4. Este spec vive junto a:
+<!-- Slice canónico del template corporativo Guide. Ver ADR-004 §4. Este spec vive junto a:
 - INDEX: {ruta}
 - spec-funcional: {ruta}
 Editable durante Construir. Ver §5. -->
 
 ## Wrapper de contexto — {area}
 
-- **Rol destino:** {agente propuesto, ej. sofka-asdd-developer-backend}
+- **Rol destino:** {agente propuesto, ej. asdd-developer-backend}
 - **Prerequisito:** todas las secciones del spec-funcional (User Story, Actores, RN, Flujo) están APROBADAS.
 - **Áreas de las que depende:** {del INDEX — ej. "backend depende de nada; diseno depende de nada; frontend depende de backend y diseno; qa depende de backend y frontend"}
 - **Contexto derivado del análisis:** {2-4 líneas — hallazgos del BA/Funcional/PO relevantes para este track, o `— sin hallazgos específicos`.}
-- **Secciones que este spec cubre** (del template corporativo Sofka): {lista exacta — ej. §5, §9 (columnas de Developer), §11 subsecciones técnicas}
+- **Secciones que este spec cubre** (del template corporativo Guide): {lista exacta — ej. §5, §9 (columnas de Developer), §11 subsecciones técnicas}
 - **Marcador Aplica del Mapa:** Sí
 
 ---
@@ -209,7 +209,7 @@ Editable durante Construir. Ver §5. -->
 
 <!-- Secciones del super-spec corporativo. Contenido de las tablas queda vacío para completar por el rol destino en la fase apropiada, o poblado por el AF/Arquitecto durante Analizar según responsabilidad marcada [AF]/[Arquitecto/Developer]. -->
 
-{...contenido del slice, EXACTAMENTE como aparece en el template corporativo Sofka §5...}
+{...contenido del slice, EXACTAMENTE como aparece en el template corporativo Guide §5...}
 
 ## §9 Validaciones de Campos — subsecciones Developer
 
@@ -228,14 +228,14 @@ Editable durante Construir. Ver §5. -->
 
 ### 4.4 Regla de slicing (skill nuevo)
 
-Se crea un nuevo skill `sofka-asdd-producto-templates` reference `spec-slice-rules.md` (a redactar en la implementación) que define, por área, qué secciones del super-spec Sofka le corresponden. Es una **tabla de proyección**, no un template. Ejemplo:
+Se crea un nuevo skill `asdd-producto-templates` reference `spec-slice-rules.md` (a redactar en la implementación) que define, por área, qué secciones del super-spec Guide le corresponden. Es una **tabla de proyección**, no un template. Ejemplo:
 
 ```yaml
 # spec-slice-rules — proyección Mapa de dominios (§0 super-spec) → área ASDD
 # El dominio Developer del super-spec se PARTE POR CAPA: capa servidor → backend, capa presentación → frontend.
 areas:
   backend:
-    dominios_sofka: [Arquitectura, "Developer (capa servidor)"]
+    dominios_guide: [Arquitectura, "Developer (capa servidor)"]
     secciones_super_spec:
       - "5 (subsección Backend/Arquitectura — contrato técnico completo, integración técnica, mock/prod)"
       - "9 (columnas Developer capa servidor: validación servidor, backend enforcement, evento)"
@@ -243,7 +243,7 @@ areas:
     referencia_por_puntero:
       - "11 (dueño: spec-seguridad — backend agrega solo notas de implementación server-side; nunca redeclara el contrato)"
   diseno:
-    dominios_sofka: [UX, UI]
+    dominios_guide: [UX, UI]
     secciones_super_spec:
       - "2 (subsección UX/UI — arquetipos y patrones de interacción por rol)"
       - "4 (máquina de estados — subsección UX/UI: intención visual y transiciones desde la perspectiva del usuario)"
@@ -251,7 +251,7 @@ areas:
       - "9 (subsección UX/UI — comportamiento de mensajes, tratamiento visual de errores HTTP, escenarios mock, jerarquía visual de validaciones)"
     consumido_por: [frontend]
   frontend:
-    dominios_sofka: ["Developer (capa presentación)"]
+    dominios_guide: ["Developer (capa presentación)"]
     secciones_super_spec:
       - "4 (máquina de estados — subsección Developer: implementación de estado UI, routers, transiciones en código)"
       - "8 (subsección Developer — wiring de componentes hi-fi contra APIs del backend, consumo de tokens y contrato visual de spec-diseno)"
@@ -260,22 +260,22 @@ areas:
       - "11 (dueño: spec-seguridad — frontend agrega solo notas de implementación cliente-side: manejo de token, storage seguro, mitigación XSS, CSP, sesión; nunca redeclara el contrato)"
     consume: [diseno, backend]
   devops:
-    dominios_sofka: [DevOps]
+    dominios_guide: [DevOps]
     secciones_super_spec:
       - "5 (subsección — SLA operacional / monitoreo)"
       - "7 (subsección — SLOs operacionales, observabilidad, pipeline, alertas)"
   seguridad:
-    dominios_sofka: [Seguridad]
+    dominios_guide: [Seguridad]
     secciones_super_spec:
       - "11 (íntegra — dueño ÚNICO del contrato completo de seguridad: autenticación, autorización, gestión de secretos, ciclo de sesión/token, logging seguro, casos de abuso, integraciones salientes, OWASP Top 10, compliance)"
       - "13 (subsección — condicional a señal regulatoria HIPAA/PCI-DSS/SOX; copia por referencia de la subsección de compliance del spec-backend cuando aplica)"
     consumido_por: [backend, frontend]  # ambos referencian §11 por puntero, no duplican contenido
   data:
-    dominios_sofka: [Datos]
+    dominios_guide: [Datos]
     secciones_super_spec:
       - "12 (íntegra — Dominio de Datos)"
   qa:
-    dominios_sofka: [QA]
+    dominios_guide: [QA]
     secciones_super_spec:
       - "7 (subsección — RNFs de calidad, cobertura, performance testing)"
       - "10 (íntegra — Criterios de Aceptación con escenarios Gherkin base + adicionales QA + criterios de done)"
@@ -290,9 +290,9 @@ La partición evita que `spec-frontend` quede vacío tras mover UX+UI al área `
 
 ### 4.5 Mapeo dominios (9) → áreas (7)
 
-El super-spec corporativo tiene 9 dominios. Este ADR los proyecta a **7 áreas ASDD**. La única partición de un dominio Sofka en dos áreas ASDD ocurre en `Developer`, que se reparte por CAPA (ver §4.4). El resto es 1-a-1 o consolidación (UX+UI → `diseno`, Arquitectura+Developer-servidor → `backend`).
+El super-spec corporativo tiene 9 dominios. Este ADR los proyecta a **7 áreas ASDD**. La única partición de un dominio Guide en dos áreas ASDD ocurre en `Developer`, que se reparte por CAPA (ver §4.4). El resto es 1-a-1 o consolidación (UX+UI → `diseno`, Arquitectura+Developer-servidor → `backend`).
 
-| Dominio Sofka | Área ASDD | Contribuye a |
+| Dominio Guide | Área ASDD | Contribuye a |
 |---|---|---|
 | Funcional | (spec-funcional) | Contenido base cross-área — no genera spec-{area} |
 | Arquitectura | backend | Contrato técnico servidor, SLAs, ADRs de aplicación |
@@ -366,7 +366,7 @@ La duda T3 asumía que editar los INDEX y `spec-{area}` desde un run posterior a
 
 ### 5.2 Hallazgo — el guard nunca valida `Edit`
 
-`sofka-asdd-pre-tool-use-artifact-name-guard.mjs` está registrado con `matcher: Write` y, en su cuerpo, retorna temprano para cualquier tool distinto de `Write` (`if (toolName !== "Write") return`). Es decir: **el guard solo valida la creación (`Write`), nunca la edición (`Edit`/`MultiEdit`)**.
+`asdd-pre-tool-use-artifact-name-guard.mjs` está registrado con `matcher: Write` y, en su cuerpo, retorna temprano para cualquier tool distinto de `Write` (`if (toolName !== "Write") return`). Es decir: **el guard solo valida la creación (`Write`), nunca la edición (`Edit`/`MultiEdit`)**.
 
 Consecuencia directa:
 
@@ -387,7 +387,7 @@ Crear un archivo NUEVO cuando el run está complete sigue bloqueado (comportamie
 
 ### 6.1 Cambio en el vocabulario
 
-El template corporativo Sofka **eliminó** de la spec:
+El template corporativo Guide **eliminó** de la spec:
 
 - `CU-\d+` (Casos de uso numerados) → reemplazados por Reglas de Negocio `RN-\d+` tipadas `[CORE]` / `[EDGE]` (§6) y por Flujo de Negocio numerado sin ID (§4).
 - `HU-\d+` (Historias de usuario numeradas) → reemplazadas por **una única** User Story libre en §1.
@@ -409,11 +409,11 @@ El template corporativo Sofka **eliminó** de la spec:
 
 | Consumidor | Uso actual | Impacto | Reconciliación propuesta |
 |---|---|---|---|
-| `sofka-asdd-tech-lead-sdd-traceability` | Parsea `AC-\d+`, `RN-\d+`, `CU-\d+` de la spec y los cruza contra tests | Se rompe para `CU-\d+` (no existe) y `AC-\d+` (no existe como ID; existe como Gherkin scenario sin ID) | **Migrar el parser**: (a) para AC → derivar ID sintético `SCN-{NNN}` desde el orden de aparición de `Scenario:` en §10. (b) para RN → mantener parseo con nuevo tipado (`[CORE]` / `[EDGE]` no cambia la extracción del ID). (c) para CU → **retirar** la tabla; el Flujo de Negocio §4 se rastrea por su descripción, no por ID. Documentar en `sdd-traceability.md` §"Ítems rastreables" el nuevo mapeo. |
-| `sofka-asdd-tech-lead-artifact-audit` | En SKILL.md línea 52: verifica presencia de `CU-\d+` con flujo principal/alternativo/excepción | Falso negativo permanente (nunca encontrará `CU-\d+`) | **Migrar la señal**: reemplazar el check por presencia de "Flujo de Negocio" numerado en §4 y de máquina de estados. |
-| `sofka-asdd-atf-api-step-1-hu-parser` | Trabaja sobre HUs crudas en `docs/testing/atf/requirements/`, no sobre specs ASDD | Sin impacto directo — sigue leyendo HUs de negocio en formato libre | Sin cambios en el skill. Nota en `sofka-asdd-atf-api-orchestration.md`: aclarar que los inputs del pipeline ATF-API son HUs de negocio (no `spec-{area}`). |
-| `sofka-asdd-atf-api-qa-engineer` | Consume artefactos del pipeline ATF, no specs ASDD | Sin impacto directo | Sin cambios. La relación spec-qa ↔ ATF-API es a través del INDEX (spec-qa referencia la corrida ATF por `run_id` del pipeline QA, no por ID de AC). |
-| `sofka-asdd-pre-tool-use-spec-size-guard` | Regex `CU-\d+`, marcador `## Aggregate:`, límite 300 líneas | **Retirado** — ver §9 | Eliminar el hook y su registro en `.claude/settings.json`. |
+| `asdd-tech-lead-sdd-traceability` | Parsea `AC-\d+`, `RN-\d+`, `CU-\d+` de la spec y los cruza contra tests | Se rompe para `CU-\d+` (no existe) y `AC-\d+` (no existe como ID; existe como Gherkin scenario sin ID) | **Migrar el parser**: (a) para AC → derivar ID sintético `SCN-{NNN}` desde el orden de aparición de `Scenario:` en §10. (b) para RN → mantener parseo con nuevo tipado (`[CORE]` / `[EDGE]` no cambia la extracción del ID). (c) para CU → **retirar** la tabla; el Flujo de Negocio §4 se rastrea por su descripción, no por ID. Documentar en `sdd-traceability.md` §"Ítems rastreables" el nuevo mapeo. |
+| `asdd-tech-lead-artifact-audit` | En SKILL.md línea 52: verifica presencia de `CU-\d+` con flujo principal/alternativo/excepción | Falso negativo permanente (nunca encontrará `CU-\d+`) | **Migrar la señal**: reemplazar el check por presencia de "Flujo de Negocio" numerado en §4 y de máquina de estados. |
+| `asdd-atf-api-step-1-hu-parser` | Trabaja sobre HUs crudas en `docs/testing/atf/requirements/`, no sobre specs ASDD | Sin impacto directo — sigue leyendo HUs de negocio en formato libre | Sin cambios en el skill. Nota en `asdd-atf-api-orchestration.md`: aclarar que los inputs del pipeline ATF-API son HUs de negocio (no `spec-{area}`). |
+| `asdd-atf-api-qa-engineer` | Consume artefactos del pipeline ATF, no specs ASDD | Sin impacto directo | Sin cambios. La relación spec-qa ↔ ATF-API es a través del INDEX (spec-qa referencia la corrida ATF por `run_id` del pipeline QA, no por ID de AC). |
+| `asdd-pre-tool-use-spec-size-guard` | Regex `CU-\d+`, marcador `## Aggregate:`, límite 300 líneas | **Retirado** — ver §9 | Eliminar el hook y su registro en `.claude/settings.json`. |
 
 ### 6.3 Convención de IDs con el nuevo modelo
 
@@ -425,7 +425,7 @@ El template corporativo Sofka **eliminó** de la spec:
 | `CR-NNN` | §15 spec-funcional | Post-aprobación | marcadores inline `[CR-NNN]` en el elemento modificado |
 | `FAS-NNN` | §1 spec-funcional (Fuera de Alcance) | Global por feature | control de alcance en UAT |
 
-**Anti-decisión: no re-introducir `CU-\d+` ni `HU-\d+` ni `AC-\d+`.** El template corporativo Sofka es el estándar; migrar los consumidores es más barato que mantener un desalineamiento permanente con el corporativo.
+**Anti-decisión: no re-introducir `CU-\d+` ni `HU-\d+` ni `AC-\d+`.** El template corporativo Guide es el estándar; migrar los consumidores es más barato que mantener un desalineamiento permanente con el corporativo.
 
 ---
 
@@ -451,7 +451,7 @@ Loop (una iteración por área implementada):
    5.2. Lee spec-{area} de su ámbito.
    5.3. Implementa según ADR-004 y las convenciones de su rol.
    5.4. Reporta al orquestador: WORKTREE COMMIT (si aplica ORC-011), archivos tocados, resumen.
-      Nota: `diseno` NO usa worktree — sus agentes (sofka-asdd-ux + sofka-asdd-ui) producen artefactos de diseño (Figma refs, tokens, specs de componentes, wireframes) que no requieren aislamiento de código. El reporte del área `diseno` incluye la ruta a los entregables producidos y no ejecuta ORC-011.
+      Nota: `diseno` NO usa worktree — sus agentes (asdd-ux + asdd-ui) producen artefactos de diseño (Figma refs, tokens, specs de componentes, wireframes) que no requieren aislamiento de código. El reporte del área `diseno` incluye la ruta a los entregables producidos y no ejecuta ORC-011.
 6. Orquestador aplica ORC-011 (validación + merge + cleanup del worktree) — sólo para áreas que produjeron código en worktree.
 7. Orquestador escribe al INDEX (sólo el orquestador escribe — regla R-INDEX-5 abajo):
    7.1. Cambia estado del área → "done" con timestamp y commit SHA.
@@ -488,34 +488,34 @@ Cuando dos features distintas comparten un módulo pero el orquestador procesa u
 
 ### 8.1 Modelo actual (v2.25.4)
 
-WF-002 tiene a `sofka-asdd-producto` como primario (skills `ba` → `funcional` → `po`) con soportes condicionales de architect, security, tech-lead invocados **antes del cierre** del spec único para alimentar secciones fijas (Restricciones arquitectónicas, Requisitos de seguridad, Restricciones técnicas).
+WF-002 tiene a `asdd-producto` como primario (skills `ba` → `funcional` → `po`) con soportes condicionales de architect, security, tech-lead invocados **antes del cierre** del spec único para alimentar secciones fijas (Restricciones arquitectónicas, Requisitos de seguridad, Restricciones técnicas).
 
 ### 8.2 Modelo nuevo
 
-WF-002 se convierte en **fase de coordinación multi-agente**. El coordinador sigue siendo `sofka-asdd-producto` (skill `funcional` como orquestador de la fase), pero el trabajo se distribuye entre los agentes dueños de los dominios del Mapa (§0 super-spec).
+WF-002 se convierte en **fase de coordinación multi-agente**. El coordinador sigue siendo `asdd-producto` (skill `funcional` como orquestador de la fase), pero el trabajo se distribuye entre los agentes dueños de los dominios del Mapa (§0 super-spec).
 
 **Roles por dominio del super-spec (y dueño resultante de cada spec-{area}):**
 
-| Dominio Sofka | Agente ASDD responsable | Skill primario | Alimenta a spec-{area} |
+| Dominio Guide | Agente ASDD responsable | Skill primario | Alimenta a spec-{area} |
 |---|---|---|---|
-| Funcional | `sofka-asdd-producto` (skills ba → funcional → po) | `funcional` | spec-funcional (único autor) |
-| Arquitectura | `sofka-asdd-solution-architect` | `architect-discovery` + `architect-adr` | spec-backend |
-| Developer (capa servidor) | `sofka-asdd-developer-backend` | `developer-backend-feature` | spec-backend |
-| Developer (capa presentación) | `sofka-asdd-developer-frontend` | `developer-frontend-feature` | spec-frontend (autor único) |
-| UX | `sofka-asdd-ux` | `ux-context-core` + `ux-flows-builder` | spec-diseno (co-autor con UI) |
-| UI | `sofka-asdd-ui` | `ui-design-tokens` | spec-diseno (co-autor con UX) |
-| QA | **Autor del `spec-qa` en WF-002:** `sofka-asdd-atf-api-qa-engineer` o `sofka-asdd-atf-web-qa-engineer` (según señal API vs Web). Redacta §10 (Criterios de Aceptación — escenarios Gherkin base + adicionales QA + criterios de done) y §7 subsección QA (RNFs de calidad, cobertura, performance testing). **Diseñador de casos ATF (post-WF-002):** el mismo agente en su ciclo ATF completo, ejecutando el `step-3-istqb-test-techniques` durante WF-003/WF-004 con los artefactos del pipeline (test-plan, test-cases, .feature) bajo `docs/testing/atf/{run_id}/`. | **Autoría spec-qa (WF-002):** skill de autoría a confirmar en implementación — el ciclo ATF actual empieza en step-1 (HU parser) y no cubre explícitamente la redacción del `spec-qa`. El PR de implementación debe (a) definir el skill de autoría dentro de los agentes ATF o (b) invocarlos con instrucción directa sin skill nombrado. **NO reusar `step-3-istqb-test-techniques`** para esta autoría — ese skill diseña casos, no redacta el spec-qa. | spec-qa |
-| DevOps | `sofka-asdd-devops-engineer` | `devops-observability` | spec-devops |
-| Seguridad | `sofka-asdd-security` | `code-scan` + `compliance` | spec-seguridad |
-| Datos | **Condicional al lock:** si `.sofka-asdd/sofka-asdd-smart-data.lock` declara `data_platform ≠ none` → dueño **`sofka-asdd-data-governance`** con skill `data-governance-assessment` (produce `spec-data` completo: dominio de datos, PII, retención, lineage inicial, contratos entre productor y consumidor). Si `data_platform = none` (software transaccional puro) → **fallback** a `sofka-asdd-solution-architect` con skill `architect-bounded-context` (produce un `spec-data` **liviano** cubriendo modelo de dominio, entidades, PII a nivel de aplicación; sin lineage analítico ni contratos Bronze/Silver/Gold). **Riesgo del fallback:** un `spec-data` producido por `solution-architect` no cubre el dominio analítico — si el feature termina requiriendo plataforma de datos, hay que abrir un run Smart Data (D0-D7) y redactar el `spec-data` real. **Cuándo marcar `n/a` en INDEX:** si el Mapa de dominios del super-spec marca `Datos Aplica = No` (feature sin manejo relevante de datos — p.ej. ajuste puramente visual, feature toggle, refactor de componente sin cambios de estado persistente), el AF marca la fila de `data` en el INDEX como `n/a` desde el arranque y no se crea `spec-data`. | `data-governance-assessment` (Smart Data activo) o `architect-bounded-context` (fallback transaccional) | spec-data |
+| Funcional | `asdd-producto` (skills ba → funcional → po) | `funcional` | spec-funcional (único autor) |
+| Arquitectura | `asdd-solution-architect` | `architect-discovery` + `architect-adr` | spec-backend |
+| Developer (capa servidor) | `asdd-developer-backend` | `developer-backend-feature` | spec-backend |
+| Developer (capa presentación) | `asdd-developer-frontend` | `developer-frontend-feature` | spec-frontend (autor único) |
+| UX | `asdd-ux` | `ux-context-core` + `ux-flows-builder` | spec-diseno (co-autor con UI) |
+| UI | `asdd-ui` | `ui-design-tokens` | spec-diseno (co-autor con UX) |
+| QA | **Autor del `spec-qa` en WF-002:** `asdd-atf-api-qa-engineer` o `asdd-atf-web-qa-engineer` (según señal API vs Web). Redacta §10 (Criterios de Aceptación — escenarios Gherkin base + adicionales QA + criterios de done) y §7 subsección QA (RNFs de calidad, cobertura, performance testing). **Diseñador de casos ATF (post-WF-002):** el mismo agente en su ciclo ATF completo, ejecutando el `step-3-istqb-test-techniques` durante WF-003/WF-004 con los artefactos del pipeline (test-plan, test-cases, .feature) bajo `docs/testing/atf/{run_id}/`. | **Autoría spec-qa (WF-002):** skill de autoría a confirmar en implementación — el ciclo ATF actual empieza en step-1 (HU parser) y no cubre explícitamente la redacción del `spec-qa`. El PR de implementación debe (a) definir el skill de autoría dentro de los agentes ATF o (b) invocarlos con instrucción directa sin skill nombrado. **NO reusar `step-3-istqb-test-techniques`** para esta autoría — ese skill diseña casos, no redacta el spec-qa. | spec-qa |
+| DevOps | `asdd-devops-engineer` | `devops-observability` | spec-devops |
+| Seguridad | `asdd-security` | `code-scan` + `compliance` | spec-seguridad |
+| Datos | **Condicional al lock:** si `.asdd/asdd-smart-data.lock` declara `data_platform ≠ none` → dueño **`asdd-data-governance`** con skill `data-governance-assessment` (produce `spec-data` completo: dominio de datos, PII, retención, lineage inicial, contratos entre productor y consumidor). Si `data_platform = none` (software transaccional puro) → **fallback** a `asdd-solution-architect` con skill `architect-bounded-context` (produce un `spec-data` **liviano** cubriendo modelo de dominio, entidades, PII a nivel de aplicación; sin lineage analítico ni contratos Bronze/Silver/Gold). **Riesgo del fallback:** un `spec-data` producido por `solution-architect` no cubre el dominio analítico — si el feature termina requiriendo plataforma de datos, hay que abrir un run Smart Data (D0-D7) y redactar el `spec-data` real. **Cuándo marcar `n/a` en INDEX:** si el Mapa de dominios del super-spec marca `Datos Aplica = No` (feature sin manejo relevante de datos — p.ej. ajuste puramente visual, feature toggle, refactor de componente sin cambios de estado persistente), el AF marca la fila de `data` en el INDEX como `n/a` desde el arranque y no se crea `spec-data`. | `data-governance-assessment` (Smart Data activo) o `architect-bounded-context` (fallback transaccional) | spec-data |
 
-**Nota — co-autoría de spec-diseno:** `sofka-asdd-ux` y `sofka-asdd-ui` son co-autores del mismo archivo. El orquestador los invoca secuencialmente (UX primero — arquetipos, flows, wireframes; luego UI — tokens, componentes hi-fi, WCAG) o en paralelo si tocan subsecciones disjuntas del slice (ORC-011-A verifica el scope). El sign-off del área `diseno` requiere ambos.
+**Nota — co-autoría de spec-diseno:** `asdd-ux` y `asdd-ui` son co-autores del mismo archivo. El orquestador los invoca secuencialmente (UX primero — arquetipos, flows, wireframes; luego UI — tokens, componentes hi-fi, WCAG) o en paralelo si tocan subsecciones disjuntas del slice (ORC-011-A verifica el scope). El sign-off del área `diseno` requiere ambos.
 
 ### 8.3 Orquestación de WF-002
 
 Nuevo flujo en 4 pasos:
 
-1. **Análisis del brief** (paso 1) — `sofka-asdd-producto` (ba → funcional → po) produce **borrador del spec-funcional** con §0 Mapa de dominios (marca Aplica Sí/No por dominio en base a las señales del brief), §1 User Story, §2 Actores, §3 Trazabilidad, §4 Flujo de Negocio, §6 RN, §7 RNFs de negocio, §14 gaps abiertos.
+1. **Análisis del brief** (paso 1) — `asdd-producto` (ba → funcional → po) produce **borrador del spec-funcional** con §0 Mapa de dominios (marca Aplica Sí/No por dominio en base a las señales del brief), §1 User Story, §2 Actores, §3 Trazabilidad, §4 Flujo de Negocio, §6 RN, §7 RNFs de negocio, §14 gaps abiertos.
 2. **Autoría multi-dominio en paralelo** (paso 2) — el orquestador delega a los agentes de dominios con `Aplica = Sí` para que produzcan sus `spec-{area}` respectivos. Se aplica ORC-011-A (task partitioning) para verificar que los scopes de archivos no se solapan — dado que cada spec-{area} es un archivo distinto, la intersección es 0 y las delegaciones ocurren en paralelo. Excepción: §9 (Validaciones de Campos) puede requerir sincronización AF ↔ Developer ↔ UX/UI — se resuelve con el patrón "cita por referencia" de §4.6.
 3. **Consolidación e INDEX** (paso 3) — el orquestador genera el INDEX con la lista de spec-{area} producidos y calcula el grafo de dependencias según la tabla de §4.5. Heurística por defecto (todas las áreas con `Aplica = Sí`):
 
@@ -535,11 +535,11 @@ Nuevo flujo en 4 pasos:
 4. **Gate DOR** (paso 4) — verifica cada checkbox del Gate DOR del super-spec (§0). Sólo cierra WF-002 si:
    - El AF marcó `Funcional` con veredicto APROBADA o APROBADA CON OBSERVACIONES resueltas.
    - Cada dominio `Aplica = Sí` está en `COMPLETO`.
-   - El opt-out de Seguridad (si se hubiera pedido) tiene sign-off explícito de `sofka-asdd-security` (no del AF).
+   - El opt-out de Seguridad (si se hubiera pedido) tiene sign-off explícito de `asdd-security` (no del AF).
 
 ### 8.4 Gate DOR — enforcement
 
-Nueva regla en `.claude/rules/sofka-asdd-workflow.md`:
+Nueva regla en `.claude/rules/asdd-workflow.md`:
 
 > **WF-002-DOR**: WF-002 no puede marcarse `complete` en `.asdd-run.json.phases.analyze` mientras el Gate DOR del spec-funcional (§0 del super-spec, checkboxes) tenga ítems sin marcar. Excepción: ítems marcados `_(omitir si Aplica = No)_` se ignoran cuando el dominio correspondiente en el Mapa está marcado `Aplica = No`.
 
@@ -564,9 +564,9 @@ Los tres gatillos actuales del guard son inaplicables:
 
 ### 9.2 Retiro operacional
 
-- Eliminar `.claude/hooks/sofka-asdd-pre-tool-use-spec-size-guard.mjs`.
+- Eliminar `.claude/hooks/asdd-pre-tool-use-spec-size-guard.mjs`.
 - Eliminar su entrada en `.claude/settings.json` (matcher `Write|Edit`, path `docs/specs/*.md`).
-- Actualizar `.claude/rules/sofka-asdd-workflow.md` — remover la sub-regla #3650 completa.
+- Actualizar `.claude/rules/asdd-workflow.md` — remover la sub-regla #3650 completa.
 - Actualizar `.claude/docs/adoption/naming-convention.md` si menciona el guard.
 - Registrar el retiro en `ASDD-CHANGELOG.md` como breaking change interno v2.26.0.
 
@@ -597,14 +597,14 @@ La sub-regla #3650 se sustituye por **WF-002-STRUCT**:
 |---|---|---|---|---|
 | R1 | Slicer inexistente al momento del port — se implementa después → developers producen slices divergentes en el intervalo | Media | Alta | Implementar el skill `spec-slice-rules` en el PR de v2.26.0 como parte inseparable del cambio. No merger v2.26.0 sin el skill. |
 | R2 | Como el `artifact-name-guard` no valida `Edit` (§5), editar artefactos vivos (INDEX/spec-{area}) desde un run posterior no deja huella a nivel de filesystem — auditoría de filesystem más difícil | Baja | Media | El Historial de estado del INDEX registra QUIÉN cambió QUÉ y CUÁNDO — trazabilidad de negocio, no de filesystem. La creación (`Write`) sí queda estampada con `run_id`/PHASE. |
-| R3 | WF-002-DOR es soft en v2.26.0 — el orquestador puede olvidar validar checkboxes | Media | Media | Añadir a `sofka-asdd-orchestration.md` una regla de checklist post-analyze. Si en 2-3 runs se detectan olvidos, escalar a hook duro en una versión posterior. |
+| R3 | WF-002-DOR es soft en v2.26.0 — el orquestador puede olvidar validar checkboxes | Media | Media | Añadir a `asdd-orchestration.md` una regla de checklist post-analyze. Si en 2-3 runs se detectan olvidos, escalar a hook duro en una versión posterior. |
 | R4 | Consumidores no migrados (traceability, artifact-audit) rompen post-v2.26.0 | Alta si no se implementan en el mismo PR | Alta | Migración de esos skills es parte del PR de v2.26.0, no diferida. Ver §12 lista de componentes. |
 | R5 | Bloqueo de creación con run.status = complete + necesidad de CR con áreas nuevas | Baja | Media | Documentar en la guía de CRs que áreas nuevas requieren un run nuevo (revalida el spec-funcional §15). Extraer excepción sólo si aparece un caso real. |
 | R6 | El wrapper de contexto de spec-{area} se convierte en el "template lean" por drift | Media | Media | Regla en `spec-slice-rules.md`: el wrapper es información derivada del análisis, no contenido nuevo del contrato. Ningún AC ni RN vive en el wrapper. |
 
 ### 11.2 Consecuencias positivas
 
-- Coherencia total con el template corporativo Sofka.
+- Coherencia total con el template corporativo Guide.
 - Developers especializados leen sólo lo que les incumbe (~150 líneas en vez de 700).
 - Estado de implementación auditable en el INDEX sin depender de `git log`.
 - Gate DOR habilita conversaciones multi-agente en fase Analizar sin duplicar contenido.
@@ -623,38 +623,38 @@ La sub-regla #3650 se sustituye por **WF-002-STRUCT**:
 
 ### 12.1 Hooks
 
-- **RETIRAR**: `.claude/hooks/sofka-asdd-pre-tool-use-spec-size-guard.mjs` y su registro en `.claude/settings.json`.
-- **`sofka-asdd-pre-tool-use-artifact-name-guard.mjs` — SIN CAMBIOS por §5.** El hallazgo de WU-7 (§5 revisado) determinó que el guard nunca valida `Edit` (solo `Write`), por lo que la exención de slugs vivos era innecesaria y **no se implementó**. La edición de INDEX/spec-{area} desde runs posteriores ya está libre; la creación sigue validada. No hay lista de slugs vivos ni audit line EX-5.
+- **RETIRAR**: `.claude/hooks/asdd-pre-tool-use-spec-size-guard.mjs` y su registro en `.claude/settings.json`.
+- **`asdd-pre-tool-use-artifact-name-guard.mjs` — SIN CAMBIOS por §5.** El hallazgo de WU-7 (§5 revisado) determinó que el guard nunca valida `Edit` (solo `Write`), por lo que la exención de slugs vivos era innecesaria y **no se implementó**. La edición de INDEX/spec-{area} desde runs posteriores ya está libre; la creación sigue validada. No hay lista de slugs vivos ni audit line EX-5.
 
 ### 12.2 Skills
 
-- **CREAR**: `.claude/skills/sofka-asdd-producto-templates/reference/spec-slice-rules.md` — tabla de proyección Mapa Sofka → área ASDD (§4.4). Debe cubrir las **7 áreas** (backend, frontend, diseno, devops, seguridad, data, qa) e implementar:
+- **CREAR**: `.claude/skills/asdd-producto-templates/reference/spec-slice-rules.md` — tabla de proyección Mapa Guide → área ASDD (§4.4). Debe cubrir las **7 áreas** (backend, frontend, diseno, devops, seguridad, data, qa) e implementar:
   - El **reparto por capa del dominio Developer** (servidor → backend, presentación → frontend).
   - **§11 Seguridad con dueño único `spec-seguridad`** y notas de implementación por referencia en `spec-backend` (server-side) y `spec-frontend` (cliente-side) — nunca redeclarar el contrato.
   - **§13 con backend siempre, seguridad condicional** a señal regulatoria HIPAA/PCI-DSS/SOX.
   - El **grafo de dependencias por defecto** del INDEX cubriendo las 7 áreas (§4.5): Ola 1 (`seguridad`, `diseno`, `backend`, `data` — paralelo) → Ola 2 (`frontend` depende de diseno+backend, referencia seguridad; `devops` depende de backend) → Ola 3 (`qa` depende de backend+frontend), con reglas de contracción por `Aplica = No`.
   - La **regla de citación por referencia** para las 8 secciones divididas de §4.6: §2, §4, §5, §7, §8, §9, §11, §13.
-- **CREAR / REEMPLAZAR**: `.claude/skills/sofka-asdd-producto-templates/reference/spec-template.md` — pasa a ser el "template corporativo Sofka" (o un puntero al archivo canónico). Ya no es el mini-template plano.
-- **MODIFICAR**: `.claude/skills/sofka-asdd-producto-templates/reference/spec-funcional-template.md` (nuevo) — copia de las secciones del super-spec que corresponden al spec-funcional (§3.2).
-- **MODIFICAR**: `.claude/skills/sofka-asdd-producto-funcional/SKILL.md` — actualizar proceso para producir spec-funcional (paso 1 de §8.3) y disparar la coordinación multi-agente (incluyendo la co-autoría ux+ui para spec-diseno).
-- **CONFIRMAR**: los skills de `sofka-asdd-ux` y `sofka-asdd-ui` incorporan un modo "autor de spec-diseno en WF-002" (contribución al slice canónico §2, §4 UX/UI, §8, §9 UX/UI). Se documenta en sus SKILL.md respectivos.
-- **CONFIRMAR**: el skill de `sofka-asdd-developer-frontend` incorpora un modo "autor de spec-frontend en WF-002" para la porción Developer de capa presentación (§4 Developer subsección, §8 Developer wiring, §9 Developer cliente).
-- **MODIFICAR**: `.claude/skills/sofka-asdd-tech-lead-sdd-traceability/SKILL.md` — reconciliación Tier C §6.2 (SCN-NNN sintético + retiro de CU-NNN).
-- **MODIFICAR**: `.claude/skills/sofka-asdd-tech-lead-artifact-audit/SKILL.md` — línea que verifica `CU-\d+` (§6.2).
+- **CREAR / REEMPLAZAR**: `.claude/skills/asdd-producto-templates/reference/spec-template.md` — pasa a ser el "template corporativo Guide" (o un puntero al archivo canónico). Ya no es el mini-template plano.
+- **MODIFICAR**: `.claude/skills/asdd-producto-templates/reference/spec-funcional-template.md` (nuevo) — copia de las secciones del super-spec que corresponden al spec-funcional (§3.2).
+- **MODIFICAR**: `.claude/skills/asdd-producto-funcional/SKILL.md` — actualizar proceso para producir spec-funcional (paso 1 de §8.3) y disparar la coordinación multi-agente (incluyendo la co-autoría ux+ui para spec-diseno).
+- **CONFIRMAR**: los skills de `asdd-ux` y `asdd-ui` incorporan un modo "autor de spec-diseno en WF-002" (contribución al slice canónico §2, §4 UX/UI, §8, §9 UX/UI). Se documenta en sus SKILL.md respectivos.
+- **CONFIRMAR**: el skill de `asdd-developer-frontend` incorpora un modo "autor de spec-frontend en WF-002" para la porción Developer de capa presentación (§4 Developer subsección, §8 Developer wiring, §9 Developer cliente).
+- **MODIFICAR**: `.claude/skills/asdd-tech-lead-sdd-traceability/SKILL.md` — reconciliación Tier C §6.2 (SCN-NNN sintético + retiro de CU-NNN).
+- **MODIFICAR**: `.claude/skills/asdd-tech-lead-artifact-audit/SKILL.md` — línea que verifica `CU-\d+` (§6.2).
 
 ### 12.3 Reglas
 
-- **MODIFICAR**: `.claude/rules/sofka-asdd-workflow.md` — WF-002 pasa a multi-dominio (§8), retirar sub-regla #3650 (§9), añadir WF-002-STRUCT y WF-002-DOR.
-- **MODIFICAR**: `.claude/references/rules/sofka-asdd-workflow-build.md` — WF-004 documenta el loop de §7 con lectura de `index_ref`.
+- **MODIFICAR**: `.claude/rules/asdd-workflow.md` — WF-002 pasa a multi-dominio (§8), retirar sub-regla #3650 (§9), añadir WF-002-STRUCT y WF-002-DOR.
+- **MODIFICAR**: `.claude/references/rules/asdd-workflow-build.md` — WF-004 documenta el loop de §7 con lectura de `index_ref`.
 
 ### 12.4 Commands
 
-- **MODIFICAR**: `.claude/commands/sofka-asdd/analyze.md` — reflejar el nuevo modelo multi-agente y la generación de INDEX + spec-funcional + spec-{area}.
-- **MODIFICAR**: `.claude/commands/sofka-asdd/build.md` — mencionar `index_ref` y el loop.
+- **MODIFICAR**: `.claude/commands/asdd/analyze.md` — reflejar el nuevo modelo multi-agente y la generación de INDEX + spec-funcional + spec-{area}.
+- **MODIFICAR**: `.claude/commands/asdd/build.md` — mencionar `index_ref` y el loop.
 
 ### 12.5 Schema
 
-- **MODIFICAR**: `.sofka-asdd/asdd-run.schema.json` — añadir campo `index_ref` en `phases.build`:
+- **MODIFICAR**: `.asdd/asdd-run.schema.json` — añadir campo `index_ref` en `phases.build`:
   ```json
   "index_ref": {
     "type": ["string", "null"],
@@ -705,4 +705,4 @@ docs/specs/
 
 **Observación de coherencia:** §11 aparece **una sola vez** en el corpus (dentro de `checkout-seguridad.md`). Ni `checkout-backend.md` ni `checkout-frontend.md` redeclaran el contrato de auth — cada uno lleva únicamente un puntero `> Ver spec-seguridad §11 para el contrato de seguridad` seguido de notas de implementación específicas de su capa.
 
-**Nota sobre naming ASCII:** el archivo es `checkout-diseno.md`, sin ñ ni tilde. Coherente con la convención de kebab-case ASCII exigida por el helper `sofka-asdd-artifact-name.mjs`.
+**Nota sobre naming ASCII:** el archivo es `checkout-diseno.md`, sin ñ ni tilde. Coherente con la convención de kebab-case ASCII exigida por el helper `asdd-artifact-name.mjs`.

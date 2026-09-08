@@ -287,7 +287,7 @@ function writePipelineState(runId, patch) {
 
 /**
  * Genera un session_context.json mínimo para un run_id standalone
- * (invocado desde /sofka-asdd:qa-web-diagnose, /sofka-asdd:qa-web-strategize, /sofka-asdd:qa-web-design).
+ * (invocado desde /asdd:qa-web-diagnose, /asdd:qa-web-strategize, /asdd:qa-web-design).
  *
  * Idempotente: si output/{run_id}/session_context.json ya existe, no hace nada
  * y retorna el contexto existente (respeta lo que haya).
@@ -375,7 +375,7 @@ function initMinimal(runId) {
   const notebooklm = appYaml.notebooklm || {};
 
   // — herencia desde config.yaml cuando appweb.yaml omite campos.
-  // Antes el LLM tenía que parchear session_context.json a mano (// en /sofka-asdd:qa-web-diagnose sobre OrangeHRM).
+  // Antes el LLM tenía que parchear session_context.json a mano (// en /asdd:qa-web-diagnose sobre OrangeHRM).
   let configYaml = {};
   try { configYaml = readYaml(CONFIG_YAML) || {}; } catch { /* config.yaml opcional */ }
   const configFolders = configYaml.folders || {};

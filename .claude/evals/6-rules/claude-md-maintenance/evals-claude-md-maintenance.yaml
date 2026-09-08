@@ -1,4 +1,4 @@
-description: "Regla: sofka-asdd-claude-md-maintenance — qué va en CLAUDE.md, triggers obligatorios, anti-patrones"
+description: "Regla: asdd-claude-md-maintenance — qué va en CLAUDE.md, triggers obligatorios, anti-patrones"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -72,7 +72,7 @@ tests:
       - type: llm-rubric
         value: |
           El agente debe ejecutar el paso de carga condicional ANTES de cerrar el feature.
-          Debe nombrar el comando exacto `node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-claude-md-maintenance`
-          y decir que lee COMPLETO `.claude/references/rules/sofka-asdd-claude-md-maintenance.md`.
+          Debe nombrar el comando exacto `node .claude/scripts/asdd-resolve-rule.mjs asdd-claude-md-maintenance`
+          y decir que lee COMPLETO `.claude/references/rules/asdd-claude-md-maintenance.md`.
           Debe indicar que si el resolver o la lectura fallan, se detiene sin cerrar el feature.
           NO debe cerrar el feature apoyándose solo en el núcleo, ni inventar o suponer el contenido de la referencia.

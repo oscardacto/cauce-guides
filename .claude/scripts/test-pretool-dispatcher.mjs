@@ -4,16 +4,16 @@ import { spawn } from "node:child_process";
 import { closeSync, mkdirSync, mkdtempSync, openSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { tmpdir } from "node:os";
-import { hookEntryRef, hookEntryTokens, isCommandHook } from "./lib/sofka-asdd-hook-entry-lib.mjs";
+import { hookEntryRef, hookEntryTokens, isCommandHook } from "./lib/asdd-hook-entry-lib.mjs";
 
 const root = resolve(import.meta.dirname, "..", "..");
 const legacy = JSON.parse(readFileSync(
-  resolve(import.meta.dirname, "fixtures", "sofka-asdd-pretool-legacy-hooks.json"),
+  resolve(import.meta.dirname, "fixtures", "asdd-pretool-legacy-hooks.json"),
   "utf8",
 ));
 const corpus = JSON.parse(
   readFileSync(
-    resolve(import.meta.dirname, "fixtures", "sofka-asdd-pretool-dispatcher-s1.json"),
+    resolve(import.meta.dirname, "fixtures", "asdd-pretool-dispatcher-s1.json"),
     "utf8",
   ),
 );
@@ -32,7 +32,7 @@ function matchingHooks(toolName) {
     const matches = String(group.matcher ?? "").split("|").map((x) => x.trim());
     if (!matches.includes(toolName)) return [];
     return (group.hooks ?? [])
-      .filter((hook) => isCommandHook(hook) && /sofka-asdd-/.test(hookEntryRef(hook)));
+      .filter((hook) => isCommandHook(hook) && /asdd-/.test(hookEntryRef(hook)));
   });
 }
 
@@ -133,7 +133,7 @@ async function dispatcher(raw) {
   const hook = {
     type: "command",
     command: "node",
-    args: ["${CLAUDE_PROJECT_DIR}/.claude/hooks/sofka-asdd-pre-tool-dispatcher.mjs"],
+    args: ["${CLAUDE_PROJECT_DIR}/.claude/hooks/asdd-pre-tool-dispatcher.mjs"],
   };
   return merge([await run(hook, raw)]);
 }

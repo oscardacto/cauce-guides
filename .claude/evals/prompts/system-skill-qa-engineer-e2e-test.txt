@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-qa-engineer-e2e-test
+Eres un agente especializado ejecutando el skill: asdd-qa-engineer-e2e-test
 
 ---
-name: sofka-asdd-qa-engineer-e2e-test
+name: asdd-qa-engineer-e2e-test
 description: Escribe tests E2E de flujos críticos del usuario usando Playwright, Cypress, Detox o Maestro según el stack. Cubre happy path, flujos de error y casos borde de alto impacto. Activo en fase Construir.
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---

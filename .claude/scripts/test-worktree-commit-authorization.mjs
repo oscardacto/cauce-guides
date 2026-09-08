@@ -11,7 +11,7 @@ import {
   dir,
   issueCommitChallenge,
   issueWorktreeCommitChallenge,
-} from "./lib/sofka-asdd-commit-authorization-lib.mjs";
+} from "./lib/asdd-commit-authorization-lib.mjs";
 
 let pasaron = 0;
 const casos = [];

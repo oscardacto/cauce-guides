@@ -1,4 +1,4 @@
-description: "CMD /sofka-asdd:build — fase Construir"
+description: "CMD /asdd:build — fase Construir"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -14,13 +14,13 @@ defaultTest:
 tests:
   - description: "CMD build: requiere spec + diseño aprobados"
     vars:
-      input: "/sofka-asdd:build Implementar el servicio de notificaciones. Spec HU-018 aprobada, ADR-009 aceptado."
+      input: "/asdd:build Implementar el servicio de notificaciones. Spec HU-018 aprobada, ADR-009 aceptado."
     assert:
       - type: icontains
-        value: "sofka-asdd-developer-backend"
+        value: "asdd-developer-backend"
       - type: llm-rubric
         value: |
-          El comando build debe: invocar sofka-asdd-developer-backend con los specs y ADR como contexto,
+          El comando build debe: invocar asdd-developer-backend con los specs y ADR como contexto,
           tech-lead como soporte para code review,
           y NO implementar código sin spec y ADR referenciados.
 

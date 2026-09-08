@@ -6,7 +6,7 @@
 #
 # Lo estable (agentes, skills, modelos, routing) vive en:
 #   - CLAUDE.md
-#   - .sofka-asdd/sofka-asdd-atf.lock
+#   - .asdd/asdd-atf.lock
 #
 # El dashboard ASDD sobreescribe automáticamente este archivo
 # al crear una corrida desde la interfaz.

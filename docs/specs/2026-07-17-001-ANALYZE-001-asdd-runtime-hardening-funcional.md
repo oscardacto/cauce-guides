@@ -11,7 +11,7 @@
 | Estado | APROBADA PARA IMPLEMENTACIÓN INCREMENTAL |
 | Versión | 1.0 |
 | Fecha | 2026-07-17 |
-| Owner funcional | Maintainers de Sofka ASDD |
+| Owner funcional | Maintainers de Guide ASDD |
 | Origen | Auditoría de rendimiento y contraste de seguridad Mason/ASDD |
 | INDEX de implementación | `docs/specs/2026-07-17-001-ANALYZE-006-asdd-runtime-hardening-index.md` |
 | ui_required | false |

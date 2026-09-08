@@ -8,7 +8,7 @@ fan-out, turnos y retries antes de lanzar un Agent.
 
 ## Configuración versionada
 
-`.sofka-asdd/subagent-budget.json` es la fuente autoritativa:
+`.asdd/subagent-budget.json` es la fuente autoritativa:
 
 | Ruta | Agentes / concurrentes | Turnos | Retries |
 |---|---:|---:|---:|
@@ -32,7 +32,7 @@ El challenge ORC-010 requiere `budget_policy_version`, ruta, fase, riesgo,
 confianza y concurrencia. Cada agente declara modelo lógico, `max_turns`,
 `retries` y motivo de escalamiento cuando aplica.
 
-La autorización store v3 conserva esos campos. `sofka-asdd-plan-gate.mjs`
+La autorización store v3 conserva esos campos. `asdd-plan-gate.mjs`
 compara el modelo del Agent y exige en su prompt el marcador exacto:
 
 ```text

@@ -31,7 +31,7 @@ const path = require('path');
 const os   = require('os');
 
 const TRACKED_FILES = [
-  'sofka-asdd-atf-web-qa-engineer.md',  // coordinador unificado (antes orchestrator.md)
+  'asdd-atf-web-qa-engineer.md',  // coordinador unificado (antes orchestrator.md)
   'execute.md',                         // phase-spec executor (antes executor.md)
   'enrich.md',                          // phase-spec cp-enricher (antes cp-enricher.md)
   'design.md',                          // phase-spec design-team

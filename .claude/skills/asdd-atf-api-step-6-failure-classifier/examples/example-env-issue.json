@@ -1,0 +1,42 @@
+{
+  "id": "D-005",
+  "run_id": "PruebaAPIClienteEjemplo-v1.0-20260521-1030",
+  "wi_id": "wi-002",
+  "cp_id": "CP-015",
+  "category": "env_issue",
+  "severity": "medium",
+  "title": "Timeout intermitente en GET /pending-billing-quotas (trigger batch)",
+  "description": "El endpoint excedió el timeout de 30s en 2 de 3 ejecuciones. Cuando responde, lo hace correctamente. No hay error en la lógica — el servicio QA está sobrecargado o la red al backend está degradada.",
+  "request": {
+    "method": "GET",
+    "url": "/osf/api/v1/pending-billing-quotas?cycle=2026-05&distributorId=DIST-TEST-001",
+    "headers_redacted": {"Accept": "application/json"},
+    "body_redacted": null
+  },
+  "response": {
+    "status": 0,
+    "headers": {},
+    "body": null
+  },
+  "expected": {
+    "status": 200,
+    "body_schema": "BillingBatchResult",
+    "body_assertions_summary": "$.status debe equals 'EXECUTION'"
+  },
+  "rule_violated": null,
+  "evidence_path": "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/execution/evidence/CP-015/",
+  "evidence_summary": "3 ejecuciones: 2 timeout (>30s sin respuesta), 1 response 200 en 2.3s. Ningún status code de error — desconexión silenciosa. Métricas de infra desde Grafana muestran p95 del endpoint en 28s durante la ventana de prueba (normalmente p95 = 800ms).",
+  "promoted_to_backlog": false,
+  "backlog_target": "none",
+  "reproducibility": "intermittent",
+  "classified_at": "2026-05-21T11:41:00-05:00",
+  "classified_by": "asdd-atf-api-step-6-execution",
+  "classification_path": [
+    "DEF-002 step 1 — el response cuando llega cumple el contrato (status 200, body válido)",
+    "DEF-002 step 2 — fixtures válidas",
+    "DEF-002 step 3 — SLA del endpoint no respetado (timeout > 30s, p95 normalmente 800ms)",
+    "Conclusión: env_issue (degradación de infra QA, no bug del servicio)"
+  ],
+  "reclassifiable": true,
+  "defects_history": []
+}

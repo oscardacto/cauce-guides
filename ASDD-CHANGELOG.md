@@ -47,12 +47,12 @@ flujo de deprecation, release process, guías de migración).
   framework le ordena — entre ellas las de su control-plane.
 
   La decisión pasa a ser una **partición por plano** —lectura, control-plane, integridad, dominio,
-  peligro— resuelta por un único motor de comandos, `.claude/hooks/_lib/sofka-asdd-command-plane.mjs`,
+  peligro— resuelta por un único motor de comandos, `.claude/hooks/_lib/asdd-command-plane.mjs`,
   con el control-plane declarado subcomando por subcomando en un manifiesto. `ask` deja de ser el
   `else`: solo se alcanza si la operación no es clasificable, y en ese caso
-  `sofka-asdd-hueco-clasificacion.mjs` describe el hueco en vez de dar un rechazo mudo.
-  `sofka-asdd-orchestrator-guard.mjs` queda en 345 líneas contra 697, y
-  `sofka-asdd-plan-authorization-lib.mjs` pierde las 106 líneas de clasificación que duplicaba.
+  `asdd-hueco-clasificacion.mjs` describe el hueco en vez de dar un rechazo mudo.
+  `asdd-orchestrator-guard.mjs` queda en 345 líneas contra 697, y
+  `asdd-plan-authorization-lib.mjs` pierde las 106 líneas de clasificación que duplicaba.
   Suites nuevas: `test-control-plane-manifest` (manifiesto ↔ archivos en disco ↔
   `permissions.allow`) y `test-hueco-clasificacion`.
 
@@ -85,7 +85,7 @@ flujo de deprecation, release process, guías de migración).
   colapsaban en `length === 0`.
 
 - **`always_on_words` era una sola clave con dos definiciones y un solo límite.**
-  `sofka-asdd-context-budget-lib.mjs` la medía como `CLAUDE.md` + `.claude/rules/**`
+  `asdd-context-budget-lib.mjs` la medía como `CLAUDE.md` + `.claude/rules/**`
   —3.978 palabras contra un techo de 8.000, verde con 2x de aire— y el check
   `context-budget` la enforzaba en stage `error` desde `37417ce`, donde el límite
   nació junto a esa medición. `measure-context-footprint.mjs` reusó la misma clave
@@ -103,7 +103,7 @@ flujo de deprecation, release process, guías de migración).
 
 - **La inyección de hooks se medía sumando ramas que no pueden coincidir.** El conteo
   recorría solo `push(` con literales y sumaba las 11 ramas de
-  `sofka-asdd-user-prompt-submit.mjs` como si dispararan en el mismo turno. Erraba en
+  `asdd-user-prompt-submit.mjs` como si dispararan en el mismo turno. Erraba en
   las dos direcciones: los cuatro intents de plan son excluyentes entre sí y el dominio
   `data`/`software`/ambiguo también, mientras que `nucleoOrc` (315 palabras) y
   `getDeterministicRouteReminder` (298) —los dos bloques que **sí** entran en todo turno
@@ -118,14 +118,14 @@ flujo de deprecation, release process, guías de migración).
   propósito: `issueDirectLightAuthorization` escribe una autorización en disco, así que
   ejecutar el hook para medirlo acuñaría autorizaciones reales.
 
-- **`sofka-asdd-cloud-architect` declaraba `allowed-tools:` en vez de `tools:`.** En el
+- **`asdd-cloud-architect` declaraba `allowed-tools:` en vez de `tools:`.** En el
   frontmatter de un **agente** la clave es `tools:`; `allowed-tools:` pertenece a los
   slash-commands y a `SKILL.md`. Como clave desconocida se ignoraba en silencio, así que el
   agente no quedaba restringido a esa lista: **heredaba todas las herramientas**. Era el único
   de los 25 agentes con esa clave, y ningún check del validador lo miraba.
 
 - **El agente de soluciones referenciaba 16 veces skills que no existen con ese nombre.**
-  Nombraba `architect-*` mientras los directorios son `sofka-asdd-solution-architect-*` — 13
+  Nombraba `architect-*` mientras los directorios son `asdd-solution-architect-*` — 13
   en su tabla de skills y 3 en su tabla de enrutado. Verificado tras el cambio: las referencias
   resuelven a los 13 directorios reales.
 
@@ -135,13 +135,13 @@ flujo de deprecation, release process, guías de migración).
 
 - **`mcp__context7__query-docs` no es un tool real.** `@upstash/context7-mcp@3.2.1` expone
   `resolve-library-id` y **`get-library-docs`**. El nombre errado estaba en
-  `sofka-asdd-solution-architect-dep-audit/SKILL.md` y en `.claude/docs/mcps-by-domain.md`, y
+  `asdd-solution-architect-dep-audit/SKILL.md` y en `.claude/docs/mcps-by-domain.md`, y
   se había propagado al frontmatter del agente. Corregido en los tres lugares.
 
-- **Quedaba una skill sin barrer.** `sofka-asdd-solution-architect-diagrams` conservaba su
+- **Quedaba una skill sin barrer.** `asdd-solution-architect-diagrams` conservaba su
   `allowed-tools:` cuando las otras 131 ya lo habían perdido.
 
-- **`.sofka-asdd/context-budget.json` medía cero.** Declaraba
+- **`.asdd/context-budget.json` medía cero.** Declaraba
   `hook_injection_words: 0` —falso: los literales de SessionStart y
   UserPromptSubmit suman 1.509 palabras en el peor turno— y las descripciones de skills, agents y
   commands, el rubro más caro del piso, no figuraban ni en `measured_components` ni
@@ -157,13 +157,13 @@ flujo de deprecation, release process, guías de migración).
   a mitad de tarea. Es el mismo motivo por el que `atf-reporting-qa-engineer`,
   `ba-specification-lead` y `ba-specification-auditor` ya habían quedado fuera del
   manifiesto — se aplica el mismo criterio a los 3 casos restantes. Vuelven a declarar
-  `skills:` eager en frontmatter y salen de `.sofka-asdd/capability-loading.json`. El
+  `skills:` eager en frontmatter y salen de `.asdd/capability-loading.json`. El
   costo es acotado: ~14.529 tokens vuelven al total eager (26.298 → ~40.827; la
   reducción contra el original 70.056 baja de −62,5% a −41,7%) y solo pesa cuando se
   invoca a esos 3 agentes puntuales — el piso always-on (−44,8%, 17.611→9.723) no se
   toca.
 
-- **`.sofka-asdd/context-budget.json` tenía 4 valores medidos desactualizados**
+- **`.asdd/context-budget.json` tenía 4 valores medidos desactualizados**
   respecto de lo que mide hoy `measure-context-footprint.mjs` (+16 palabras del
   último commit del changelog, no reflejadas en el artefacto): `always_on_floor_words`
   9707→9723, `discovery_surface_skill_descriptions_words` 2802→2811,
@@ -230,14 +230,14 @@ flujo de deprecation, release process, guías de migración).
 - **`qa-web-perf` y `qa-web-visual-ux-a11y` perdieron la cláusula "Independiente del
   flujo CP-by-CP", y sus skills contraparte (`atf-web-lighthouse-validator`,
   `atf-web-visual-ux-a11y-validator`) perdieron el espejo "Invocado por
-  /sofka-asdd:qa-web-\*".** Restituidas en versión corta en los 4 archivos.
+  /asdd:qa-web-\*".** Restituidas en versión corta en los 4 archivos.
 
 - **`ba-log-lessons-learned` perdió su cláusula anti-ruteo** ("la consulta de lecciones
   no es un skill, se lee `docs/lecciones/` directo") en la compresión de descripción
   (502→101 caracteres). El ruteo ocurre antes de leer el cuerpo del skill, así que la
   cláusula solo protege si está en la `description:`. Restituida en versión corta.
 
-- **`sofka-asdd-system-integrity` y `sofka-asdd-memory-hygiene` quedaron con normas
+- **`asdd-system-integrity` y `asdd-memory-hygiene` quedaron con normas
   reales solo en la referencia condicional, detrás de un trigger que no se dispara en
   el momento que gobiernan** ("NUNCA adivinar" al trabarse; "Necesito: [archivo] para
   [razón]" antes de cada lectura). Se ajustan los triggers de "Carga condicional
@@ -252,8 +252,8 @@ flujo de deprecation, release process, guías de migración).
 
 - **20 skills eran invocables solo por un alias truncado que ningún loader acepta, y los
   6 dominios de `domain-expert` no eran invocables en absoluto (B6).** Los dos loaders
-  —`sofka-asdd-load-capability.mjs` y `sofka-asdd-resolve-capability.mjs`— exigen
-  `^sofka-asdd-[a-z0-9-]+$` y resuelven contra el nombre exacto del directorio. Los sitios
+  —`asdd-load-capability.mjs` y `asdd-resolve-capability.mjs`— exigen
+  `^asdd-[a-z0-9-]+$` y resuelven contra el nombre exacto del directorio. Los sitios
   que cargan skills usaban el nombre corto: el `skills:` del frontmatter de los seis
   phase-specs de ATF Web (`data-generator`, `risk-scorer`, `instance-planner`,
   `testability-scorer`, `knowledge-distiller`, `material-reference-detector`,
@@ -264,7 +264,7 @@ flujo de deprecation, release process, guías de migración).
   60 sitios normalizados al nombre canónico —10 de frontmatter y 50 marcadores—; ninguno
   resolvía antes.
 
-  `sofka-asdd-domain-expert` era el caso severo: sin `skills:` en el frontmatter, sin
+  `asdd-domain-expert` era el caso severo: sin `skills:` en el frontmatter, sin
   entrada en `capability-loading.json` y con su tabla de dominios listando
   `domain-expert-fintech`. Los seis dominios de negocio —fintech, seguros, retail, salud,
   logística, educación— existían en `.claude/skills/`, se ofrecían al usuario y **no tenían
@@ -276,8 +276,8 @@ flujo de deprecation, release process, guías de migración).
   decía que "Claude Code detecta el dominio por contexto y activa el skill", mecanismo que
   no existe.
 
-  También `sofka-asdd-atf-api-security-zap-runner` y
-  `sofka-asdd-atf-api-performance-perf-threshold-evaluator`, que solo aparecían truncados
+  También `asdd-atf-api-security-zap-runner` y
+  `asdd-atf-api-performance-perf-threshold-evaluator`, que solo aparecían truncados
   en `qa-automate.md`, en la secuencia de Fase 4 del agente ATF API y en el `next_step` de
   `k6-script-generator`.
 
@@ -303,14 +303,14 @@ flujo de deprecation, release process, guías de migración).
 
 ### Fixed — menores (R2, M1-M21)
 
-- **`.sofka-asdd/context-budget.json` vuelve a quedar desactualizado tras los propios
+- **`.asdd/context-budget.json` vuelve a quedar desactualizado tras los propios
   cambios de esta rama** (M8/M9 suman palabras al núcleo, S13-S16 recortan
   descripciones) — re-sincronizado una vez más al cierre: `claude_md_words` 952,
   `always_on_rules_words` 3064, `discovery_surface_skill_descriptions_words` 2772,
   `discovery_surface_command_descriptions_words` 690, `always_on_floor_words` 9730.
 - **`measure-context-footprint.mjs` no nombraba al ofensor en agents y commands**
   (`relative(...).split(sep).slice(-2)[0]` daba el directorio padre genérico —
-  "agents" o "sofka-asdd" — en vez del archivo). Ahora usa el nombre del propio
+  "agents" o "asdd" — en vez del archivo). Ahora usa el nombre del propio
   archivo salvo para skills, que sí viven en `{slug}/SKILL.md` (M2).
 - **`skill-preflight`: "Antes de el Paso 0"** corregido a "Antes del Paso 0" en el
   núcleo y en el fixture de eval (M5).
@@ -334,7 +334,7 @@ flujo de deprecation, release process, guías de migración).
   4 que señaló R2 para `security` y `researcher` ya no tienen ese boilerplate, ver B1
   arriba) (M12).
 - **2 fixtures `-loaded` atribuían al resolver una salida de contenido completo que
-  `sofka-asdd-resolve-rule.mjs` no produce** (solo imprime la ruta) — corregido el
+  `asdd-resolve-rule.mjs` no produce** (solo imprime la ruta) — corregido el
   comentario en `memory-hygiene-loaded.txt` y `system-integrity-loaded.txt` (M15).
 - **`evals/README.md` tenía dos conteos de la suite desactualizados y contradictorios
   entre sí** ("45 configs, ~306 llamadas" a 27 líneas de "62 archivos / 223 tests") —
@@ -361,12 +361,12 @@ flujo de deprecation, release process, guías de migración).
 - **`system-rule-system-integrity-loaded.txt`** — dos rubrics preexistentes de
   `evals-system-integrity.yaml` (líneas 41 y 56) pedían contenido que la compresión de
   `fix/carga-de-contexto` sacó del núcleo y dejó solo en
-  `.claude/references/rules/sofka-asdd-system-integrity.md`, que el harness de evals no
+  `.claude/references/rules/asdd-system-integrity.md`, que el harness de evals no
   carga (recibe el system prompt, sin tools). Se agrega el fixture `-loaded` —mismo
   patrón que ya tenía `memory-hygiene`— y los 2 tests que lo necesitan repuntan ahí.
 
 - **`.claude/evals/6-rules/capability-loading/evals-capability-loading.yaml`** — ningún
-  eval ejercía `sofka-asdd-load-capability.mjs`. Cubre los 5 agentes migrados que
+  eval ejercía `asdd-load-capability.mjs`. Cubre los 5 agentes migrados que
   quedan sin suite propia (`data-architect`, `data-governance`, `ba-scope-manager`,
   `ba-functional-architect`, `ba-functional-sme`): cada test verifica que el agente
   identifica la capability primaria correcta y nombra el comando exacto del loader, sin
@@ -394,8 +394,8 @@ flujo de deprecation, release process, guías de migración).
 ### Changed
 
 - **El agente de reportería ATF sube de `haiku` a `sonnet` en el lock.**
-  `.sofka-asdd/sofka-asdd-atf.lock` declaraba `model_strategy.phase_default.report: haiku` y
-  `agent_pinning["sofka-asdd-atf-reporting-qa-engineer"]: haiku`. Los dos pasan a `sonnet`.
+  `.asdd/asdd-atf.lock` declaraba `model_strategy.phase_default.report: haiku` y
+  `agent_pinning["asdd-atf-reporting-qa-engineer"]: haiku`. Los dos pasan a `sonnet`.
 
   El frontmatter del agente ya decía `sonnet` desde **#3618** (v2.22.0, *«el agente evalúa
   Quality Gate Score»*); el lock nunca se reconcilió y quedó siendo la única declaración de
@@ -407,10 +407,10 @@ flujo de deprecation, release process, guías de migración).
   Verificar** — emite el veredicto PASS/FAIL del quality gate. El bloqueo existe en el
   validador solo para `phase_default`, no para `agent_pinning`, y por eso no se detectó.
 
-- **`sofka-asdd-security` gana `Write`.** Su definición de terminado le exige dejar el reporte
+- **`asdd-security` gana `Write`.** Su definición de terminado le exige dejar el reporte
   de hallazgos en un archivo y no tenía permiso de escritura.
 
-- **`sofka-asdd-cloud-architect` gana `Glob`, `Grep` y `Edit`.** Podía leer y escribir pero no
+- **`asdd-cloud-architect` gana `Glob`, `Grep` y `Edit`.** Podía leer y escribir pero no
   buscar ni editar, así que no podía revisar la infraestructura existente antes de proponer
   cambios sobre ella.
 
@@ -424,7 +424,7 @@ flujo de deprecation, release process, guías de migración).
     "Agentes disponibles" y "Skills disponibles por agente" y el listado literal de
     los 40 comandos: repetían en prosa el catálogo que el runtime ya inyecta, y se
     pagaba dos veces por turno. Ahora cumple su propia regla
-    `sofka-asdd-claude-md-maintenance` (máx ~150 líneas).
+    `asdd-claude-md-maintenance` (máx ~150 líneas).
   - **8 reglas partidas** en núcleo compacto always-on más reference on-demand, con
     la estrategia `compact-always-on-core-plus-explicit-reference-reader` que el
     template ya usaba en otras 9: `system-integrity`, `ba-layer-routing`,
@@ -448,8 +448,8 @@ flujo de deprecation, release process, guías de migración).
 - **8 agentes migrados a carga de capacidades bajo demanda** (cuerpos de `SKILL.md`
   cargados eager: 70.056 → 26.298 tokens, −62,5%; el manifiesto pasa de 8 agentes a 16). Un agente con `skills:` en el
   frontmatter carga el **cuerpo completo** de cada `SKILL.md` antes de hacer nada.
-  Pasan a catálogo en `.sofka-asdd/capability-loading.json` + loader
-  `sofka-asdd-load-capability.mjs`, el patrón que el template ya corría en 8 agentes:
+  Pasan a catálogo en `.asdd/capability-loading.json` + loader
+  `asdd-load-capability.mjs`, el patrón que el template ya corría en 8 agentes:
   - **Sin eager** (una skill por invocación): `data-architect`, `data-governance`,
     `cloud-architect`, `security`, `researcher`.
   - **Con 1 eager** —su escritor de registro, que toda corrida usa—:
@@ -459,7 +459,7 @@ flujo de deprecation, release process, guías de migración).
     `ba-specification-lead` y `ba-specification-auditor` (2 cada uno). Sus flujos
     usan 3 a 5 skills en una sola corrida y el runtime autoriza **primaria + 1
     dependencia** (`max_dependencies: 1`, enforzado en
-    `sofka-asdd-plan-authorization-lib.mjs` → `capability-mismatch`): migrarlos los
+    `asdd-plan-authorization-lib.mjs` → `capability-mismatch`): migrarlos los
     rompía. Su deuda de `eager_skills` queda visible en el validador, como antes.
 
   La deuda `eager_skills` pasa de 12 a 4 agentes. `data-eng-databricks` sigue afuera:
@@ -470,7 +470,7 @@ flujo de deprecation, release process, guías de migración).
   documento lo declaraba peso muerto — "NO INVOCAR ESTE MODO COMO SUB-AGENTE", "la
   lógica vive INLINE en el command" — y se cargaba en cada batch sin gobernar
   ninguna acción. Movido a
-  `.claude/reference/atf-web/sofka-asdd-atf-web-vua-conceptual-reference.md`.
+  `.claude/reference/atf-web/asdd-atf-web-vua-conceptual-reference.md`.
 
 - **`compatibility.min_cli_version` se reafirma en `0.9.8`**, y `min_cli_version_reviewed_at`
   pasa a `3.7.0`. Revisión del piso del CLI exigida por el bump MINOR (el umbral de
@@ -525,7 +525,7 @@ flujo de deprecation, release process, guías de migración).
   `-delete`, `-fprint`, `-fprintf`, `-fls` y `-o`/`--output`.
 
 - **El comando más mandado del framework estaba denegado.** Las 9 reglas always-on exigen
-  `node .claude/scripts/sofka-asdd-resolve-rule.mjs <regla>` en su bloque "Carga condicional
+  `node .claude/scripts/asdd-resolve-rule.mjs <regla>` en su bloque "Carga condicional
   obligatoria", y el hook de operaciones lo rechazaba: `SAFE_CAPABILITY_RESOLVER_RE` cubría el
   resolver hermano (`resolve-capability`) y no este. Detectado auditando las 358 superficies de
   instrucción de `.claude/` — 549 comandos que reglas, skills, agentes y comandos ordenan
@@ -539,32 +539,32 @@ flujo de deprecation, release process, guías de migración).
   estado y ninguna regla se lo manda a un agente; `plan-authorization` y `run-bootstrap` también,
   por ser control-plane del orquestador. Se agrega `git worktree list` (AL-005).
 
-- **`sofka-asdd-system-integrity` obliga a correr el validador y los tests del proyecto**, pero la
+- **`asdd-system-integrity` obliga a correr el validador y los tests del proyecto**, pero la
   invocación exacta no se conoce al planificar. Ahora el hook admite `npm test` y
   `npm run <script>` en su forma canónica, solo si el script está declarado en el `package.json`
   del proyecto y su nombre es de verificación. `setup`, `hash:regen`, cualquier script de entrega
   y `npm test -- --coverage` siguen exigiendo declaración.
 
-- **`sofka-asdd-ephemeral-artifacts` era inaplicable.** La regla aplica a TODO agente y le ordena
+- **`asdd-ephemeral-artifacts` era inaplicable.** La regla aplica a TODO agente y le ordena
   crear scratch en `.tmp/` (gitignoreado), prohibiendo explícitamente la raíz del repo. Ningún
   `scope[]` declara `.tmp/`, así que el guard dejaba al agente sin la única zona permitida.
 
 - **Las rutas que el propio framework obliga a escribir daban `scope-mismatch`.**
   `.claude/agent-memory/{agente}/**` y `.asdd-run.json` nunca aparecen en el `scope[]` de un plan,
-  pero `sofka-asdd-memory-hygiene` ordena persistir memoria y ORC-007 obliga a checkpointear el
+  pero `asdd-memory-hygiene` ordena persistir memoria y ORC-007 obliga a checkpointear el
   run: 7 de las 18 denegaciones de scope de la corrida. Ahora son scope implícito, fijo y no
   configurable desde el plan; un agente solo alcanza su propio directorio de memoria y el resto de
   `.claude/` sigue exigiendo scope.
 
-- **`.claude/scripts/sofka-asdd-resolve-workspace.mjs` volvió a `distribution`.** La ruta se
+- **`.claude/scripts/asdd-resolve-workspace.mjs` volvió a `distribution`.** La ruta se
   perdió al resolver un merge el 11-ago y estuvo ausente en v3.4.0, v3.5.0 y v3.5.1, pese a que
-  `.sofka-asdd/workspace.schema.json` —que sí se distribuye— la declara como fuente de verdad en
+  `.asdd/workspace.schema.json` —que sí se distribuye— la declara como fuente de verdad en
   runtime. Ningún check la detectaba: `cli-runtime-distribution` solo ve una ruta caída si otro
   artefacto distribuido la nombra por su path, y el schema la nombra dentro de una descripción que
   el barrido no alcanzaba. Es el caso que motiva el check nuevo de más abajo.
 
 - **La checklist de adopción pedía verificar un archivo que la guía de migración manda borrar.**
-  `.claude/docs/adoption/adoption-checklist.md` incluía «`.sofka-asdd/checklist.json` existe»
+  `.claude/docs/adoption/adoption-checklist.md` incluía «`.asdd/checklist.json` existe»
   entre los pasos de verificación manual, mientras `.claude/docs/migrations/3.3-to-3.4.md` indica
   eliminarlo — los dos documentos se distribuyen. Quien siguiera la checklist concluiría que la
   adopción falló. Se quitó el ítem y el encabezado ahora aclara que la checklist ejecutable vive
@@ -575,14 +575,14 @@ flujo de deprecation, release process, guías de migración).
   explícita: `DANGEROUS_GIT` no cubría `rebase` a secas ni las formas con tilde de "reescribir
   historia", y no existía ninguna detección para borrado/limpieza de ramas o worktrees.
 
-  Se agrega el check `dangerousGit` en `sofka-asdd-proportional-router-lib.mjs`, evaluado antes de
+  Se agrega el check `dangerousGit` en `asdd-proportional-router-lib.mjs`, evaluado antes de
   clasificar como `git_ops`: fuerza `depth: "MEDIUM"`, `confidence: 0.95`, excluye la vía rápida
   `LIGHT`/`TRIVIAL` y expande `DANGEROUS_GIT` para cubrir `rebase`, `squash`, `filter-repo` y las
   formas con tilde/voseo de "reescribir historia". Se agrega `DESTRUCTIVE_CLEANUP` para
   borrado/limpieza de rama(s)/branch(es)/worktree(s) y `branch -D`. `requires_confirmation` ahora
   deriva de `dangerousGit` en vez de re-testear `DANGEROUS_GIT` directamente, así que también cubre
   los casos de borrado. De paso se fusionaron dos declaraciones duplicadas de
-  `getPromptInjectionProfile` en `sofka-asdd-user-prompt-submit.mjs` que un merge anterior dejó
+  `getPromptInjectionProfile` en `asdd-user-prompt-submit.mjs` que un merge anterior dejó
   como `SyntaxError` — deshabilitaba en silencio el hook de enforcement en cada prompt.
 
 ### Added
@@ -594,12 +594,12 @@ flujo de deprecation, release process, guías de migración).
 
 - **El plan gate ORC-010 deja de aceptar una sola palabra.** El único punto donde se parseaba la
   respuesta del usuario era un regex de vocabulario cerrado y anclado a string completo
-  (`sofka-asdd-user-prompt-submit.mjs`), que fallaba con `"ok, dale"`, `"sí, procede"`,
+  (`asdd-user-prompt-submit.mjs`), que fallaba con `"ok, dale"`, `"sí, procede"`,
   `"perfecto"`, `"de acuerdo"`, `"hazlo"` o `"ok 👍"`. Peor: las skills documentaban palabras que
-  el regex no contenía (`sofka-asdd-tech-lead-commit` prometía `"procede"`, ausente del regex), así
+  el regex no contenía (`asdd-tech-lead-commit` prometía `"procede"`, ausente del regex), así
   que el usuario tipeaba lo documentado y el challenge no se consumía.
 
-  Ahora `.claude/scripts/lib/sofka-asdd-approval-intent-lib.mjs` clasifica por **raíz
+  Ahora `.claude/scripts/lib/asdd-approval-intent-lib.mjs` clasifica por **raíz
   morfológica** — una raíz cubre todas sus flexiones — y no por lista de palabras: una lista más
   larga es el mismo bug. La cola larga (`"brutal"`, `"va"`) deja el turno **elegible** para que el
   orquestador la resuelva con `plan-authorization.mjs approve --challenge-id <uuid>`, sin aflojar el
@@ -643,7 +643,7 @@ flujo de deprecation, release process, guías de migración).
   e `import.meta.url` ya viene resuelto: los procesos hijos salían con status 0 y stdout vacío, un
   falso "no hizo nada". Se resuelve el symlink con `realpathSync`.
 
-- **Procedencia publicada de cada ruta distribuida** en `.sofka-asdd/sofka-asdd-provenance.json`:
+- **Procedencia publicada de cada ruta distribuida** en `.asdd/asdd-provenance.json`:
   por cada ruta, el conjunto de hashes SHA-256 normalizados que esa ruta tuvo a lo largo de la
   historia. Hoy son **1042 rutas y 2446 materializaciones** (252,8 KB).
 
@@ -655,7 +655,7 @@ flujo de deprecation, release process, guías de migración).
   del template y se actualiza. Si no está, se preserva, que es el comportamiento de siempre.
 
   Se genera acá porque el CLI clona con `--depth 1` y no tiene historia con qué reconstruirlo.
-  El generador es `.claude/scripts/sofka-asdd-gen-provenance.mjs` (`npm run provenance:regen`),
+  El generador es `.claude/scripts/asdd-gen-provenance.mjs` (`npm run provenance:regen`),
   **no se distribuye**, y su salida es determinista: sin timestamps ni SHAs de tips, ordenada, de
   modo que el archivo solo cambia cuando cambia el contenido de una ruta distribuida.
 
@@ -679,10 +679,10 @@ flujo de deprecation, release process, guías de migración).
   comparación es por ruta, no por entrada. Las dos decisiones están medidas: comparar contra la
   versión inmediata anterior **no** habría detectado el caso de `resolve-workspace.mjs`, porque en
   esa versión ya faltaba; y comparar entrada contra entrada reporta el árbol entero de
-  `.sofka-asdd/` como caído solo porque dejó de declararse como directorio.
+  `.asdd/` como caído solo porque dejó de declararse como directorio.
 
   Tres retiros deliberados quedan registrados con su razón dentro del check —
-  `.sofka-asdd/checklist.json`, `ASDD-CHANGELOG.md` y el ADR-020 de worktree multi-repo, que se
+  `.asdd/checklist.json`, `ASDD-CHANGELOG.md` y el ADR-020 de worktree multi-repo, que se
   revirtió—. Se imprimen siempre, incluso cuando el check pasa.
 
 - **Check `provenance-freshness` en el validador** (error), que delega en el generador vía su
@@ -710,7 +710,7 @@ flujo de deprecation, release process, guías de migración).
   que no existe, sin decir por qué; y con cinco formas para tres modelos, la cadena
   `skill_override > agent_pinning > phase_default > frontmatter` comparaba valores que no eran
   comparables. El mismo cambio en `.claude/settings.json` (modelo del orquestador) y en
-  `.sofka-asdd/subagent-budget.json` (el mapa de modelos lógicos).
+  `.asdd/subagent-budget.json` (el mapa de modelos lógicos).
 
 - **131 skills dejan de declarar `allowed-tools`.** Una skill no gobierna sus herramientas: las
   tiene el agente que la carga. La declaración no hacía nada y sí creaba una segunda fuente que
@@ -719,15 +719,15 @@ flujo de deprecation, release process, guías de migración).
   reglas ya cargan por su propio mecanismo.
 
 - **8 skills del arquitecto de soluciones tenían un `name` que no era el suyo.** Declaraban
-  `sofka-asdd-architect-*` mientras el resto del framework las referenciaba como
-  `sofka-asdd-solution-architect-*`. Una skill cuyo `name` no coincide no se encuentra por el
+  `asdd-architect-*` mientras el resto del framework las referenciaba como
+  `asdd-solution-architect-*`. Una skill cuyo `name` no coincide no se encuentra por el
   nombre con el que se la invoca. Las ocho quedaron corregidas, y la tabla de enrutado del
   agente se reescribió para que cada situación apunte a una sola skill.
 
-- **`sofka-asdd-tech-lead` gana `Write`.** Su checklist le exige dejar el code review, el
+- **`asdd-tech-lead` gana `Write`.** Su checklist le exige dejar el code review, el
   quality gate y el plan de refactoring en `docs/tech/`, y no tenía permiso de escritura.
 
-- **`sofka-asdd-solution-architect` gana las dos consultas de documentación de librerías**
+- **`asdd-solution-architect` gana las dos consultas de documentación de librerías**
   (`mcp__context7__resolve-library-id`, `mcp__context7__query-docs`).
 
 - **`compatibility.min_cli_version` pasa de `0.9.6` a `0.9.8`**, y
@@ -781,7 +781,7 @@ Release de contrato: **no cambia ningún archivo distribuido**. Corrige
   tipo `2.0.0` en un fallo del validador en vez de un bloqueo en la máquina del consumidor.
 
 - **Validación de sincronía de la versión del template.** La versión vive en **cuatro** lugares
-  y un release los bumpea a mano: `sofka-asdd.lock` (`version` y `variants.claude.version`),
+  y un release los bumpea a mano: `asdd.lock` (`version` y `variants.claude.version`),
   `cli-contract.json` (`template.version`) y `package.json`. Nada verificaba que coincidieran, y
   los dos lectores discrepan en silencio cuando driftean: el CLI compara el lock del consumidor
   contra el lock remoto para ofrecer el upgrade, mientras que `template.version` es lo que queda
@@ -824,13 +824,13 @@ esa rama. El orden por canal es: **primero el CLI, después el template.**
 
 ## [3.5.0] - 2026-08-11
 
-Addon Smart Data: `1.0.0` → `1.2.0` (`.sofka-asdd/sofka-asdd-smart-data.lock` y el bloque
-`sub_locks` de `.sofka-asdd/sofka-asdd.lock`, que se mueven juntos).
+Addon Smart Data: `1.0.0` → `1.2.0` (`.asdd/asdd-smart-data.lock` y el bloque
+`sub_locks` de `.asdd/asdd.lock`, que se mueven juntos).
 
 > **Migración para engagements Data en curso.** MEJORA-001 renombra el naming canónico del
 > subdominio a `smart-data-eng-*`. El `analyze-guard` ya solo reconoce como equivalente-brief
 > un Excel `smart-data-eng-{cliente}.xlsx`, así que un engagement que venga de 3.4.0 debe
-> renombrar su Excel de trabajo antes de invocar `/sofka-asdd:data-eng-discover`; si no, la
+> renombrar su Excel de trabajo antes de invocar `/asdd:data-eng-discover`; si no, la
 > escritura de artefactos en `docs/specs/` queda bloqueada con M1/M2/M3.
 
 ### Fixed — feat/smart-data-v1.2
@@ -865,7 +865,7 @@ Los tres templates de Discover (`technical-discovery.md`, `governance-checklist.
 
 #### BUG-005 — Header design con YAML frontmatter y estado en español (`069f007`)
 
-El esqueleto del `smart-data-eng-design` y el `layer-decision-matrix.md` usaban prosa pipe-separated con `Estado: draft | approved` (en inglés). Se reemplazaron por YAML frontmatter con `estado: Borrador` en español. La condición de gate del SKILL.md que habilita `/sofka-asdd:data-eng-build` se actualizó para evaluar `estado: Borrador → Aprobado`.
+El esqueleto del `smart-data-eng-design` y el `layer-decision-matrix.md` usaban prosa pipe-separated con `Estado: draft | approved` (en inglés). Se reemplazaron por YAML frontmatter con `estado: Borrador` en español. La condición de gate del SKILL.md que habilita `/asdd:data-eng-build` se actualizó para evaluar `estado: Borrador → Aprobado`.
 
 #### BUG-006 — Header de estado por fase y deduplicación de gaps cross-artefacto
 
@@ -876,17 +876,17 @@ Dos gaps del flujo Discover sin corrección hasta ahora:
 
 #### BUG-007 — Procedimiento C: cierre formal de gaps antes de avanzar a design
 
-Discover no tenía protocolo definido para cerrar gaps antes de pasar a `/sofka-asdd:data-eng-design`: sin estado visible por `tipo_accion`, sin criterio operacional de "validado" (SD-001 solo decía "validado" sin definirlo) y sin flujo de resolución interactiva. Se agregó:
+Discover no tenía protocolo definido para cerrar gaps antes de pasar a `/asdd:data-eng-design`: sin estado visible por `tipo_accion`, sin criterio operacional de "validado" (SD-001 solo decía "validado" sin definirlo) y sin flujo de resolución interactiva. Se agregó:
 
 - **Opción 5 en el Paso 0** de `data-eng-discover.md`: "Cerrar gaps antes de avanzar a design", con prerequisito de que Procedimiento B ya haya corrido.
 - **Procedimiento C completo** (4 pasos): (1) leer gaps abiertos de ambos artefactos — tabla estructurada en governance-assessment, bloques inline en discovery; (2) semáforo por `tipo_accion` con conteo de bloqueantes reales (`conversation` y `excel-update` bloquean, el resto se difiere); (3) resolución interactiva uno por uno, con regla de trazabilidad obligatoria — un gap `conversation` nunca se cierra solo verbalmente, la resolución se escribe en disco antes de marcarlo cerrado; (4) criterio de salida explícito hacia design.
-- **Definición operacional de "validado"** agregada a SD-001 en `sofka-asdd-data-eng-workflow.md`: cero gaps `conversation` sin resolver + cero gaps `Critical` abiertos; el resto puede quedar diferido con owner/fecha sin bloquear.
-- `conversation` es un `tipo_accion` exclusivo del agente de discovery (`sofka-asdd-data-eng-discovery`) — el agente de gobernanza nunca lo genera; el semáforo y la escritura atómica del Procedimiento C respetan esa asimetría entre ambos artefactos en lugar de asumir una estructura idéntica.
+- **Definición operacional de "validado"** agregada a SD-001 en `asdd-data-eng-workflow.md`: cero gaps `conversation` sin resolver + cero gaps `Critical` abiertos; el resto puede quedar diferido con owner/fecha sin bloquear.
+- `conversation` es un `tipo_accion` exclusivo del agente de discovery (`asdd-data-eng-discovery`) — el agente de gobernanza nunca lo genera; el semáforo y la escritura atómica del Procedimiento C respetan esa asimetría entre ambos artefactos en lugar de asumir una estructura idéntica.
 - **Header de estado y "Siguiente paso del flujo" sincronizados con el cuarto procedimiento**: el header `[Fase: Discover · Procedimiento: {A|B|Sync|C} · ...]` (BUG-006) y la sección final `## Siguiente paso del flujo` no incluían la opción C al agregarla — ambos quedaron actualizados para reflejar los 4 procedimientos.
 
 #### BUG-008 — Atribución invertida de esquemas de ID en R-D2 (Procedimiento Sync de discovery)
 
-La regla **R-D2** de `sofka-asdd-data-eng-discovery/SKILL.md` (detectada como hallazgo preexistente durante la auditoría de BUG-007) llamaba "patrón de governance" a `G-NN`, cuando el esquema real es al revés: `G-NN` es el ID propio de discovery y `GOV-NNN` es el de governance-assessment (ver BUG-006). Además, citaba una sección "Próximos pasos" que no existe en discovery — ese nombre pertenece a `**Próximos pasos por gap**` de `governance-assessment`, mientras que discovery organiza sus gaps bajo `## Gaps y preguntas abiertas`.
+La regla **R-D2** de `asdd-data-eng-discovery/SKILL.md` (detectada como hallazgo preexistente durante la auditoría de BUG-007) llamaba "patrón de governance" a `G-NN`, cuando el esquema real es al revés: `G-NN` es el ID propio de discovery y `GOV-NNN` es el de governance-assessment (ver BUG-006). Además, citaba una sección "Próximos pasos" que no existe en discovery — ese nombre pertenece a `**Próximos pasos por gap**` de `governance-assessment`, mientras que discovery organiza sus gaps bajo `## Gaps y preguntas abiertas`.
 
 Corrección: R-D2 ahora distingue explícitamente los dos casos — menciones a `GOV-NNN` se verifican contra `### Gaps cerrados` de `smart-data-eng-governance-assessment-{cliente}.md`; menciones a `G-NN` se verifican dentro de la propia sección `## Gaps y preguntas abiertas` de discovery, ancladas al marcador `[RESUELTO — Procedimiento C, YYYY-MM-DD]` (definido en el Procedimiento C de `data-eng-discover.md`, BUG-007). Ningún otro archivo del template referenciaba la redacción anterior de R-D2.
 
@@ -908,7 +908,7 @@ de contenido del consumidor.
 ### Fixed
 
 - **`clean.files_to_remove` dejó de destruir contenido del consumidor**
-  (`.sofka-asdd/cli-contract.json`, `contract_version` 2.4.0 → 2.5.0). El CLI aplica esa
+  (`.asdd/cli-contract.json`, `contract_version` 2.4.0 → 2.5.0). El CLI aplica esa
   clave con `os.RemoveAll` **incondicional** después de copiar, sin comparar contenido ni
   hash. Tenía 12 entradas y **4 eran destructivas**:
   - `ASDD-MEMORY.md` y `.claude/docs/migrations/` **colisionaban con `distribution`**: el
@@ -919,7 +919,7 @@ de contenido del consumidor.
     11 artefactos distribuidos lo leen o escriben. El upgrade destruía el estado de la
     corrida activa.
   - `docs/runs/` son los **manifiestos de corrida** que escribe el hook distribuido
-    `sofka-asdd-run-manifest.mjs`. El upgrade borraba el historial del consumidor.
+    `asdd-run-manifest.mjs`. El upgrade borraba el historial del consumidor.
 
   Quedan 8 entradas, todas rutas que ningún runtime distribuido escribe. El criterio de
   admisibilidad quedó documentado en `contract-spec.md` §3.5.3 y enforzado por un check
@@ -981,12 +981,12 @@ de contenido del consumidor.
 
 ### Fixed
 
-- **`.gitattributes` entra en `distribution`** (`.sofka-asdd/cli-contract.json`,
+- **`.gitattributes` entra en `distribution`** (`.asdd/cli-contract.json`,
   `contract_version` 2.3.0 → 2.3.1). La política de EOL no llegaba a ningún proyecto
   consumidor: el template quedaba portable y los proyectos instalados no, así que la
   clase de defecto podía reproducirse ahí intacta. Cierra el blocker H-1 de VERIFY-002.
 - **`fingerprintSources` normaliza antes de hashear**
-  (`.claude/scripts/lib/sofka-asdd-artifact-runtime-lib.mjs`). Hasheaba bytes crudos de
+  (`.claude/scripts/lib/asdd-artifact-runtime-lib.mjs`). Hasheaba bytes crudos de
   disco a través de un helper de una línea, así que el fingerprint del caché de
   discovery invalidaba por cambio de SO en lugar de por cambio de contenido. El sitio
   que sí hashea bytes crudos a propósito (`loadDiscovery`, roundtrip byte-exacto de un
@@ -1049,19 +1049,19 @@ referenciados sin recibirlos.
   usuario: los 3 reportes `docs/testing/2026-08-03-001-VERIFY-00{1,2,3}-*.md` (200 KB de
   auditorías internas), `ASDD-CHANGELOG.md` (129 KB de historia de desarrollo), los ADRs
   `docs/adoption/ADR-002, ADR-004, ADR-006, ADR-007`,
-  `docs/architecture/decisions/ADR-020-*` y `.sofka-asdd/checklist.json` (checklist de
+  `docs/architecture/decisions/ADR-020-*` y `.asdd/checklist.json` (checklist de
   mantenimiento del template).
 - **`docs/testing/` deja de ser una entrada de directorio** y pasa a 6 rutas explícitas: las
   semillas de configuración que ATF API y ATF Web necesitan (`appweb.yaml`,
   `appweb.example.yaml`, `config.yaml`, `appapi.yaml`, `credentials.yaml.example`,
   `atf/config/.gitignore`). Borrar la carpeta completa habría roto el setup de ATF.
-- **`.sofka-asdd/` deja de ser una entrada de directorio** y pasa a lista explícita de 15
+- **`.asdd/` deja de ser una entrada de directorio** y pasa a lista explícita de 15
   archivos, para poder excluir `checklist.json`. `cli-contract.json` **se conserva**: el
   check `cli-contract` es de nivel `error` y falla si el archivo no existe, y `post_install`
   corre el validador con `must_pass: true` + `on_fail: rollback` — sacarlo convertía cada
   instalación nueva en un rollback.
 - **Adentro — lo que el consumidor necesitaba y no recibía:**
-  `.claude/scripts/sofka-asdd-regen-hashes.mjs` (sin él, personalizar una referencia de
+  `.claude/scripts/asdd-regen-hashes.mjs` (sin él, personalizar una referencia de
   regla hacía fallar el validador distribuido sin remediación posible, abortando la
   instalación), `.claude/docs/migrations/` (runbooks dirigidos al consumidor, con pasos que el CLI
   no ejecuta), `ASDD-MEMORY.md` (CLAUDE.md lo declara como índice de memoria y
@@ -1118,7 +1118,7 @@ archivos y actualización de referencias.
 
 ### Fixed — instrucciones distribuidas que eran falsas
 
-- **§7 de `sofka-asdd-system-integrity.md`** decía a los repos que instalan ASDD que
+- **§7 de `asdd-system-integrity.md`** decía a los repos que instalan ASDD que
   corrieran `npm test`. Las 45 suites son tooling de mantenedor y no se distribuyen, así que
   la instrucción era inejecutable. Ahora el paso del consumidor es
   `node .claude/scripts/validate-template.mjs` y `npm test` queda acotado explícitamente al
@@ -1138,13 +1138,13 @@ archivos y actualización de referencias.
   barrido las 6 semillas de config de ATF que sí viven bajo `docs/testing/`. El barrido pasa
   de 636 a **640 artefactos** sin exclusiones.
 - **5 citas de ADR quedaban colgando** al sacar esos ADRs de la distribución. Dos de ellas
-  vivían en reglas de runtime distribuidas (`sofka-asdd-spec-guard.md`,
-  `sofka-asdd-git-safety.md`) y tres en documentos recién agregados a la distribución
+  vivían en reglas de runtime distribuidas (`asdd-spec-guard.md`,
+  `asdd-git-safety.md`) y tres en documentos recién agregados a la distribución
   (`guia-uso-capa-ba-management.md`, `smart-data-integration-plan.md`,
   `migrations/2.25-to-2.26.md`). Ninguna era una instrucción de lectura: todas eran citas de
   procedencia ("fuente del mecanismo", "ADR de respaldo"). Se les quitó la **ruta**
   conservando el identificador y aclarando que el ADR vive en el repositorio del template.
-  El hash de `sofka-asdd-git-safety.md` se regeneró con `npm run hash:regen`.
+  El hash de `asdd-git-safety.md` se regeneró con `npm run hash:regen`.
 
 ## [3.3.0] - 2026-07-31
 
@@ -1155,14 +1155,14 @@ cambios, así que no requiere guía de migración.
 
 ### Added
 
-- **Contrato de workspace WS-001 (`.sofka-asdd/workspace.json`).** Declara dónde
+- **Contrato de workspace WS-001 (`.asdd/workspace.json`).** Declara dónde
   vive el código que ASDD implementa: un mapa de repos de desarrollo con `root`,
   `base_branch` y `branch_pattern` por proyecto. `root` acepta ruta relativa a la
   raíz del ASDD (`proyectos/<x>`) o absoluta, para adoptar ASDD sobre un repo ya
-  clonado. `.sofka-asdd/workspace.local.json` (gitignored) permite el override
+  clonado. `.asdd/workspace.local.json` (gitignored) permite el override
   por máquina sin versionar rutas personales. Schema en
-  `.sofka-asdd/workspace.schema.json`.
-- **Resolver `sofka-asdd-resolve-workspace.mjs`.** Única fuente de verdad en
+  `.asdd/workspace.schema.json`.
+- **Resolver `asdd-resolve-workspace.mjs`.** Única fuente de verdad en
   runtime sobre `project_root`, `branch`, `worktree_path`, `base_branch` y los
   comandos git exactos del handoff. Fail-closed: valida repo git, commit inicial,
   existencia de `base_branch`, validez y no-colisión de la rama, escribibilidad
@@ -1184,7 +1184,7 @@ cambios, así que no requiere guía de migración.
 - **Directorio de worktrees.** `{project_root}/../.asdd-worktrees/{rama}` —
   hermano del project root, fuera del working tree del proyecto y del ASDD.
 - **Ramas de desarrollo parametrizables.** `branch_pattern` con `{ticket}`,
-  `{slug}`, `{area}`, `{run_id}`, validado contra `SOFKA_ASDD_GITFLOW_PREFIXES`
+  `{slug}`, `{area}`, `{run_id}`, validado contra `ASDD_GITFLOW_PREFIXES`
   y `git check-ref-format`. Un patrón sin discriminador devuelve
   `parallel_safe: false` y ORC-011-A degrada a lotes secuenciales.
 - **ORC-011-G prohíbe el fallback de rol.** Un fallo de resolución de workspace
@@ -1196,8 +1196,8 @@ cambios, así que no requiere guía de migración.
 - **`testing-capabilities.yaml`.** Los comandos se ejecutan dentro del worktree
   del repo de desarrollo, no en la raíz del ASDD. Documentado en el encabezado.
 - **`.gitignore`.** Se ignoran `proyectos/`, `.asdd-worktrees/`, `.wt-*/` y
-  `.sofka-asdd/workspace.local.json`.
-- **Gate de workspace en `/sofka-asdd:build`.** La fase Construir resuelve el
+  `.asdd/workspace.local.json`.
+- **Gate de workspace en `/asdd:build`.** La fase Construir resuelve el
   workspace antes de delegar al primer agente que produce código.
 - **Allow-list del orchestrator-guard.** Autoriza el resolver como comando de
   control del orquestador; rechaza chaining, sustitución de comandos y flags
@@ -1232,7 +1232,7 @@ cambios, así que no requiere guía de migración.
 
 Tras actualizar el plugin `databricks aitools` a v0.2.0, los tres nombres de skill
 cambiaron en el registry del Dev Kit. Se actualizaron en `cli-contract.json`
-(`provides_skills`) y en el agente `sofka-asdd-data-eng-databricks.md`:
+(`provides_skills`) y en el agente `asdd-data-eng-databricks.md`:
 
 | Nombre anterior | Nombre nuevo |
 |---|---|
@@ -1245,7 +1245,7 @@ Los dos baselines de roles en `docs/baselines/2026-07-25-001-ANALYZE-008-*` y
 actualizados al naming nuevo), pero son snapshots históricos generados antes de este
 rename (commit `5846fa7`, 2026-07-25) y llevan un campo `"warning"` que lo indica.
 **No son runtime** — ningún agente, hook ni script los lee. Si se necesita un baseline
-fresco y preciso, generar uno nuevo con `sofka-asdd-researcher` (skill `spike`) sobre
+fresco y preciso, generar uno nuevo con `asdd-researcher` (skill `spike`) sobre
 la rama `dev` una vez mergeado este branch, usando como nombre de artefacto
 `YYYY-MM-DD-NNN-ANALYZE-*` con la fecha del día.
 
@@ -1256,42 +1256,42 @@ Aplicando el mismo patrón namespace/subdominio que usa ATF (`atf` → `atf-api`
 `data-engineering` como primer subdominio. La plataforma (Databricks hoy,
 AWS/Fabric después) pasa a ser un parámetro dentro del flujo `data-engineering`.
 
-**Commands** (`.claude/commands/sofka-asdd/`):
+**Commands** (`.claude/commands/asdd/`):
 
 | Anterior | Nuevo |
 |---|---|
-| `data-discover.md` → `/sofka-asdd:data-discover` | `data-eng-discover.md` → `/sofka-asdd:data-eng-discover` |
-| `data-design.md` → `/sofka-asdd:data-design` | `data-eng-design.md` → `/sofka-asdd:data-eng-design` |
-| `data-build.md` → `/sofka-asdd:data-build` | `data-eng-build.md` → `/sofka-asdd:data-eng-build` |
-| `data-validate.md` → `/sofka-asdd:data-validate` | `data-eng-validate.md` → `/sofka-asdd:data-eng-validate` |
-| `data-publish.md` → `/sofka-asdd:data-publish` | `data-eng-publish.md` → `/sofka-asdd:data-eng-publish` |
+| `data-discover.md` → `/asdd:data-discover` | `data-eng-discover.md` → `/asdd:data-eng-discover` |
+| `data-design.md` → `/asdd:data-design` | `data-eng-design.md` → `/asdd:data-eng-design` |
+| `data-build.md` → `/asdd:data-build` | `data-eng-build.md` → `/asdd:data-eng-build` |
+| `data-validate.md` → `/asdd:data-validate` | `data-eng-validate.md` → `/asdd:data-eng-validate` |
+| `data-publish.md` → `/asdd:data-publish` | `data-eng-publish.md` → `/asdd:data-eng-publish` |
 
 **Reference files** (`.claude/reference/smart-data/` → `.claude/reference/data-engineering/`):
 
 | Anterior | Nuevo |
 |---|---|
-| `sofka-asdd-data-workflow.md` | `sofka-asdd-data-eng-workflow.md` |
-| `sofka-asdd-data-lineage.md` | `sofka-asdd-data-eng-lineage.md` |
-| `sofka-asdd-data-schema-contracts.md` | `sofka-asdd-data-eng-schema-contracts.md` |
-| `sofka-asdd-data-retention.md` | `sofka-asdd-data-eng-retention.md` |
-| `sofka-asdd-data-inter-contracts.md` | `sofka-asdd-data-eng-inter-contracts.md` |
+| `asdd-data-workflow.md` | `asdd-data-eng-workflow.md` |
+| `asdd-data-lineage.md` | `asdd-data-eng-lineage.md` |
+| `asdd-data-schema-contracts.md` | `asdd-data-eng-schema-contracts.md` |
+| `asdd-data-retention.md` | `asdd-data-eng-retention.md` |
+| `asdd-data-inter-contracts.md` | `asdd-data-eng-inter-contracts.md` |
 
-> Las tres rules transversales del namespace `data` (`sofka-asdd-data-boundary.md`,
-> `sofka-asdd-data-events-integrity.md`, `sofka-asdd-data-routing.md`) NO se renombraron:
+> Las tres rules transversales del namespace `data` (`asdd-data-boundary.md`,
+> `asdd-data-events-integrity.md`, `asdd-data-routing.md`) NO se renombraron:
 > aplican al namespace completo, no al subdominio `data-engineering`.
 
 **Skills** (directorios en `.claude/skills/`):
 
 | Anterior | Nuevo |
 |---|---|
-| `sofka-asdd-data-discovery/` | `sofka-asdd-data-eng-discovery/` |
-| `sofka-asdd-data-architecture-design/` | `sofka-asdd-data-eng-architecture-design/` |
-| `sofka-asdd-data-contract/` | `sofka-asdd-data-eng-contract/` |
-| `sofka-asdd-data-governance-assessment/` | `sofka-asdd-data-eng-governance-assessment/` |
+| `asdd-data-discovery/` | `asdd-data-eng-discovery/` |
+| `asdd-data-architecture-design/` | `asdd-data-eng-architecture-design/` |
+| `asdd-data-contract/` | `asdd-data-eng-contract/` |
+| `asdd-data-governance-assessment/` | `asdd-data-eng-governance-assessment/` |
 
-Los agentes `sofka-asdd-data-architect.md` y `sofka-asdd-data-governance.md`
+Los agentes `asdd-data-architect.md` y `asdd-data-governance.md`
 actualizaron sus listas `skills:` y las rutas hardcoded a reference files.
-`CLAUDE.md` y `.claude/hooks/sofka-asdd-pre-tool-use-analyze-guard.mjs` actualizados.
+`CLAUDE.md` y `.claude/hooks/asdd-pre-tool-use-analyze-guard.mjs` actualizados.
 
 #### .gitignore — AI Dev Kit local state files (Part 3)
 
@@ -1315,8 +1315,8 @@ local de instalación del AI Dev Kit (no versionable):
   alterar la configuración efectiva de permisos, modelo, hooks, worktrees ni
   plugins. Esto evita fallos en lectores JSON que no toleran BOM.
 - **Integridad de carga condicional (`19fe357`)**: se actualizó en
-  `.sofka-asdd/rule-loading.json` el `reference_sha256` de
-  `sofka-asdd-routing-heuristics` a
+  `.asdd/rule-loading.json` el `reference_sha256` de
+  `asdd-routing-heuristics` a
   `3ed2bcaa06880242ec6116d43deb5a32a6410a99509c530408d17746fd62a46c`,
   correspondiente al contenido vigente de la regla, eliminando el hash
   obsoleto y restaurando la verificación de integridad.
@@ -1326,52 +1326,52 @@ local de instalación del AI Dev Kit (no versionable):
 ### Added — Capa BA refactor (ADR-010)
 
 - **5 agentes BA nuevos** (consolidan los 9 anteriores):
-  `sofka-asdd-ba-functional-architect`, `sofka-asdd-ba-specification-lead`,
-  `sofka-asdd-ba-specification-auditor`, `sofka-asdd-ba-functional-sme`,
-  `sofka-asdd-ba-scope-manager`.
-- **17 skills BA nuevos o renombrados**: `sofka-asdd-ba-brief`,
-  `sofka-asdd-ba-change-log`, `sofka-asdd-ba-client-validation`,
-  `sofka-asdd-ba-early-scope`, `sofka-asdd-ba-functional-sme-dominio`,
-  `sofka-asdd-ba-functional-sme-sector`, `sofka-asdd-ba-log-lessons-learned`,
-  `sofka-asdd-ba-requirements`, `sofka-asdd-ba-scope-control`,
-  `sofka-asdd-ba-specification-auditor-coherencia`,
-  `sofka-asdd-ba-specification-auditor-gaps`,
-  `sofka-asdd-ba-specification-auditor-mece`,
-  `sofka-asdd-ba-specification-lead-contexto`,
-  `sofka-asdd-ba-specification-lead-extraccion`,
-  `sofka-asdd-ba-specification-lead-gherkin`,
-  `sofka-asdd-ba-uat-classifier`, `sofka-asdd-ba-user-story`.
+  `asdd-ba-functional-architect`, `asdd-ba-specification-lead`,
+  `asdd-ba-specification-auditor`, `asdd-ba-functional-sme`,
+  `asdd-ba-scope-manager`.
+- **17 skills BA nuevos o renombrados**: `asdd-ba-brief`,
+  `asdd-ba-change-log`, `asdd-ba-client-validation`,
+  `asdd-ba-early-scope`, `asdd-ba-functional-sme-dominio`,
+  `asdd-ba-functional-sme-sector`, `asdd-ba-log-lessons-learned`,
+  `asdd-ba-requirements`, `asdd-ba-scope-control`,
+  `asdd-ba-specification-auditor-coherencia`,
+  `asdd-ba-specification-auditor-gaps`,
+  `asdd-ba-specification-auditor-mece`,
+  `asdd-ba-specification-lead-contexto`,
+  `asdd-ba-specification-lead-extraccion`,
+  `asdd-ba-specification-lead-gherkin`,
+  `asdd-ba-uat-classifier`, `asdd-ba-user-story`.
 - **Protocolo epistémico SME** — 5 marcadores canónicos (`[CERTEZA]`,
   `[INFERENCIA]`, `[ESPECÍFICO_CLIENTE]`, `[NO_SÉ]`, `[RIESGO_REGULATORIO]`)
   con reglas de anclaje regulatorio y calibración de práctica estándar.
 - **Layout A (ART-001)** — artefactos BA ahora usan naming plano en `docs/specs/`;
   código de nodo EDT embebido en el slug. Ver
-  `.claude/reference/ba/sofka-asdd-ba-specs-layout.md`.
-- **`sofka-asdd-ba-layer-routing.md`** — regla de routing actualizada con 5
+  `.claude/reference/ba/asdd-ba-specs-layout.md`.
+- **`asdd-ba-layer-routing.md`** — regla de routing actualizada con 5
   agentes y Layout A; reemplaza la versión antigua.
-- **3 nuevas referencias BA**: `sofka-asdd-ba-change-log-contract.md`,
-  `sofka-asdd-ba-specification-lead-iteracion.md`,
-  `sofka-asdd-ba-specs-layout.md` en `.claude/reference/ba/`.
+- **3 nuevas referencias BA**: `asdd-ba-change-log-contract.md`,
+  `asdd-ba-specification-lead-iteracion.md`,
+  `asdd-ba-specs-layout.md` en `.claude/reference/ba/`.
 - **ADR-010** — formaliza el refactor consolidador de la capa BA.
 
 ### Changed
 
-- `sofka-asdd-ba-layer-routing.md` — actualizado con nuevos nombres de agentes
+- `asdd-ba-layer-routing.md` — actualizado con nuevos nombres de agentes
   y Layout A.
-- `sofka-asdd-spec-guard.md` — agentes CR y skill de change-log actualizados
-  (`sofka-asdd-ba-scope-manager`, `sofka-asdd-ba-specification-lead`,
-  `sofka-asdd-ba-change-log`).
-- `coordinator-loading.json` — entrada `sofka-asdd-ba-descomponedor` →
-  `sofka-asdd-ba-functional-architect` con SHA-256 recomputados.
+- `asdd-spec-guard.md` — agentes CR y skill de change-log actualizados
+  (`asdd-ba-scope-manager`, `asdd-ba-specification-lead`,
+  `asdd-ba-change-log`).
+- `coordinator-loading.json` — entrada `asdd-ba-descomponedor` →
+  `asdd-ba-functional-architect` con SHA-256 recomputados.
 - ADR-006 — estado actualizado a "Aceptada (parcialmente supersedida por ADR-010)".
 
 ### Deprecated
 
-- 4 agentes BA antiguos: `sofka-asdd-ba-descomponedor`, `sofka-asdd-ba-constructor`,
-  `sofka-asdd-ba-evaluador`, `sofka-asdd-ba-bitacora` — eliminados de `.claude/agents/`.
-- 7 skills BA con nombres antiguos: `sofka-asdd-ba-bitacora-log`,
-  `sofka-asdd-ba-constructor-{contexto,extraccion,gherkin}`,
-  `sofka-asdd-ba-evaluador-{coherencia,gaps,mece}` — reemplazados por los
+- 4 agentes BA antiguos: `asdd-ba-descomponedor`, `asdd-ba-constructor`,
+  `asdd-ba-evaluador`, `asdd-ba-bitacora` — eliminados de `.claude/agents/`.
+- 7 skills BA con nombres antiguos: `asdd-ba-bitacora-log`,
+  `asdd-ba-constructor-{contexto,extraccion,gherkin}`,
+  `asdd-ba-evaluador-{coherencia,gaps,mece}` — reemplazados por los
   nuevos; directorios pendientes de borrado manual.
 
 ## [3.0.1] - 2026-07-27
@@ -1399,13 +1399,13 @@ operaciones y nombres de artefactos nuevos. Ver
 
 - **Dispatchers en lugar de cadenas de hooks:** `PreToolUse` para
   `Bash|Write|Edit` se registra mediante
-  `sofka-asdd-pre-tool-dispatcher.mjs`, y `SessionStart` mediante
-  `sofka-asdd-session-start-dispatcher.mjs`. Se retira el entrypoint
-  `sofka-asdd-session-start.mjs` y los hooks de contexto reemplazados quedan
+  `asdd-pre-tool-dispatcher.mjs`, y `SessionStart` mediante
+  `asdd-session-start-dispatcher.mjs`. Se retira el entrypoint
+  `asdd-session-start.mjs` y los hooks de contexto reemplazados quedan
   únicamente como fixtures legacy de benchmark.
 - **Rules especializadas bajo demanda:** diez rules dejan de ser always-on en
   `.claude/rules/` y pasan a `.claude/references/rules/`. Los agentes deben
-  resolverlas explícitamente con `sofka-asdd-resolve-rule.mjs`; rutas directas
+  resolverlas explícitamente con `asdd-resolve-rule.mjs`; rutas directas
   antiguas dejan de ser válidas.
 - **Autorización vinculada a la ejecución:** un plan aprobado ya no autoriza
   genéricamente al agente. El launch y cada `Write`, `Edit` o Bash sensible
@@ -1536,15 +1536,15 @@ operaciones y nombres de artefactos nuevos. Ver
 
 ### Added
 
-- **Guía de dependencias runtime de ATF Web**: `.claude/docs/adoption/atf-web-setup-dependencies.md` documenta las dependencias de Node.js que requiere el pipeline ATF Web (`@playwright/mcp`, `glob`, `mssql`, `@playwright/test`, `axe-core`, `mammoth`, `pdf-parse`, `pptx2json`, `xlsx`) y su comando de instalación — no formaban parte del core del template y no se instalaban automáticamente al adoptar el template. Se agrega puntero descubrible desde `sofka-asdd-atf-web-qa-engineer` y `/sofka-asdd:qa-web-setup-app`, y se distribuye el nuevo doc vía `.sofka-asdd/cli-contract.json`.
+- **Guía de dependencias runtime de ATF Web**: `.claude/docs/adoption/atf-web-setup-dependencies.md` documenta las dependencias de Node.js que requiere el pipeline ATF Web (`@playwright/mcp`, `glob`, `mssql`, `@playwright/test`, `axe-core`, `mammoth`, `pdf-parse`, `pptx2json`, `xlsx`) y su comando de instalación — no formaban parte del core del template y no se instalaban automáticamente al adoptar el template. Se agrega puntero descubrible desde `asdd-atf-web-qa-engineer` y `/asdd:qa-web-setup-app`, y se distribuye el nuevo doc vía `.asdd/cli-contract.json`.
 
 ### Fixed
 
-- **Bug B — guards de git resuelven el repo efectivo del comando (soporte de repos anidados, arregla falso positivo que bloqueaba commits legítimos)**: los 3 guards de git (`sofka-asdd-guard-branch.mjs`, `sofka-asdd-pre-push-gate.mjs`, `sofka-asdd-pre-pr-gate.mjs`) ya no asumen que git corre siempre sobre `CLAUDE_PROJECT_DIR` — resuelven el repo EFECTIVO del comando (`cd X &&`, `git -C X`, `input.cwd`) antes de evaluar rama, diff o el marcador GS-008, vía el helper compartido `.claude/hooks/_lib/git-command-cwd.mjs`. Iteraciones R3→R3d cerraron 4 clases de bypass encontradas en auditorías adversariales sucesivas (correlación incorrecta de `-C` multi-git, separadores newline/subshell, construcciones no parseables como eval/pipe, comillas y `pushd`/`popd`), siempre fail-closed ante ambigüedad. Reencuadre de doctrina en `sofka-asdd-git-safety.md` (GS-001): los guards son **safety-net contra el error accidental**, no barrera contra evasión deliberada — esa barrera real es **branch protection server-side** (GitLab/GitHub rechaza pushes directos a ramas protegidas) + el escape hatch auditable existente para releases. Residuales (`--git-dir`/`--work-tree`, variables de shell sin resolver, symlinks) quedan documentados y aceptados by-design — ver ADR-007 (`docs/adoption/ADR-007-git-guards-threat-model-reenfoque.md`) para el análisis completo y la Opción D (git hooks nativos) como follow-up futuro opcional.
+- **Bug B — guards de git resuelven el repo efectivo del comando (soporte de repos anidados, arregla falso positivo que bloqueaba commits legítimos)**: los 3 guards de git (`asdd-guard-branch.mjs`, `asdd-pre-push-gate.mjs`, `asdd-pre-pr-gate.mjs`) ya no asumen que git corre siempre sobre `CLAUDE_PROJECT_DIR` — resuelven el repo EFECTIVO del comando (`cd X &&`, `git -C X`, `input.cwd`) antes de evaluar rama, diff o el marcador GS-008, vía el helper compartido `.claude/hooks/_lib/git-command-cwd.mjs`. Iteraciones R3→R3d cerraron 4 clases de bypass encontradas en auditorías adversariales sucesivas (correlación incorrecta de `-C` multi-git, separadores newline/subshell, construcciones no parseables como eval/pipe, comillas y `pushd`/`popd`), siempre fail-closed ante ambigüedad. Reencuadre de doctrina en `asdd-git-safety.md` (GS-001): los guards son **safety-net contra el error accidental**, no barrera contra evasión deliberada — esa barrera real es **branch protection server-side** (GitLab/GitHub rechaza pushes directos a ramas protegidas) + el escape hatch auditable existente para releases. Residuales (`--git-dir`/`--work-tree`, variables de shell sin resolver, symlinks) quedan documentados y aceptados by-design — ver ADR-007 (`docs/adoption/ADR-007-git-guards-threat-model-reenfoque.md`) para el análisis completo y la Opción D (git hooks nativos) como follow-up futuro opcional.
 
 ## [2.27.3] - 2026-07-08
 
-Versión PATCH: distribución del CLI corregida — `sofka init`/`sofka update` dejaban de instalar directorios y ADRs que el propio template referencia desde reglas y agentes, generando referencias colgantes en cada proyecto consumidor. Causa raíz: drift del array `distribution[]` en `.sofka-asdd/cli-contract.json` respecto al contenido real del repositorio.
+Versión PATCH: distribución del CLI corregida — `guide init`/`guide update` dejaban de instalar directorios y ADRs que el propio template referencia desde reglas y agentes, generando referencias colgantes en cada proyecto consumidor. Causa raíz: drift del array `distribution[]` en `.asdd/cli-contract.json` respecto al contenido real del repositorio.
 
 ### Fixed
 
@@ -1559,9 +1559,9 @@ Versión PATCH: Bug C — el hook `coauthorship-guard` cubre vectores de escape 
 
 ### Fixed
 
-- **`coauthorship-guard` cubre vectores de escape (C1-C5)**: la cobertura previa del hook `sofka-asdd-pre-tool-use-coauthorship-guard.mjs` solo interceptaba `git commit`, `glab mr create` y `gh pr create`. Se amplía la allowlist para cubrir también `glab mr update`/`glab mr edit`/`gh pr edit` (un MR limpio no se puede "enriquecer" después con atribución de IA), `glab api .../merge_requests` y `gh api .../pulls` con métodos de escritura (`POST`/`PUT`/`PATCH`), variantes de prosa sin el trailer canónico (`"Generated with Claude Code"`, `"Generated by Anthropic"`, `"Assisted by Claude"`, `"Written by Claude"`) y archivos escritos con `Write`/`Edit` destinados a ser cuerpo de MR/PR (`--description-file`/`--body-file`/`-F`).
+- **`coauthorship-guard` cubre vectores de escape (C1-C5)**: la cobertura previa del hook `asdd-pre-tool-use-coauthorship-guard.mjs` solo interceptaba `git commit`, `glab mr create` y `gh pr create`. Se amplía la allowlist para cubrir también `glab mr update`/`glab mr edit`/`gh pr edit` (un MR limpio no se puede "enriquecer" después con atribución de IA), `glab api .../merge_requests` y `gh api .../pulls` con métodos de escritura (`POST`/`PUT`/`PATCH`), variantes de prosa sin el trailer canónico (`"Generated with Claude Code"`, `"Generated by Anthropic"`, `"Assisted by Claude"`, `"Written by Claude"`) y archivos escritos con `Write`/`Edit` destinados a ser cuerpo de MR/PR (`--description-file`/`--body-file`/`-F`).
 - **Fix R2b — candidatura del matcher `Write`**: la ampliación C1-C5 del matcher `Write` bloqueaba de forma colateral documentación legítima del template (paths como `docs/tech/*.md`). Se introduce una allowlist positiva de paths candidatos a "cuerpo de MR/PR" (basename o ruta con `description`/`body`/`mr-`/`pr-`), de modo que el matcher solo se activa sobre archivos que realmente son candidatos a ser el cuerpo de un MR/PR — trade-off documentado en el bug report `BUILD-007`.
-- **Skill `sofka-asdd-tech-lead-create-mr` actualizada**: documenta el patrón obligatorio de heredoc (`--description "$(cat <<'EOF' ... EOF)"`) para descripciones largas de MR, evitando el patrón `--description-file`/`--body-file`/`-F` sobre archivos pre-escritos con `Write`.
+- **Skill `asdd-tech-lead-create-mr` actualizada**: documenta el patrón obligatorio de heredoc (`--description "$(cat <<'EOF' ... EOF)"`) para descripciones largas de MR, evitando el patrón `--description-file`/`--body-file`/`-F` sobre archivos pre-escritos con `Write`.
 - **Suite de tests extendida**: la suite `coauthorship-guard` crece de 18 a 25 casos cubriendo los vectores C1-C5 y la allowlist positiva del fix R2b.
 
 Trazabilidad: bug report `docs/tech/2026-07-07-001-BUILD-007-*`, plan maestro `BUILD-001`.
@@ -1575,7 +1575,7 @@ Versión PATCH (retroactiva): Bug A — naming de `artifact-name-guard` y de run
 - **`current_phase` con enum + fallback compartido**: se centraliza la resolución de la fase actual del run con un enum y un fallback compartido, eliminando divergencias entre hooks que interpretaban la fase de forma distinta.
 - **`--dry-run` no consume `artifact_seq`**: las corridas en modo dry-run ya no incrementan el contador de secuencia de artefactos, evitando huecos de numeración en runs reales.
 - **`run complete` degrada a aviso**: un run marcado `complete` deja de bloquear duro y degrada a aviso, permitiendo continuidad operativa sin perder la señal de estado.
-- **`docs/tech` exento del `artifact-name-guard`**: los artefactos producidos por `sofka-asdd-tech-lead` en `docs/tech/` quedan exentos del naming estricto de artefactos de run, alineado con su naturaleza de reporte transversal.
+- **`docs/tech` exento del `artifact-name-guard`**: los artefactos producidos por `asdd-tech-lead` en `docs/tech/` quedan exentos del naming estricto de artefactos de run, alineado con su naturaleza de reporte transversal.
 - **`analyze-guard` exime `bug-*.md`**: los reportes de bug (`docs/specs/bug-*.md`) quedan exentos del gate de `analyze-guard`, ya que no son artefactos del flujo Analizar.
 - **Renombrado `hooks/lib` → `hooks/_lib` (E2)**: el directorio interno de utilidades compartidas de hooks se renombra con prefijo `_` para señalizar explícitamente que no es un hook ejecutable propio.
 - **Nuevo check `asdd-run-json-schema`**: se agrega verificación de schema para `.asdd-run.json` en el validador del template.
@@ -1586,32 +1586,32 @@ Versión MINOR: **carga condicional de rules de dominio** (ADR-005). Las 5 rules
 
 ### Changed
 
-- **Rules ATF Web fuera del auto-load (ADR-005)**: 5 rules del pipeline ATF Web se mueven de `.claude/rules/` a `.claude/reference/atf-web/` (commit `1d4c421`); el pipeline las carga por path desde `sofka-asdd-atf-web-qa-engineer` y sus phase-specs. `.claude/rules/` queda reservado para rules **universales** (git-safety, anti-loops, data-boundary, system-integrity, memory-*, etc.) y de **orquestación** (orchestration*, workflow*, routing*), que sí aplican a cualquier agente y conservan el auto-load.
-- **6 rules Smart Data revertidas al auto-load**: se movieron a `.claude/reference/smart-data/` (commit `62978b6`) y se revirtieron porque son transversales "siempre activas" **sin punto de lectura explícito** — moverlas dejaba a los agentes Data sin gobernanza en runtime (`sofka-asdd-data-{routing,workflow,schema-contracts,lineage,retention,inter-contracts}.md`). Vía futura para recuperar su ≈ −14k: darles un `Read` explícito en su agente/command dueño antes de retirarlas (ver ADR-005 §Vía futura). `sofka-asdd-data-boundary.md` y `sofka-asdd-data-events-integrity.md` nunca se movieron: pese al prefijo `data-`, son universales (seguridad anti prompt-injection e integridad de persistencia/eventos) que aplican a todo agente.
+- **Rules ATF Web fuera del auto-load (ADR-005)**: 5 rules del pipeline ATF Web se mueven de `.claude/rules/` a `.claude/reference/atf-web/` (commit `1d4c421`); el pipeline las carga por path desde `asdd-atf-web-qa-engineer` y sus phase-specs. `.claude/rules/` queda reservado para rules **universales** (git-safety, anti-loops, data-boundary, system-integrity, memory-*, etc.) y de **orquestación** (orchestration*, workflow*, routing*), que sí aplican a cualquier agente y conservan el auto-load.
+- **6 rules Smart Data revertidas al auto-load**: se movieron a `.claude/reference/smart-data/` (commit `62978b6`) y se revirtieron porque son transversales "siempre activas" **sin punto de lectura explícito** — moverlas dejaba a los agentes Data sin gobernanza en runtime (`asdd-data-{routing,workflow,schema-contracts,lineage,retention,inter-contracts}.md`). Vía futura para recuperar su ≈ −14k: darles un `Read` explícito en su agente/command dueño antes de retirarlas (ver ADR-005 §Vía futura). `asdd-data-boundary.md` y `asdd-data-events-integrity.md` nunca se movieron: pese al prefijo `data-`, son universales (seguridad anti prompt-injection e integridad de persistencia/eventos) que aplican a todo agente.
 
 ### Added
 
-- **Convención `.claude/reference/{domain}/` (ADR-005)**: nuevo directorio **no auto-cargado**, hogar canónico de las rules de dominio. Los agentes de dominio las referencian y leen por path explícito (ej. `reference/atf-web/…` citado por `sofka-asdd-atf-web-qa-engineer`). Documentado en `.claude/docs/adoption/naming-convention.md` §3.5.
+- **Convención `.claude/reference/{domain}/` (ADR-005)**: nuevo directorio **no auto-cargado**, hogar canónico de las rules de dominio. Los agentes de dominio las referencian y leen por path explícito (ej. `reference/atf-web/…` citado por `asdd-atf-web-qa-engineer`). Documentado en `.claude/docs/adoption/naming-convention.md` §3.5.
 - **ADR-005 — Carga condicional de rules**: `docs/adoption/ADR-005-conditional-rule-loading.md` (Propuesta) — root-cause del thrashing, clasificación universal/orquestación/dominio, lección de la reversión Smart Data (solo es seguro mover rules con lector explícito) + vía futura para recuperar el −14k, evidencia empírica WU-T0 (`/context` 117.2k → 108.2k al mover 1 rule) y follow-up para endurecer el check `broken-skill-references` (hoy no valida rutas de 2 niveles `reference/{domain}/X.md`).
 
 ### Notes
 
-- **`sofka-asdd-counts`**: el conteo `rules` del lock es **29** — las 5 rules ATF Web salieron a `.claude/reference/atf-web/` (el check `walk('.claude/rules')` no recurre a `.claude/reference/`, directorio hermano) y las 6 Smart Data volvieron al auto-load. Coincide con `.claude/rules/`.
+- **`asdd-counts`**: el conteo `rules` del lock es **29** — las 5 rules ATF Web salieron a `.claude/reference/atf-web/` (el check `walk('.claude/rules')` no recurre a `.claude/reference/`, directorio hermano) y las 6 Smart Data volvieron al auto-load. Coincide con `.claude/rules/`.
 - **Follow-up conocido**: `broken-skill-references` en `validate-template.mjs` solo resuelve referencias de un nivel (`reference/X.md`); las rutas anidadas `reference/{domain}/X.md` no se validan. Endurecimiento recomendado como trabajo separado (ver ADR-005 §Limitación conocida).
 
 ### Migración Smart-Data (ADR-005 Enmienda 1 — 2026-07-07, misma fecha, ciclo posterior)
 
 Ejecución de la §"Vía futura" del ADR-005 base: 5 de las 6 rules Smart-Data se retiran del auto-load y pasan a `.claude/reference/smart-data/` con lector `Read` explícito en su agente o command dueño. Rama de trabajo: `feature/smart-data-context-diet`. Commits WU-0..WU-4 + WU-6a de cierre.
 
-- **Rules Smart-Data fuera del auto-load** (WU-1..WU-4): `sofka-asdd-data-schema-contracts.md` (WU-1 `0020653` — lectores: `data-eng-databricks`, `data-architect`), `sofka-asdd-data-retention.md` + `sofka-asdd-data-inter-contracts.md` (WU-2 `9c19925` — lectores: `data-governance`, `data-architect`), `sofka-asdd-data-lineage.md` (WU-3 `bbff6e4` — lectores: `data-governance`, `data-eng-databricks`, commands `data-build` y `data-validate`; este último absorbe LIN-003 del orquestador como criterio de entrada), `sofka-asdd-data-workflow.md` (WU-4 `cbd3357` — lectores: los 5 commands `data-*`, cada uno cita su sección `SD-00x` respectiva). Lock `manifest.rules` pasa de **29 → 24**. Reducción del piso heredado por sub-agente: **≈ −11k tokens** (555 líneas movidas × ~20 tokens/línea, calibrado con el −14k proyectado del ADR). Combinado con las 5 rules ATF-web (≈ −17k) el piso baja ≈ −28k respecto al estado pre-ADR.
-- **`sofka-asdd-data-routing.md` DIFERIDO**: queda en `.claude/rules/` (auto-load). Es routing crítico del orquestador consultado ANTES de que corra cualquier agente/command → no tiene punto de lectura de agente en el instante del routing. El ahorro adicional (≈ −2k) no justifica el riesgo residual de que el orquestador pierda la tabla D0-D7 inline. Documentado como mejora futura opcional en ADR-005 Enmienda 1 §E1.3.
-- **Nuevo check `reference-path-integrity`** (error) en `.claude/scripts/validate-template.mjs`: red de seguridad anti-orfandad. Escanea `.claude/agents/*.md` + `.claude/commands/**/*.md` y matchea `.claude/reference/{domain}/*.{md,json,yaml,yml,txt}`. Si un agente o command referencia un archivo bajo `reference/` que no existe → error. Verificado empíricamente: al eliminar temporalmente `reference/smart-data/sofka-asdd-data-lineage.md`, el check reporta ERR listando los 4 lectores exactos. Cierra el follow-up del ADR original (§Limitación) para rutas de 2 niveles y lo aplica también a agentes (no solo skills). Cubre tanto Smart-Data como ATF-web (10 paths distintos verificados hoy).
+- **Rules Smart-Data fuera del auto-load** (WU-1..WU-4): `asdd-data-schema-contracts.md` (WU-1 `0020653` — lectores: `data-eng-databricks`, `data-architect`), `asdd-data-retention.md` + `asdd-data-inter-contracts.md` (WU-2 `9c19925` — lectores: `data-governance`, `data-architect`), `asdd-data-lineage.md` (WU-3 `bbff6e4` — lectores: `data-governance`, `data-eng-databricks`, commands `data-build` y `data-validate`; este último absorbe LIN-003 del orquestador como criterio de entrada), `asdd-data-workflow.md` (WU-4 `cbd3357` — lectores: los 5 commands `data-*`, cada uno cita su sección `SD-00x` respectiva). Lock `manifest.rules` pasa de **29 → 24**. Reducción del piso heredado por sub-agente: **≈ −11k tokens** (555 líneas movidas × ~20 tokens/línea, calibrado con el −14k proyectado del ADR). Combinado con las 5 rules ATF-web (≈ −17k) el piso baja ≈ −28k respecto al estado pre-ADR.
+- **`asdd-data-routing.md` DIFERIDO**: queda en `.claude/rules/` (auto-load). Es routing crítico del orquestador consultado ANTES de que corra cualquier agente/command → no tiene punto de lectura de agente en el instante del routing. El ahorro adicional (≈ −2k) no justifica el riesgo residual de que el orquestador pierda la tabla D0-D7 inline. Documentado como mejora futura opcional en ADR-005 Enmienda 1 §E1.3.
+- **Nuevo check `reference-path-integrity`** (error) en `.claude/scripts/validate-template.mjs`: red de seguridad anti-orfandad. Escanea `.claude/agents/*.md` + `.claude/commands/**/*.md` y matchea `.claude/reference/{domain}/*.{md,json,yaml,yml,txt}`. Si un agente o command referencia un archivo bajo `reference/` que no existe → error. Verificado empíricamente: al eliminar temporalmente `reference/smart-data/asdd-data-lineage.md`, el check reporta ERR listando los 4 lectores exactos. Cierra el follow-up del ADR original (§Limitación) para rutas de 2 niveles y lo aplica también a agentes (no solo skills). Cubre tanto Smart-Data como ATF-web (10 paths distintos verificados hoy).
 - **Principio de seguridad aplicado en cada WU**: el `Read` del lector se agregó en el MISMO commit que el `git mv` de la regla — nunca mover primero y agregar lector después (lección de `bcdab3f`). Ninguna rule quedó huérfana en runtime en ningún punto intermedio del ciclo.
-- **Hallazgo confirmado empíricamente en las 4 WU**: ninguno de los agentes/commands lectores declara el key `rules:` en su frontmatter. El único mecanismo real de carga de una rule bajo `reference/` es la instrucción `Read` explícita en el cuerpo del agente/command (patrón ATF-web `sofka-asdd-atf-web-qa-engineer.md`). La hipótesis E1.1 del ADR queda validada por la migración.
+- **Hallazgo confirmado empíricamente en las 4 WU**: ninguno de los agentes/commands lectores declara el key `rules:` en su frontmatter. El único mecanismo real de carga de una rule bajo `reference/` es la instrucción `Read` explícita en el cuerpo del agente/command (patrón ATF-web `asdd-atf-web-qa-engineer.md`). La hipótesis E1.1 del ADR queda validada por la migración.
 
 ### Refuerzo WU-7 — lector command para las 3 reglas "soft" (ADR-005 §E1.9)
 
-Hallazgo runtime del test WU-6b en consumidor real: los **agentes** Data corrieron con 0 tool uses cuando el orquestador los invocó via Task con contexto pre-cargado (no dispararon su `Read` de Paso 0). El **command** `/sofka-asdd:data-discover` sí disparó `Read` de `reference/smart-data/sofka-asdd-data-workflow.md` en el turno del orquestador. Conclusión: lectores command = confiables; lectores agente = best-effort. WU-7 robustece el flujo normal dándole lector command a las 3 reglas que en la Enmienda 1 original solo tenían lector agente.
+Hallazgo runtime del test WU-6b en consumidor real: los **agentes** Data corrieron con 0 tool uses cuando el orquestador los invocó via Task con contexto pre-cargado (no dispararon su `Read` de Paso 0). El **command** `/asdd:data-discover` sí disparó `Read` de `reference/smart-data/asdd-data-workflow.md` en el turno del orquestador. Conclusión: lectores command = confiables; lectores agente = best-effort. WU-7 robustece el flujo normal dándole lector command a las 3 reglas que en la Enmienda 1 original solo tenían lector agente.
 
 - **Ampliación de Paso 0 en 4 commands** (ninguna regla se mueve — ya viven en `reference/smart-data/`):
   - `data-discover` sumó lectura de `data-retention.md` (governance-assessment de discover define retención de campo PII — RET-005).
@@ -1628,7 +1628,7 @@ Hallazgo runtime del test WU-6b en consumidor real: los **agentes** Data corrier
   | `data-validate` | ✓ SD-004 | ✓ (absorbe LIN-003) | — | — | ✓ (WU-7) |
   | `data-publish` | ✓ SD-005 | — | — | — | — |
 
-- **El lector agente se mantiene como best-effort** — no se toca: si el sub-agente sí abre tools, tiene el `Read` disponible (patrón `sofka-asdd-data-{architect,eng-databricks,governance}.md`). Si no, el command ya cargó la regla por él. La migración a `reference/` sigue bajando el piso ≈ −11k tokens; WU-7 solo cambia el punto de lectura confiable, no la ubicación.
+- **El lector agente se mantiene como best-effort** — no se toca: si el sub-agente sí abre tools, tiene el `Read` disponible (patrón `asdd-data-{architect,eng-databricks,governance}.md`). Si no, el command ya cargó la regla por él. La migración a `reference/` sigue bajando el piso ≈ −11k tokens; WU-7 solo cambia el punto de lectura confiable, no la ubicación.
 - **Sin cambios al lock**: `manifest.rules = 24` sigue igual (ninguna regla se mueve entre `.claude/rules/` y `.claude/reference/`).
 - **Validador**: `reference-path-integrity` sigue OK con 10 paths distintos verificados (los mismos 5 Smart-Data + 5 ATF-web; WU-7 solo aumenta la cantidad de citas por regla, no las rutas totales).
 
@@ -1639,8 +1639,8 @@ Versión MINOR: nuevo modelo de especificación **spec-per-área** (ADR-004). La
 ### Added
 
 - **Modelo spec-per-área (ADR-004)**: WF-002 (Analizar) ahora cierra con exactamente **1 INDEX + 1 spec-funcional + N `spec-{area}`**, donde N = cantidad de áreas con `Aplica = Sí` en el Mapa de dominios (§0 del super-spec). Áreas ∈ {backend, frontend, diseno, devops, seguridad, data, qa}. El INDEX (`{run_id}-ANALYZE-{SEQ}-{feature}-index.md`) es la SSoT del progreso por área; el spec-funcional es la SSoT del contenido cross-área; cada `spec-{area}` es el slice canónico de su dominio.
-- **Fase Analizar multi-dominio (WF-002)**: `sofka-asdd-producto` (skill `funcional`) coordina y cada dominio con `Aplica = Sí` autora su propio slice en paralelo (ORC-011-A: archivos disjuntos → intersección 0). Orquestación en 4 pasos: análisis del brief → autoría multi-dominio → consolidación e INDEX → Gate DOR.
-- **Gate DOR (WF-002-DOR)**: criterio de cierre de Analizar — el dominio Funcional debe estar `APROBADA`, cada dominio `Aplica = Sí` en `COMPLETO`, y el opt-out de Seguridad requiere sign-off explícito de `sofka-asdd-security`. Enforcement soft (revisado por el orquestador).
+- **Fase Analizar multi-dominio (WF-002)**: `asdd-producto` (skill `funcional`) coordina y cada dominio con `Aplica = Sí` autora su propio slice en paralelo (ORC-011-A: archivos disjuntos → intersección 0). Orquestación en 4 pasos: análisis del brief → autoría multi-dominio → consolidación e INDEX → Gate DOR.
+- **Gate DOR (WF-002-DOR)**: criterio de cierre de Analizar — el dominio Funcional debe estar `APROBADA`, cada dominio `Aplica = Sí` en `COMPLETO`, y el opt-out de Seguridad requiere sign-off explícito de `asdd-security`. Enforcement soft (revisado por el orquestador).
 - **Construir dirigido por `index_ref` (WF-004)**: la fase Construir se ejecuta como loop determinista dirigido por el INDEX, con grafo de olas (Ola 1: seguridad, diseno, backend, data → Ola 2: frontend, devops → Ola 3: qa). Solo el orquestador escribe el INDEX (R-INDEX-5).
 - **`ui_required` en el spec-funcional (§0)**: campo derivado del Mapa de dominios (UX/UI `Aplica = Sí` → `true`), consumido por el hook `design-guard` (gate WF-003).
 - **Reconciliación Tier C**: los escenarios Gherkin (§10 del super-spec) reciben IDs sintéticos `SCN-NNN` derivados del orden de aparición para trazabilidad.
@@ -1653,7 +1653,7 @@ Versión MINOR: nuevo modelo de especificación **spec-per-área** (ADR-004). La
 
 ### Removed
 
-- **spec-size-guard retirado** (WU-1): el hook `sofka-asdd-pre-tool-use-spec-size-guard.mjs` y sus umbrales cuantitativos (300 líneas / ≤5 CU / ≤1 aggregate) se retiran. La partición pasa a ser **estructural por área** (WF-002-STRUCT), no cuantitativa — reemplaza la sub-regla de tamaño #3650.
+- **spec-size-guard retirado** (WU-1): el hook `asdd-pre-tool-use-spec-size-guard.mjs` y sus umbrales cuantitativos (300 líneas / ≤5 CU / ≤1 aggregate) se retiran. La partición pasa a ser **estructural por área** (WF-002-STRUCT), no cuantitativa — reemplaza la sub-regla de tamaño #3650.
 
 ### Notes
 
@@ -1666,9 +1666,9 @@ Versión PATCH: reconocimiento de artefactos Smart Data centralizado en un únic
 
 ### Fixed
 
-- **Reconocimiento de artefactos Smart Data — Single Source of Truth**: la regex que identifica artefactos del flujo Data (`smart-data-*-{cliente}.md`) estaba triplicada de forma independiente en `sofka-asdd-pre-tool-use-analyze-guard.mjs`, `sofka-asdd-pre-tool-use-artifact-name-guard.mjs` y `sofka-asdd-pre-tool-use-spec-size-guard.mjs`. Se centraliza en `.claude/hooks/lib/smart-data-naming.mjs`, consumido por los tres guards, eliminando el riesgo de que una futura actualización de la regex se aplique en un solo hook y desincronice la cadena.
+- **Reconocimiento de artefactos Smart Data — Single Source of Truth**: la regex que identifica artefactos del flujo Data (`smart-data-*-{cliente}.md`) estaba triplicada de forma independiente en `asdd-pre-tool-use-analyze-guard.mjs`, `asdd-pre-tool-use-artifact-name-guard.mjs` y `asdd-pre-tool-use-spec-size-guard.mjs`. Se centraliza en `.claude/hooks/lib/smart-data-naming.mjs`, consumido por los tres guards, eliminando el riesgo de que una futura actualización de la regex se aplique en un solo hook y desincronice la cadena.
 - **Soporte de contratos versionados DC-004**: el reconocimiento de artefactos ahora acepta el patrón `smart-data-contract-{capa}-{cliente}-{semver}.md`, cubriendo el naming de contratos versionados del flujo Data que antes no matcheaba ninguno de los tres guards.
-- **Candado mecánico redundante en agentes Data**: se remueve `permissionMode: plan` del frontmatter de `sofka-asdd-data-architect` y `sofka-asdd-data-governance`. La restricción era redundante con la aprobación explícita ya exigida por `ORC-010-A` (inyección de aprobación del orquestador) y generaba fricción operativa sin aportar una salvaguarda adicional real.
+- **Candado mecánico redundante en agentes Data**: se remueve `permissionMode: plan` del frontmatter de `asdd-data-architect` y `asdd-data-governance`. La restricción era redundante con la aprobación explícita ya exigida por `ORC-010-A` (inyección de aprobación del orquestador) y generaba fricción operativa sin aportar una salvaguarda adicional real.
 - **Nuevo check del validador — `agent-permission-mode`**: `validate-template.mjs` incorpora un check `error` que detecta configuraciones de `permissionMode` inconsistentes con la política vigente de agentes.
 - **Harness de cadena ampliado**: `.claude/scripts/test-guards-chain-data.mjs` pasa de 12 a 16 casos, cubriendo el nuevo helper centralizado y el patrón de contratos versionados DC-004.
 - **ADR-003 Amendment 2**: se documenta en `docs/adoption/ADR-003-domain-aware-analyze-guard.md` el racional completo de las exenciones de dominio Data y la migración al SSOT.
@@ -1680,8 +1680,8 @@ Versión PATCH: fix del deadlock de la cadena de guards PreToolUse para el flujo
 ### Fixed
 
 - **Deadlock de cadena de guards para el flujo Smart Data**: aunque el `analyze-guard` domain-aware (ADR-003, publicado en 2.25.1) permite escribir los artefactos del flujo Data, dos guards posteriores de la cadena PreToolUse seguían bloqueando en consumidor real:
-  - `sofka-asdd-pre-tool-use-artifact-name-guard.mjs` exigía naming `{run_id}-{PHASE}-{SEQ}-` sobre todo `docs/**` con 3+ segmentos.
-  - `sofka-asdd-pre-tool-use-spec-size-guard.mjs` aplicaba umbrales 300 líneas / ≤5 CU / ≤1 aggregate del dominio software.
+  - `asdd-pre-tool-use-artifact-name-guard.mjs` exigía naming `{run_id}-{PHASE}-{SEQ}-` sobre todo `docs/**` con 3+ segmentos.
+  - `asdd-pre-tool-use-spec-size-guard.mjs` aplicaba umbrales 300 líneas / ≤5 CU / ≤1 aggregate del dominio software.
 
   Ambos hooks ahora eximen los artefactos `smart-data-*-{cliente}.md` por regex idéntica a `isDataArtifactFile` del analyze-guard (`/^smart-data-.+-[a-z0-9][a-z0-9_-]*\.md$/i` sobre basename) + log auditable a stderr no-bloqueante. El `analyze-guard` domain-aware sigue siendo el único gate del dominio Data (ADR-003), corre PRIMERO en la cadena y valida M1/M2/M3 contra el registry de clientes en filesystem — no se duplica la validación del Excel.
 
@@ -1695,7 +1695,7 @@ Versión PATCH: fix de distribución de la plantilla Excel del flujo Data hacia 
 
 ### Fixed
 
-- **Distribución de la plantilla Smart Data**: la plantilla `docs/smart-data/data/smart-data-cliente.xlsx` — publicada en 2.25.1 — no llegaba a los proyectos consumidores porque `distribution[]` en `.sofka-asdd/cli-contract.json` es una allowlist explícita y el CLI copia solo las rutas listadas (semántica "files or directories copied verbatim", soporta archivos individuales). El directorio `docs/smart-data/data/` estaba únicamente en `create_dirs` (gitkeep), lo que creaba el directorio vacío en el consumidor pero omitía la plantilla. Se agrega la ruta explícita `docs/smart-data/data/smart-data-cliente.xlsx` a `distribution[]`; el otro xlsx del template (`.claude/skills/sofka-asdd-data-governance-assessment/templates/data-dictionary-template.xlsx`) ya viajaba porque `.claude/skills/` está en la allowlist como directorio.
+- **Distribución de la plantilla Smart Data**: la plantilla `docs/smart-data/data/smart-data-cliente.xlsx` — publicada en 2.25.1 — no llegaba a los proyectos consumidores porque `distribution[]` en `.asdd/cli-contract.json` es una allowlist explícita y el CLI copia solo las rutas listadas (semántica "files or directories copied verbatim", soporta archivos individuales). El directorio `docs/smart-data/data/` estaba únicamente en `create_dirs` (gitkeep), lo que creaba el directorio vacío en el consumidor pero omitía la plantilla. Se agrega la ruta explícita `docs/smart-data/data/smart-data-cliente.xlsx` a `distribution[]`; el otro xlsx del template (`.claude/skills/asdd-data-governance-assessment/templates/data-dictionary-template.xlsx`) ya viajaba porque `.claude/skills/` está en la allowlist como directorio.
 
 ## [2.25.1] - 2026-07-02
 
@@ -1703,19 +1703,19 @@ Versión PATCH: fix del `analyze-guard` para el flujo Smart Data (ADR-003) y pub
 
 ### Fixed
 
-- **`analyze-guard` domain-aware (ADR-003)**: el hook `sofka-asdd-pre-tool-use-analyze-guard.mjs` bloqueaba la persistencia de los artefactos del flujo Smart Data en `docs/specs/` porque exigía `brief-*.md` para toda la carpeta. Ahora es domain-aware: la ruta software sigue exigiendo `brief-*.md` (intacta), y la ruta Data acepta como equivalente-brief el Excel del cliente `docs/smart-data/data/smart-data-{cliente}.xlsx`. El matching se hace por sufijo literal `-{cliente}.md` contra los xlsx detectados en filesystem, con soporte correcto para clientes multi-palabra (`smart-data-{tipo}-acme-retail.md` matchea `smart-data-acme-retail.xlsx`). Mensajes de bloqueo M1/M2/M3 accionables con la acción exacta a ejecutar. Gap descubierto en las pruebas E2E del Caso C y confirmado con el autor de Smart Data.
+- **`analyze-guard` domain-aware (ADR-003)**: el hook `asdd-pre-tool-use-analyze-guard.mjs` bloqueaba la persistencia de los artefactos del flujo Smart Data en `docs/specs/` porque exigía `brief-*.md` para toda la carpeta. Ahora es domain-aware: la ruta software sigue exigiendo `brief-*.md` (intacta), y la ruta Data acepta como equivalente-brief el Excel del cliente `docs/smart-data/data/smart-data-{cliente}.xlsx`. El matching se hace por sufijo literal `-{cliente}.md` contra los xlsx detectados en filesystem, con soporte correcto para clientes multi-palabra (`smart-data-{tipo}-acme-retail.md` matchea `smart-data-acme-retail.xlsx`). Mensajes de bloqueo M1/M2/M3 accionables con la acción exacta a ejecutar. Gap descubierto en las pruebas E2E del Caso C y confirmado con el autor de Smart Data.
 
 ### Added
 
 - **Plantilla Excel del flujo Data** (`docs/smart-data/data/smart-data-cliente.xlsx`, 26 KB, sanitizada): 8 pestañas (Guía, Stakeholders, Propuesta, Restricciones, Fuentes, Plataforma, Diccionario, Tablas consumo) con dropdowns e instrucciones inline. Sirve como equivalente-brief del ciclo Data que copian los engagements como `smart-data-{cliente}.xlsx`.
 - **Harness de tests del guard** (`.claude/scripts/test-analyze-guard-domain-aware.mjs`): 15 casos con fixtures temporales cubriendo M1/M2/M3, ruta software original, cliente multi-palabra y verificación de que la plantilla sola NO habilita la ruta Data.
 - **ADR-003** (`docs/adoption/ADR-003-domain-aware-analyze-guard.md`, Aceptada): decisión formal del guard domain-aware con matriz de casos, riesgos y algoritmo de sufijo-match literal.
-- **Nota SD-001** en `.claude/rules/sofka-asdd-data-workflow.md` declarando el contrato equivalente-brief del ciclo Data.
+- **Nota SD-001** en `.claude/rules/asdd-data-workflow.md` declarando el contrato equivalente-brief del ciclo Data.
 
 ### Changed
 
 - **`.gitignore`**: excluye `docs/smart-data/data/*.xlsx` (Excel reales de cliente contienen datos sensibles) con negación explícita `!docs/smart-data/data/smart-data-cliente.xlsx` para versionar solo la plantilla sanitizada.
-- **`.sofka-asdd/sofka-asdd-smart-data.lock`**: descripción actualizada — el skeleton ya está portado al template base y las referencias en `cli-contract.json` + `sub_locks` del lock principal ya existen (validado durante el ciclo).
+- **`.asdd/asdd-smart-data.lock`**: descripción actualizada — el skeleton ya está portado al template base y las referencias en `cli-contract.json` + `sub_locks` del lock principal ya existen (validado durante el ciclo).
 
 ## [2.25.0] - 2026-07-02
 
@@ -1723,25 +1723,25 @@ Versión MINOR: integración del dominio **Smart Data ASDD** como addon opcional
 
 ### Added
 
-- **Dominio Smart Data ASDD (addon `data_platform`)**: 3 agentes (`sofka-asdd-data-architect`, `sofka-asdd-data-governance`, `sofka-asdd-data-eng-databricks`), 4 skills, 6 reglas y 5 comandos `/sofka-asdd:data-*`. Se activa por opt-in en `conditional_install` del `cli-contract.json`; deja intacto el default del template. Conteos del lock: agents 17 → 20, rules 28 → 34, skills 142 → 146, commands 35 → 40.
+- **Dominio Smart Data ASDD (addon `data_platform`)**: 3 agentes (`asdd-data-architect`, `asdd-data-governance`, `asdd-data-eng-databricks`), 4 skills, 6 reglas y 5 comandos `/asdd:data-*`. Se activa por opt-in en `conditional_install` del `cli-contract.json`; deja intacto el default del template. Conteos del lock: agents 17 → 20, rules 28 → 34, skills 142 → 146, commands 35 → 40.
 - **Whitelist data-driven del validador**: `.claude/scripts/validate-template.mjs` reconoce las skills y MCP servers externos del Databricks AI Dev Kit como referencias legítimas — se elimina el ruido de "referencias colgantes" en runs que activen Smart Data.
 - **Docs de adopción**: `docs/adoption/ADR-002-smart-data-flow-isolation.md` (Aceptada), `docs/adoption/smart-data-integration-analysis.md` y `.claude/docs/adoption/smart-data-integration-plan.md` documentan el análisis, el plan por PRs y las decisiones de aislación del flujo Smart Data respecto del flujo de arquitectura de software.
 
 ### Changed
 
 - **Mitigación anti-interferencia de routing (ADR-002)**: descripciones mutuamente excluyentes en los 3 pares de agentes que comparten señales — `solution-architect ↔ data-architect`, `cloud-architect ↔ data-eng-databricks`, `security ↔ data-governance` —, cada uno con triggers negativos y cross-pointer al par correspondiente.
-- **Hook `sofka-asdd-user-prompt-submit.mjs`**: split del regex único en `DATA_DOMAIN_RE` y `SOFTWARE_ARCH_RE` con rama de desambiguación cuando ambos dominios matchean en el mismo prompt.
-- **Reglas de routing**: `sofka-asdd-routing-heuristics.md`, `sofka-asdd-data-routing.md` y `sofka-asdd-phases-reference.md` incorporan scope-check recíproco entre los dos dominios y arbitraje explícito entre `ORC-001` (fase/complejidad ASDD) y `D0-D7` (routing Data).
+- **Hook `asdd-user-prompt-submit.mjs`**: split del regex único en `DATA_DOMAIN_RE` y `SOFTWARE_ARCH_RE` con rama de desambiguación cuando ambos dominios matchean en el mismo prompt.
+- **Reglas de routing**: `asdd-routing-heuristics.md`, `asdd-data-routing.md` y `asdd-phases-reference.md` incorporan scope-check recíproco entre los dos dominios y arbitraje explícito entre `ORC-001` (fase/complejidad ASDD) y `D0-D7` (routing Data).
 - **Test de no-interferencia**: nuevo `test-smart-data-hook-no-interference.mjs` con 7 casos que verifican que el hook enruta correctamente los prompts ambiguos entre ambos dominios (7/7 PASS). Aserción T08 de `test-orc-enforcement-hooks.mjs` actualizada al comportamiento correcto tras el split de regex.
 
 ## [2.24.0] - 2026-06-26
 
 ### Removed
-- **Agente `sofka-asdd-developer` genérico (#3644)**: eliminado en favor de los especializados `sofka-asdd-developer-frontend` y `sofka-asdd-developer-backend`. Lock `variants.claude.agents` 18 → 17.
+- **Agente `asdd-developer` genérico (#3644)**: eliminado en favor de los especializados `asdd-developer-frontend` y `asdd-developer-backend`. Lock `variants.claude.agents` 18 → 17.
 
 ### Added
 - **3 docs normativos on-demand (#3644)** en `.claude/docs/`: `developer-test-protocol.md`, `clean-code-solid.md`, `stabilization-bug-rules.md` — recuperan el contenido normativo (Test Protocol PE/AVF, Clean Code & SOLID, Bug Fix Rules SBR-001..004) que vivía embebido en el agente borrado. Referenciados por path desde las skills; no se cargan always-loaded (criterio #3671).
-- **Ecosistema ATF-web QA (#3673)**: port completo del stack de automatización web QA — 28 skills `sofka-asdd-atf-web-*`, 11 comandos `qa-web-*`, 5 reglas `atf-web-*`, más phase-specs y tooling asociados. Desbloquea el gate `validate-template` (skill-references) requerido para la promoción.
+- **Ecosistema ATF-web QA (#3673)**: port completo del stack de automatización web QA — 28 skills `asdd-atf-web-*`, 11 comandos `qa-web-*`, 5 reglas `atf-web-*`, más phase-specs y tooling asociados. Desbloquea el gate `validate-template` (skill-references) requerido para la promoción.
 
 ### Changed
 - **Barrido de 135 referencias colgantes (#3644)** al developer genérico: skills normativas re-apuntadas a los nuevos docs on-demand; refs de delegación/routing re-apuntadas a `developer-frontend`/`-backend`; eval prompts + YAML, tablas de agentes y docs actualizados; fixtures de los 3 tests de hooks actualizados al nombre de agente válido.
@@ -1750,11 +1750,11 @@ Versión MINOR: integración del dominio **Smart Data ASDD** como addon opcional
 
 ## [2.23.1] - 2026-06-23
 
-Versión PATCH: `sofka-asdd-producto` recibe `Write` y `Edit` en su frontmatter (#3656). El agente tenía ownership del discovery funcional (#3577) pero no las write-tools — el orquestador hacía bypass manual para persistir sus specs. Fix quirúrgico elimina ese workaround.
+Versión PATCH: `asdd-producto` recibe `Write` y `Edit` en su frontmatter (#3656). El agente tenía ownership del discovery funcional (#3577) pero no las write-tools — el orquestador hacía bypass manual para persistir sus specs. Fix quirúrgico elimina ese workaround.
 
 ### Fixed
 
-- **`sofka-asdd-producto` sin write-tools (#3656):** se agregan `Write` y `Edit` al frontmatter `tools:` del agente (antes: `[Read, Grep, Glob]`; ahora: `[Read, Write, Edit, Glob, Grep]`). Producto puede escribir sus specs en `docs/specs/` directamente, sin que el orquestador use `SOFKA_ASDD_ORCHESTRATOR_GUARD_DISABLE`. Se agrega eval de capacidad de escritura en `agent-producto.yaml`.
+- **`asdd-producto` sin write-tools (#3656):** se agregan `Write` y `Edit` al frontmatter `tools:` del agente (antes: `[Read, Grep, Glob]`; ahora: `[Read, Write, Edit, Glob, Grep]`). Producto puede escribir sus specs en `docs/specs/` directamente, sin que el orquestador use `ASDD_ORCHESTRATOR_GUARD_DISABLE`. Se agrega eval de capacidad de escritura en `agent-producto.yaml`.
 
 ## [2.23.0] - 2026-06-23
 
@@ -1762,17 +1762,17 @@ Versión PATCH: `sofka-asdd-producto` recibe `Write` y `Edit` en su frontmatter 
 - **Hook `design-guard`** (#3648): bloquea WF-003 (diseño) sin spec aprobado de WF-002.
 - **Hook `coauthorship-guard`** (#3649): rechaza `Co-Authored-By` Claude/Anthropic en commits/MRs.
 - **Regla de tamaño de spec en WF-002** (#3650): >5 CU / >1 aggregate / >300 líneas → partir spec.
-- **Agente `sofka-asdd-producto`** (#3577): ownership exclusivo del discovery/Analizar (RN/CU/HU); el orquestador no enruta discovery al developer.
+- **Agente `asdd-producto`** (#3577): ownership exclusivo del discovery/Analizar (RN/CU/HU); el orquestador no enruta discovery al developer.
 
 ## [2.22.0] - 2026-06-19
 
-Versión MINOR: batch de 4 sesiones paralelas (seguridad de hooks + reglas core + roster de agentes + distribución). Counts reconciliados: agents 15→17, rules 31→35, hooks 16→17 (corrige drift pre-existente). **NOTA:** gates pendientes antes de promover a qa/main — AC4 de #3633 (`sofka init` real + refinar whole-dirs), smoke de #3642 (context7 3.x), revisión de contenido de reglas y de la coexistencia developer/front/back.
+Versión MINOR: batch de 4 sesiones paralelas (seguridad de hooks + reglas core + roster de agentes + distribución). Counts reconciliados: agents 15→17, rules 31→35, hooks 16→17 (corrige drift pre-existente). **NOTA:** gates pendientes antes de promover a qa/main — AC4 de #3633 (`guide init` real + refinar whole-dirs), smoke de #3642 (context7 3.x), revisión de contenido de reglas y de la coexistencia developer/front/back.
 
 ### Added
-- **Reglas core (#3601-#3604):** exception handling en `clean-code` + `developer-test-protocol`; nuevas reglas universales `sofka-asdd-ddd-universal`, `sofka-asdd-data-events-integrity`, `sofka-asdd-ux-universal`.
-- **`sofka-asdd-data-boundary` (#3641):** contenido externo = DATA no confiable + delimitadores en skills que leen contenido externo.
+- **Reglas core (#3601-#3604):** exception handling en `clean-code` + `developer-test-protocol`; nuevas reglas universales `asdd-ddd-universal`, `asdd-data-events-integrity`, `asdd-ux-universal`.
+- **`asdd-data-boundary` (#3641):** contenido externo = DATA no confiable + delimitadores en skills que leen contenido externo.
 - **ORC-000-C (#3647):** tras 2 fallos consecutivos del mismo agente, el orquestador re-lanza una instancia NUEVA con approach distinto + diagnóstico inyectado (preserva ORC-000/orchestrator-guard).
-- **Agentes `developer-frontend` / `developer-backend` (#3644):** segmentación por capa (convenciones Sofka, no tutoriales de framework).
+- **Agentes `developer-frontend` / `developer-backend` (#3644):** segmentación por capa (convenciones Guide, no tutoriales de framework).
 - **Distribución por allowlist (#3633):** campo `distribution` en `cli-contract.json` reemplaza la denylist (default seguro: lo no-listado no se distribuye).
 - **Progreso granular (#3645):** `.asdd-run.json` + `run-manifest` registran avance por fase para recuperación sin re-escaneo.
 - **Cap de worktrees (#3643):** enforcement en `dangerous-bash` (maxTurns y spawn-depth de Task = follow-up manual/harness).
@@ -1784,18 +1784,18 @@ Versión MINOR: batch de 4 sesiones paralelas (seguridad de hooks + reglas core 
 - **Path traversal en `run-manifest` (#3640):** `run_id` validado (sin `..` ni separadores).
 - **Pin de `context7` (#3642):** `@^1`/`@latest` → `@3.2.1`.
 - **least-privilege de agentes (#3619):** ajustes en `researcher`, `cloud-architect`, `atf-api-qa-engineer`.
-- **Guardia NaN en cap de worktrees (#3643):** `SOFKA_ASDD_MAX_WORKTREES` mal formado cae al default 3 en vez de desactivar el cap.
-- **`unit-test-design` (#3614):** movido al `developer` + renombrado `sofka-asdd-unit-test-design`.
+- **Guardia NaN en cap de worktrees (#3643):** `ASDD_MAX_WORKTREES` mal formado cae al default 3 en vez de desactivar el cap.
+- **`unit-test-design` (#3614):** movido al `developer` + renombrado `asdd-unit-test-design`.
 - **istqb scope (#3646):** nota de separación de capas vs skills ATF.
 - **code-review standards (#3620/#3621):** `docs/tech` + citar reglas core.
 
 ### Changed
-- **Model de `sofka-asdd-atf-reporting-qa-engineer` (#3618):** haiku → sonnet (el agente evalúa Quality Gate Score).
+- **Model de `asdd-atf-reporting-qa-engineer` (#3618):** haiku → sonnet (el agente evalúa Quality Gate Score).
 - Lock reconciliado por el integrador tras mergear las 17 MRs de las 4 sesiones: agents 15→17, rules 31→35, hooks 16→17.
 
 ## [2.21.1] - 2026-06-19
 
-Versión PATCH: el payload de `sofka init`/`upgrade` ya no distribuye documentación de desarrollo/soporte del propio template al repo del consumidor (#3633, reporte de Pipe). Quick-fix por denylist; la solución estructural (allowlist `distribution`) queda en #3633.
+Versión PATCH: el payload de `guide init`/`upgrade` ya no distribuye documentación de desarrollo/soporte del propio template al repo del consumidor (#3633, reporte de Pipe). Quick-fix por denylist; la solución estructural (allowlist `distribution`) queda en #3633.
 
 ### Fixed
 
@@ -1808,17 +1808,17 @@ Versión MINOR: enforcement de reglas ORC en 3 tiers mecánicos (#3607) y endure
 ### Added
 
 - **Enforcement ORC 3 tiers (#3607):**
-  - **Tier A — gate mecánico:** hook `sofka-asdd-orchestrator-guard` pasa a deny incondicional en Edit/Write del hilo orquestador + ask en Bash; nuevo hook `sofka-asdd-plan-gate` implementa ORC-010 como gate ask sobre la tool Agent (marcador + TTL, consumo único por invocación). Escape hatch auditable: `SOFKA_ASDD_GUARD_PUSH_DISABLE=1` / `SOFKA_ASDD_PLAN_GATE_DISABLE=1`.
-  - **Tier B — reminders conductuales:** `sofka-asdd-session-start` re-inyecta al inicio de sesión el checklist completo de las 24 reglas ORC + política de compactación proactiva; `sofka-asdd-user-prompt-submit` refuerza el núcleo conductual (ORC-000, ORC-001, ORC-007, ORC-008, ORC-010) por prompt.
-  - **Tier C — estado computado:** 4 hooks SessionStart dedicados: `sofka-asdd-codebase-size` (ORC-001-D), `sofka-asdd-model-strategy` (ORC-002-B), `sofka-asdd-tdd-state` (ORC-009), `sofka-asdd-state-freshness` (ORC-007).
-- **Regla `sofka-asdd-orchestration-index.md`**: índice canónico de las 24 reglas ORC (tabla tier A/B/C, archivos fuente, mapa de hooks de enforcement). Inyectado por `session-start` como referencia única.
+  - **Tier A — gate mecánico:** hook `asdd-orchestrator-guard` pasa a deny incondicional en Edit/Write del hilo orquestador + ask en Bash; nuevo hook `asdd-plan-gate` implementa ORC-010 como gate ask sobre la tool Agent (marcador + TTL, consumo único por invocación). Escape hatch auditable: `ASDD_GUARD_PUSH_DISABLE=1` / `ASDD_PLAN_GATE_DISABLE=1`.
+  - **Tier B — reminders conductuales:** `asdd-session-start` re-inyecta al inicio de sesión el checklist completo de las 24 reglas ORC + política de compactación proactiva; `asdd-user-prompt-submit` refuerza el núcleo conductual (ORC-000, ORC-001, ORC-007, ORC-008, ORC-010) por prompt.
+  - **Tier C — estado computado:** 4 hooks SessionStart dedicados: `asdd-codebase-size` (ORC-001-D), `asdd-model-strategy` (ORC-002-B), `asdd-tdd-state` (ORC-009), `asdd-state-freshness` (ORC-007).
+- **Regla `asdd-orchestration-index.md`**: índice canónico de las 24 reglas ORC (tabla tier A/B/C, archivos fuente, mapa de hooks de enforcement). Inyectado por `session-start` como referencia única.
 - **`ADR-001-orc-enforcement-3-tiers.md`**: decisión arquitectónica documentando la estrategia de 3 tiers y sus trade-offs.
 - **`.claude/docs/adoption/statusline.md`**: guía para leer el statusline de contexto de Claude Code (umbrales de compactación, acciones por tier de uso).
 
 ### Changed
 
 - **`worktree.baseRef=head`** en `settings.json`: los worktrees de agentes arrancan desde HEAD en vez del commit base, garantizando que el developer arranque con los cambios más recientes del ciclo.
-- **ORC-000 deny incondicional (#3606):** `sofka-asdd-orchestrator-guard` cambia de deny-condicional a deny absoluto sobre Edit/Write del orquestador principal; el ask sobre Bash se mantiene para comandos de estado (git, gh). Enforcement demostrado en vivo con evidencia de comportamiento.
+- **ORC-000 deny incondicional (#3606):** `asdd-orchestrator-guard` cambia de deny-condicional a deny absoluto sobre Edit/Write del orquestador principal; el ask sobre Bash se mantiene para comandos de estado (git, gh). Enforcement demostrado en vivo con evidencia de comportamiento.
 
 ### Fixed
 
@@ -1839,17 +1839,17 @@ Versión MINOR: absorción del batch Humana #3536 (20 skills universales adaptad
 
 ### Changed
 
-- **`build-validator` (#3583)**: detección de stack mínima y agnóstica — solo presencia de config (`package.json`/`pom.xml`/`build.gradle`/`go.mod`/`*.csproj`/`Cargo.toml`/`pyproject`); el comando proviene siempre de `.sofka-asdd/testing-capabilities.yaml`, sin lógica per-stack en el core.
-- **Umbral de complejidad ciclomática unificado en CC ≤ 10** (polish #3535): `sofka-asdd-clean-code.md` se alinea al quality-gate del tech-lead (antes declaraba ≤15) y a su espejo de eval.
+- **`build-validator` (#3583)**: detección de stack mínima y agnóstica — solo presencia de config (`package.json`/`pom.xml`/`build.gradle`/`go.mod`/`*.csproj`/`Cargo.toml`/`pyproject`); el comando proviene siempre de `.asdd/testing-capabilities.yaml`, sin lógica per-stack en el core.
+- **Umbral de complejidad ciclomática unificado en CC ≤ 10** (polish #3535): `asdd-clean-code.md` se alinea al quality-gate del tech-lead (antes declaraba ≤15) y a su espejo de eval.
 - **Conteo de skills en el lock**: 94 → 114.
 
 ### Fixed
 
-- **`hooks-executable`**: restaurado el bit ejecutable (`100644 → 100755`) de `sofka-asdd-user-prompt-submit.mjs`.
+- **`hooks-executable`**: restaurado el bit ejecutable (`100644 → 100755`) de `asdd-user-prompt-submit.mjs`.
 
 ### Removed
 
-- **`checkpoint-resume` (#3564) descartado**: la función la cubre el comando `/sofka-asdd:resume` y su regla `sofka-asdd-checkpoint-resume.md`.
+- **`checkpoint-resume` (#3564) descartado**: la función la cubre el comando `/asdd:resume` y su regla `asdd-checkpoint-resume.md`.
 
 ## [2.19.0] - 2026-06-16
 
@@ -1861,23 +1861,23 @@ Estado de los evals (Claude Code provider, `--no-cache`):
 
 ### Added
 
-- **Hook `sofka-asdd-session-start`** (#3524): hook SessionStart que inyecta estado git (rama, GS-004 naming, working tree) y recordatorio de routing ORC-000 como `<system-reminder>` al inicio de cada sesión. Escape hatch: `SOFKA_ASDD_SESSION_START_DISABLE=1`.
+- **Hook `asdd-session-start`** (#3524): hook SessionStart que inyecta estado git (rama, GS-004 naming, working tree) y recordatorio de routing ORC-000 como `<system-reminder>` al inicio de cada sesión. Escape hatch: `ASDD_SESSION_START_DISABLE=1`.
 
-- **Hook `sofka-asdd-user-prompt-submit.mjs`** (#3577): hook UserPromptSubmit que refuerza el routing ORC-000 / plan-gate ORC-010 al enviar cada prompt.
+- **Hook `asdd-user-prompt-submit.mjs`** (#3577): hook UserPromptSubmit que refuerza el routing ORC-000 / plan-gate ORC-010 al enviar cada prompt.
 
 - **Smoke test `test-session-start-hook.mjs`** (#3524): 7 escenarios — exit 0, ORC-000 ACTIVO en stdout, naming GS-004, rama protegida, working tree sucio, DISABLE var, detached HEAD. 16 aserciones, sin dependencias externas.
 
-- **Eval `orc-000-figma-delegation.yaml`** (#3577): 6 casos de prueba — URL Figma delegada a sofka-asdd-ui (#8/#4), plan con orquestador consultando Figma directamente (inválido, #8/#12), plan con paso sin agente (gate rechaza, #12), integración Redshift activa arquitecto (#4), tarea de dominio NO-Figma (endpoint) delega a sofka-asdd-developer (#3), y decisión arquitectónica/ADR delega a sofka-asdd-solution-architect (#2). 6/6 PASS (bug#2 intermitente en corrida combinada).
+- **Eval `orc-000-figma-delegation.yaml`** (#3577): 6 casos de prueba — URL Figma delegada a asdd-ui (#8/#4), plan con orquestador consultando Figma directamente (inválido, #8/#12), plan con paso sin agente (gate rechaza, #12), integración Redshift activa arquitecto (#4), tarea de dominio NO-Figma (endpoint) delega a asdd-developer (#3), y decisión arquitectónica/ADR delega a asdd-solution-architect (#2). 6/6 PASS (bug#2 intermitente en corrida combinada).
 
 - **Eval `orc-010-plan-gate.yaml`** (#3577): 2 casos de prueba — feature nueva exige plan + aprobación antes de ejecutar (#12) y tono imperativo ("hazlo ya") NO desactiva el gate (#13). 2/2 PASS (bug#13 intermitente por glitch del grader en corrida combinada).
 
 ### Changed
 
-- **Comandos de fase: alias de agente corregidos** (fix #2 / #3577): `design.md` y `document.md` usaban alias cortos desactualizados (`architect`, `ux-ui`, `tech-lead`) que no resolvían al agente real. Corregidos a `@sofka-asdd-solution-architect`, `@sofka-asdd-ui` y `@sofka-asdd-tech-lead`. **Fix #2 (alias arquitecto): corregido.**
+- **Comandos de fase: alias de agente corregidos** (fix #2 / #3577): `design.md` y `document.md` usaban alias cortos desactualizados (`architect`, `ux-ui`, `tech-lead`) que no resolvían al agente real. Corregidos a `@asdd-solution-architect`, `@asdd-ui` y `@asdd-tech-lead`. **Fix #2 (alias arquitecto): corregido.**
 
-- **WF-001 señales del arquitecto expandidas** (#3598): `sofka-asdd-solution-architect` ahora se activa también con "nueva API / diseño de API", "decisión de stack o tecnología", "multi-plataforma (mobile + web / multi-canal)", "microservicios", "nuevo servicio backend", "arquitectura del sistema". Cubre bug #4 de Javier.
+- **WF-001 señales del arquitecto expandidas** (#3598): `asdd-solution-architect` ahora se activa también con "nueva API / diseño de API", "decisión de stack o tecnología", "multi-plataforma (mobile + web / multi-canal)", "microservicios", "nuevo servicio backend", "arquitectura del sistema". Cubre bug #4 de Javier.
 
-- **WF-003 señal Figma para sofka-asdd-ui** (#3577): URL de Figma agregada como primera señal explícita de activación de sofka-asdd-ui. Cubre bug #8.
+- **WF-003 señal Figma para asdd-ui** (#3577): URL de Figma agregada como primera señal explícita de activación de asdd-ui. Cubre bug #8.
 
 - **ORC-000 enforcement obligatorio** (#3577): "Aplica en TODO momento — incluida la fase de planeación". Protocolo de excepción etiquetada `EXCEPCIÓN ORC-000 (orquestador)`. ORC-000-B renombrado a "SIN FALLBACK SILENCIOSO" con logging en `.asdd-run.json`. Cubre bugs #3 y #8.
 
@@ -1891,17 +1891,17 @@ Parte del gulpito 3 de US #3535 (batch B).
 
 ### Added
 
-- **Regla `sofka-asdd-clean-code`** (#3546): estándares SOLID + Clean Code obligatorios — DIP, SRP, OCP, LSP, ISP; naming, CC ≤ 15, nesting ≤ 2, no magic numbers, Boy Scout Rule.
-  Generalizado desde Humana: eliminados refs a sonar-quality-rules.md y quality-rules.md internos; coverage thresholds delegados al CLAUDE.md del proyecto consumidor; `@continuous-improver` → `sofka-asdd-tech-lead`.
+- **Regla `asdd-clean-code`** (#3546): estándares SOLID + Clean Code obligatorios — DIP, SRP, OCP, LSP, ISP; naming, CC ≤ 15, nesting ≤ 2, no magic numbers, Boy Scout Rule.
+  Generalizado desde Humana: eliminados refs a sonar-quality-rules.md y quality-rules.md internos; coverage thresholds delegados al CLAUDE.md del proyecto consumidor; `@continuous-improver` → `asdd-tech-lead`.
 
-- **Regla `sofka-asdd-system-integrity`** (#3547): zero regresiones — compilación limpia, tests de módulos afectados y consumers (Dependent Module Testing), no tolerar tests fallidos como "preexistentes", investigar flakiness.
-  Generalizado desde Humana: comandos de build/test genéricos (via testing-capabilities.yaml); scripts de detección con `rg` agnóstico en lugar de paths hardcoded de Humana; `@architect`/`@tech-lead` → `sofka-asdd-solution-architect`/`sofka-asdd-tech-lead`.
+- **Regla `asdd-system-integrity`** (#3547): zero regresiones — compilación limpia, tests de módulos afectados y consumers (Dependent Module Testing), no tolerar tests fallidos como "preexistentes", investigar flakiness.
+  Generalizado desde Humana: comandos de build/test genéricos (via testing-capabilities.yaml); scripts de detección con `rg` agnóstico en lugar de paths hardcoded de Humana; `@architect`/`@tech-lead` → `asdd-solution-architect`/`asdd-tech-lead`.
 
-- **Regla `sofka-asdd-claude-md-maintenance`** (#3548): gobernanza de CLAUDE.md — qué va, límite de líneas (~150), triggers obligatorios por tipo de cambio, auditoría de drift.
-  Generalizado desde Humana: eliminada arquitectura canónica monorepo (claude-context/back/, pointer files, generate-claude-pointers.sh); agentes Humana → `sofka-asdd-developer` / `sofka-asdd-tech-lead`; triggers generalizados por tipo de artefacto.
+- **Regla `asdd-claude-md-maintenance`** (#3548): gobernanza de CLAUDE.md — qué va, límite de líneas (~150), triggers obligatorios por tipo de cambio, auditoría de drift.
+  Generalizado desde Humana: eliminada arquitectura canónica monorepo (claude-context/back/, pointer files, generate-claude-pointers.sh); agentes Humana → `asdd-developer` / `asdd-tech-lead`; triggers generalizados por tipo de artefacto.
 
-- **Regla `sofka-asdd-spanish-orthography`** (#3549): zero tolerancia en ortografía española de textos visibles al usuario — tildes obligatorias, signos dobles (¿? ¡!), actualización de tests junto con el texto.
-  Generalizado desde Humana: `humanatech-sofkaai-back/front` → backend/frontend genérico; anotaciones y schemas de validación con ejemplos agnósticos; eliminados refs a docs internas de Humana.
+- **Regla `asdd-spanish-orthography`** (#3549): zero tolerancia en ortografía española de textos visibles al usuario — tildes obligatorias, signos dobles (¿? ¡!), actualización de tests junto con el texto.
+  Generalizado desde Humana: `humanatech-guideai-back/front` → backend/frontend genérico; anotaciones y schemas de validación con ejemplos agnósticos; eliminados refs a docs internas de Humana.
 
 - **Evals** (×4): 3 tests por regla con `llm-rubric` y system prompt dedicado. 12 tests total — 3/3 PASS por regla.
 
@@ -1913,18 +1913,18 @@ Parte del gulpito 3 de US #3535.
 
 ### Added
 
-- **Regla `sofka-asdd-skill-preflight`** (#3542): bloque PRE-FLIGHT estándar para skills
+- **Regla `asdd-skill-preflight`** (#3542): bloque PRE-FLIGHT estándar para skills
   que crean o modifican archivos — verifica rama protegida, baseline verde y duplicados.
-  Generalizado desde Humana: ramas configurables via `SOFKA_ASDD_PROTECTED_BRANCHES`.
-- **Regla `sofka-asdd-ephemeral-artifacts`** (#3543): protocolo de manejo de scripts
+  Generalizado desde Humana: ramas configurables via `ASDD_PROTECTED_BRANCHES`.
+- **Regla `asdd-ephemeral-artifacts`** (#3543): protocolo de manejo de scripts
   temporales — zona `.tmp/`, salvaguardas de no-borrado y verificación pre-push.
   Generalizado desde Humana: paths específicos del proyecto reemplazados por genéricos.
-- **Regla `sofka-asdd-istqb-quality-culture`** (#3544): 7 principios ISTQB v4.0 y gestión
+- **Regla `asdd-istqb-quality-culture`** (#3544): 7 principios ISTQB v4.0 y gestión
   de defectos (severidad/prioridad/reporte mínimo). Generalizado desde Humana: refs al
   SDD Pipeline reemplazadas por ASDD, agentes Humana por ASDD.
-- **Regla `sofka-asdd-developer-test-protocol`** (#3545): Test Coverage Declaration
+- **Regla `asdd-developer-test-protocol`** (#3545): Test Coverage Declaration
   obligatoria antes de codear, CASO A (con spec) y CASO B (self-derived), tabla de mínimos
-  por componente. Generalizado desde Humana: agentes específicos → `sofka-asdd-developer`,
+  por componente. Generalizado desde Humana: agentes específicos → `asdd-developer`,
   thresholds de coverage → parámetros del proyecto consumidor.
 - **Evals 6-rules/skill-preflight** (#3542): 3 tests — rama protegida bloqueante, baseline
   roto bloqueante, scope declaration para skills read-only.
@@ -1943,7 +1943,7 @@ por bounded context.
 
 ### Added
 
-- **Hook `sofka-asdd-pre-tool-use-analyze-guard`** (#3575): guard mecánico (PreToolUse)
+- **Hook `asdd-pre-tool-use-analyze-guard`** (#3575): guard mecánico (PreToolUse)
   que bloquea escrituras en `docs/specs/**` si no existe `brief-*.md` con
   `Estado: aprobado` en ese directorio. Habilitado por defecto. Escape hatch:
   `ASDD_ANALYZE_GUARD_ENABLED=false`.
@@ -1953,25 +1953,25 @@ por bounded context.
 
 ### Changed
 
-- **Comando `sofka-asdd:analyze`** (#3575): prerrequisito actualizado a BLOQUEANTE con
+- **Comando `asdd:analyze`** (#3575): prerrequisito actualizado a BLOQUEANTE con
   instrucción explícita de STOP y referencia al hook. Sección "Cierre de fase" reemplazada
   por umbral binario (≥ 2 preguntas abiertas → `gaps-{feature}.md`; < 2 → sección
   `## Observaciones de análisis` en el spec). Nueva regla de granularidad: un spec por
   funcionalidad acotada, cardinalidad decidida por el sistema. Artefactos actualizados:
   `gaps-{feature}.md` solo si umbral se supera.
-- **Regla `sofka-asdd-workflow`** (#3575): WF-002 incluye prerrequisito bloqueante, umbral
+- **Regla `asdd-workflow`** (#3575): WF-002 incluye prerrequisito bloqueante, umbral
   de gaps y criterio de granularidad; artefactos y criterio de completitud actualizados
   para reflejar la condicionalidad del gaps file.
 
 ## [2.15.0] - 2026-06-12
 
 Versión MINOR que implementa el protocolo completo de handoff de worktrees para
-`sofka-asdd-developer`, habilitando paralelismo real entre implementaciones independientes.
+`asdd-developer`, habilitando paralelismo real entre implementaciones independientes.
 
 ### Added
 
-- **Regla `sofka-asdd-orchestration-worktree`** (#3578): protocolo ORC-011 de handoff
-  de resultados de `sofka-asdd-developer` cuando corre con `isolation: worktree`.
+- **Regla `asdd-orchestration-worktree`** (#3578): protocolo ORC-011 de handoff
+  de resultados de `asdd-developer` cuando corre con `isolation: worktree`.
   Incluye: detección de campos `WORKTREE COMMIT`/`Files`/`Branch` en el output del
   agente, validación de tests pre-merge (ORC-011-C), merge secuencial con `--no-ff`
   (ORC-011-D), STOP ante conflictos, task partitioning pre-check para N developers
@@ -1980,17 +1980,17 @@ Versión MINOR que implementa el protocolo completo de handoff de worktrees para
 
 ### Changed
 
-- **Agente `sofka-asdd-developer`** (#3578): nueva sección "Cierre obligatorio en
+- **Agente `asdd-developer`** (#3578): nueva sección "Cierre obligatorio en
   worktree" — el agente DEBE hacer `git add -A && git commit` antes de retornar e
   incluir en su output los tres campos `WORKTREE COMMIT: {sha7}`, `Files:` y
   `Branch:`. Sin estos campos el orquestador detecta que el worktree fue destruido
   automáticamente (cambios perdidos) y reinvoca al developer.
-- **Regla `sofka-asdd-orchestration-ops`** (#3578): ORC-005 refiere a ORC-011 para
+- **Regla `asdd-orchestration-ops`** (#3578): ORC-005 refiere a ORC-011 para
   el handoff de results de developers con worktree.
-- **Regla `sofka-asdd-anti-loops`** (#3578): sección Worktrees documenta la ruta de
+- **Regla `asdd-anti-loops`** (#3578): sección Worktrees documenta la ruta de
   éxito vía ORC-011, diferenciando el caso de commit exitoso del caso de worktree
   destruido automáticamente.
-- **Regla `sofka-asdd-workflow-build`** (#3578): WF-004 incluye guidance de
+- **Regla `asdd-workflow-build`** (#3578): WF-004 incluye guidance de
   paralelismo de developers con requisito de task partitioning pre-check (ORC-011-A).
 
 ## [2.14.2] - 2026-06-12
@@ -2005,7 +2005,7 @@ contrato CLI explícito con una whitelist en `files_to_remove`.
   deben distribuirse a proyectos consumidores:
   - `.claude/memory/git-rebase-perdida-codigo.md` y
     `.claude/memory/git-una-rama-por-ciclo.md` — memorias internas del mantenedor
-    sin nomenclatura `sofka-asdd-*`.
+    sin nomenclatura `asdd-*`.
   - `docs/architecture/decisions/ADR-001-codebase-size-autodetection.md` — ADR
     interno de implementación que causaba colisión de numeración en proyectos que
     ya tenían su propio `ADR-001` (como Javier).
@@ -2015,7 +2015,7 @@ contrato CLI explícito con una whitelist en `files_to_remove`.
 ### Changed
 
 - **`cli-contract.json`** (#3576): `files_to_remove` ahora lista explícitamente
-  los 4 artefactos eliminados. Esto permite que `sofka update` limpie
+  los 4 artefactos eliminados. Esto permite que `guide update` limpie
   instalaciones existentes automáticamente. Eliminada entrada `remove-migration-guides`
   de `optional_remove` (la carpeta ya no existe en el template).
 
@@ -2032,7 +2032,7 @@ git rm -rf .claude/docs/migrations/ 2>/dev/null || true
 git commit -m "chore: eliminar artefactos internos del template (v2.14.2)"
 ```
 
-Si usás `sofka update`, el CLI aplica `files_to_remove` automáticamente.
+Si usás `guide update`, el CLI aplica `files_to_remove` automáticamente.
 
 ## [2.14.1] - 2026-06-12
 
@@ -2042,7 +2042,7 @@ promoción entre ramas protegidas (dev→qa, qa→main) sin requerir el workarou
 
 ### Fixed
 
-- **Hook `sofka-asdd-pre-pr-gate`** (#3567): fast-track para MRs de promoción
+- **Hook `asdd-pre-pr-gate`** (#3567): fast-track para MRs de promoción
   entre ramas protegidas. Cuando fuente y destino son ambas ramas protegidas y
   distintas (ej. dev→qa, qa→main, dev→main), el gate omite las validaciones
   1 (fuente no protegida) y 2 (naming GitFlow) — que no aplican a ramas de
@@ -2057,13 +2057,13 @@ Humana→ASDD, más una aclaración de ownership de la política de token budget
 
 ### Added
 
-- **Regla `sofka-asdd-memory-hygiene`** (US #3535, Task #3540): sistema de dos
+- **Regla `asdd-memory-hygiene`** (US #3535, Task #3540): sistema de dos
   capas de memoria (equipo git-committed + personal local), protocolo de promoción
   de lecciones con criterios de ≥2 sesiones y ausencia de datos sensibles, política
   de archivado por tipo, formato de session handoff y declaración de contexto por
   agente. Generalizada desde Humana; paths y referencias de dominio reemplazados
   por equivalentes ASDD.
-- **Regla `sofka-asdd-memory-privacy`** (US #3535, Task #3541): convención
+- **Regla `asdd-memory-privacy`** (US #3535, Task #3541): convención
   `<private>` para datos en sesión que no deben persistir, tabla de categorías
   prohibidas en `memory/` (credenciales, hosts de producción, tokens JWT, PII,
   datos de clientes) y punto de extensión para categorías sensibles específicas
@@ -2072,10 +2072,10 @@ Humana→ASDD, más una aclaración de ownership de la política de token budget
 
 ### Changed
 
-- **Regla `sofka-asdd-anti-loops`**: declarado `sofka-asdd-meta` como dueño
+- **Regla `asdd-anti-loops`**: declarado `asdd-meta` como dueño
   autoritativo de la política de token budget. Los umbrales de compactación
-  proactiva ahora referencian explícitamente a `sofka-asdd-meta` como árbitro ante
-  divergencias con otras reglas (ej. `sofka-asdd-orchestration-ops.md`).
+  proactiva ahora referencian explícitamente a `asdd-meta` como árbitro ante
+  divergencias con otras reglas (ej. `asdd-orchestration-ops.md`).
 
 ## [2.13.0] - 2026-06-11
 
@@ -2084,7 +2084,7 @@ Humana→ASDD: estabilización de bugs y control de bucles de agentes.
 
 ### Added
 
-- **Regla `sofka-asdd-stabilization-bug-rules`** (US #3535, Task #3538):
+- **Regla `asdd-stabilization-bug-rules`** (US #3535, Task #3538):
   cuatro principios para la fase de estabilización — Think Before Coding
   (SBR-001), Simplicity First (SBR-002), Surgical Changes (SBR-003) y
   Goal-Driven Execution (SBR-004). Incluye protocolo de test reproducible
@@ -2092,7 +2092,7 @@ Humana→ASDD: estabilización de bugs y control de bucles de agentes.
   gate agnóstico de stack y checklist de bugs que los agentes introducen.
   Generalizada desde Humana; refs a agentes y stacks específicos reemplazados
   por equivalentes ASDD.
-- **Regla `sofka-asdd-anti-loops`** (US #3535, Task #3539): circuit-breaker
+- **Regla `asdd-anti-loops`** (US #3535, Task #3539): circuit-breaker
   de dos intentos con cambio de estrategia obligatorio, presupuesto de turnos
   por agente ASDD (AL-001..AL-008), supervisión de worktrees, patrón de token
   management de 3 capas (Grep→Glob→Read) y umbrales de compactación proactiva.
@@ -2122,8 +2122,8 @@ Versión MINOR que incorpora reglas de seguridad Git como ciudadanas de primera 
 
 ### Added
 
-- **Regla `sofka-asdd-git-safety`** (#3515): normas GS-001..GS-007 que formalizan el contrato git del template — protección de ramas protegidas (GS-001), historia inmutable sin force push ni reset --hard (GS-002), commits solo con autorización explícita (GS-003), naming GitFlow (GS-004), conventional commits (GS-005), una rama por ciclo de cambio (GS-006) y sincronización con merge --no-ff, nunca rebase (GS-007).
-- **Hook `sofka-asdd-guard-branch`** (#3515): hook `PreToolUse` (matcher: Bash) que bloquea mecánicamente `git commit` en ramas protegidas (exit 2). Ramas configurables vía `SOFKA_ASDD_PROTECTED_BRANCHES` (default: `main,master,qa,dev,develop`). Escape hatch auditable: `SOFKA_ASDD_GUARD_BRANCH_DISABLE=1`.
+- **Regla `asdd-git-safety`** (#3515): normas GS-001..GS-007 que formalizan el contrato git del template — protección de ramas protegidas (GS-001), historia inmutable sin force push ni reset --hard (GS-002), commits solo con autorización explícita (GS-003), naming GitFlow (GS-004), conventional commits (GS-005), una rama por ciclo de cambio (GS-006) y sincronización con merge --no-ff, nunca rebase (GS-007).
+- **Hook `asdd-guard-branch`** (#3515): hook `PreToolUse` (matcher: Bash) que bloquea mecánicamente `git commit` en ramas protegidas (exit 2). Ramas configurables vía `ASDD_PROTECTED_BRANCHES` (default: `main,master,qa,dev,develop`). Escape hatch auditable: `ASDD_GUARD_BRANCH_DISABLE=1`.
 - **Memorias de equipo** (#3515): `.claude/memory/git-rebase-perdida-codigo.md` y `.claude/memory/git-una-rama-por-ciclo.md` — dos anti-patrones documentados con contexto real de incidentes. Registradas en `ASDD-MEMORY.md`.
 
 ## [2.11.0] - 2026-06-09
@@ -2132,17 +2132,17 @@ Versión MINOR que consolida la línea de producción tras extraer el SPDD (Canv
 
 ### Added
 
-- **Comandos de gestión del template** (#3491): `/sofka-asdd:add-agent` y `/sofka-asdd:add-skill` — creación controlada de agentes y skills ASDD respetando convención de nomenclatura y contadores del lock.
-- **Skill `sofka-asdd-tech-lead-create-mr`** (#3492): creación de MRs/PRs estilo Sofka, sin atribución de IA, con conventional commits.
-- **Hook + skill `dep-audit`** (#3493): `sofka-asdd-pre-tool-use-dep-check.mjs` + `sofka-asdd-solution-architect-dep-audit` — el arquitecto valida dependencias antes de agregarlas.
+- **Comandos de gestión del template** (#3491): `/asdd:add-agent` y `/asdd:add-skill` — creación controlada de agentes y skills ASDD respetando convención de nomenclatura y contadores del lock.
+- **Skill `asdd-tech-lead-create-mr`** (#3492): creación de MRs/PRs estilo Guide, sin atribución de IA, con conventional commits.
+- **Hook + skill `dep-audit`** (#3493): `asdd-pre-tool-use-dep-check.mjs` + `asdd-solution-architect-dep-audit` — el arquitecto valida dependencias antes de agregarlas.
 
 ### Changed
 
-- **Rename `sofka-asdd-architect` → `sofka-asdd-solution-architect`** (agente y sus 9 skills). Los proyectos consumidores que referencien el nombre viejo deben actualizar a `solution-architect`. El skill ADR conserva su comportamiento; solo cambia el prefijo del agente y sus skills.
+- **Rename `asdd-architect` → `asdd-solution-architect`** (agente y sus 9 skills). Los proyectos consumidores que referencien el nombre viejo deben actualizar a `solution-architect`. El skill ADR conserva su comportamiento; solo cambia el prefijo del agente y sus skills.
 
 ### Removed
 
-- **SPDD (Canvas integration) extraído de la línea de producción.** El SPDD nunca formó parte de una versión documentada (≤2.9.0 no lo incluían); se preserva en la rama `feat/spdd` para iteración independiente y no se distribuye vía `sofka update`/`upgrade`.
+- **SPDD (Canvas integration) extraído de la línea de producción.** El SPDD nunca formó parte de una versión documentada (≤2.9.0 no lo incluían); se preserva en la rama `feat/spdd` para iteración independiente y no se distribuye vía `guide update`/`upgrade`.
 
 ## [2.10.0] - 2026-05-29
 
@@ -2150,8 +2150,8 @@ Versión MINOR que incorpora los agentes UX y UI como ciudadanos de primera clas
 
 ### Added
 
-- **`sofka-asdd-ux`** — agente UX transversal (UX Research, Information Architecture, Storytelling ejecutivo). Participa en Analizar, Diseñar, Construir, Verificar y Documentar. Skills: `ux-context-core`, `ux-gap-auditor`, `ux-desk-researcher`, `ux-research-instruments`, `ux-qualitative-synthesizer`, `ux-flows-builder`, `ux-executive-storytelling`.
-- **`sofka-asdd-ui`** — agente UI hi-fi (componentes finalizados, design tokens, integración Figma, auditoría de diseño). Reemplaza al legacy `sofka-asdd-ux-ui`. Skills: `ui-hifi-builder`, `ui-figma-impl`, `ui-design-tokens`, `ui-ux-content`, `ui-motion`, `ui-accessibility`, `ui-responsive`, `ui-design-audit`.
+- **`asdd-ux`** — agente UX transversal (UX Research, Information Architecture, Storytelling ejecutivo). Participa en Analizar, Diseñar, Construir, Verificar y Documentar. Skills: `ux-context-core`, `ux-gap-auditor`, `ux-desk-researcher`, `ux-research-instruments`, `ux-qualitative-synthesizer`, `ux-flows-builder`, `ux-executive-storytelling`.
+- **`asdd-ui`** — agente UI hi-fi (componentes finalizados, design tokens, integración Figma, auditoría de diseño). Reemplaza al legacy `asdd-ux-ui`. Skills: `ui-hifi-builder`, `ui-figma-impl`, `ui-design-tokens`, `ui-ux-content`, `ui-motion`, `ui-accessibility`, `ui-responsive`, `ui-design-audit`.
 - **WF-003 a WF-006** actualizados con la participación formal de UX y UI por fase.
 
 ## [2.9.0] - 2026-05-27
@@ -2160,9 +2160,9 @@ Versión MINOR que incorpora el framework ATF API (Agentic Testing Framework for
 
 ### Added
 
-- **`sofka-asdd-atf-api-qa-engineer`** — nuevo agente primario de QA API Pipeline Lead. Reemplaza `sofka-asdd-qa-engineer`. Participa en Diseñar (primario — plan de pruebas ISTQB, análisis de contrato OpenAPI), Construir (primario — automatización Playwright/Newman), Verificar (primario — ejecución de suite, clasificación de defectos) y Documentar (soporte).
-- **`sofka-asdd-atf-reporting-qa-engineer`** — nuevo agente primario de QA Report Lead. Participa en Verificar (primario — evaluación QGS, sign-off formal) y Documentar (primario — reporte HTML/MD, backlog Jira/ADO).
-- **32 skills ATF API** bajo `.claude/skills/sofka-asdd-atf-api-*/`:
+- **`asdd-atf-api-qa-engineer`** — nuevo agente primario de QA API Pipeline Lead. Reemplaza `asdd-qa-engineer`. Participa en Diseñar (primario — plan de pruebas ISTQB, análisis de contrato OpenAPI), Construir (primario — automatización Playwright/Newman), Verificar (primario — ejecución de suite, clasificación de defectos) y Documentar (soporte).
+- **`asdd-atf-reporting-qa-engineer`** — nuevo agente primario de QA Report Lead. Participa en Verificar (primario — evaluación QGS, sign-off formal) y Documentar (primario — reporte HTML/MD, backlog Jira/ADO).
+- **32 skills ATF API** bajo `.claude/skills/asdd-atf-api-*/`:
   - Shared: `shared-config-loader`, `shared-checkpoint-manager`, `shared-rate-limit-protocol`, `shared-evidence-collector`, `shared-knowledge-base-writer`
   - Bootstrap: `orchestrator-run-bootstrap`, `work-item-partitioner`, `dependency-mapper`, `manifest-writer`
   - Analyze: `step-1-hu-parser`, `acceptance-criteria-normalizer`, `gap-detector`, `step-2-openapi-parser`, `contract-hasher`, `contract-delta-detector`
@@ -2170,28 +2170,28 @@ Versión MINOR que incorpora el framework ATF API (Agentic Testing Framework for
   - Automate: `step-5-bun-runner-setup`, `playwright-api-scaffolder`, `newman-bridge`, `security-owasp-api-checks`, `zap-runner`, `performance-k6-script-generator`, `perf-threshold-evaluator`
   - Execute: `step-6-execution-runner`, `failure-classifier`
   - Reporting: `reporting-qgs-evaluator`, `reporting-report-renderer`, `reporting-backlog-sync`
-- **5 reglas ATF API** bajo `.claude/rules/sofka-asdd-atf-api-*.md`:
-  - `sofka-asdd-atf-api-qa-orchestration` — ORC-000 a ORC-030, ciclo completo ATF
-  - `sofka-asdd-atf-api-qa-checkpoint-resume` — CHKPT-001 a CHKPT-007, resiliencia de corridas
-  - `sofka-asdd-atf-api-qa-rate-limit-protocol` — RL-001 a RL-005, pausa ordenada ante rate limit
-  - `sofka-asdd-atf-api-qa-routing-light-vs-full` — taxonomía LIGHT/FULL para corridas ATF
-  - `sofka-asdd-atf-api-qa-defect-classification` — DEF-001 a DEF-007, taxonomía de defectos
-- **11 comandos QA** bajo `.claude/commands/sofka-asdd/qa-*.md`: `qa-bootstrap`, `qa-analyze`, `qa-design`, `qa-automate`, `qa-execute`, `qa-report`, `qa-resume`, `qa-regression`, `qa-fast-track`, `qa-retest`, `qa-do`.
-- **`.sofka-asdd/sofka-asdd-atf.lock`** — lock file específico de QA: estrategia de modelos por fase ATF, configuración de checkpoint, taxonomía de defectos y routing. Complementa `sofka-asdd.lock` sin duplicar sus campos.
+- **5 reglas ATF API** bajo `.claude/rules/asdd-atf-api-*.md`:
+  - `asdd-atf-api-qa-orchestration` — ORC-000 a ORC-030, ciclo completo ATF
+  - `asdd-atf-api-qa-checkpoint-resume` — CHKPT-001 a CHKPT-007, resiliencia de corridas
+  - `asdd-atf-api-qa-rate-limit-protocol` — RL-001 a RL-005, pausa ordenada ante rate limit
+  - `asdd-atf-api-qa-routing-light-vs-full` — taxonomía LIGHT/FULL para corridas ATF
+  - `asdd-atf-api-qa-defect-classification` — DEF-001 a DEF-007, taxonomía de defectos
+- **11 comandos QA** bajo `.claude/commands/asdd/qa-*.md`: `qa-bootstrap`, `qa-analyze`, `qa-design`, `qa-automate`, `qa-execute`, `qa-report`, `qa-resume`, `qa-regression`, `qa-fast-track`, `qa-retest`, `qa-do`.
+- **`.asdd/asdd-atf.lock`** — lock file específico de QA: estrategia de modelos por fase ATF, configuración de checkpoint, taxonomía de defectos y routing. Complementa `asdd.lock` sin duplicar sus campos.
 - **Rutas de artefactos ATF unificadas** bajo estructura ASDD: `docs/testing/atf/{run_id}/` (automation, execution, knowledge) y `docs/qa/atf/{run_id}/` (reporte final, QGS, backlog).
-- **ORC-009** actualizado para forward del estado TDD a `sofka-asdd-atf-api-qa-engineer` (reemplaza `sofka-asdd-qa-engineer`).
+- **ORC-009** actualizado para forward del estado TDD a `asdd-atf-api-qa-engineer` (reemplaza `asdd-qa-engineer`).
 - **WF-003, WF-004, WF-005, WF-006** actualizados con participación formal de los nuevos agentes ATF.
-- **CORE-008** actualizado: sign-off formal = veredicto PASS de `sofka-asdd-atf-reporting-qa-engineer` en `docs/qa/atf/{run_id}/qgs-evaluation.json`.
+- **CORE-008** actualizado: sign-off formal = veredicto PASS de `asdd-atf-reporting-qa-engineer` en `docs/qa/atf/{run_id}/qgs-evaluation.json`.
 
 ### Removed
 
-- **`sofka-asdd-qa-engineer`** — agente reemplazado por `sofka-asdd-atf-api-qa-engineer` y `sofka-asdd-atf-reporting-qa-engineer`. Skills eliminados: `sofka-asdd-qa-engineer-test-strategy`, `sofka-asdd-qa-engineer-e2e-test`, `sofka-asdd-qa-engineer-coverage`, `sofka-asdd-qa-engineer-regression`.
+- **`asdd-qa-engineer`** — agente reemplazado por `asdd-atf-api-qa-engineer` y `asdd-atf-reporting-qa-engineer`. Skills eliminados: `asdd-qa-engineer-test-strategy`, `asdd-qa-engineer-e2e-test`, `asdd-qa-engineer-coverage`, `asdd-qa-engineer-regression`.
 
 ### Changed
 
-- **`sofka-asdd.lock`**: `agents` 13→14, `skills` 51→79, `rules` 11→16, `commands` 10→21.
+- **`asdd.lock`**: `agents` 13→14, `skills` 51→79, `rules` 11→16, `commands` 10→21.
 - **`CLAUDE.md`**: tabla de agentes, tabla de skills y estructura `docs/` actualizados para reflejar los nuevos agentes y rutas ATF.
-- **`sofka-asdd-phases-reference.md`**: tabla de fases actualizada con participación de los nuevos agentes ATF en Diseñar, Construir, Verificar y Documentar.
+- **`asdd-phases-reference.md`**: tabla de fases actualizada con participación de los nuevos agentes ATF en Diseñar, Construir, Verificar y Documentar.
 
 ## [2.8.0] - 2026-05-23
 
@@ -2201,9 +2201,9 @@ Versión MINOR que agrega visibilidad completa del orquestador y pre-execution p
 
 - **ORC-008 — Visibilidad de agentes e identidad del orquestador**: cada acción
   visible en la conversación debe identificar quién la ejecuta. Formato de anuncio
-  estandarizado para agentes (`→ **@sofka-asdd-{nombre}**`) y para el orquestador
+  estandarizado para agentes (`→ **@asdd-{nombre}**`) y para el orquestador
   (`→ **Orquestador ASDD**`). Prohibición explícita del agente built-in `Explore`
-  en favor de `sofka-asdd-explorer`.
+  en favor de `asdd-explorer`.
 - **ORC-010 — Pre-execution plan gate**: el orquestador presenta un plan explícito
   antes de ejecutar comandos CLI potencialmente destructivos o de alto impacto,
   requiriendo confirmación del usuario antes de proceder.
@@ -2223,14 +2223,14 @@ Versión PATCH que corrige rutas de hooks que fallaban por CWD drift.
   `node $CLAUDE_PROJECT_DIR/.claude/hooks/...` en lugar de rutas relativas. Las
   rutas relativas se rompían cuando el CWD de Claude Code derivaba tras un `cd`
   en el Bash tool, produciendo el error `PreToolUse:Bash hook error — .claude/hooks/...: not found`.
-- **`logPath` en `sofka-asdd-post-subagent-stop.mjs`** — resuelto con
+- **`logPath` en `asdd-post-subagent-stop.mjs`** — resuelto con
   `process.env.CLAUDE_PROJECT_DIR || process.cwd()` para garantizar que
   `audit-log.jsonl` siempre se escriba en la raíz del proyecto correcto.
 
 ## [2.7.0] - 2026-05-14
 
 Versión MINOR que agrega salida estructurada JSON al validador de template,
-permitiendo que herramientas externas (como `sofka init`) consuman los
+permitiendo que herramientas externas (como `guide init`) consuman los
 hallazgos de forma programática.
 
 ### Added
@@ -2246,7 +2246,7 @@ hallazgos de forma programática.
 
 ### Changed
 
-- **`sofka init` consume `--json`** — el CLI inyecta el flag al invocar
+- **`guide init` consume `--json`** — el CLI inyecta el flag al invocar
   el validador post-instalación, parsea el JSON y presenta los hallazgos
   en secciones `[REQUIRED]` / `[OPTIONAL]` con cabeceras "Must fix" /
   "Can fix later" y un bloque "Next steps". Fallback a texto plano si el
@@ -2255,7 +2255,7 @@ hallazgos de forma programática.
 ## [2.6.1] - 2026-05-13
 
 Versión PATCH que resuelve la colisión de responsabilidades de diagramación
-entre `sofka-asdd-architect` y `sofka-asdd-cloud-architect`, define el
+entre `asdd-architect` y `asdd-cloud-architect`, define el
 ownership exclusivo del C4 Deployment Diagram en el cloud-architect e
 incorpora soporte para iconografía oficial de proveedores cloud.
 
@@ -2274,15 +2274,15 @@ incorpora soporte para iconografía oficial de proveedores cloud.
 - **C4 Deployment Diagram con ejemplo Mermaid** en `cloud-architect-design` —
   ownership explícito declarado en el skill; incluye ejemplo completo con
   `C4Deployment`, `Deployment_Node`, `Container` y `ContainerDb`.
-- **Tabla de routing de diagramas en WF-003** (`sofka-asdd-workflow.md`) —
+- **Tabla de routing de diagramas en WF-003** (`asdd-workflow.md`) —
   separación clara de responsabilidades: C4 L1/L2/L3 de aplicación →
   `architect-component-diagram`; C4 Deployment + diagramas cloud →
   `cloud-architect-design`.
-- **Regla de routing de diagramas** en `sofka-asdd-routing-heuristics.md` —
+- **Regla de routing de diagramas** en `asdd-routing-heuristics.md` —
   tabla con keywords que disparan `cloud-architect` como primario (VPC, EKS/AKS/GKE,
   RDS, regiones, "deployment diagram", iconografía oficial) y protocolo de
   pregunta para requests ambiguos con "diagrama C4".
-- **Triggers explícitos para diagramas** en el agente `sofka-asdd-cloud-architect` —
+- **Triggers explícitos para diagramas** en el agente `asdd-cloud-architect` —
   "diagrama de infraestructura cloud", "C4 Deployment Diagram" e "iconografía
   oficial" como señales de activación; naming convention y checklist actualizado.
 
@@ -2299,7 +2299,7 @@ incorpora soporte para iconografía oficial de proveedores cloud.
 ### Fixed
 
 - Colisión de routing: requests con "diagrama de infraestructura" activaban
-  al `sofka-asdd-architect` en vez del `sofka-asdd-cloud-architect`.
+  al `asdd-architect` en vez del `asdd-cloud-architect`.
 - Ambigüedad en C4 Deployment Diagram: ambos agentes lo reclamaban sin
   ownership definido.
 
@@ -2311,19 +2311,19 @@ de "Cuándo NO invocar" en los skills restantes del template.
 
 ### Added
 
-- **ORC-001-D** en `.claude/rules/sofka-asdd-orchestration.md` — nueva regla
+- **ORC-001-D** en `.claude/rules/asdd-orchestration.md` — nueva regla
   de auto-detección de `codebase_size` al primer request LIGHT de la sesión.
   Usa regla 2-de-3 (archivos fuente, commits, docs) con umbrales configurables
   en `detection_thresholds` del lock. El resultado se cachea en `.asdd-run.json`
   bajo `auto_detected` y se reutiliza durante toda la sesión.
 - **Scope injection** en ORC-001-B — cuando `codebase_size: large` + ruta LIGHT,
   el orquestador inyecta restricción de scope en el prompt del agente delegado
-  (máx. 2 niveles de dependencias transitivas) y antepone `sofka-asdd-explorer`
+  (máx. 2 niveles de dependencias transitivas) y antepone `asdd-explorer`
   para Tipo 2/3. Ruta FULL no se ve afectada.
-- **`detection_thresholds`** y **`project_context`** en `.sofka-asdd/sofka-asdd.lock`
+- **`detection_thresholds`** y **`project_context`** en `.asdd/asdd.lock`
   — bloque configurable con umbrales por señal y campo `maturity` para override
   manual de la auto-detección.
-- **`auto_detected`** en `.sofka-asdd/asdd-run.schema.json` — nuevo campo
+- **`auto_detected`** en `.asdd/asdd-run.schema.json` — nuevo campo
   opcional que persiste el resultado de la detección (codebase_size, señales
   observadas, override del lock).
 - **ADR-001** en `docs/architecture/decisions/ADR-001-codebase-size-autodetection.md`
@@ -2331,7 +2331,7 @@ de "Cuándo NO invocar" en los skills restantes del template.
   de aceptación.
 - **Secciones "Cuándo NO invocar" y "Anti-patterns"** en 13 skills que las
   faltaban: `architect-api-contract`, `architect-component-diagram`,
-  `architect-bounded-context`, `architect-sofka-docs`, `cloud-architect-finops`,
+  `architect-bounded-context`, `architect-guide-docs`, `cloud-architect-finops`,
   `cloud-architect-design`, `cloud-architect-security`, `devops-cloud-ops`,
   `devops-engineer-iac`, `devops-engineer-containers`,
   `devops-engineer-observability`, `devops-engineer-pipeline`,
@@ -2344,7 +2344,7 @@ de "Cuándo NO invocar" en los skills restantes del template.
   tabla de efectos por tipo de request y bloque literal de scope restriction.
 - **ORC-008** extendido — el anuncio del agente incluye `(scope: {módulo})`
   cuando ORC-001-B inyecta scope restriction.
-- **`.sofka-asdd/sofka-asdd.lock`** — `version`: `2.5.0` → `2.6.0`;
+- **`.asdd/asdd.lock`** — `version`: `2.5.0` → `2.6.0`;
   counts actualizados (`rules: 5`, `commands: 10`); nota de `repository`
   simplificada.
 
@@ -2365,7 +2365,7 @@ Versión PATCH de bump técnico para validar clonado por canal `dev` en el CLI.
 
 ### Changed
 
-- **`.sofka-asdd/sofka-asdd.lock`** — `version`: `2.5.0` → `2.5.1`.
+- **`.asdd/asdd.lock`** — `version`: `2.5.0` → `2.5.1`.
 
 ## [2.5.0] - 2026-05-12
 
@@ -2376,25 +2376,25 @@ asignación de modelo LLM parametrizable por fase, y división del agente
 ### Added
 
 - **Routing adaptativo** (`ORC-001-B`, `ORC-001-C`) en
-  `.claude/rules/sofka-asdd-orchestration.md` — clasifica cada request como
+  `.claude/rules/asdd-orchestration.md` — clasifica cada request como
   ruta LIGHT (delegación directa a un agente) o FULL (workflow de 6 fases)
   usando taxonomía de 6 tipos. Incluye protocolo de escalamiento universal
   `ORC-001-C` con motivos trazables (`scope_mayor`, `requiere_adr`,
   `falta_artefacto`, `codigo_critico`, `rompe_contrato`).
-- **`sofka-asdd-routing-heuristics.md`** — nueva rule con taxonomía completa
+- **`asdd-routing-heuristics.md`** — nueva rule con taxonomía completa
   de tipos de request, señales de clasificación y agente por defecto en LIGHT.
-- **`/sofka-asdd:do`** — nuevo command para override explícito de ruta LIGHT.
-- **`escalations[]`** en `.sofka-asdd/asdd-run.schema.json` — array para
+- **`/asdd:do`** — nuevo command para override explícito de ruta LIGHT.
+- **`escalations[]`** en `.asdd/asdd-run.schema.json` — array para
   trazabilidad de escalamientos LIGHT→FULL ocurridos en el run.
-- **Bloque `routing`** en `.sofka-asdd/sofka-asdd.lock` — `mode`, `always_full`
+- **Bloque `routing`** en `.asdd/asdd.lock` — `mode`, `always_full`
   y `hard_exclusions` (auth, pagos, PII, pipelines, contratos-publicos, compliance).
-- **Model strategy** (`ORC-002-B`) en `.claude/rules/sofka-asdd-orchestration.md`
+- **Model strategy** (`ORC-002-B`) en `.claude/rules/asdd-orchestration.md`
   — el orquestador resuelve el modelo de cada agente antes de invocarlo con
   cadena de precedencia: `skill_override > agent_pinning > phase_default > frontmatter`.
-- **`model_strategy`** en `.sofka-asdd/sofka-asdd.lock` — defaults por fase
+- **`model_strategy`** en `.asdd/asdd.lock` — defaults por fase
   (`specify/analyze: sonnet`, `design/verify: opus`, `build: sonnet`,
   `document: haiku`) con soporte para `agent_pinning` y `skill_override`.
-- **`models_used`** en `.sofka-asdd/asdd-run.schema.json` — objeto por fase
+- **`models_used`** en `.asdd/asdd-run.schema.json` — objeto por fase
   que registra el modelo resuelto por ORC-002-B para cada agente invocado.
 - **Check #15 `model-strategy`** en el validador — bloquea `haiku` en fases
   Diseñar y Verificar donde se requiere capacidad de razonamiento alta.
@@ -2402,11 +2402,11 @@ asignación de modelo LLM parametrizable por fase, y división del agente
   bloque `routing` en el lock.
 - **`.claude/docs/adoption/model-strategy.md`** — guía de configuración con cadena
   de precedencia, ejemplos de `agent_pinning` y `skill_override`.
-- **`sofka-asdd-cloud-architect`** — nuevo agente primario en fase Diseñar.
+- **`asdd-cloud-architect`** — nuevo agente primario en fase Diseñar.
   Responsable de arquitecturas cloud multi-cloud (AWS/Azure/GCP), ADRs de
   infraestructura, FinOps y diagramas C4. Skills: `cloud-architect-design`,
   `cloud-architect-finops`, `cloud-architect-security`.
-- **`sofka-asdd-devops-engineer`** — nuevo agente primario en fases Construir
+- **`asdd-devops-engineer`** — nuevo agente primario en fases Construir
   y Verificar. Responsable de CI/CD, containers, IaC, observabilidad y
   operaciones cloud CLI. Skills: `devops-engineer-pipeline`,
   `devops-engineer-containers`, `devops-engineer-iac`,
@@ -2414,14 +2414,14 @@ asignación de modelo LLM parametrizable por fase, y división del agente
 
 ### Removed
 
-- **`sofka-asdd-platform-engineer`** — reemplazado por `cloud-architect` +
+- **`asdd-platform-engineer`** — reemplazado por `cloud-architect` +
   `devops-engineer`. Responsabilidades de diseño e implementación de infra
   quedan en agentes distintos, eliminando la ambigüedad de cuándo invocar cada rol.
 - **`.gitlab-ci.yml`** — pipeline eliminado, no requerido para el template.
 
 ### Changed
 
-- **`.sofka-asdd/sofka-asdd.lock`** — `version`: `2.4.0` → `2.5.0`;
+- **`.asdd/asdd.lock`** — `version`: `2.4.0` → `2.5.0`;
   `agents`: `12` → `13` (net +1: se agregan 2, se elimina 1); agregados
   bloques `model_strategy` y `routing`.
 - **`CLAUDE.md`** — secciones "Routing Adaptativo" y "Asignación de modelo
@@ -2436,13 +2436,13 @@ identificador del template para que coincida con el catálogo del CLI.
 
 ### Added
 
-- **Strict TDD Mode** en `sofka-asdd-developer` (skill `feature`) y
-  `sofka-asdd-qa-engineer` (skill `test-strategy`):
-  - `.claude/skills/sofka-asdd-developer-feature/strict-tdd.md` — protocolo
+- **Strict TDD Mode** en `asdd-developer` (skill `feature`) y
+  `asdd-qa-engineer` (skill `test-strategy`):
+  - `.claude/skills/asdd-developer-feature/strict-tdd.md` — protocolo
     Red-Green-Refactor para implementación TDD-first.
-  - `.claude/skills/sofka-asdd-qa-engineer-test-strategy/strict-tdd-verify.md` —
+  - `.claude/skills/asdd-qa-engineer-test-strategy/strict-tdd-verify.md` —
     contrapartida del QA para validar cobertura del ciclo TDD.
-  - `.sofka-asdd/testing-capabilities.yaml` — declaración de capacidades de
+  - `.asdd/testing-capabilities.yaml` — declaración de capacidades de
     testing del template, consumida por `sdd-init` para activar Strict TDD.
 
 ### Changed
@@ -2450,12 +2450,12 @@ identificador del template para que coincida con el catálogo del CLI.
 - **`cli-contract.json`** — `template.id`: `"project-structure"` → `"claude"`.
   Alinea el identificador con el ID que el catálogo del CLI usa para esta
   estructura. Sin impacto en la copia de archivos al consumidor; el CLI
-  registra el `structure_id` correcto en `~/.sofka/projects.json` y
-  `sofka update`/`upgrade` puede resolver la URL del repo remoto.
-- **`sofka-asdd.lock.version`**: `2.3.0` → `2.4.0`.
-- **`sofka-asdd.lock.variants.claude.version`**: `2.3.0` → `2.4.0`.
-- Reglas de orquestación (`.claude/rules/sofka-asdd-orchestration.md`,
-  `sofka-asdd-workflow.md`, `sofka-asdd-phases-reference.md`) ajustadas
+  registra el `structure_id` correcto en `~/.guide/projects.json` y
+  `guide update`/`upgrade` puede resolver la URL del repo remoto.
+- **`asdd.lock.version`**: `2.3.0` → `2.4.0`.
+- **`asdd.lock.variants.claude.version`**: `2.3.0` → `2.4.0`.
+- Reglas de orquestación (`.claude/rules/asdd-orchestration.md`,
+  `asdd-workflow.md`, `asdd-phases-reference.md`) ajustadas
   para integrar Strict TDD en las fases Construir y Verificar.
 
 ### Fixed
@@ -2465,9 +2465,9 @@ identificador del template para que coincida con el catálogo del CLI.
 
 ### Migration notes for existing consumers
 
-Consumidores en `2.3.0` que actualicen vía `sofka upgrade --structures-only`
+Consumidores en `2.3.0` que actualicen vía `guide upgrade --structures-only`
 recibirán los nuevos artefactos de Strict TDD y el `template.id` actualizado.
-La entry de registro en `~/.sofka/projects.json` mantendrá el viejo
+La entry de registro en `~/.guide/projects.json` mantendrá el viejo
 `structure_id: "project-structure"` hasta que el CLI re-registre el
 proyecto (ver fix correspondiente en el CLI v0.2.x).
 
@@ -2490,17 +2490,17 @@ rules ni hooks.
 - **`cli-contract.json`** — el entry `project-name` se mantiene en el contract
   (mapeo a `project.name` y validación) pero el CLI ≥ v0.2.0 ya **no se lo
   pregunta al usuario**: lo deriva del nombre del directorio donde corre
-  `sofka init`, sanitizado a kebab-case automáticamente. CLIs anteriores
+  `guide init`, sanitizado a kebab-case automáticamente. CLIs anteriores
   siguen pidiendo `project-name` por prompt sin saber que es derivable; los
   usuarios deben actualizar el CLI a v0.2.0+ para el flujo completo.
 - **`contract_version`**: `2.0.0 → 2.1.0` (MINOR — entries nuevas en `personalize`).
 
 ### Migration notes for existing consumers
 
-Proyectos en 2.2.1 que actualicen vía `sofka upgrade --structures-only`
+Proyectos en 2.2.1 que actualicen vía `guide upgrade --structures-only`
 recibirán el contract nuevo pero sus lockfiles seguirán **sin**
 `project.account` ni `project.solution` (el upgrade no re-evalúa prompts).
-Para completar esos campos será necesario un comando `sofka backfill`
+Para completar esos campos será necesario un comando `guide backfill`
 (issue separado) o editar el lockfile manualmente.
 
 ## [2.2.1] - 2026-04-27
@@ -2524,14 +2524,14 @@ menores se aplicaron.
   **`security-dependency-audit/SKILL.md`**, **`security-secrets-scan/SKILL.md`** —
   mismo cambio: stub `Gotchas` reducido a placeholder mínimo (4 archivos).
 - **`ux-ui-design-tokens/SKILL.md`** — los 9 valores hexadecimales de ejemplo
-  (eran de paletas Tailwind/Radix didácticas, no brand Sofka real) reemplazados
+  (eran de paletas Tailwind/Radix didácticas, no brand Guide real) reemplazados
   por placeholders genéricos `#XXXXXX (categoría)` para evitar implicar que
-  son la paleta oficial Sofka.
+  son la paleta oficial Guide.
 - **`platform-engineer-pipeline/SKILL.md`** — actualizado para no referenciar
   `reference/deploy-strategies-detail.md` (ahora borrado). Mantiene la tabla
   resumen de Rolling/Blue-Green/Canary inline.
-- **`sofka-asdd.lock.version`:** `2.2.0` → `2.2.1`
-- **`sofka-asdd.lock.variants.claude.version`:** `2.2.0` → `2.2.1`
+- **`asdd.lock.version`:** `2.2.0` → `2.2.1`
+- **`asdd.lock.variants.claude.version`:** `2.2.0` → `2.2.1`
 
 ### Removed
 
@@ -2548,24 +2548,24 @@ menores se aplicaron.
   del lens de auditoría, se concluyó que **glosarios y flujos sirven como
   anchor terminológico y de proceso** — no son enciclopedia: garantizan que
   Claude use consistentemente la misma terminología y secuencia que el cliente
-  Sofka espera. Borrarlos generaría drift terminológico sesión a sesión sin
+  Guide espera. Borrarlos generaría drift terminológico sesión a sesión sin
   ganancia real (10-20 líneas borrables por archivo, ROI negativo).
 - **Lens framework refinado** (incorporado en futuras auditorías):
-  - Procedimiento Sofka (cómo hacer X) → KEEP
+  - Procedimiento Guide (cómo hacer X) → KEEP
   - Anchor de terminología (glosario) → KEEP
   - Anchor de proceso (flujos, ciclo de vida, secuencias) → KEEP
   - Anchor de estados (`creado → pendiente → ...`) → KEEP
-  - Catálogos curados Sofka (selección de N de M) → KEEP
+  - Catálogos curados Guide (selección de N de M) → KEEP
   - Templates rellenables → KEEP
   - Regulación EN PROSA larga → DELETE
   - Conceptos genéricos en prosa → DELETE
   - Stubs/instrucciones meta sin valor → DELETE
 - **Otros candidatos descartados:**
-  - `platform-engineer-iac/reference/pulumi-template.md` — Sofka usa Pulumi y
+  - `platform-engineer-iac/reference/pulumi-template.md` — Guide usa Pulumi y
     Terraform, mantener ambos.
   - `security-compliance` checklist ASVS L1/L2/L3 — anchor para mapear
     hallazgos, mantener.
-  - `ux-ui-accessibility` selección de 11 criterios WCAG — selección Sofka
+  - `ux-ui-accessibility` selección de 11 criterios WCAG — selección Guide
     curada (no exhaustiva), mantener.
 
 ### Reference
@@ -2575,14 +2575,14 @@ menores se aplicaron.
 
 ## [2.2.0] - 2026-04-27
 
-Versión MINOR que aplica trim sustancial a los 9 skills `sofka-asdd-architect-*`
+Versión MINOR que aplica trim sustancial a los 9 skills `asdd-architect-*`
 alineando con la guía oficial Anthropic ("The Complete Guide to Building
 Skills for Claude") y el principio **"skills = procedimiento, no enciclopedia"**.
 
 Reduce 93 → 47 archivos en architect skills (-49%) eliminando duplicación de
 conocimiento canónico (C4, ISO 25010, EIP, ATAM, Team Topologies, MADR/Nygard,
 DDD glossary, cloud mappings AWS/Azure/GCP, etc.) que Claude reconstruye desde
-training data. Preserva y consolida el conocimiento procedural Sofka-específico
+training data. Preserva y consolida el conocimiento procedural Guide-específico
 en los SKILL.md correspondientes.
 
 ### Removed
@@ -2595,7 +2595,7 @@ en los SKILL.md correspondientes.
     taxonomy, ISO 25010 + fitness functions canónico + nfr-catalog, estilos
     arquitectónicos canon, data/security/auth patterns canon, antipatterns,
     interview-script genérico (41 archivos).
-  - Bloque B — fallback MADR/Nygard eliminado: el estándar Sofka DA_ADE34 es
+  - Bloque B — fallback MADR/Nygard eliminado: el estándar Guide DA_ADE34 es
     ahora el único formato válido para ADRs en proyectos COE
     (`templates/madr-template.md`, `templates/nygard-template.md`,
     `examples/adr-001-database-choice.md`, `examples/adr-002-auth-provider.md`
@@ -2603,49 +2603,49 @@ en los SKILL.md correspondientes.
 
 ### Added
 
-- **Sección "Reglas operativas Sofka"** en `.claude/agents/sofka-asdd-architect.md`
+- **Sección "Reglas operativas Guide"** en `.claude/agents/asdd-architect.md`
   con el credo del COE de 5 reglas: empezar simple, cada decisión = ADR, cada
   NFR = SLO, cada SLO = fitness function, cada microservicio nuevo = costo
   operativo justificable.
 
 ### Changed
 
-- **Refactor de los 9 SKILL.md `sofka-asdd-architect-*`** para absorber el
-  contenido procedural Sofka que vivía en los `reference/*.md` borrados:
-  - `architect-adr` — Sofka DA_ADE34 como único formato; lifecycle ADR inline.
+- **Refactor de los 9 SKILL.md `asdd-architect-*`** para absorber el
+  contenido procedural Guide que vivía en los `reference/*.md` borrados:
+  - `architect-adr` — Guide DA_ADE34 como único formato; lifecycle ADR inline.
   - `architect-api-contract` — convenciones COE de OpenAPI 3.1 y AsyncAPI.
-  - `architect-bounded-context` — heurísticas Sofka de DDD.
+  - `architect-bounded-context` — heurísticas Guide de DDD.
   - `architect-component-diagram` — Excalidraw default COE, convenciones de
     sequence flows, data modeling, Structurizr DSL.
-  - `architect-discovery` — RACI Sofka, taxonomía LATAM de constraints,
+  - `architect-discovery` — RACI Guide, taxonomía LATAM de constraints,
     coordinación SOX con cliente.
-  - `architect-patterns` — decision tree Sofka (thresholds 15/16-50/>50 devs,
+  - `architect-patterns` — decision tree Guide (thresholds 15/16-50/>50 devs,
     default Monolito Modular, anti-flowchart), convenciones EIP, sync vs async.
   - `architect-quality` — workflow CORE de traducción NFR vago → medible.
   - `architect-tradeoff-analysis` — heurísticas COE de sensitivity analysis y
     decision matrix.
-  - `architect-review` — sin cambios estructurales (review checklist Sofka
+  - `architect-review` — sin cambios estructurales (review checklist Guide
     ya estaba en templates).
-- **`sofka-asdd.lock.version`:** `2.1.1` → `2.2.0`
-- **`sofka-asdd.lock.variants.claude.version`:** `2.1.1` → `2.2.0`
-- **`sofka-asdd.lock.updated_at`:** `2026-04-24` → `2026-04-27`
+- **`asdd.lock.version`:** `2.1.1` → `2.2.0`
+- **`asdd.lock.variants.claude.version`:** `2.1.1` → `2.2.0`
+- **`asdd.lock.updated_at`:** `2026-04-24` → `2026-04-27`
 - `variants.claude.skills`: sin cambio (sigue en 46 — no se removieron skills,
   sólo archivos `reference/` dentro de skills).
 
 ### Decisions
 
-- **Eliminado fallback MADR/Nygard** — el estándar Sofka DA_ADE34 es default
+- **Eliminado fallback MADR/Nygard** — el estándar Guide DA_ADE34 es default
   oficial v2.1.1; mantener fallback duplicaba responsabilidad. Quien necesite
   MADR/Nygard puede pedírselo a Claude sin skill (formatos públicos).
 - **Conocimiento canónico (libros/estándares públicos) NO se documenta en
   skills.** Claude lo reconstruye desde training. Skills sólo contienen
-  procedimiento Sofka-específico (decisión tomada con base en la guía oficial
+  procedimiento Guide-específico (decisión tomada con base en la guía oficial
   Anthropic: "skills provide the recipes, not the encyclopedia").
 - **Diferida la convención estructural Anthropic** (`reference/`→`references/`,
   `templates/`+`examples/`→`assets/`) hasta v2.3.0. El cambio estructural es
   ortogonal al trim de contenido y arriesga ruptura del check `skills-structure`
   del validador.
-- **Credo Sofka migrado al agent file**, no a un SKILL.md específico — son
+- **Credo Guide migrado al agent file**, no a un SKILL.md específico — son
   reglas operativas del rol arquitecto, transversales a todos los sub-skills.
 
 ### Reference
@@ -2656,36 +2656,36 @@ en los SKILL.md correspondientes.
 
 ## [2.1.1] - 2026-04-24
 
-Versión PATCH que adopta el estándar interno Sofka **DA_ADE34 — Drivers
+Versión PATCH que adopta el estándar interno Guide **DA_ADE34 — Drivers
 de Arquitectura** como formato default para ADRs, en sustitución del
 formato MADR genérico.
 
 ### Added
 
-- `reference/sofka-da_ade34-spec.md` en `sofka-asdd-architect-adr` —
-  spec operativo del estándar Sofka: 8 ítems obligatorios (Id, Título,
+- `reference/guide-da_ade34-spec.md` en `asdd-architect-adr` —
+  spec operativo del estándar Guide: 8 ítems obligatorios (Id, Título,
   Estado, Fecha, Contexto y Problema, Factores Impulsores, Opciones
   Consideradas, Resultado de la Decisión, Consecuencias, Más Información),
-  conceptos Sofka (Drivers de Arquitectura, Architecture Concern,
+  conceptos Guide (Drivers de Arquitectura, Architecture Concern,
   AS-IS/TO-BE, Trazabilidad, Trade-off, Deuda Arquitectónica), reglas de
   redacción y antipatrones específicos.
-- `templates/sofka-da_ade34-template.md` — plantilla rellenable con la
+- `templates/guide-da_ade34-template.md` — plantilla rellenable con la
   estructura de 8 ítems del estándar, patrón de título
   `[Verbo] [Objeto] usando [Tecnología/Patrón]` y guías inline.
-- `examples/adr-sofka-cache-aside-redis.md` — ejemplo canónico tomado del
-  documento fuente Sofka (Cache-Aside + Redis Cluster), demuestra tono,
+- `examples/adr-guide-cache-aside-redis.md` — ejemplo canónico tomado del
+  documento fuente Guide (Cache-Aside + Redis Cluster), demuestra tono,
   trazabilidad QA → decisión y profundidad esperada.
 
 ### Changed
 
-- `sofka-asdd-architect-adr/SKILL.md` — Sofka DA_ADE34 pasa a ser formato
+- `asdd-architect-adr/SKILL.md` — Guide DA_ADE34 pasa a ser formato
   default. Description actualizada para reflejarlo. Body ampliado con
-  tabla de conceptos Sofka, los 8 ítems obligatorios y selección de
-  formato (Sofka default → MADR alternativa → Nygard interno).
-- `sofka-asdd-architect-adr/reference/madr-spec.md` — pasa de "default
+  tabla de conceptos Guide, los 8 ítems obligatorios y selección de
+  formato (Guide default → MADR alternativa → Nygard interno).
+- `asdd-architect-adr/reference/madr-spec.md` — pasa de "default
   del COE" a "alternativa para proyectos open-source o equipos externos".
-- **`sofka-asdd.lock.version`:** `2.1.0` → `2.1.1`
-- **`sofka-asdd.lock.variants.claude.version`:** `2.1.0` → `2.1.1`
+- **`asdd.lock.version`:** `2.1.0` → `2.1.1`
+- **`asdd.lock.variants.claude.version`:** `2.1.0` → `2.1.1`
 
 ### Decisions
 
@@ -2695,45 +2695,45 @@ formato MADR genérico.
 - **Mantenidos** los ejemplos `examples/adr-001-database-choice.md` y
   `examples/adr-002-auth-provider.md` en formato MADR — siguen siendo
   referencia válida del formato alternativo.
-- **No se renombró el skill** (`sofka-asdd-architect-adr` → preservado).
-  La adopción de Sofka DA_ADE34 es un cambio de contenido, no de
+- **No se renombró el skill** (`asdd-architect-adr` → preservado).
+  La adopción de Guide DA_ADE34 es un cambio de contenido, no de
   interfaz: validador 14/14 sigue pasando sin renames.
 
 ### Source
 
 - Documento fuente: **DA_ADE34 — Drivers de Arquitectura** v0.1
-  (2025-10-27), uso interno Sofka, gobernado por el Líder de la Práctica
+  (2025-10-27), uso interno Guide, gobernado por el Líder de la Práctica
   de Arquitectura (Head of Architecture Practice).
 
 ## [2.1.0] - 2026-04-24
 
 Versión MINOR que expande las capacidades del agente Arquitecto. Adopta y
-reconcilia el spec externo `sofka-skills-arch-*` (21 skills + router) con la
+reconcilia el spec externo `guide-skills-arch-*` (21 skills + router) con la
 convención de nomenclatura v2.0, consolidando a 9 skills bajo
-`sofka-asdd-architect-*` mediante progressive disclosure.
+`asdd-architect-*` mediante progressive disclosure.
 
 ### Added
 
-- **5 skills nuevos para `sofka-asdd-architect`:**
-  - `sofka-asdd-architect-discovery` — captura de contexto, stakeholders,
+- **5 skills nuevos para `asdd-architect`:**
+  - `asdd-architect-discovery` — captura de contexto, stakeholders,
     restricciones (consolida context-discovery, stakeholder-mapping,
     constraint-elicitation del spec original).
-  - `sofka-asdd-architect-tradeoff-analysis` — ATAM-lite, matrices de decisión,
+  - `asdd-architect-tradeoff-analysis` — ATAM-lite, matrices de decisión,
     risk register (consolida tradeoff-analysis + risk-assessment).
-  - `sofka-asdd-architect-quality` — ISO/IEC 25010, SLOs/SLIs, fitness
+  - `asdd-architect-quality` — ISO/IEC 25010, SLOs/SLIs, fitness
     functions (consolida quality-attributes + nfr-elicitation +
     fitness-functions).
-  - `sofka-asdd-architect-patterns` — catálogo de estilos, integration
+  - `asdd-architect-patterns` — catálogo de estilos, integration
     patterns (EIP), data patterns (CQRS, ES, sagas), security patterns
     (consolida style-selection + integration + data + security).
-  - `sofka-asdd-architect-review` — review checklist, evolution roadmap
+  - `asdd-architect-review` — review checklist, evolution roadmap
     (strangler fig, branch-by-abstraction), team topology (consolida
     review-checklist + evolution-roadmap + team-topology).
 - **Progressive disclosure** (`reference/`, `templates/`, `examples/`) en los 4
   skills existentes del Arquitecto (adr, api-contract, bounded-context,
   component-diagram). 33 archivos nuevos siguiendo la convención oficial
   Anthropic, sin renombrar los SKILL.md.
-- Frontmatter del agente `sofka-asdd-architect` ampliado: array `skills:` pasa
+- Frontmatter del agente `asdd-architect` ampliado: array `skills:` pasa
   de 4 a 9 entradas, tabla "Sub-roles disponibles" extendida con 5 filas y
   "Selección de skill" con 5 reglas adicionales.
 - Spec original archivado en `docs/audit/agentic/architect-skills-v1-input.md`
@@ -2743,7 +2743,7 @@ convención de nomenclatura v2.0, consolidando a 9 skills bajo
 
 - `docs/audit/` (histórico de usuario) del template tracked. El histórico de
   auditorías del COE queda en git history y en un backup externo
-  (`sofka-asdd-coe-history-pre-v2.0.tar.gz`). La carpeta se regenera
+  (`asdd-coe-history-pre-v2.0.tar.gz`). La carpeta se regenera
   automáticamente cuando un proyecto consumidor ejecute
   `@qgt-audit-agentic-config` por primera vez. La subcarpeta
   `docs/audit/agentic/` queda como artefacto de desarrollo del template
@@ -2751,17 +2751,17 @@ convención de nomenclatura v2.0, consolidando a 9 skills bajo
 
 ### Changed
 
-- **`sofka-asdd.lock.version`:** `2.0.0` → `2.1.0`
-- **`sofka-asdd.lock.variants.claude.version`:** `2.0.0` → `2.1.0`
-- **`sofka-asdd.lock.variants.claude.skills`:** `41` → `46` (5 nuevos)
-- **`sofka-asdd.lock.updated_at`:** `2026-04-23` → `2026-04-24`
-- `.sofka-asdd/cli-contract.json.clean.optional_remove`: el id
+- **`asdd.lock.version`:** `2.0.0` → `2.1.0`
+- **`asdd.lock.variants.claude.version`:** `2.0.0` → `2.1.0`
+- **`asdd.lock.variants.claude.skills`:** `41` → `46` (5 nuevos)
+- **`asdd.lock.updated_at`:** `2026-04-23` → `2026-04-24`
+- `.asdd/cli-contract.json.clean.optional_remove`: el id
   `remove-audit-proposals` pasa a `remove-audit-history` y apunta a
   `docs/audit/` completo (antes solo removía `proposals/`).
 
 ### Decisions (ADR-style trazabilidad)
 
-- **Eliminado** el `sofka-skills-arch-engagement-router` propuesto en spec
+- **Eliminado** el `guide-skills-arch-engagement-router` propuesto en spec
   externo. Justificación: anti-patrón en Claude Code (routing nativo por
   description elimina la necesidad de skill intermediario; agregaría latencia
   sin valor).
@@ -2777,23 +2777,23 @@ convención de nomenclatura v2.0, consolidando a 9 skills bajo
 ## [2.0.0] - 2026-04-24
 
 Primera versión MAJOR del template. Introduce la **Convención de Nomenclatura
-Universal sofka-asdd-*** para separar claramente los artefactos del template
+Universal asdd-*** para separar claramente los artefactos del template
 de los del proyecto consumidor y de los plugins externos. Rompe compatibilidad
 con consumidores v1.x; ver `.claude/docs/migrations/1-to-2.md` para el procedimiento.
 
 ### BREAKING CHANGES
 
-- **Prefijo `sofka-asdd-` en todos los artefactos del template:**
-  - 11 agentes renombrados (`architect` → `sofka-asdd-architect`, etc.)
-  - 41 skills renombrados (`architect-adr` → `sofka-asdd-architect-adr`, etc.)
-  - 2 rules renombradas (`asdd-orchestration.md` → `sofka-asdd-orchestration.md`)
-  - 2 hooks renombrados (`pre-tool-use-dangerous-bash.mjs` → `sofka-asdd-pre-tool-use-dangerous-bash.mjs`)
-- **Agente `asdd-expert` renombrado a `sofka-asdd-meta`** (cambio doble: prefijo
-  y rol base). El skill `asdd-expert-platform` rebasa a `sofka-asdd-meta-platform`.
-- **Commands movidos al namespace `/sofka-asdd:`:**
-  `/project:specify` → `/sofka-asdd:specify` (y las 5 fases restantes).
-  La carpeta `.claude/commands/project/` se convierte en `.claude/commands/sofka-asdd/`.
-- **Contrato CLI bumpeado a `2.0.0`:** requiere `sofka-ai >= 2.0.0`. Se agregó
+- **Prefijo `asdd-` en todos los artefactos del template:**
+  - 11 agentes renombrados (`architect` → `asdd-architect`, etc.)
+  - 41 skills renombrados (`architect-adr` → `asdd-architect-adr`, etc.)
+  - 2 rules renombradas (`asdd-orchestration.md` → `asdd-orchestration.md`)
+  - 2 hooks renombrados (`pre-tool-use-dangerous-bash.mjs` → `asdd-pre-tool-use-dangerous-bash.mjs`)
+- **Agente `asdd-expert` renombrado a `asdd-meta`** (cambio doble: prefijo
+  y rol base). El skill `asdd-expert-platform` rebasa a `asdd-meta-platform`.
+- **Commands movidos al namespace `/asdd:`:**
+  `/project:specify` → `/asdd:specify` (y las 5 fases restantes).
+  La carpeta `.claude/commands/project/` se convierte en `.claude/commands/asdd/`.
+- **Contrato CLI bumpeado a `2.0.0`:** requiere `guide-ai >= 2.0.0`. Se agregó
   el bloque `naming_convention` que declara la convención para el CLI.
 - **Commands del proyecto consumidor deben usar namespace `{project.name}:`**
   (ej. `/checkout-backend:deploy`). Enforzado por check 14 del validador.
@@ -2801,19 +2801,19 @@ con consumidores v1.x; ver `.claude/docs/migrations/1-to-2.md` para el procedimi
 ### Added
 
 - **Convención formal de nomenclatura** con 3 namespaces:
-  `sofka-asdd-*` (template), `{project.name}-*` (proyecto),
+  `asdd-*` (template), `{project.name}-*` (proyecto),
   plugins (namespace propio). Formalizada en
   `.claude/docs/adoption/naming-convention.md` (tabla de decisión, FAQ, tutorial paso a paso).
 - **Check 14 `naming-convention` (strict)** en validador. El validador pasa
   de 13/13 a 14/14.
-- **Bloque `naming_convention`** en `.sofka-asdd/cli-contract.json` para que
+- **Bloque `naming_convention`** en `.asdd/cli-contract.json` para que
   el CLI valide consistencia durante la adopción.
 - **Sección "Convención de nomenclatura"** en `ASDD-VERSIONING.md`.
 - **Guía de migración** `.claude/docs/migrations/1-to-2.md`.
 
 ### Changed
 
-- **`sofka-asdd.lock.version`**: `1.0.1` → `2.0.0`
+- **`asdd.lock.version`**: `1.0.1` → `2.0.0`
 - **`cli-contract.json.contract_version`**: `1.0.0` → `2.0.0`
 - **`cli-contract.json.compatibility.min_cli_version`**: `1.0.0` → `2.0.0`
 - **`checklist.json.checklist_version`**: `1.0.0` → `2.0.0`
@@ -2867,12 +2867,12 @@ retrospectivamente como línea base.
   cada push y merge request.
 - Documentación de validación en `.claude/docs/validation.md` con guía de
   adopción, activar/deshabilitar y pre-commit hook opcional.
-- Carpeta `.sofka-asdd/` con tres artefactos:
-  - `sofka-asdd.lock` — manifiesto versionado del template.
+- Carpeta `.asdd/` con tres artefactos:
+  - `asdd.lock` — manifiesto versionado del template.
   - `cli-contract.json` — contrato declarativo v1.0 para adopción
-    automatizada por el CLI `sofka-ai`.
+    automatizada por el CLI `guide-ai`.
   - `checklist.json` — checklist ejecutable pre/post adopción.
-- Markers HTML `<!-- sofka-asdd:template-disclaimer:start/end -->`
+- Markers HTML `<!-- asdd:template-disclaimer:start/end -->`
   en `CLAUDE.md` para parsing estable por el CLI durante la
   personalización del template.
 - Documentación de adopción en `docs/adoption/`:
@@ -2894,8 +2894,8 @@ retrospectivamente como línea base.
 
 ### Changed
 
-- `.sofka-asdd` migrado de archivo único a carpeta con tres JSON
-  adentro (`sofka-asdd.lock`, `cli-contract.json`, `checklist.json`).
+- `.asdd` migrado de archivo único a carpeta con tres JSON
+  adentro (`asdd.lock`, `cli-contract.json`, `checklist.json`).
 - Agentes `developer` y `tech-lead` cambian de Sonnet a
   `claude-opus-4-7` para razonamiento más profundo en su dominio.
 - Rules comprimidas sin pérdida de lógica:
@@ -2915,7 +2915,7 @@ retrospectivamente como línea base.
   `deny`, reduciendo aprobaciones manuales en el flujo diario.
 - 6 commands de fase ASDD con `allowed-tools` restrictivo (cada
   command declara explícitamente qué tools puede usar).
-- `README.md` y `.sofka-asdd` alineados con la realidad del
+- `README.md` y `.asdd` alineados con la realidad del
   filesystem (contadores, estructura, agentes, skills).
 
 ### Removed
@@ -2948,10 +2948,10 @@ retrospectivamente como línea base.
   con catálogo de anti-patrones, hallazgos por fase y plan de
   corrección aplicable.
 - `CLAUDE.md` con disclaimer explícito template vs proyecto real
-  (delimitado por markers `sofka-asdd:template-disclaimer`).
+  (delimitado por markers `asdd:template-disclaimer`).
 - `CORE-008` operacionalizado en `CLAUDE.md` con ejemplos
   concretos de uso.
-- Este `ASDD-CHANGELOG.md` retrospectivo, alineado con `sofka-asdd.lock.version`.
+- Este `ASDD-CHANGELOG.md` retrospectivo, alineado con `asdd.lock.version`.
 - `ASDD-VERSIONING.md` con política SemVer, compatibility matrix,
   release process, política de soporte y FAQ.
 - `.claude/docs/migrations/README.md` explica el catálogo y formato de guías de

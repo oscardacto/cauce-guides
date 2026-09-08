@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Smoke test — sofka-asdd-orchestrator-guard.mjs (#3606/#3607)
+ * Smoke test — asdd-orchestrator-guard.mjs (#3606/#3607)
  * Uso: node .claude/scripts/test-orchestrator-guard-hook.mjs
  *
  * Verifica que el hook PreToolUse aplica ORC-000 / ORC-000-B / CORE-009:
@@ -17,7 +17,7 @@
  *      comandos de control redundantes → DEBEN denegarse sin prompt nativo
  */
 
-import { getOrchestratorGuardDecision } from "../hooks/sofka-asdd-orchestrator-guard.mjs";
+import { getOrchestratorGuardDecision } from "../hooks/asdd-orchestrator-guard.mjs";
 
 let passed = 0;
 let failed = 0;
@@ -117,8 +117,8 @@ console.log("C7: main thread + Bash local read-only allow-listed → allow");
 }
 for (const command of [
   "git -C /tmp/consumer status --short",
-  "node .claude/scripts/sofka-asdd-route-request.mjs --file docs/contexto/prompts/00-auditoria-contexto.md",
-  'cat .sofka-asdd/capability-loading.json 2>/dev/null | python3 -m json.tool 2>/dev/null | grep -A3 "producto" | head -40',
+  "node .claude/scripts/asdd-route-request.mjs --file docs/contexto/prompts/00-auditoria-contexto.md",
+  'cat .asdd/capability-loading.json 2>/dev/null | python3 -m json.tool 2>/dev/null | grep -A3 "producto" | head -40',
 ]) {
   const r = run({ hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command } });
   assert(`${command} es diagnóstico read-only permitido`, r.stdout.trim() === "", r.stdout.slice(0, 200));
@@ -137,7 +137,7 @@ for (const [command, porQue] of [
   ["find . -exec echo {} \;", "predicado de ejecución"],
   ["tree -o inventario.txt", "escribe un archivo"],
   ["git branch -D feature/temporal", "muta el repositorio"],
-  ["node .claude/scripts/sofka-asdd-route-request.mjs --file ../secreto.md", "traversal fuera del proyecto"],
+  ["node .claude/scripts/asdd-route-request.mjs --file ../secreto.md", "traversal fuera del proyecto"],
 ]) {
   const r = run({ hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command } });
   assert(`${command} produce deny (${porQue})`, isDeny(r.stdout), r.stdout.slice(0, 200));
@@ -146,7 +146,7 @@ for (const [command, porQue] of [
 // C9 — la única escritura efímera admitida al orquestador antes de `ok`.
 console.log("C9: emisión challenge ORC-010-A → allow");
 {
-  const issue = `node .claude/scripts/sofka-asdd-plan-authorization.mjs issue --plan-json '{"request_id":"req-e2e","task":"cambio","agents":[{"agent":"sofka-asdd-developer-backend","capability":"sofka-asdd-developer-bug-fix","scope":[".sofka-asdd/context-budget.json"],"commands":["node .claude/scripts/validate-template.mjs"]}]}'`;
+  const issue = `node .claude/scripts/asdd-plan-authorization.mjs issue --plan-json '{"request_id":"req-e2e","task":"cambio","agents":[{"agent":"asdd-developer-backend","capability":"asdd-developer-bug-fix","scope":[".asdd/context-budget.json"],"commands":["node .claude/scripts/validate-template.mjs"]}]}'`;
   const r = run({ hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command: issue } });
   assert("challenge canónico no pide confirmación extra", r.stdout.trim() === "", r.stdout.slice(0, 200));
   const multiline = issue.replace("{\"request_id\"", "{\n  \"request_id\"").replace("\"task\"", "\n  \"task\"");
@@ -155,14 +155,14 @@ console.log("C9: emisión challenge ORC-010-A → allow");
   const absoluteIssue = issue.replace("node .claude/scripts/", "node /tmp/consumer/.claude/scripts/") + " 2>&1";
   const absoluteResult = run({ hook_event_name: "PreToolUse", tool_name: "Bash", cwd: "/tmp/consumer", tool_input: { command: absoluteIssue } });
   assert("challenge con ruta absoluta del proyecto y 2>&1 no duplica autorización", absoluteResult.stdout.trim() === "", absoluteResult.stdout.slice(0, 200));
-  const bootstrap = run({ hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command: "node .claude/scripts/sofka-asdd-run-bootstrap.mjs --feature aid-bancolombia --phase specify --artifact-dir docs/specs --artifact-slug brief-aid-bancolombia" } });
+  const bootstrap = run({ hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command: "node .claude/scripts/asdd-run-bootstrap.mjs --feature aid-bancolombia --phase specify --artifact-dir docs/specs --artifact-slug brief-aid-bancolombia" } });
   assert("bootstrap canónico de run es control-plane permitido", bootstrap.stdout.trim() === "", bootstrap.stdout.slice(0, 200));
   const escaped = run({ hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command: `${issue}; rm -rf /tmp/nope` } });
   assert("challenge con comando extra se deniega", isDeny(escaped.stdout), escaped.stdout.slice(0, 200));
   for (const command of [
-    "node .claude/scripts/sofka-asdd-plan-authorization.mjs approve",
-    "node .claude/scripts/sofka-asdd-plan-authorization.mjs status",
-    "node .claude/scripts/sofka-asdd-plan-authorization.mjs --help",
+    "node .claude/scripts/asdd-plan-authorization.mjs approve",
+    "node .claude/scripts/asdd-plan-authorization.mjs status",
+    "node .claude/scripts/asdd-plan-authorization.mjs --help",
   ]) {
     const control = run({ hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command } });
     assert(`${command} se deniega sin prompt nativo`, isDeny(control.stdout), control.stdout.slice(0, 200));
@@ -178,7 +178,7 @@ console.log("C2: subagente + Bash (con agent_id) → allow");
     tool_name: "Bash",
     tool_input: { command: "echo hola" },
     agent_id: "abc",
-    agent_type: "sofka-asdd-developer-backend",
+    agent_type: "asdd-developer-backend",
   });
   assert("exit code 0", r.code === 0, `code=${r.code}`);
   assert("stdout vacío (sin ask)", r.stdout.trim() === "", r.stdout.slice(0, 200));
@@ -197,7 +197,7 @@ console.log("C3: main thread + Read (tool no cubierta) → allow");
 }
 
 // C4 — main thread + Bash + DISABLE=1 → DEBE permitir
-console.log("C4: main thread + Bash + SOFKA_ASDD_ORCHESTRATOR_GUARD_DISABLE=1 → allow");
+console.log("C4: main thread + Bash + ASDD_ORCHESTRATOR_GUARD_DISABLE=1 → allow");
 {
   const r = run(
     {
@@ -205,7 +205,7 @@ console.log("C4: main thread + Bash + SOFKA_ASDD_ORCHESTRATOR_GUARD_DISABLE=1 �
       tool_name: "Bash",
       tool_input: { command: "echo hola" },
     },
-    { env: { SOFKA_ASDD_ORCHESTRATOR_GUARD_DISABLE: "1" } },
+    { env: { ASDD_ORCHESTRATOR_GUARD_DISABLE: "1" } },
   );
   assert("exit code 0", r.code === 0, `code=${r.code}`);
   assert("stdout vacío (sin ask)", r.stdout.trim() === "", r.stdout.slice(0, 200));
@@ -254,7 +254,7 @@ console.log("C6: main thread + Write (sin agent_id) → deny");
 console.log("C10: approve/amend acotados ORC-010-E → allow; resto del CLI → deny");
 {
   const id = "11111111-2222-3333-4444-555555555555";
-  const cli = "node .claude/scripts/sofka-asdd-plan-authorization.mjs";
+  const cli = "node .claude/scripts/asdd-plan-authorization.mjs";
   const allowed = [
     `${cli} approve --challenge-id ${id}`,
     `${cli} amend --challenge-id ${id} --confirm-unchanged`,
@@ -280,7 +280,7 @@ console.log("C10: approve/amend acotados ORC-010-E → allow; resto del CLI → 
 // validación. Se fijan como casos propios para que no puedan volver por otra vía.
 console.log("C11: los cuatro defectos que la suite le cazó al rediseño");
 {
-  const cli = "node .claude/scripts/sofka-asdd-plan-authorization.mjs";
+  const cli = "node .claude/scripts/asdd-plan-authorization.mjs";
   const id = "11111111-2222-3333-4444-555555555555";
   const deny = (command) => isDeny(run({ hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command } }).stdout);
 
@@ -306,7 +306,7 @@ console.log("C11: `test` y `>/dev/null` en el sondeo del control-plane → allow
 {
   const permitidos = [
     "test -f .gitignore",
-    "node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-orchestration >/dev/null 2>&1",
+    "node .claude/scripts/asdd-resolve-rule.mjs asdd-orchestration >/dev/null 2>&1",
   ];
   for (const command of permitidos) {
     const r = run({ hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command } });
@@ -325,7 +325,7 @@ console.log("C11: `test` y `>/dev/null` en el sondeo del control-plane → allow
 }
 
 console.log(`\n${"─".repeat(52)}`);
-console.log(`Smoke sofka-asdd-orchestrator-guard: ${passed} ✅  ${failed} ❌`);
+console.log(`Smoke asdd-orchestrator-guard: ${passed} ✅  ${failed} ❌`);
 if (failed > 0) {
   process.exit(1);
 }

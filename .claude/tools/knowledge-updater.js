@@ -2,7 +2,7 @@
 /**
  * knowledge-updater.js — Actualiza los registros transaccionales post-ejecución.
  *
- * Implementa las 3 partes de .claude/skills/sofka-asdd-atf-web-knowledge-updater/SKILL.md como
+ * Implementa las 3 partes de .claude/skills/asdd-atf-web-knowledge-updater/SKILL.md como
  * script ejecutable determinístico. Lee SIEMPRE desde disco — nunca de memoria.
  *
  * Modo single-module (legacy):

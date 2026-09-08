@@ -1,8 +1,8 @@
 # Brief: Perfiles profesionales de enfoque ASDD
 
-**Proyecto:** project-structure / Sofka ASDD
+**Proyecto:** project-structure / Guide ASDD
 **Fecha:** 2026-07-25
-**Owner:** Maintainers de Sofka ASDD + representantes de las áreas profesionales
+**Owner:** Maintainers de Guide ASDD + representantes de las áreas profesionales
 **Run:** `2026-07-25-001`
 **Estado:** APROBADO EN G0 PARA INICIAR ANALYZE READ-ONLY
 
@@ -113,7 +113,7 @@ Cada elemento tendrá metadatos equivalentes a:
 
 ```json
 {
-  "id": "sofka-asdd-data-quality",
+  "id": "asdd-data-quality",
   "kind": "skill",
   "primary_domain": "data",
   "secondary_domains": ["quality"],

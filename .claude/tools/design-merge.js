@@ -130,8 +130,8 @@ function validateFragmentStrict(filePath) {
     process.stderr.write(`\nAcción del QA:\n`);
     process.stderr.write(`  1) Eliminar fragment inválido:\n`);
     process.stderr.write(`     rm "${filePath}"\n`);
-    process.stderr.write(`  2) Re-ejecutar SOLO esa HU (cuando /sofka-asdd:qa-web-design --hu esté disponible) o\n`);
-    process.stderr.write(`     re-ejecutar el módulo completo con /sofka-asdd:qa-web-design --module {M}.\n`);
+    process.stderr.write(`  2) Re-ejecutar SOLO esa HU (cuando /asdd:qa-web-design --hu esté disponible) o\n`);
+    process.stderr.write(`     re-ejecutar el módulo completo con /asdd:qa-web-design --module {M}.\n`);
     process.stderr.write(`  3) El agente DEBE emitir test_datasets como literales JSON puros\n`);
     process.stderr.write(`     (sin .repeat(), sin \${}, sin comentarios). Ver REGLA 8.\n`);
     process.stderr.write('='.repeat(70) + '\n\n');

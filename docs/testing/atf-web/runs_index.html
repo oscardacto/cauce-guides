@@ -7,23 +7,23 @@
 <title id="page-title">ATF · Historial de Runs</title>
 <style>
 /**
- * ATF — Sofka Design Tokens
+ * ATF — Guide Design Tokens
  * Fuente única de verdad para colores, tipografía y radios.
  * Se inlinea en cada template en tiempo de build por generate-report.js.
  * NO modificar colores hardcodeados en templates individuales — usar estas variables.
  *
- * Identidad visual: sofka_style_manual.md (Sofka Technologies 2026)
+ * Identidad visual: guide_style_manual.md (Guide Technologies 2026)
  * Template version: 3.1.0
  */
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
-  /* ── Sofka Brand Palette 2026 (sofka_style_manual.md §2) ── */
-  --orange:      #F47920;                      /* Naranja Sofka — CTAs, acentos, guión bajo del logo */
+  /* ── Guide Brand Palette 2026 (guide_style_manual.md §2) ── */
+  --orange:      #F47920;                      /* Naranja Guide — CTAs, acentos, guión bajo del logo */
   --orange-bg:   rgba(244,121,32,.09);
   --orange-b:    rgba(244,121,32,.28);
-  --sofka-light: #F0EDE8;                      /* Crema / Beige — fondos de apertura */
-  --sofka-dark:  #B8A894;
+  --guide-light: #F0EDE8;                      /* Crema / Beige — fondos de apertura */
+  --guide-dark:  #B8A894;
 
   /* ── Backgrounds ── */
   --bg:    #F7F5F2;
@@ -41,16 +41,16 @@
   --skip:  #8A8478; --skip-bg:rgba(138,132,120,.10);--skip-b:rgba(138,132,120,.25);
   --p3c:   #0A7A7A;   /* P3 bugs = teal */
 
-  /* ── Sofka Semáforo de Criticidades (§5.1) ── */
+  /* ── Guide Semáforo de Criticidades (§5.1) ── */
   --sev-critical: #E53E3E;  /* Rojo — bloqueos, fallos graves */
-  --sev-high:     #F47920;  /* Naranja Sofka — alertas importantes */
+  --sev-high:     #F47920;  /* Naranja Guide — alertas importantes */
   --sev-medium:   #F6C343;  /* Amarillo — puntos de atención */
   --sev-low:      #38A169;  /* Verde — estado saludable */
 
   /* ── Texto (§2 + §3) ── */
   --text:  #1A1A1A; --text2: #555555; --text3: #888888; --text4: #B0A898;
 
-  /* ── Tipografía Sofka 2026 (§3) ── */
+  /* ── Tipografía Guide 2026 (§3) ── */
   --font-head: 'Barlow Condensed', 'Montserrat', Arial Narrow, sans-serif;  /* Titulares */
   --font-body: 'Montserrat', 'Roboto', Arial, sans-serif;                   /* Cuerpo */
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
@@ -104,8 +104,8 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── SOFKA FOOTER (§4.7 — compartido entre todos los templates) ── */
-.sofka-footer {
+/* ── GUIDE FOOTER (§4.7 — compartido entre todos los templates) ── */
+.guide-footer {
   text-align: center;
   font-size: .75rem;
   color: var(--text3, #888888);
@@ -115,20 +115,20 @@
   line-height: 1.7;
   font-family: var(--font-body);
 }
-.sofka-footer a {
+.guide-footer a {
   color: var(--orange, #F47920);
   text-decoration: none;
   font-weight: 600;
 }
-.sofka-footer a:hover { opacity: .7; }
-.sofka-brand {
+.guide-footer a:hover { opacity: .7; }
+.guide-brand {
   font-family: var(--font-head);
   font-weight: 700;
   font-size: .85rem;
   color: var(--text, #1A1A1A);
   letter-spacing: -.01em;
 }
-.sofka-brand .underscore {
+.guide-brand .underscore {
   color: var(--orange, #F47920);
   font-weight: 800;
 }
@@ -136,13 +136,13 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg,#f7f5f2);color:var(--text,#1a1a18);font-family:var(--body,system-ui,sans-serif);font-size:13px;line-height:1.55;min-height:100vh}
 
-/* ── SOFKA PATTERN ── */
-.sofka-bg{position:relative;overflow:hidden}
-.sofka-bg::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent,transparent 14px,rgba(244,121,32,.018) 14px,rgba(244,121,32,.018) 15px);pointer-events:none;z-index:0}
-.sofka-bg>*{position:relative;z-index:1}
+/* ── GUIDE PATTERN ── */
+.guide-bg{position:relative;overflow:hidden}
+.guide-bg::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent,transparent 14px,rgba(244,121,32,.018) 14px,rgba(244,121,32,.018) 15px);pointer-events:none;z-index:0}
+.guide-bg>*{position:relative;z-index:1}
 
 /* Header */
-.page-header{position:sticky;top:0;z-index:50;background:var(--text,#1a1a18);color:var(--sofka-light,#F0EDE8);padding:0 28px;height:56px;display:flex;align-items:center;gap:20px;border-bottom:3px solid var(--orange,#F47920)}
+.page-header{position:sticky;top:0;z-index:50;background:var(--text,#1a1a18);color:var(--guide-light,#F0EDE8);padding:0 28px;height:56px;display:flex;align-items:center;gap:20px;border-bottom:3px solid var(--orange,#F47920)}
 .h-logo{font-family:var(--sans,sans-serif);font-size:13px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
 .h-dot{width:7px;height:7px;border-radius:50%;background:var(--orange,#F47920);box-shadow:0 0 8px var(--orange,#F47920);animation:blink 3s ease-in-out infinite}
 @keyframes blink{0%,88%,100%{opacity:1}94%{opacity:.15}}
@@ -242,10 +242,10 @@ footer span{color:var(--orange,#F47920)}
 <body>
 
 <!-- ── HEADER ── -->
-<header class="page-header sofka-bg">
+<header class="page-header guide-bg">
   <div class="h-logo">
     <span class="h-dot"></span>
-    <span>sofka_ · ATF</span>
+    <span>guide_ · ATF</span>
   </div>
   <span class="h-sep"></span>
   <span class="h-run" id="h-app-name">Historial de Runs</span>
@@ -342,7 +342,7 @@ footer span{color:var(--orange,#F47920)}
 </main>
 
 <footer>
-  <span class="sofka-brand" style="font-family:var(--sans,sans-serif);font-weight:700;font-size:13px;color:var(--text,#1a1a18)">sofka<span style="color:var(--orange,#F47920);font-weight:800">_</span></span>
+  <span class="guide-brand" style="font-family:var(--sans,sans-serif);font-weight:700;font-size:13px;color:var(--text,#1a1a18)">guide<span style="color:var(--orange,#F47920);font-weight:800">_</span></span>
   <span> · </span>Generado por <span>ATF</span> · template v3.1.0 · <span id="footer-date"></span>
   <span> · </span><a href="https://sofka.com.co" style="color:var(--orange,#F47920);text-decoration:none;font-weight:600">sofka.com.co</a>
 </footer>

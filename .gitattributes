@@ -4,7 +4,7 @@
 # .gitattributes. Sin esta política explícita, el checkout materializa
 # CRLF en Windows para TODO archivo de texto, lo que rompe scripts POSIX
 # (.sh/.bash), diverge del hash SHA-256 calculado sobre contenido LF en
-# .sofka-asdd/rule-loading.json y .sofka-asdd/coordinator-loading.json, y
+# .asdd/rule-loading.json y .asdd/coordinator-loading.json, y
 # arriesga corrupción de binarios que Git intenta diffear como texto.
 #
 # Decisión explícita del proyecto: NO usar `* text=auto eol=lf` como única

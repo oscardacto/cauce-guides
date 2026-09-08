@@ -35,7 +35,7 @@
  *   1 — error fatal (input inválido, archivos ausentes)
  *
  * NOTA: este script NO altera el flujo del executor. Solo añade discoveries
- * a la session file. El `nav-learning merge` posterior (PASO 4.7.a de /sofka-asdd:qa-web-exec)
+ * a la session file. El `nav-learning merge` posterior (PASO 4.7.a de /asdd:qa-web-exec)
  * los consolida a navigation_map.json.
  */
 

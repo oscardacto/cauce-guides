@@ -20,7 +20,7 @@ routing heuristics, anti-loops, orchestration ops, data boundary y
 orchestration routing. El contenido anterior se preservó completo en su
 referencia correspondiente.
 
-`.sofka-asdd/rule-loading.json` es el contrato procesable de la estrategia. Por
+`.asdd/rule-loading.json` es el contrato procesable de la estrategia. Por
 cada regla declara core, referencia, trigger, marcadores críticos y SHA-256 del
 detalle normativo. `validate-template` comprueba rutas, hashes, readers,
 marcadores, mayor detalle de la referencia y ausencia de duplicados.
@@ -30,7 +30,7 @@ marcadores, mayor detalle de la referencia y ausencia de duplicados.
 Cada core contiene la ruta exacta y ejecuta:
 
 ```bash
-node .claude/scripts/sofka-asdd-resolve-rule.mjs <nombre-regla>
+node .claude/scripts/asdd-resolve-rule.mjs <nombre-regla>
 ```
 
 La instrucción exige leer el archivo **COMPLETO** antes de actuar. Si resolver o

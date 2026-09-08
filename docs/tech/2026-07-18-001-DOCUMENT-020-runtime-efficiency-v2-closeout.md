@@ -70,7 +70,7 @@ versionados en el baseline final.
 - `.claude/docs/adoption/runtime-efficiency.md`
 - `.claude/scripts/test-cli-runtime-distribution.mjs`
 - `.claude/scripts/validate-template.mjs`
-- `.sofka-asdd/cli-contract.json`
+- `.asdd/cli-contract.json`
 
 Resultado: iniciativa completa, documentación reconciliada y release
 condicionado explícitamente a macOS/Windows nativos.

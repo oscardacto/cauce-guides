@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import { performance } from "node:perf_hooks";
-import { normalizeBudgetEnvelope } from "./lib/sofka-asdd-subagent-budget-lib.mjs";
-import { routeRequest } from "./lib/sofka-asdd-proportional-router-lib.mjs";
+import { normalizeBudgetEnvelope } from "./lib/asdd-subagent-budget-lib.mjs";
+import { routeRequest } from "./lib/asdd-proportional-router-lib.mjs";
 
 const samples = Number(process.argv[2] ?? 1_000);
 if (!Number.isInteger(samples) || samples < 30 || samples > 100_000) throw new Error("samples must be 30..100000");
-const rawAgent = { agent: "sofka-asdd-developer-backend", capability: "sofka-asdd-developer-bug-fix", model: "sonnet", max_turns: 20, retries: 0 };
+const rawAgent = { agent: "asdd-developer-backend", capability: "asdd-developer-bug-fix", model: "sonnet", max_turns: 20, retries: 0 };
 const normalized = [{ agent: rawAgent.agent, capability: rawAgent.capability, dependencies: [], scope: ["src/x.ts"], commands: [] }];
 const input = { budget_policy_version: 1, route: "LIGHT", phase: "build", risk: "low", confidence: 0.9, max_concurrent: 1, agents: [rawAgent] };
 const routeTimes = [], budgetTimes = [];

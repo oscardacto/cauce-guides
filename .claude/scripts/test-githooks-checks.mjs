@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Suite de la capa de enforcement git nativa (.sofka-asdd/githooks).
+// Suite de la capa de enforcement git nativa (.asdd/githooks).
 //
 // Las funciones de checks son puras respecto de git salvo dos, que se prueban
 // contra el repo real (integridad de reglas) y contra un repo fixture temporal
@@ -17,7 +17,7 @@ import {
   checkNoAiAttribution,
   checkProtectedBranch,
   checkRuleIntegrity,
-} from "../../.sofka-asdd/githooks/lib/checks.mjs";
+} from "../../.asdd/githooks/lib/checks.mjs";
 
 const repoRaiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -37,8 +37,8 @@ test("GS-001 permite una feature branch", () => {
   assert.equal(checkProtectedBranch("fix/algo-concreto").ok, true);
 });
 
-test("GS-001 respeta SOFKA_ASDD_PROTECTED_BRANCHES", () => {
-  const env = { SOFKA_ASDD_PROTECTED_BRANCHES: "trunk,release" };
+test("GS-001 respeta ASDD_PROTECTED_BRANCHES", () => {
+  const env = { ASDD_PROTECTED_BRANCHES: "trunk,release" };
   assert.equal(checkProtectedBranch("trunk", env).ok, false);
   assert.equal(checkProtectedBranch("dev", env).ok, true, "dev deja de estar protegida si no se declara");
 });

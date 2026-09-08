@@ -4,11 +4,11 @@
 
 - **Estado:** Propuesta
 - **Fecha:** 2026-07-09
-- **Revisión 2026-07-09 (rev-1):** Ajuste dirigido tras aprobación de Andrés para incorporar (i) el principio de resume reconciliado contra git, validado empíricamente en el repo `humanatech-sofkaai-convenios` (nuevo §9); (ii) decisión de ownership/naming del skill de reconciliación (nuevo §10); (iii) adopción del sub-tipado del CR propuesto por el AF en §8/P4 (nueva decisión (f) en §3, refleja en §2.e). Refuerzo de evidencia en la recomendación (a). Estado sigue `Propuesta`.
+- **Revisión 2026-07-09 (rev-1):** Ajuste dirigido tras aprobación de Andrés para incorporar (i) el principio de resume reconciliado contra git, validado empíricamente en el repo `humanatech-guideai-convenios` (nuevo §9); (ii) decisión de ownership/naming del skill de reconciliación (nuevo §10); (iii) adopción del sub-tipado del CR propuesto por el AF en §8/P4 (nueva decisión (f) en §3, refleja en §2.e). Refuerzo de evidencia en la recomendación (a). Estado sigue `Propuesta`.
 - **Deciders:** _(pendiente — requiere aprobación explícita del maintainer del template)_
-- **Autor:** sofka-asdd-solution-architect
+- **Autor:** asdd-solution-architect
 - **Skill activo:** tradeoff-analysis (fase Diseñar)
-- **Relacionados:** ADR-004 (modelo spec-per-área — este ADR lo **extiende, no lo reemplaza**), ORC-007 en `.claude/references/rules/sofka-asdd-checkpoint-resume.md`, WF-004 en `.claude/references/rules/sofka-asdd-workflow-build.md`, ORC-011 en `.claude/references/rules/sofka-asdd-orchestration-worktree.md`, SPG-001 y SPG-004 en `.claude/references/rules/sofka-asdd-spec-guard.md`, `.sofka-asdd/asdd-run.schema.json`, `.claude/commands/sofka-asdd/resume.md`, `sofka-asdd-tech-lead-sdd-traceability` (skill).
+- **Relacionados:** ADR-004 (modelo spec-per-área — este ADR lo **extiende, no lo reemplaza**), ORC-007 en `.claude/references/rules/asdd-checkpoint-resume.md`, WF-004 en `.claude/references/rules/asdd-workflow-build.md`, ORC-011 en `.claude/references/rules/asdd-orchestration-worktree.md`, SPG-001 y SPG-004 en `.claude/references/rules/asdd-spec-guard.md`, `.asdd/asdd-run.schema.json`, `.claude/commands/asdd/resume.md`, `asdd-tech-lead-sdd-traceability` (skill).
 - **Ship en:** MINOR — extiende el flujo interno del template (autoría/implementación) sin romper el contrato del código de negocio del consumidor. Requiere migración de commands, un skill nuevo y un hook.
 
 ---
@@ -42,13 +42,13 @@ I5 no es un gate de tamaño — es una **estrella polar**. El tiempo es la unida
 
 ### 1.3 Estado actual verificado (base factual, no re-explorada)
 
-- Re-ejecutar `/sofka-asdd:analyze` sobre un feature `complete` **no extiende** el bloque: crea uno nuevo con `run_id` nuevo. No existe lógica "detectar bloque existente + extender".
+- Re-ejecutar `/asdd:analyze` sobre un feature `complete` **no extiende** el bloque: crea uno nuevo con `run_id` nuevo. No existe lógica "detectar bloque existente + extender".
 - El bloqueo "status=complete → Write bloqueado" **ya fue removido** (Bug A A7 en `artifact-name-guard.mjs` → `exit 0`, solo advertencia). No es el muro.
-- `.asdd-run.json` (`.sofka-asdd/asdd-run.schema.json`) es **1 run = 1 feature = 1 workspace**: campos top-level `run_id`/`feature`(singular)/`status`/`phases{6}`/`artifact_seq`. **Sin array de bloques, sin backlog.** No puede representar "100 specs pendientes". `phases.build.index_ref` = puntero a **un** INDEX.
+- `.asdd-run.json` (`.asdd/asdd-run.schema.json`) es **1 run = 1 feature = 1 workspace**: campos top-level `run_id`/`feature`(singular)/`status`/`phases{6}`/`artifact_seq`. **Sin array de bloques, sin backlog.** No puede representar "100 specs pendientes". `phases.build.index_ref` = puntero a **un** INDEX.
 - El **INDEX ya es portable y autocontenido**: viaja en git con las specs, tiene estado por área (`pending`/`in_progress`/`done`/`blocked`/`n/a`) + historial append-only. Regla R-INDEX-5: solo el orquestador lo escribe (ADR-004).
 - El estado de avance está **duplicado** hoy: en el INDEX y en `.asdd-run.json.phases.build.completed_steps`, sin sincronización.
 - `.asdd-run.json` y `docs/specs/` están **ambos trackeados en git** → un archivo de estado de sesión compartido entre devs = conflictos de merge.
-- **No existe bootstrap**: el orquestador no sabe escanear `docs/specs/` para descubrir bloques ajenos. `/sofka-asdd:build` asume que el INDEX salió de un `analyze` con **tu** `run_id`.
+- **No existe bootstrap**: el orquestador no sabe escanear `docs/specs/` para descubrir bloques ajenos. `/asdd:build` asume que el INDEX salió de un `analyze` con **tu** `run_id`.
 - `run_id` va **embebido en el filename**: `{run_id}-ANALYZE-{SEQ}-{feature}-{area}.md`.
 - ADR-004 §9 **retiró a propósito** el ceiling #3650 (>300 líneas / >5 CU / >1 Aggregate) por "fricción vestigial". ASDD **no tiene** concepto de esfuerzo/tamaño ni artefacto de tasks/work-units (eso es del SDD genérico: Review Workload Forecast, budget de 400 líneas, work-unit-commits — no existe en ASDD). Unidad implementable mínima hoy = el `spec-{area}` completo (~150 líneas), implementado end-to-end por 1 agente en el loop WF-004.
 
@@ -130,7 +130,7 @@ Cada decisión abierta se evalúa con alternativas concretas y una recomendació
 
 **Recomendación (a): Alt-A2 — jubilar `.asdd-run.json` del ciclo de implementación.** El portafolio se **deriva** leyendo los INDEX en disco (`glob docs/specs/*-index.md`), no se materializa como estado. Margen >20% → decisión robusta. Un array de runs re-introduce el dual-SSoT que el hallazgo #3 de ADR-004 ya condenó. `.asdd-run.json` sobrevive solo como conveniencia del ciclo de autoría en vuelo y orquestación local de fases.
 
-**Evidencia empírica que refuerza (a) — prior art `humanatech-sofkaai-convenios`.** La exploración del repo Humana confirmó, en un proyecto real y en producción, que **no usa un state file confiable-por-sí-mismo** para retomar trabajo. Su mecanismo de resume localiza el documento del feature y lo **cruza contra el estado real de git** (`git log origin/develop..HEAD`, `git diff --name-only`), infiere qué se implementó según qué archivos aparecen en el diff, y produce un checklist visual (✅ hecho · 🔄 en progreso · ⬜ pendiente · ❌ bloqueado) más una línea `PRÓXIMO PASO`. Adicionalmente aplica una **matriz de trazabilidad con doble verificación** (implementador + tech-lead). El **principio validado** en ese repo es exactamente el de esta decisión: **la verdad vive en git y en los artefactos versionados; el estado se reconcilia de ahí — no se confía en un state file**. Dos elementos del enfoque Humana **NO se copian** porque chocan con este ADR: (i) su documento no se commitea (fuera de git → menos portable, opuesto a que el INDEX viaje en el mismo repo), y (ii) es monolítico por feature (opuesto a spec-per-área ADR-004). El principio sí se adopta y se materializa en §9.
+**Evidencia empírica que refuerza (a) — prior art `humanatech-guideai-convenios`.** La exploración del repo Humana confirmó, en un proyecto real y en producción, que **no usa un state file confiable-por-sí-mismo** para retomar trabajo. Su mecanismo de resume localiza el documento del feature y lo **cruza contra el estado real de git** (`git log origin/develop..HEAD`, `git diff --name-only`), infiere qué se implementó según qué archivos aparecen en el diff, y produce un checklist visual (✅ hecho · 🔄 en progreso · ⬜ pendiente · ❌ bloqueado) más una línea `PRÓXIMO PASO`. Adicionalmente aplica una **matriz de trazabilidad con doble verificación** (implementador + tech-lead). El **principio validado** en ese repo es exactamente el de esta decisión: **la verdad vive en git y en los artefactos versionados; el estado se reconcilia de ahí — no se confía en un state file**. Dos elementos del enfoque Humana **NO se copian** porque chocan con este ADR: (i) su documento no se commitea (fuera de git → menos portable, opuesto a que el INDEX viaje en el mismo repo), y (ii) es monolítico por feature (opuesto a spec-per-área ADR-004). El principio sí se adopta y se materializa en §9.
 
 ### Decisión (b) — ¿`.asdd-run.json` sigue trackeado en git?
 
@@ -261,18 +261,18 @@ Este ADR **no implementa** — enumera lo que la implementación tocaría:
 
 | Componente | Cambio |
 |---|---|
-| `.sofka-asdd/asdd-run.schema.json` | Degradar rol: documentar que **no** es portafolio y que `phases.build.completed_steps` deja de ser SSoT de progreso (el INDEX lo es). Marcar el archivo como local/no-portable. |
+| `.asdd/asdd-run.schema.json` | Degradar rol: documentar que **no** es portafolio y que `phases.build.completed_steps` deja de ser SSoT de progreso (el INDEX lo es). Marcar el archivo como local/no-portable. |
 | `.gitignore` | Agregar `.asdd-run.json` (decisión b). Verificar dependencias de hooks antes. |
-| `.claude/commands/sofka-asdd/build.md` | Bootstrap INDEX-driven: descubrir bloques (propios y ajenos), cola priorizada, activar capa portafolio solo cuando `run_id` ajeno. Avance solo al INDEX. |
-| `.claude/commands/sofka-asdd/analyze.md` | Flujo de **extensión de bloque**: detectar INDEX existente + agregar área sin regenerar. |
-| Nuevo command (opcional) | `/sofka-asdd:intake` o `/sofka-asdd:extend` si no se prefiere sobrecargar `build`/`analyze`. |
-| `.claude/hooks/sofka-asdd-pre-tool-use-artifact-name-guard.mjs` | Relajación acotada (decisión c): aceptar `run_id` en filename si existe un INDEX en disco que lo declara; mantener `exit 2` en cualquier otro caso. |
-| `.claude/references/rules/sofka-asdd-workflow-build.md` (WF-004) | Loop dirigido por descubrimiento de INDEX, no por `run_id` local; introducir el concepto de área multi-wave y work-unit derivado. |
-| `.claude/references/rules/sofka-asdd-checkpoint-resume.md` (ORC-007) | `.asdd-run.json` como conveniencia local; recovery del progreso de implementación desde el INDEX en disco + reconciliación contra `git log`/`git diff` (§9). |
-| `.claude/references/rules/sofka-asdd-orchestration-worktree.md` (ORC-011) | Work-unit-commit por sub-slice/wave (préstamo conceptual del SDD, decisión e). |
-| `.claude/commands/sofka-asdd/resume.md` | **Extender** (no crear nuevo): reemplazar el Paso 1/2 basados en `.asdd-run.json` por reconciliación INDEX + git (§9). Invocar el skill nuevo del §10. Preservar la UX del checklist visual y la línea `PRÓXIMO PASO`. |
-| `.claude/skills/sofka-asdd-tech-lead-resume-reconciler/SKILL.md` (**nuevo**, §10) | Skill nuevo dueño de la lógica de reconciliación INDEX ↔ git ↔ checklist. Ownership: `sofka-asdd-tech-lead` (dueño de skills operativos de git). |
-| `.claude/references/rules/sofka-asdd-spec-guard.md` (SPG-001) y `spec-funcional-template` §15 | Documentar el sub-tipado del CR (decisión f): columna "sub-tipo" en §15 con valores `registro (track)` \| `contenido`; regla de sign-off proporcional. |
+| `.claude/commands/asdd/build.md` | Bootstrap INDEX-driven: descubrir bloques (propios y ajenos), cola priorizada, activar capa portafolio solo cuando `run_id` ajeno. Avance solo al INDEX. |
+| `.claude/commands/asdd/analyze.md` | Flujo de **extensión de bloque**: detectar INDEX existente + agregar área sin regenerar. |
+| Nuevo command (opcional) | `/asdd:intake` o `/asdd:extend` si no se prefiere sobrecargar `build`/`analyze`. |
+| `.claude/hooks/asdd-pre-tool-use-artifact-name-guard.mjs` | Relajación acotada (decisión c): aceptar `run_id` en filename si existe un INDEX en disco que lo declara; mantener `exit 2` en cualquier otro caso. |
+| `.claude/references/rules/asdd-workflow-build.md` (WF-004) | Loop dirigido por descubrimiento de INDEX, no por `run_id` local; introducir el concepto de área multi-wave y work-unit derivado. |
+| `.claude/references/rules/asdd-checkpoint-resume.md` (ORC-007) | `.asdd-run.json` como conveniencia local; recovery del progreso de implementación desde el INDEX en disco + reconciliación contra `git log`/`git diff` (§9). |
+| `.claude/references/rules/asdd-orchestration-worktree.md` (ORC-011) | Work-unit-commit por sub-slice/wave (préstamo conceptual del SDD, decisión e). |
+| `.claude/commands/asdd/resume.md` | **Extender** (no crear nuevo): reemplazar el Paso 1/2 basados en `.asdd-run.json` por reconciliación INDEX + git (§9). Invocar el skill nuevo del §10. Preservar la UX del checklist visual y la línea `PRÓXIMO PASO`. |
+| `.claude/skills/asdd-tech-lead-resume-reconciler/SKILL.md` (**nuevo**, §10) | Skill nuevo dueño de la lógica de reconciliación INDEX ↔ git ↔ checklist. Ownership: `asdd-tech-lead` (dueño de skills operativos de git). |
+| `.claude/references/rules/asdd-spec-guard.md` (SPG-001) y `spec-funcional-template` §15 | Documentar el sub-tipado del CR (decisión f): columna "sub-tipo" en §15 con valores `registro (track)` \| `contenido`; regla de sign-off proporcional. |
 | `ADR-004` (addendum) | Reflejar: INDEX como SSoT portable único; extensión de bloque; work-unit de implementación como capa emergente en build; retiro de la duplicación con `completed_steps`; sub-tipado del CR (f). |
 | `spec-funcional-template` §0 + `spec-slice-rules` | Soporte de "agregar área" (marcar `Aplica = Sí` vía CR con sub-tipo según f) y wrapper de área multi-wave sin estado propio. Documentar que multi-wave = build-only, jamás autoral (aclaración pedida por el AF en §8/P3). |
 
@@ -305,7 +305,7 @@ Este ADR **no implementa** — enumera lo que la implementación tocaría:
 | El equipo chico percibe fricción nueva pese a §1.4 | Baja | Medio | Gate de activación por comparación de `run_id`; happy path sin bootstrap |
 | "Área multi-wave" se confunde con re-picar el spec | Media | Medio | Documentar que la fragmentación es de build, no de autoría; el spec no cambia |
 
-### Preguntas abiertas para el Analista Funcional (`sofka-asdd-producto`)
+### Preguntas abiertas para el Analista Funcional (`asdd-producto`)
 
 > **Estado actualizado (rev-1):** las 5 preguntas originales fueron respondidas por el AF en **§8** de este ADR. La revisión rev-1 adopta las cinco posturas, con matiz solo en la (P4) que se formalizó como la nueva **decisión (f)** de §3. Las preguntas se conservan aquí para trazabilidad histórica; ver §8 para las respuestas.
 
@@ -321,7 +321,7 @@ Este ADR **no implementa** — enumera lo que la implementación tocaría:
 
 ## 7. Resumen de recomendaciones
 
-- **(a)** Jubilar `.asdd-run.json` del ciclo de implementación; derivar el portafolio leyendo los INDEX en disco. **Reforzado por prior art `humanatech-sofkaai-convenios`** (§3(a)). **(4.75 vs 1.9)**
+- **(a)** Jubilar `.asdd-run.json` del ciclo de implementación; derivar el portafolio leyendo los INDEX en disco. **Reforzado por prior art `humanatech-guideai-convenios`** (§3(a)). **(4.75 vs 1.9)**
 - **(b)** Sacar `.asdd-run.json` de git (`.gitignore`); los INDEX portables cargan el estado compartido. **(4.70 vs 2.30)**
 - **(c)** Relajación acotada del guard: aceptar `run_id` ajeno solo si un INDEX en disco lo declara (ancla verificable, sin hueco). **(4.75 vs 3.25/3.00)**
 - **(d)** Work-unit derivado en build = `spec-{area}`; si excede proxy → área multi-wave (fragmenta build, no spec). **(4.75 vs 2.15)**
@@ -332,7 +332,7 @@ Este ADR **no implementa** — enumera lo que la implementación tocaría:
 
 ## 8. Resolución de autoría (Analista Funcional)
 
-> **Autor de esta sección:** `sofka-asdd-producto` (skill `funcional`, rol AF), fase Diseñar. Responde las cinco preguntas abiertas de §6 desde la óptica de autoría del super-spec (ADR-004). Se numera **8** porque §7 (Resumen de recomendaciones del arquitecto) ya existe; no reescribe ninguna sección previa, solo agrega la postura del AF y, donde corresponde, matiza explícitamente una decisión del arquitecto. Estado del ADR: **Propuesta** (sin cambios).
+> **Autor de esta sección:** `asdd-producto` (skill `funcional`, rol AF), fase Diseñar. Responde las cinco preguntas abiertas de §6 desde la óptica de autoría del super-spec (ADR-004). Se numera **8** porque §7 (Resumen de recomendaciones del arquitecto) ya existe; no reescribe ninguna sección previa, solo agrega la postura del AF y, donde corresponde, matiza explícitamente una decisión del arquitecto. Estado del ADR: **Propuesta** (sin cambios).
 
 ### 1. ¿El AF piensa en work-units al escribir? Relación work-unit ↔ RN ↔ Gherkin ↔ `spec-{area}`
 
@@ -425,7 +425,7 @@ La nueva `spec-{area}` es parte del **mismo cuerpo de trabajo** (el bloque autor
 
 ## 9. Mecanismo de resume reconciliado contra git (reemplaza el resume basado en `.asdd-run.json`)
 
-Con `.asdd-run.json` degradado por (a) y sacado de git por (b), el mecanismo de resume actual (`/sofka-asdd:resume` Pasos 1-2 que leen `.asdd-run.json` como fuente de verdad) queda obsoleto en el ciclo de implementación. El principio validado empíricamente en `humanatech-sofkaai-convenios` (§3(a)) lo reemplaza: **la verdad vive en git y en el INDEX; el estado se reconcilia**.
+Con `.asdd-run.json` degradado por (a) y sacado de git por (b), el mecanismo de resume actual (`/asdd:resume` Pasos 1-2 que leen `.asdd-run.json` como fuente de verdad) queda obsoleto en el ciclo de implementación. El principio validado empíricamente en `humanatech-guideai-convenios` (§3(a)) lo reemplaza: **la verdad vive en git y en el INDEX; el estado se reconcilia**.
 
 ### 9.1 Fuentes de verdad y sus roles
 
@@ -476,7 +476,7 @@ Rama base: {base}
   devops       ⬜ pending   · depende de backend🔄 (aún no listo)
   qa           ⬜ pending   · depende de backend🔄 + frontend⬜
 
-PRÓXIMO PASO: completar `backend` (área 🔄) — dueño: @sofka-asdd-developer-backend
+PRÓXIMO PASO: completar `backend` (área 🔄) — dueño: @asdd-developer-backend
              — 2 archivos con cambios sin commitear en src/api/**.
 ```
 
@@ -486,7 +486,7 @@ Además del checklist visual, el skill de reconciliación produce **matriz de tr
 
 - **Columna 1 — Declarada por implementador:** commit SHA + archivos tocados (según INDEX historial).
 - **Columna 2 — Verificada contra código:** el skill vuelve a correr `git log`/`git diff` y confirma que los commits declarados existen y los archivos declarados fueron efectivamente modificados (o borrados).
-- **Columna 3 — Firma tech-lead:** requiere que `sofka-asdd-tech-lead` (skill `sdd-traceability` o `impl-quality-gate`) haya marcado ✅ para el bloque.
+- **Columna 3 — Firma tech-lead:** requiere que `asdd-tech-lead` (skill `sdd-traceability` o `impl-quality-gate`) haya marcado ✅ para el bloque.
 
 Si las columnas 1 y 2 divergen → ❌ en el checklist con detalle de la divergencia. Un `sign-off ✅` del bloque requiere las 3 columnas verdes. Esta matriz alimenta el gate de cierre de Verificar/Documentar (WF-005/WF-006) y **no se genera** hasta que el bloque tenga todas sus áreas ✅.
 
@@ -494,7 +494,7 @@ Si las columnas 1 y 2 divergen → ❌ en el checklist con detalle de la diverge
 
 - **Vs `.asdd-run.json` (nuestro status quo):** el state file podía mentir (bug reportado hoy: divergencia INDEX ↔ `completed_steps` sin sincronización). Aquí no hay state file confiable-por-sí-mismo — todo se cruza contra git. Un dev que abre el proyecto por primera vez ve el estado real, no lo que alguien declaró.
 - **Vs el doc monolítico de Humana:** el doc de Humana estaba fuera de git y era un solo archivo por feature. Perdía portabilidad y no soportaba spec-per-área. Nuestro INDEX viaja en git (portabilidad natural entre workspaces) y es por-feature con áreas nativas (natively spec-per-área). Ganamos ambos ejes.
-- **Vs cualquier tercero:** un dev que recibe el bloque por git corre `/sofka-asdd:resume`, el skill lee el INDEX en disco, corre `git log`, reconstruye el checklist y le da la línea `PRÓXIMO PASO`. Cero conocimiento previo necesario del `run_id` de autoría.
+- **Vs cualquier tercero:** un dev que recibe el bloque por git corre `/asdd:resume`, el skill lee el INDEX en disco, corre `git log`, reconstruye el checklist y le da la línea `PRÓXIMO PASO`. Cero conocimiento previo necesario del `run_id` de autoría.
 
 ### 9.6 Interacción con las capas anteriores
 
@@ -512,39 +512,39 @@ Andrés fijó como restricción dura: verificar qué existe antes de proponer un
 
 | Artefacto verificado | Existe hoy | Rol actual |
 |---|---|---|
-| Comando `/sofka-asdd:resume` | Sí, `.claude/commands/sofka-asdd/resume.md` | 5 pasos basados en leer `.asdd-run.json` y reconstruir tabla de fases. |
-| Regla ORC-007 (`sofka-asdd-checkpoint-resume.md`) | Sí | Contrato de checkpoint/resume del workflow ASDD. |
+| Comando `/asdd:resume` | Sí, `.claude/commands/asdd/resume.md` | 5 pasos basados en leer `.asdd-run.json` y reconstruir tabla de fases. |
+| Regla ORC-007 (`asdd-checkpoint-resume.md`) | Sí | Contrato de checkpoint/resume del workflow ASDD. |
 | Skill dedicado a resume | **No existe** | — |
-| Skills operativos de git en tech-lead | Sí, 13 skills: `gitflow`, `pre-push`, `create-mr`, `commit`, `delivery-report`, `sdd-traceability`, `impl-quality-gate`, `integration-validator`, etc. | `sofka-asdd-tech-lead` es el dueño natural de skills que corren `git log`, `git diff`, `git status` y matrices de trazabilidad. |
-| Skills operativos de git en `sofka-asdd-solution-architect` | 12 skills: ninguno corre git; todos son de diseño/análisis. | El arquitecto **no** dueña operaciones de git. |
+| Skills operativos de git en tech-lead | Sí, 13 skills: `gitflow`, `pre-push`, `create-mr`, `commit`, `delivery-report`, `sdd-traceability`, `impl-quality-gate`, `integration-validator`, etc. | `asdd-tech-lead` es el dueño natural de skills que corren `git log`, `git diff`, `git status` y matrices de trazabilidad. |
+| Skills operativos de git en `asdd-solution-architect` | 12 skills: ninguno corre git; todos son de diseño/análisis. | El arquitecto **no** dueña operaciones de git. |
 
 ### 10.2 Decisión — dos entregables coordinados
 
-**Extender el comando `/sofka-asdd:resume` existente** (no crear uno nuevo) y **crear un skill nuevo** que encapsule la lógica reutilizable de reconciliación.
+**Extender el comando `/asdd:resume` existente** (no crear uno nuevo) y **crear un skill nuevo** que encapsule la lógica reutilizable de reconciliación.
 
 **Justificación:**
 
-- **El comando ya cubre el rol conceptual** ("retomar workflow ASDD"). Fragmentarlo en dos comandos (`/sofka-asdd:resume` legado + `/sofka-asdd:resume-portfolio` nuevo) rompería la UX y confundiría al developer que no debería conocer la diferencia entre modo continuo y modo portafolio (§2.f: un solo mecanismo, dos entradas).
+- **El comando ya cubre el rol conceptual** ("retomar workflow ASDD"). Fragmentarlo en dos comandos (`/asdd:resume` legado + `/asdd:resume-portfolio` nuevo) rompería la UX y confundiría al developer que no debería conocer la diferencia entre modo continuo y modo portafolio (§2.f: un solo mecanismo, dos entradas).
 - **El cambio en el comando es de MECÁNICA** (fuente de verdad: INDEX + git en vez de `.asdd-run.json`), **no de propósito**. La misma UX visible (checklist + PRÓXIMO PASO) queda; solo cambia cómo se computa.
 - **La lógica de reconciliación es reutilizable** — el orquestador la va a invocar también dentro del loop WF-004 (paso 2 del §2.d, para saber qué área es la siguiente) y desde ORC-007 (recovery tras `/compact`). Un skill invocable es la unidad correcta; un comando en `.claude/commands/` es UX, no lógica.
-- **Ownership por convención de casa:** los skills que corren git y matrices de trazabilidad viven en `sofka-asdd-tech-lead` (`gitflow`, `pre-push`, `sdd-traceability`, `impl-quality-gate`, `delivery-report`). Poner el reconciler bajo `sofka-asdd-solution-architect` violaría esa convención — el arquitecto no tiene ningún skill operativo de git hoy.
+- **Ownership por convención de casa:** los skills que corren git y matrices de trazabilidad viven en `asdd-tech-lead` (`gitflow`, `pre-push`, `sdd-traceability`, `impl-quality-gate`, `delivery-report`). Poner el reconciler bajo `asdd-solution-architect` violaría esa convención — el arquitecto no tiene ningún skill operativo de git hoy.
 
 ### 10.3 Especificación concreta
 
 | Aspecto | Decisión | Justificación |
 |---|---|---|
 | ¿Extender o crear? | **Extender** el comando; **crear** el skill. | El comando ya existe con el propósito correcto; la lógica es nueva y merece skill propio. |
-| Comando afectado | `.claude/commands/sofka-asdd/resume.md` — reemplazar Pasos 1-2 por invocación al skill nuevo; preservar Pasos 3-5 (presentación, gestión de contexto, continuar workflow) con contenido derivado del skill. | Mantiene la UX y el punto de entrada conocido del developer. |
-| Skill nuevo | `sofka-asdd-tech-lead-resume-reconciler` en `.claude/skills/sofka-asdd-tech-lead-resume-reconciler/SKILL.md`. | Nombre en formato `sofka-asdd-*` (convención estricta del template) + agrupado bajo `sofka-asdd-tech-lead-*` (dueño natural de skills operativos de git). |
-| Agente dueño | `sofka-asdd-tech-lead`. | Dueño natural: 13 skills operativos de git + trazabilidad hoy; ningún equivalente en arquitecto. |
+| Comando afectado | `.claude/commands/asdd/resume.md` — reemplazar Pasos 1-2 por invocación al skill nuevo; preservar Pasos 3-5 (presentación, gestión de contexto, continuar workflow) con contenido derivado del skill. | Mantiene la UX y el punto de entrada conocido del developer. |
+| Skill nuevo | `asdd-tech-lead-resume-reconciler` en `.claude/skills/asdd-tech-lead-resume-reconciler/SKILL.md`. | Nombre en formato `asdd-*` (convención estricta del template) + agrupado bajo `asdd-tech-lead-*` (dueño natural de skills operativos de git). |
+| Agente dueño | `asdd-tech-lead`. | Dueño natural: 13 skills operativos de git + trazabilidad hoy; ningún equivalente en arquitecto. |
 | Rol del skill | (i) Descubrir INDEX (glob `docs/specs/*-index.md`); (ii) reconciliar INDEX ↔ `git log`/`git diff`/`git status`; (iii) emitir checklist visual con símbolos ✅🔄⬜❌⏭; (iv) calcular `PRÓXIMO PASO`; (v) al cierre, generar matriz de trazabilidad con doble verificación (§9.4). | Encapsula toda la mecánica de §9. |
-| Invocadores | (1) `/sofka-asdd:resume`; (2) el orquestador dentro del loop WF-004 (§2.d, paso 2); (3) ORC-007 en recovery post-compact/clear. | Reutilizable — de ahí que sea skill y no comando. |
-| Relación con `sofka-asdd-tech-lead-sdd-traceability` | Skills separados. `sdd-traceability` produce la matriz **de gate final** para sign-off; `resume-reconciler` produce el estado **operativo de re-entrada**. Comparten formato de matriz pero se invocan en momentos y con propósitos distintos. | Diferentes cuando y para qué — separado evita mezclar gate de cierre con mecanismo de re-entrada. |
+| Invocadores | (1) `/asdd:resume`; (2) el orquestador dentro del loop WF-004 (§2.d, paso 2); (3) ORC-007 en recovery post-compact/clear. | Reutilizable — de ahí que sea skill y no comando. |
+| Relación con `asdd-tech-lead-sdd-traceability` | Skills separados. `sdd-traceability` produce la matriz **de gate final** para sign-off; `resume-reconciler` produce el estado **operativo de re-entrada**. Comparten formato de matriz pero se invocan en momentos y con propósitos distintos. | Diferentes cuando y para qué — separado evita mezclar gate de cierre con mecanismo de re-entrada. |
 
 ### 10.4 Alternativa rechazada
 
-**Alternativa A — Extender `sofka-asdd-tech-lead-sdd-traceability`** para incluir la reconciliación. Rechazada porque `sdd-traceability` es un artefacto de gate final (matriz para sign-off en Verificar/Documentar), mientras que la reconciliación se invoca en cualquier momento de la sesión — incluso a mitad del loop de build. Meter ambos en un solo skill los acopla y complica el modelo mental. La matriz de trazabilidad producida al cierre (§9.4) puede seguir viviendo en `sdd-traceability`, con `resume-reconciler` proveyéndole los datos verificados. Interfaz limpia, responsabilidades separadas.
+**Alternativa A — Extender `asdd-tech-lead-sdd-traceability`** para incluir la reconciliación. Rechazada porque `sdd-traceability` es un artefacto de gate final (matriz para sign-off en Verificar/Documentar), mientras que la reconciliación se invoca en cualquier momento de la sesión — incluso a mitad del loop de build. Meter ambos en un solo skill los acopla y complica el modelo mental. La matriz de trazabilidad producida al cierre (§9.4) puede seguir viviendo en `sdd-traceability`, con `resume-reconciler` proveyéndole los datos verificados. Interfaz limpia, responsabilidades separadas.
 
-**Alternativa B — Crear el skill bajo `sofka-asdd-solution-architect`.** Rechazada por incoherencia con la convención de casa: el arquitecto no dueña operaciones de git hoy. Introducirlo abriría un precedente de "cualquier skill puede vivir en cualquier agente", debilitando el routing de skills que ya opera en el template.
+**Alternativa B — Crear el skill bajo `asdd-solution-architect`.** Rechazada por incoherencia con la convención de casa: el arquitecto no dueña operaciones de git hoy. Introducirlo abriría un precedente de "cualquier skill puede vivir en cualquier agente", debilitando el routing de skills que ya opera en el template.
 
-**Alternativa C — Skill bajo un agente nuevo (ej. `sofka-asdd-orchestrator`).** Rechazada: el orquestador no es un agente en el template — es un rol conceptual encarnado por la sesión principal de Claude Code (ORC-000). No tiene skills propios ni sub-carpetas en `.claude/skills/`.
+**Alternativa C — Skill bajo un agente nuevo (ej. `asdd-orchestrator`).** Rechazada: el orquestador no es un agente en el template — es un rol conceptual encarnado por la sesión principal de Claude Code (ORC-000). No tiene skills propios ni sub-carpetas en `.claude/skills/`.

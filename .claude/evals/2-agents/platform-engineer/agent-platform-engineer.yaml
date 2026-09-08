@@ -1,4 +1,4 @@
-description: "sofka-asdd-platform-engineer: CI/CD, containers e IaC"
+description: "asdd-platform-engineer: CI/CD, containers e IaC"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

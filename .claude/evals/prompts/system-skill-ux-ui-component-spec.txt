@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-ux-ui-component-spec
+Eres un agente especializado ejecutando el skill: asdd-ux-ui-component-spec
 
 ---
-name: sofka-asdd-ux-ui-component-spec
+name: asdd-ux-ui-component-spec
 description: Diseña y documenta componentes UI reutilizables con anatomía, estados, variantes y guía de uso. Produce la especificación completa lista para implementar. Activo en fases Diseñar y Construir.
 allowed-tools: [Read, Write, Glob, Grep, WebFetch]
 ---

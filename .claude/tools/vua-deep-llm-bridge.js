@@ -2,7 +2,7 @@
 /**
  * vua-deep-llm-bridge.js
  *
- * Puente entre el comando /sofka-asdd:qa-web-visual-ux-a11y --deep-llm (que ejecuta el turno
+ * Puente entre el comando /asdd:qa-web-visual-ux-a11y --deep-llm (que ejecuta el turno
  * LLM en contexto primario) y los artefactos en disco. Tiene dos modos:
  *
  *   --mode=prepare → lee todas las page_scan_phase_a.json del run y emite
@@ -168,7 +168,7 @@ function modeMerge(args) {
   const runFolder = path.join(PROJECT_ROOT, 'docs', 'testing', 'atf-web', args.runId);
   const aggPath = path.join(runFolder, 'visual_ux_a11y_results.json');
   if (!fs.existsSync(aggPath)) {
-    process.stderr.write(`ERROR: agregado no existe: ${aggPath}. Ejecutar /sofka-asdd:qa-web-visual-ux-a11y antes de --deep-llm merge.\n`);
+    process.stderr.write(`ERROR: agregado no existe: ${aggPath}. Ejecutar /asdd:qa-web-visual-ux-a11y antes de --deep-llm merge.\n`);
     process.exit(1);
   }
   const agg = safeReadJson(aggPath);

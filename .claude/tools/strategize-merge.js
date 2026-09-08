@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // ATF — strategize-merge.js
 //
-// Soporte de sprint-incremental para /sofka-asdd:qa-web-strategize. Análogo a diagnose-merge.js
+// Soporte de sprint-incremental para /asdd:qa-web-strategize. Análogo a diagnose-merge.js
 //: preserva el trabajo previo del strategist (priority, notes,
-// dependencies_in/outbound) cuando re-ejecutas /sofka-asdd:qa-web-strategize sobre un run que
+// dependencies_in/outbound) cuando re-ejecutas /asdd:qa-web-strategize sobre un run que
 // ya tiene execution_plan.json, agregando módulos solo para HUs nuevas.
 //
 // Sub-comandos:

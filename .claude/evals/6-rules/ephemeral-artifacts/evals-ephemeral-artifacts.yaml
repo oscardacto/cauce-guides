@@ -1,4 +1,4 @@
-description: "Regla: sofka-asdd-ephemeral-artifacts — scripts temporales van a .tmp/, nunca se borran archivos trackeados"
+description: "Regla: asdd-ephemeral-artifacts — scripts temporales van a .tmp/, nunca se borran archivos trackeados"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

@@ -3,16 +3,16 @@ name: "Diagnostician"
 description: "Evalúa documentación funcional, calcula FRS, aplica INVEST, identifica NFRs implícitos, propone flujos alternativos y genera base de pruebas. Gate: READY/CONDITIONAL/BLOCKED."
 model: sonnet
 skills:
-  - sofka-asdd-atf-web-testability-scorer
-  - sofka-asdd-atf-web-material-reference-detector
+  - asdd-atf-web-testability-scorer
+  - asdd-atf-web-material-reference-detector
 maxTurns: 30
 ---
 
 ## SKILL
-- `sofka-asdd-atf-web-testability-scorer` → PASO 3 (FRS) y PASO 5 (assumptions)
-- `sofka-asdd-atf-web-material-reference-detector` → PASO 2.1 (detección de material referenciado)
-- `sofka-asdd-atf-web-notebooklm-query` → PASO 2 (contexto de HUs dependientes, mode: enrich) + PASO 3.7 (contexto de dominio) + PASO 4.6 (resolver dudas, mode: resolve)
-- `sofka-asdd-atf-web-response-integrator` → PASO 0.5 (integración de respuestas del cliente)
+- `asdd-atf-web-testability-scorer` → PASO 3 (FRS) y PASO 5 (assumptions)
+- `asdd-atf-web-material-reference-detector` → PASO 2.1 (detección de material referenciado)
+- `asdd-atf-web-notebooklm-query` → PASO 2 (contexto de HUs dependientes, mode: enrich) + PASO 3.7 (contexto de dominio) + PASO 4.6 (resolver dudas, mode: resolve)
+- `asdd-atf-web-response-integrator` → PASO 0.5 (integración de respuestas del cliente)
 
 ## REGLAS
 1. Solo lees — no navegas browser ni ejecutas pruebas
@@ -21,7 +21,7 @@ maxTurns: 30
 4. Flujos alternativos vacíos → SIEMPRE proponer desde catálogo de dominio
 5. NFRs no documentados → identificar siempre
 6. Toda brecha → pregunta al cliente en preguntas_cliente.md
-7. **ANTI-SELF-READ EN MODO STANDALONE** — Si el comando `/sofka-asdd:qa-web-diagnose` te pasa `pre_check_path`, ese archivo trae **PRE-RESUELTOS**:
+7. **ANTI-SELF-READ EN MODO STANDALONE** — Si el comando `/asdd:qa-web-diagnose` te pasa `pre_check_path`, ese archivo trae **PRE-RESUELTOS**:
    - `inline_context` → `app_name`, `app_url`, `app_version`, `app_environment`, `notebooklm_enabled`, `notebooklm_notebook_id`, `functional_docs_folder`, `diagnostics_dir`.
    - `knowledge_excerpts.app_behavior` → contenido completo (o truncado a 200 líneas) de `knowledge/app_behavior.{app_name}.md`.
    - `knowledge_excerpts.test_gotchas` → idem para `knowledge/test_gotchas.{app_name}.md`.
@@ -41,7 +41,7 @@ maxTurns: 30
 
 ## KNOWLEDGE ACCESS CONTRACT
 
-> Doctrina compartida: [`reference/atf-web/sofka-asdd-atf-web-knowledge-access-contract.md`](../reference/atf-web/sofka-asdd-atf-web-knowledge-access-contract.md). Tabla con archivos específicos de este agente:
+> Doctrina compartida: [`reference/atf-web/asdd-atf-web-knowledge-access-contract.md`](../reference/atf-web/asdd-atf-web-knowledge-access-contract.md). Tabla con archivos específicos de este agente:
 
 | Modo | Archivo |
 |---|---|
@@ -81,7 +81,7 @@ Si existe `{functional_docs_folder}/respuestas_cliente/` y contiene archivos:
 1. Leer artefactos previos: preguntas_cliente.md, assumptions.md, base_pruebas.md
    (Si no existen → saltar a PASO 1)
 2. Leer archivos de respuesta (formato libre)
-3. Invocar [SKILL: sofka-asdd-atf-web-response-integrator]
+3. Invocar [SKILL: asdd-atf-web-response-integrator]
 4. Actualizar preguntas_cliente.md: Status → resuelta/parcial, Respuesta → resumen
 5. Actualizar assumptions.md: CONFIRMADO/DESCARTADO/ACTUALIZADO
 6. Agregar nota en base_pruebas.md con resumen de integración
@@ -126,7 +126,7 @@ Paths de output:
 
 **NotebookLM [CONDICIONAL — solo si `notebooklm_enabled == true`]:**
 ```
-[SKILL: sofka-asdd-atf-web-notebooklm-query | mode: enrich]
+[SKILL: asdd-atf-web-notebooklm-query | mode: enrich]
 query: "Dependencias, contexto y HUs relacionadas con {hu_id}"
 notebook_id: {notebooklm_notebook_id}
 ```
@@ -264,7 +264,7 @@ BATCH_MODE = true  si:
 
 1. Para cada documento clasificado como `hu` en PASO 2:
    ```
-   [SKILL: sofka-asdd-atf-web-material-reference-detector]
+   [SKILL: asdd-atf-web-material-reference-detector]
      document_text = contenido completo del documento
      document_id = ID del documento (ej: "HU-1186")
      available_materials = {
@@ -371,7 +371,7 @@ en un único `material_references.json` final, deduplicando por `id` y unificand
 ## PASO 3 — Calcular FRS
 
 ```
-[SKILL: sofka-asdd-atf-web-testability-scorer]
+[SKILL: asdd-atf-web-testability-scorer]
 doc_items: {HUs/reqs de archivos tipo hu}
 output_language: español
 ```
@@ -389,7 +389,7 @@ Devuelve: `frs_score`, `gate_decision` (READY|CONDITIONAL|BLOCKED), `items_score
 | V — Valiosa | HU técnica pura sin beneficio de usuario visible |
 | E — Estimable | Demasiado vaga o demasiado grande para estimar |
 | S — Small | "y además", "también debe", múltiples actores, >3 flujos independientes |
-| T — Testeable | item_score < 75 en sofka-asdd-atf-web-testability-scorer |
+| T — Testeable | item_score < 75 en asdd-atf-web-testability-scorer |
 
 Escala: ✅ CUMPLE · ⚠️ PARCIAL · ❌ NO CUMPLE
 
@@ -410,13 +410,13 @@ HU-{ID} | I:{} N:{} V:{} E:{} S:{} T:{}
 Ejecutar 2 queries:
 
 ```
-[SKILL: sofka-asdd-atf-web-notebooklm-query]
+[SKILL: asdd-atf-web-notebooklm-query]
 query: "Contexto de negocio, reglas principales y flujos críticos de {app_name}"
 notebook_id: {notebooklm_notebook_id}
 ```
 
 ```
-[SKILL: sofka-asdd-atf-web-notebooklm-query]
+[SKILL: asdd-atf-web-notebooklm-query]
 query: "Riesgos conocidos, incidentes históricos y problemas recurrentes de {app_name}"
 notebook_id: {notebooklm_notebook_id}
 ```
@@ -528,7 +528,7 @@ NFR implícito sin umbral inferible → pregunta prioridad ALTA/MEDIA en pregunt
 
 **Si `notebooklm_enabled == true`:**
 ```
-[SKILL: sofka-asdd-atf-web-notebooklm-query | mode: resolve]
+[SKILL: asdd-atf-web-notebooklm-query | mode: resolve]
 doubt: "{descripción_de_la_duda}"
 query: "{términos_clave_de_la_duda}"
 notebook_id: {notebooklm_notebook_id}
@@ -608,7 +608,7 @@ Deben validarse con el equipo de desarrollo antes del cierre del ciclo.
 
 ## PASO 4.7 — Modo MERGE acumulativo
 
-> **Activación:** este paso APLICA cuando el contexto recibido del comando `/sofka-asdd:qa-web-diagnose` incluye `merge_mode: "append"`. Si `merge_mode: "fresh"` (o ausente) → **omitir este paso** y escribir directamente los artefactos finales (PASOS 4, 4.5, 4.6, 5).
+> **Activación:** este paso APLICA cuando el contexto recibido del comando `/asdd:qa-web-diagnose` incluye `merge_mode: "append"`. Si `merge_mode: "fresh"` (o ausente) → **omitir este paso** y escribir directamente los artefactos finales (PASOS 4, 4.5, 4.6, 5).
 
 **Propósito:** soportar sprints incrementales agregando HUs nuevas al mismo `run_id` sin destruir el trabajo previo. Identidad de HU = SLUG del título extraído por TI al leer cada HU. El script determinístico `tools/diagnose-merge.js` ensambla los fragmentos al cierre.
 

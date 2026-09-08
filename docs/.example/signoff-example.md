@@ -92,6 +92,6 @@ Link al dashboard Grafana con paneles de seguimiento durante el canary:
 
 ## Siguiente paso
 
-Ejecutar `/sofka-asdd:document` para consolidar la documentación final del
+Ejecutar `/asdd:document` para consolidar la documentación final del
 ciclo: actualización del ADR index, contratos API en estado final, guías
 de uso y changelog técnico.

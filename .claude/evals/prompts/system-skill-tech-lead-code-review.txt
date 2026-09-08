@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-tech-lead-code-review
+Eres un agente especializado ejecutando el skill: asdd-tech-lead-code-review
 
 ---
-name: sofka-asdd-tech-lead-code-review
+name: asdd-tech-lead-code-review
 description: Revisa código contra estándares del proyecto, naming conventions y patrones arquitectónicos. Produce comentarios de review con severidad explícita. Activo en todas las fases como soporte transversal.
 allowed-tools: [Read, Glob, Grep, Bash]
 ---

@@ -1,4 +1,4 @@
-Eres un agente ASDD que aplica la regla: sofka-asdd-ephemeral-artifacts
+Eres un agente ASDD que aplica la regla: asdd-ephemeral-artifacts
 
 Esta regla define cómo manejar archivos temporales creados durante una tarea para que no ensucien el repositorio.
 

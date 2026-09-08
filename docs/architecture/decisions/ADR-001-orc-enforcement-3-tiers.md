@@ -2,7 +2,7 @@
 
 **Estado:** Aceptada  
 **Fecha:** 2026-06-18  
-**Decisor:** Equipo Sofka ASDD  
+**Decisor:** Equipo Guide ASDD  
 
 > **Nota de actualización — 2026-08-03 (run `2026-08-03-001`).** El cuerpo de esta ADR conserva
 > la decisión histórica tal como se aceptó el 2026-06-18. Lo que se corrigió son **referencias a
@@ -10,13 +10,13 @@
 >
 > - El commit `59975b2` (2026-07-17, *"perf(hooks): consolidate session start guards"*) movió los
 >   cuatro hooks Tier C de `.claude/hooks/` a `.claude/scripts/legacy-hooks/` y los consolidó en
->   `.claude/hooks/sofka-asdd-session-start-dispatcher.mjs`. Las rutas citadas en la tabla de
+>   `.claude/hooks/asdd-session-start-dispatcher.mjs`. Las rutas citadas en la tabla de
 >   Tier C, en el diagrama de arquitectura y en la sección de validación apuntaban a archivos
 >   inexistentes.
 > - **`codebase_size` ya no se computa.** El dispatcher solo **retransmite** el override del lock
 >   (`project_context.maturity`, dispatcher líneas 19-22) y no implementa la auto-detección 2-de-3
 >   que `ORC-001-D` describe y que el hook legacy sí tenía
->   (`legacy-hooks/sofka-asdd-codebase-size.mjs`). Con `maturity: null` en el lock, hoy no se emite
+>   (`legacy-hooks/asdd-codebase-size.mjs`). Con `maturity: null` en el lock, hoy no se emite
 >   ninguna línea de `codebase_size`. La afirmación original de que el dispatcher "computa"
 >   `codebase_size` era la deriva más grave de esta ADR.
 > - El dispatcher **no escribe** `.asdd-run.json`: solo lo lee para emitir el estado ORC-007
@@ -59,8 +59,8 @@ Implementar **Enforcement ORC mediante un modelo de 3 Tiers**, cada uno con meca
 
 | Regla | Hook | Mecanismo | Exit | Escape hatch |
 |---|---|---|---|---|
-| **ORC-000** | `sofka-asdd-orchestrator-guard.mjs` | Deny `Edit`/`Write` tools + Ask `Bash` (excepto git state queries) | `permissionDecision: deny` para Edit/Write | `SOFKA_ASDD_ORCHESTRATOR_GUARD_DISABLE=1` |
-| **ORC-010** | `sofka-asdd-plan-gate.mjs` | Consume una autorización estructurada de uso único por agente antes de delegar a `Agent`. Sin lote activo → ask; lote existente con mismatch/replay → deny | `permissionDecision: ask` / `deny` | `SOFKA_ASDD_PLAN_GATE_DISABLE=1` |
+| **ORC-000** | `asdd-orchestrator-guard.mjs` | Deny `Edit`/`Write` tools + Ask `Bash` (excepto git state queries) | `permissionDecision: deny` para Edit/Write | `ASDD_ORCHESTRATOR_GUARD_DISABLE=1` |
+| **ORC-010** | `asdd-plan-gate.mjs` | Consume una autorización estructurada de uso único por agente antes de delegar a `Agent`. Sin lote activo → ask; lote existente con mismatch/replay → deny | `permissionDecision: ask` / `deny` | `ASDD_PLAN_GATE_DISABLE=1` |
 
 **Garantía**: El orquestador **nunca puede ejecutar Edit/Write** sin pasar por su propio proceso de toma de decisiones (aunque lo quiera). El plan-gate bloquea delegaciones sin aprobación reciente. **Duro: no es opción.**
 
@@ -72,8 +72,8 @@ Implementar **Enforcement ORC mediante un modelo de 3 Tiers**, cada uno con meca
 
 | Regla | Hook | Contenido | Cuándo se inyecta |
 |---|---|---|---|
-| ORC-001..011 (núcleo: 11 de 24) | `sofka-asdd-session-start-dispatcher.mjs` | Checklist completo de las 24 ORC reformateado como lista de verificación | Inicio de sesión + post-compactación |
-| ORC-000, 001, 007, 008, 010 (critico) | `sofka-asdd-user-prompt-submit.mjs` | Recordatorio enfocado en las reglas más críticas antes de cada action | Antes de cada agente delegado |
+| ORC-001..011 (núcleo: 11 de 24) | `asdd-session-start-dispatcher.mjs` | Checklist completo de las 24 ORC reformateado como lista de verificación | Inicio de sesión + post-compactación |
+| ORC-000, 001, 007, 008, 010 (critico) | `asdd-user-prompt-submit.mjs` | Recordatorio enfocado en las reglas más críticas antes de cada action | Antes de cada agente delegado |
 
 **Garantía**: nada "dura" — el modelo puede ignorar los reminders si _quiere_. Pero **están ahí, siempre, sin que lo pida**, refrescándose tras compactación.
 
@@ -85,14 +85,14 @@ Implementar **Enforcement ORC mediante un modelo de 3 Tiers**, cada uno con meca
 
 | Dato | Hook vigente ¹ | Cuándo se computa | Consumidor | Beneficio |
 |---|---|---|---|---|
-| `codebase_size` (small \| large) | `sofka-asdd-session-start-dispatcher.mjs:19-22` | **No se computa.** Solo retransmite `project_context.maturity` del lock; con `maturity: null` no emite ninguna línea | ORC-001-B / ORC-001-D (routing LIGHT vs FULL) | **No se obtiene hoy.** La detección 2-de-3 quedó en `.claude/scripts/legacy-hooks/sofka-asdd-codebase-size.mjs`, que no está registrado como hook |
-| `model_strategy` (por agente/skill/fase) | `sofka-asdd-session-start-dispatcher.mjs:23-26` | Inicio de sesión (una vez), leído de `model_strategy.phase_default` del lock | ORC-002-B (resolución de modelo) | Asignación de modelos automática, sin negociación |
-| `strict_tdd` (true \| false) | `sofka-asdd-session-start-dispatcher.mjs:27-30` | Inicio de sesión (una vez), leído de `.sofka-asdd/testing-capabilities.yaml` | ORC-009 (forwarding a developer/qa) | El estado TDD se comunica sin ambigüedad; no hay "adivinar" |
-| `freshness` de `.asdd-run.json` | `sofka-asdd-session-start-dispatcher.mjs:31-34` | Inicio de sesión y post-compactación — **lectura, nunca escritura** | ORC-007 (resume de fase anterior) | No se pierde progreso; sesiones largas se resumen sin perder artefactos |
+| `codebase_size` (small \| large) | `asdd-session-start-dispatcher.mjs:19-22` | **No se computa.** Solo retransmite `project_context.maturity` del lock; con `maturity: null` no emite ninguna línea | ORC-001-B / ORC-001-D (routing LIGHT vs FULL) | **No se obtiene hoy.** La detección 2-de-3 quedó en `.claude/scripts/legacy-hooks/asdd-codebase-size.mjs`, que no está registrado como hook |
+| `model_strategy` (por agente/skill/fase) | `asdd-session-start-dispatcher.mjs:23-26` | Inicio de sesión (una vez), leído de `model_strategy.phase_default` del lock | ORC-002-B (resolución de modelo) | Asignación de modelos automática, sin negociación |
+| `strict_tdd` (true \| false) | `asdd-session-start-dispatcher.mjs:27-30` | Inicio de sesión (una vez), leído de `.asdd/testing-capabilities.yaml` | ORC-009 (forwarding a developer/qa) | El estado TDD se comunica sin ambigüedad; no hay "adivinar" |
+| `freshness` de `.asdd-run.json` | `asdd-session-start-dispatcher.mjs:31-34` | Inicio de sesión y post-compactación — **lectura, nunca escritura** | ORC-007 (resume de fase anterior) | No se pierde progreso; sesiones largas se resumen sin perder artefactos |
 
 > ¹ **Corrección de referencias — 2026-08-03.** La tabla original citaba cuatro hooks
-> independientes bajo `.claude/hooks/`: `sofka-asdd-codebase-size.mjs`,
-> `sofka-asdd-model-strategy.mjs`, `sofka-asdd-tdd-state.mjs` y `sofka-asdd-state-freshness.mjs`.
+> independientes bajo `.claude/hooks/`: `asdd-codebase-size.mjs`,
+> `asdd-model-strategy.mjs`, `asdd-tdd-state.mjs` y `asdd-state-freshness.mjs`.
 > El commit `59975b2` (2026-07-17) los movió a `.claude/scripts/legacy-hooks/` —donde los archivos
 > siguen existiendo pero **ya no están registrados en `settings.json`**— y consolidó su salida en
 > el dispatcher único. Las rutas originales apuntan hoy a archivos inexistentes y los cuatro
@@ -108,7 +108,7 @@ Implementar **Enforcement ORC mediante un modelo de 3 Tiers**, cada uno con meca
 
 ```
 SessionStart (INICIO DE SESIÓN)
-  ├─ Hook: sofka-asdd-session-start-dispatcher.mjs (Tier B + C)
+  ├─ Hook: asdd-session-start-dispatcher.mjs (Tier B + C)
   │  ├─ Inyecta sistema prompt: recordatorio del núcleo de ejecución ORC
   │  ├─ LEE del lock: model_strategy.phase_default, project_context.maturity
   │  ├─ LEE testing-capabilities.yaml: strict_tdd
@@ -117,14 +117,14 @@ SessionStart (INICIO DE SESIÓN)
   └─ Resultado: modelo recibe checklist ORC + estado leído del lock y del disco
 
 PreToolUse (ANTES DE CADA TOOL CALL)
-  ├─ Hook: sofka-asdd-orchestrator-guard.mjs (Tier A)
+  ├─ Hook: asdd-orchestrator-guard.mjs (Tier A)
   │  └─ Intercept Edit/Write → deny; Bash → ask (excepto git queries)
-  ├─ Hook: sofka-asdd-plan-gate.mjs (Tier A)
+  ├─ Hook: asdd-plan-gate.mjs (Tier A)
   │  └─ Intercept Agent → ask si hay marcador `.plan-approved` válido
   └─ Resultado: restricciones duras ejecutadas antes de cualquier acción
 
 UserPromptSubmit (ANTES DE PROCESAR PROMPT DEL USUARIO)
-  ├─ Hook: sofka-asdd-user-prompt-submit.mjs (Tier B)
+  ├─ Hook: asdd-user-prompt-submit.mjs (Tier B)
   │  └─ Inyecta recordatorio de reglas críticas (ORC-000, 001, 007, 008, 010)
   └─ Resultado: modelo procesa el prompt con contexto ORC fresco
 
@@ -167,8 +167,8 @@ Post-compactación (si el usuario ejecuta `/compact`)
 
 > **Corrección 2026-08-03 — esta alternativa se revirtió en la práctica.** El commit `59975b2`
 > (*"perf(hooks): consolidate session start guards"*) adoptó exactamente la Alt-3 descartada aquí:
-> los cuatro hooks Tier C más `sofka-asdd-session-start.mjs` se consolidaron en el dispatcher
-> único `.claude/hooks/sofka-asdd-session-start-dispatcher.mjs`, por costo de arranque (cinco
+> los cuatro hooks Tier C más `asdd-session-start.mjs` se consolidaron en el dispatcher
+> único `.claude/hooks/asdd-session-start-dispatcher.mjs`, por costo de arranque (cinco
 > procesos Node por `SessionStart`). Los archivos originales quedaron en
 > `.claude/scripts/legacy-hooks/`. La consecuencia predicha se materializó: al consolidar se
 > perdió la detección 2-de-3 de `codebase_size` que el hook legacy sí implementaba, y ni la
@@ -204,7 +204,7 @@ Post-compactación (si el usuario ejecuta `/compact`)
 2. **Plan-gate ask + TTL**: Un usuario aprueba un plan, pero luego la sesión se queda abierta 15 min y la autorización expira.
    - **Mitigation:** La aprobación abre una ventana nueva de TTL en vez de heredar el remanente del challenge (ADR-020), así deliberar no descuenta tiempo de ejecución. Escape-hatch por env var para operaciones urgentes.
 3. **Strict TDD no está garantizado por mecanismo**: ORC-009 inyecta instrucción `STRICT TDD MODE ACTIVO` en el prompt, pero el modelo podría ignorarlo. El ciclo `RED → GREEN → TRIANGULATE → REFACTOR` depende de conducta.
-   - **Mitigation:** El comando de tests sigue siendo obligatorio (`.sofka-asdd/testing-capabilities.yaml`). Si los tests fallan, el dev verá el reporte y debe arreglar.
+   - **Mitigation:** El comando de tests sigue siendo obligatorio (`.asdd/testing-capabilities.yaml`). Si los tests fallan, el dev verá el reporte y debe arreglar.
 
 ---
 
@@ -226,15 +226,15 @@ Post-compactación (si el usuario ejecuta `/compact`)
 ### Impacto en la gobernanza de WI #3607
 
 - El `orchestrator-guard.mjs` con deny/ask + los 5 hooks (plan-gate, codebase-size, model-strategy, tdd-state, state-freshness) **demuestran el enforcement de ORC operacionalmente**.
-  - **Corrección 2026-08-03:** la superficie vigente son `.claude/hooks/sofka-asdd-orchestrator-guard.mjs`, `.claude/hooks/sofka-asdd-plan-gate.mjs` y `.claude/hooks/sofka-asdd-session-start-dispatcher.mjs`. Los cuatro Tier C ya no son hooks: viven en `.claude/scripts/legacy-hooks/` sin registro en `settings.json`.
+  - **Corrección 2026-08-03:** la superficie vigente son `.claude/hooks/asdd-orchestrator-guard.mjs`, `.claude/hooks/asdd-plan-gate.mjs` y `.claude/hooks/asdd-session-start-dispatcher.mjs`. Los cuatro Tier C ya no son hooks: viven en `.claude/scripts/legacy-hooks/` sin registro en `settings.json`.
 - Documentación (este ADR + `.claude/docs/adoption/statusline.md` + fix de `orchestration-index.md`) **comunica la estrategia** a stakeholders y futuros maintainers.
-- `.sofka-asdd/sofka-asdd.lock` actualizado con conteos reales de hooks **declara el estado de implementación en código**.
+- `.asdd/asdd.lock` actualizado con conteos reales de hooks **declara el estado de implementación en código**.
 
 ---
 
 ## Decisión aprobada
 
-El modelo de 3 Tiers se implementa como se describe en "Decisión" y "Arquitectura de enforcement" arriba. Los hooks Tier A y el dispatcher Tier B+C están en `.claude/hooks/` con documentación en `.claude/rules/sofka-asdd-orchestration-*.md`. El orquestador y los sub-agentes aplican las reglas respetando esta arquitectura.
+El modelo de 3 Tiers se implementa como se describe en "Decisión" y "Arquitectura de enforcement" arriba. Los hooks Tier A y el dispatcher Tier B+C están en `.claude/hooks/` con documentación en `.claude/rules/asdd-orchestration-*.md`. El orquestador y los sub-agentes aplican las reglas respetando esta arquitectura.
 
 > **Corrección 2026-08-03.** La frase original —"todos los hooks Tier A/B/C están en
 > `.claude/hooks/`"— dejó de ser cierta con `59975b2`: los cuatro hooks Tier C están en

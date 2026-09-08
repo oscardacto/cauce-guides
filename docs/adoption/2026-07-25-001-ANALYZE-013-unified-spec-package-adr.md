@@ -78,7 +78,7 @@ adoptarlo posteriormente en el mismo path. La adopción completa `technical/` e
 ### 2.5 Product Strategy
 
 Se conserva una capacidad/agente independiente y limitado, tentativamente
-`sofka-asdd-product-strategy`, dueño de:
+`asdd-product-strategy`, dueño de:
 
 - visión y outcomes;
 - valor y priorización;
@@ -88,7 +88,7 @@ Se conserva una capacidad/agente independiente y limitado, tentativamente
 No puede escribir o aprobar specs funcionales, auditarlas, diseñar soluciones
 técnicas ni decidir routing. Sus outputs son inputs estratégicos referenciables.
 
-### 2.6 Retiro de `sofka-asdd-producto`
+### 2.6 Retiro de `asdd-producto`
 
 El agente paraguas se retira después de redistribuir sus siete capabilities y
 actualizar todos sus consumidores. No se elimina primero porque eso rompería

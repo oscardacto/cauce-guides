@@ -10,7 +10,7 @@
  * del CP. El historial de ejecuciones vive en `cp_registry.execution_history`
  * y en ALM. (Cambio: se eliminó el modo `archive` por completo.)
  *
- * Invocado por sofka-asdd-atf-web-rerun-resolver (vía executor PASO 0.5), o manualmente.
+ * Invocado por asdd-atf-web-rerun-resolver (vía executor PASO 0.5), o manualmente.
  *
  * Uso:
  *   node .claude/tools/reset-cp-artifacts.js \
@@ -155,7 +155,7 @@ Salida:
   stdout: log legible + marcador ---MANIFEST_START--- con JSON del resultado.
   exit 0 → OK. exit 1 → error fatal.
 
-Invocado por sofka-asdd-atf-web-rerun-resolver (executor PASO 0.5) o manualmente.
+Invocado por asdd-atf-web-rerun-resolver (executor PASO 0.5) o manualmente.
 `);
   process.exit(0);
 }
@@ -395,7 +395,7 @@ for (const [moduleId, moduleCpIds] of Object.entries(cpsByModule)) {
       // Ajustar contadores por riesgo si existen
       if (progress.counters_by_risk) {
         // No podemos saber el risk_level de cada CP removido sin leer el diseño,
-        // pero los contadores se recalcularán al final por sofka-asdd-atf-web-execution-result-writer.
+        // pero los contadores se recalcularán al final por asdd-atf-web-execution-result-writer.
         // Dejamos los counters_by_risk como están — el writer los sobreescribe.
       }
 

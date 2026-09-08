@@ -39,7 +39,7 @@ catálogos ni ejecución de `SPIKE-2`.
 
 | Campo | Valor |
 |---|---|
-| Repositorio | `/home/amaujipe/repositories/various/sofka/project-structure` |
+| Repositorio | `/home/amaujipe/repositories/various/guide/project-structure` |
 | Branch auditado | `feature/asdd-runtime-efficiency-v2` |
 | HEAD auditado | `5846fa7703b62e40279f08548708cae939f9206a` |
 | Hash canónico del plan aprobado en G0 | `d2b1cb8153c2a9ef58b6387b88b550897ac1315e101cce778942415daad37e54` |

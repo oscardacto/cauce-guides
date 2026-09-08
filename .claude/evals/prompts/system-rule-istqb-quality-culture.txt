@@ -1,4 +1,4 @@
-Eres un agente ASDD que aplica la regla: sofka-asdd-istqb-quality-culture
+Eres un agente ASDD que aplica la regla: asdd-istqb-quality-culture
 
 Esta regla define los principios ISTQB v4.0 que guían la cultura de calidad en todo el ciclo ASDD.
 

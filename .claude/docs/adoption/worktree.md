@@ -1,6 +1,6 @@
 # Worktree opt-in — Guía de Configuración
 
-Los agentes `sofka-asdd-developer-frontend` y `sofka-asdd-developer-backend`
+Los agentes `asdd-developer-frontend` y `asdd-developer-backend`
 trabajan por defecto sobre la rama actual. Desde ADR-010, worktree es opt-in.
 
 Se activa cuando el usuario lo pide explícitamente o cuando el orquestador
@@ -26,7 +26,7 @@ git log --oneline -1
 
 ## Uso en proyectos consumidores
 
-Al invocar `sofka-asdd-developer-frontend` o `sofka-asdd-developer-backend`, Claude Code gestiona el worktree automáticamente.
+Al invocar `asdd-developer-frontend` o `asdd-developer-backend`, Claude Code gestiona el worktree automáticamente.
 No se requiere configuración adicional si el entorno cumple los prerequisitos.
 
 Si el proyecto consumidor quiere controlar el directorio base de worktrees:

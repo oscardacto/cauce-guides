@@ -17,7 +17,7 @@ const APPROVAL_RE = /^\s*(ok|dale|listo|s[ií]|aprobado|adelante|confirmo|go|pro
 
 Fallaba con `"ok, dale"`, `"sí, procede"`, `"perfecto"`, `"de acuerdo"`, `"hazlo"`,
 `"apruebo"`, `"ok 👍"`. Y las skills documentaban palabras que el regex **no** contenía
-—`sofka-asdd-tech-lead-commit/SKILL.md` prometía aceptar `"procede"`, que no estaba—:
+—`asdd-tech-lead-commit/SKILL.md` prometía aceptar `"procede"`, que no estaba—:
 el usuario tipeaba lo documentado, el challenge no se consumía y el orquestador quedaba
 colgado o intentaba ejecutar `plan-authorization.mjs approve`, que el propio reminder le
 prohibía.
@@ -44,7 +44,7 @@ tiempo de ejecución de los agentes. El gate castigaba pensar antes de aprobar.
 
 ### 1. Reconocimiento por raíz, no por lista (ORC-010-E)
 
-`.claude/scripts/lib/sofka-asdd-approval-intent-lib.mjs` clasifica por **raíz morfológica**.
+`.claude/scripts/lib/asdd-approval-intent-lib.mjs` clasifica por **raíz morfológica**.
 Una lista cerrada más larga reproduce el mismo bug: `"obvio"`, `"de una"`, `"joya"`, `"va"`
 quedarían afuera igual. Una raíz (`aprob*`) cubre todas sus flexiones sin enumerarlas.
 

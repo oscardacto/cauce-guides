@@ -10,7 +10,7 @@
  * (hallazgo A del — registry quedó en 0 CPs
  * pese a haberse diseñado 26 en `cp_modulo_job-titles.json`).
  *
- * Solución: mover la responsabilidad al comando `/sofka-asdd:qa-web-design`. El agente solo
+ * Solución: mover la responsabilidad al comando `/asdd:qa-web-design`. El agente solo
  * escribe `cp_modulo_*.json`; el comando invoca este script post-diseño y el
  * registry se actualiza determinísticamente sin depender del LLM.
  *

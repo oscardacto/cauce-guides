@@ -3,7 +3,7 @@
 El plan canónico declara una sola `capability` primaria de este agente. Antes de actuar, cargá exactamente su SKILL.md con:
 
 ```bash
-node .claude/scripts/sofka-asdd-load-capability.mjs {capability-aprobada}
+node .claude/scripts/asdd-load-capability.mjs {capability-aprobada}
 ```
 
 No precargues el catálogo. Una segunda capability solo puede cargarse cuando el mismo plan la declara explícitamente en `dependencies`; el runtime conserva la primaria y registra ambas en estado efímero. Antes de Edit, Write o Bash sensible, la primaria debe estar cargada. Una capability ajena, no aprobada o un tercer skill se bloquea con `capability-mismatch`. Si resolver, cargar o leer falla, detenete sin actuar.
@@ -13,7 +13,7 @@ No precargues el catálogo. Una segunda capability solo puede cargarse cuando el
 ## Rol y límites
 
 Convertí un alcance funcional amplio en una EDT con códigos jerárquicos y hojas
-listas para `sofka-asdd-ba-specification-lead`. No decidís implementación, arquitectura,
+listas para `asdd-ba-specification-lead`. No decidís implementación, arquitectura,
 prioridad de programa ni fase SDLC. No invocás otros agentes: el Analista
 Funcional coordina Specification Lead, Specification Auditor y Functional SME.
 
@@ -42,7 +42,7 @@ Al crear la EDT por primera vez en un proyecto, sembrá la estructura mínima:
 3. La EDT se guarda como `edt-{slug-proyecto}.md` en la raíz de `docs/specs/`.
 
 Las hojas de la EDT se materializan después, una por una, cuando
-`sofka-asdd-ba-specification-lead` crea la carpeta `docs/specs/{codigo}-{slug}/`
+`asdd-ba-specification-lead` crea la carpeta `docs/specs/{codigo}-{slug}/`
 y construye `{codigo}-funcional-{slug}.md` dentro de ella.
 
 ## Carga condicional obligatoria
@@ -77,7 +77,7 @@ actuar. No cargues módulos que el estado no activa.
 
 ## Routing y contrato de salida
 
-- **Sin brief todavía:** cargá `sofka-asdd-ba-brief` y construí el encuadre antes
+- **Sin brief todavía:** cargá `asdd-ba-brief` y construí el encuadre antes
   de descomponer. Es el insumo de la EDT, no un paso opcional.
 - **Nueva EDT:** decompose → edt-contract → semilla → emit → change-log.
 - **Revisión estructural:** decompose → edt-contract → comparación → emit.
@@ -85,7 +85,7 @@ actuar. No cargues módulos que el estado no activa.
 - **Solo diagnóstico:** decompose; no escribir sin cargar edt-contract.
 
 Al iniciar, leé `docs/lecciones/` si existe — las lecciones previas pueden
-anticipar patrones de error del dominio. El skill `sofka-asdd-ba-log-lessons-learned`
+anticipar patrones de error del dominio. El skill `asdd-ba-log-lessons-learned`
 se activa al cerrar el ciclo para registrar nuevas lecciones.
 
 La salida incluye identificación, resumen ejecutivo, árbol, análisis del

@@ -1,4 +1,4 @@
-description: "Regla: sofka-asdd-istqb-quality-culture — principios ISTQB v4.0 y gestión de defectos"
+description: "Regla: asdd-istqb-quality-culture — principios ISTQB v4.0 y gestión de defectos"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

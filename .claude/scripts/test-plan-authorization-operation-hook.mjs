@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { mkdirSync, rmSync, symlinkSync } from "node:fs";
-import { approveActiveChallenge, issueChallenge, RUNTIME_DIR } from "./lib/sofka-asdd-plan-authorization-lib.mjs";
-import { getPlanGateDecision } from "../hooks/sofka-asdd-plan-gate.mjs";
-import { getOperationAuthorizationDecision } from "../hooks/sofka-asdd-plan-authorization-operation.mjs";
+import { approveActiveChallenge, issueChallenge, RUNTIME_DIR } from "./lib/asdd-plan-authorization-lib.mjs";
+import { getPlanGateDecision } from "../hooks/asdd-plan-gate.mjs";
+import { getOperationAuthorizationDecision } from "../hooks/asdd-plan-authorization-operation.mjs";
 
 let passed = 0;
 let failed = 0;
@@ -24,25 +24,25 @@ const plan = {
   confidence: 0.9,
   max_concurrent: 1,
   agents: [{
-    agent: "sofka-asdd-developer-backend",
-    capability: "sofka-asdd-developer-bug-fix",
+    agent: "asdd-developer-backend",
+    capability: "asdd-developer-bug-fix",
     scope: [".claude/scripts/test-plan-authorization-operation-hook.mjs"],
     commands: ["node .claude/scripts/test-plan-authorization-operation-hook.mjs"],
     model: "sonnet", max_turns: 20, retries: 0,
   }],
 };
-const launch = (agent = "sofka-asdd-developer-backend") => ({
+const launch = (agent = "asdd-developer-backend") => ({
   tool_name: "Agent", tool_input: {
     subagent_type: agent,
     model: "sonnet",
-    prompt: "[ASDD-BUDGET route=LIGHT phase=build model=sonnet max_turns=20 retries=0]\nnode .claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-developer-bug-fix\nexecute authorized scope",
+    prompt: "[ASDD-BUDGET route=LIGHT phase=build model=sonnet max_turns=20 retries=0]\nnode .claude/scripts/asdd-load-capability.mjs asdd-developer-bug-fix\nexecute authorized scope",
   },
 });
 const operation = (overrides = {}) => ({
   tool_name: "Edit",
   tool_input: { file_path: ".claude/scripts/test-plan-authorization-operation-hook.mjs" },
   agent_id: "runtime-agent-1",
-  agent_type: "sofka-asdd-developer-backend",
+  agent_type: "asdd-developer-backend",
   ...overrides,
 });
 
@@ -58,17 +58,17 @@ approveActiveChallenge();
 assert("Agent autorizado permite", allows(getPlanGateDecision(launch())));
 assert("Edit sin capability cargada devuelve deny", decision(getOperationAuthorizationDecision(operation()), "deny", "capability-not-loaded"));
 assert("loader de capability declarada permite", allows(getOperationAuthorizationDecision(operation({
-  tool_name: "Bash", tool_input: { command: "node .claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-developer-bug-fix" },
+  tool_name: "Bash", tool_input: { command: "node .claude/scripts/asdd-load-capability.mjs asdd-developer-bug-fix" },
 }))));
 assert("Edit dentro del scope tras cargar capability permite", allows(getOperationAuthorizationDecision(operation())));
 assert("Bash exacto permite", allows(getOperationAuthorizationDecision(operation({
   tool_name: "Bash", tool_input: { command: "node .claude/scripts/test-plan-authorization-operation-hook.mjs" },
 }))));
 assert("resolver de capabilities read-only permite", allows(getOperationAuthorizationDecision(operation({
-  tool_name: "Bash", tool_input: { command: "node .claude/scripts/sofka-asdd-resolve-capability.mjs sofka-asdd-developer-bug-fix" },
+  tool_name: "Bash", tool_input: { command: "node .claude/scripts/asdd-resolve-capability.mjs asdd-developer-bug-fix" },
 }))));
 assert("loader de capability distinta devuelve deny", decision(getOperationAuthorizationDecision(operation({
-  tool_name: "Bash", tool_input: { command: "node .claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-developer-unit-test" },
+  tool_name: "Bash", tool_input: { command: "node .claude/scripts/asdd-load-capability.mjs asdd-developer-unit-test" },
 })), "deny", "capability-mismatch"));
 
 console.log("PO3: challenge nuevo pendiente conserva el binding del lote vigente");
@@ -78,22 +78,22 @@ issueChallenge({
   task: "new plan pending approval",
   agents: [{
     ...plan.agents[0],
-    scope: [".claude/scripts/lib/sofka-asdd-plan-authorization-lib.mjs"],
+    scope: [".claude/scripts/lib/asdd-plan-authorization-lib.mjs"],
     commands: [],
   }],
 });
 assert("Edit fuera del scope original sigue devolviendo deny", decision(getOperationAuthorizationDecision(operation({
-  tool_input: { file_path: ".claude/scripts/lib/sofka-asdd-plan-authorization-lib.mjs" },
+  tool_input: { file_path: ".claude/scripts/lib/asdd-plan-authorization-lib.mjs" },
 })), "deny", "scope-mismatch"));
 assert("Bash fuera de commands original sigue devolviendo deny", decision(getOperationAuthorizationDecision(operation({
   // Fixture deliberadamente fuera de toda allowlist: resolve-workspace escribe
   // estado y ninguna regla se lo manda a un agente.
-  tool_name: "Bash", tool_input: { command: "node .claude/scripts/sofka-asdd-resolve-workspace.mjs" },
+  tool_name: "Bash", tool_input: { command: "node .claude/scripts/asdd-resolve-workspace.mjs" },
 })), "deny", "command-mismatch"));
 
 console.log("PO4: mismatches de alcance/comando/identidad se deniegan");
 assert("scope distinto devuelve deny", decision(getOperationAuthorizationDecision(operation({
-  tool_input: { file_path: ".claude/scripts/lib/sofka-asdd-plan-authorization-lib.mjs" },
+  tool_input: { file_path: ".claude/scripts/lib/asdd-plan-authorization-lib.mjs" },
 })), "deny", "scope-mismatch"));
 assert("comando compuesto devuelve deny", decision(getOperationAuthorizationDecision(operation({
   tool_name: "Bash",
@@ -106,7 +106,7 @@ console.log("PO5: un agente distinto no puede reutilizar el lote vivo");
 clean();
 issueChallenge(plan);
 approveActiveChallenge();
-assert("launch de agente distinto devuelve deny", decision(getPlanGateDecision(launch("sofka-asdd-security")), "deny"));
+assert("launch de agente distinto devuelve deny", decision(getPlanGateDecision(launch("asdd-security")), "deny"));
 assert("operación con identidad incompleta devuelve deny", decision(getOperationAuthorizationDecision(operation({ agent_type: undefined })), "deny", "missing-runtime-identity"));
 
 console.log("PO6: un symlink dentro del scope no permite escapar del árbol autorizado");
@@ -123,7 +123,7 @@ try {
   // (ejecutar como administrador) o Modo Desarrollador activo. A diferencia
   // de una junction (solo válida para directorios), no hay forma portable de
   // crear este symlink de archivo sin elevación.
-  symlinkSync("../../scripts/lib/sofka-asdd-plan-authorization-lib.mjs", symlinkPath);
+  symlinkSync("../../scripts/lib/asdd-plan-authorization-lib.mjs", symlinkPath);
   symlinkCreated = true;
 } catch (error) {
   if (error?.code === "EPERM") {
@@ -144,8 +144,8 @@ if (symlinkCreated) {
       request_id: "hook-symlink-test",
       task: "symlink escape test",
       agents: [{
-        agent: "sofka-asdd-developer-backend",
-        capability: "sofka-asdd-developer-bug-fix",
+        agent: "asdd-developer-backend",
+        capability: "asdd-developer-bug-fix",
         scope: [`${symlinkFixture}/`],
         commands: [],
         model: "sonnet", max_turns: 20, retries: 0,
@@ -156,7 +156,7 @@ if (symlinkCreated) {
     assert("loader previo al Edit symlink permite", allows(getOperationAuthorizationDecision(operation({
       agent_id: "runtime-symlink-1",
       tool_name: "Bash",
-      tool_input: { command: "node .claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-developer-bug-fix" },
+      tool_input: { command: "node .claude/scripts/asdd-load-capability.mjs asdd-developer-bug-fix" },
     }))));
     assert("symlink dentro del scope devuelve scope-mismatch", decision(getOperationAuthorizationDecision(operation({
       agent_id: "runtime-symlink-1",
@@ -173,13 +173,13 @@ console.log("PO7: escape hatch del launch no desactiva el hook de operaciones");
 clean();
 issueChallenge(plan);
 approveActiveChallenge();
-const previousEscapeHatch = process.env.SOFKA_ASDD_PLAN_GATE_DISABLE;
-process.env.SOFKA_ASDD_PLAN_GATE_DISABLE = "1";
+const previousEscapeHatch = process.env.ASDD_PLAN_GATE_DISABLE;
+process.env.ASDD_PLAN_GATE_DISABLE = "1";
 try {
   assert("escape hatch permite launch sin consumirlo", allows(getPlanGateDecision(launch())));
 } finally {
-  if (previousEscapeHatch === undefined) delete process.env.SOFKA_ASDD_PLAN_GATE_DISABLE;
-  else process.env.SOFKA_ASDD_PLAN_GATE_DISABLE = previousEscapeHatch;
+  if (previousEscapeHatch === undefined) delete process.env.ASDD_PLAN_GATE_DISABLE;
+  else process.env.ASDD_PLAN_GATE_DISABLE = previousEscapeHatch;
 }
 assert("operación tras escape hatch devuelve launch-not-authorized", decision(
   getOperationAuthorizationDecision(operation({ agent_id: "runtime-escape-hatch-1" })),
@@ -195,7 +195,7 @@ getPlanGateDecision(launch());
 const bash = (command, overrides = {}) => operation({ tool_name: "Bash", tool_input: { command }, ...overrides });
 
 assert("loader con 2>&1 y pipe a head permite y registra la capability", allows(
-  getOperationAuthorizationDecision(bash("node .claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-developer-bug-fix 2>&1 | head -20")),
+  getOperationAuthorizationDecision(bash("node .claude/scripts/asdd-load-capability.mjs asdd-developer-bug-fix 2>&1 | head -20")),
 ));
 assert("Edit tras el loader compuesto ya no pide capability", allows(getOperationAuthorizationDecision(operation())));
 
@@ -208,7 +208,7 @@ for (const command of [
   "git -C . status",
   "pwd",
   "node --version",
-  "cd .claude/scripts && cat lib/sofka-asdd-plan-authorization-lib.mjs",
+  "cd .claude/scripts && cat lib/asdd-plan-authorization-lib.mjs",
 ]) {
   assert(`permite: ${command}`, allows(getOperationAuthorizationDecision(bash(command))));
 }
@@ -233,18 +233,18 @@ for (const [command, code] of [
 
 console.log("PO9: rutas que el framework obliga a escribir no exigen scope, pero no cruzan de agente");
 assert("memoria del propio agente permite", allows(getOperationAuthorizationDecision(operation({
-  tool_input: { file_path: ".claude/agent-memory/sofka-asdd-developer-backend/MEMORY.md" },
+  tool_input: { file_path: ".claude/agent-memory/asdd-developer-backend/MEMORY.md" },
 }))));
 assert("checkpoint del run permite", allows(getOperationAuthorizationDecision(operation({
   tool_input: { file_path: ".asdd-run.json" },
 }))));
 assert("memoria de otro agente devuelve scope-mismatch", decision(getOperationAuthorizationDecision(operation({
-  tool_input: { file_path: ".claude/agent-memory/sofka-asdd-security/MEMORY.md" },
+  tool_input: { file_path: ".claude/agent-memory/asdd-security/MEMORY.md" },
 })), "deny", "scope-mismatch"));
 assert("otra ruta bajo .claude sigue fuera de scope", decision(getOperationAuthorizationDecision(operation({
   tool_input: { file_path: ".claude/settings.json" },
 })), "deny", "scope-mismatch"));
-assert("scratch en .tmp permite (sofka-asdd-ephemeral-artifacts)", allows(getOperationAuthorizationDecision(operation({
+assert("scratch en .tmp permite (asdd-ephemeral-artifacts)", allows(getOperationAuthorizationDecision(operation({
   tool_input: { file_path: ".tmp/analyze-coverage.py" },
 }))));
 assert("raiz del repo sigue fuera de scope", decision(getOperationAuthorizationDecision(operation({
@@ -254,12 +254,12 @@ assert("raiz del repo sigue fuera de scope", decision(getOperationAuthorizationD
 console.log("PO10: el control-plane que las reglas obligan a ejecutar no exige declaracion");
 for (const command of [
   // Las 9 reglas always-on exigen este comando en su bloque de carga condicional.
-  "node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-orchestration",
-  // sofka-asdd-system-integrity exige cerrar con el validador y el runner del proyecto.
+  "node .claude/scripts/asdd-resolve-rule.mjs asdd-orchestration",
+  // asdd-system-integrity exige cerrar con el validador y el runner del proyecto.
   "node .claude/scripts/validate-template.mjs",
   "npm test",
   "npm run validate",
-  // sofka-asdd-anti-loops exige verificar worktrees al cerrar sesion.
+  // asdd-anti-loops exige verificar worktrees al cerrar sesion.
   "git worktree list",
 ]) {
   assert(`permite: ${command}`, allows(getOperationAuthorizationDecision(bash(command))));
@@ -270,11 +270,11 @@ for (const command of [
   "npm run hash:regen",
   "npm test -- --coverage",
   // Escribe estado y ninguna regla se lo manda a un agente.
-  "node .claude/scripts/sofka-asdd-resolve-workspace.mjs",
+  "node .claude/scripts/asdd-resolve-workspace.mjs",
   // Un subagente no consulta ni aprueba su propia autorizacion (ORC-010-A).
-  "node .claude/scripts/sofka-asdd-plan-authorization.mjs status",
+  "node .claude/scripts/asdd-plan-authorization.mjs status",
   // Homonimo fuera del proyecto: el allowlist es por ruta, no por basename.
-  "node /etc/evil/sofka-asdd-resolve-rule.mjs sofka-asdd-orchestration",
+  "node /etc/evil/asdd-resolve-rule.mjs asdd-orchestration",
   "git worktree remove --force /tmp/x",
 ]) {
   assert(`deniega: ${command}`, decision(getOperationAuthorizationDecision(bash(command)), "deny", "command-mismatch"));
@@ -282,21 +282,21 @@ for (const command of [
 
 console.log("PO11: una cadena de loaders carga las dos capabilities aprobadas en una sola llamada");
 clean();
-const LOADER = "node .claude/scripts/sofka-asdd-load-capability.mjs";
+const LOADER = "node .claude/scripts/asdd-load-capability.mjs";
 const planConDependencia = {
   ...plan,
   request_id: "hook-loader-chain",
   agents: [{
     ...plan.agents[0],
-    capability: "sofka-asdd-developer-bug-fix",
-    dependencies: ["sofka-asdd-developer-unit-test"],
+    capability: "asdd-developer-bug-fix",
+    dependencies: ["asdd-developer-unit-test"],
   }],
 };
 issueChallenge(planConDependencia);
 approveActiveChallenge();
 getPlanGateDecision(launch());
 assert("cadena de dos loaders aprobados permite", allows(getOperationAuthorizationDecision(bash(
-  `${LOADER} sofka-asdd-developer-bug-fix && ${LOADER} sofka-asdd-developer-unit-test`,
+  `${LOADER} asdd-developer-bug-fix && ${LOADER} asdd-developer-unit-test`,
 ))));
 assert("Edit tras la cadena ya no pide capability", allows(getOperationAuthorizationDecision(operation())));
 
@@ -305,7 +305,7 @@ issueChallenge(planConDependencia);
 approveActiveChallenge();
 getPlanGateDecision(launch());
 assert("cadena en orden inverso tambien permite", allows(getOperationAuthorizationDecision(bash(
-  `${LOADER} sofka-asdd-developer-unit-test && ${LOADER} sofka-asdd-developer-bug-fix`,
+  `${LOADER} asdd-developer-unit-test && ${LOADER} asdd-developer-bug-fix`,
 ))));
 assert("Edit tras la cadena invertida ya no pide capability", allows(getOperationAuthorizationDecision(operation())));
 
@@ -315,23 +315,23 @@ approveActiveChallenge();
 getPlanGateDecision(launch());
 // La cadena no amplia autoridad: cada eslabon se valida igual que si fuera solo.
 assert("cadena con una capability no aprobada devuelve capability-mismatch", decision(
-  getOperationAuthorizationDecision(bash(`${LOADER} sofka-asdd-developer-bug-fix && ${LOADER} sofka-asdd-developer-e2e-test`)),
+  getOperationAuthorizationDecision(bash(`${LOADER} asdd-developer-bug-fix && ${LOADER} asdd-developer-e2e-test`)),
   "deny", "capability-mismatch",
 ));
 assert("cadena con una escritura devuelve command-mismatch", decision(
-  getOperationAuthorizationDecision(bash(`${LOADER} sofka-asdd-developer-bug-fix && rm -rf /tmp/x`)),
+  getOperationAuthorizationDecision(bash(`${LOADER} asdd-developer-bug-fix && rm -rf /tmp/x`)),
   "deny", "command-mismatch",
 ));
 assert("cadena con un comando declarado devuelve command-mismatch", decision(
-  getOperationAuthorizationDecision(bash(`${LOADER} sofka-asdd-developer-bug-fix && npm run setup`)),
+  getOperationAuthorizationDecision(bash(`${LOADER} asdd-developer-bug-fix && npm run setup`)),
   "deny", "command-mismatch",
 ));
 assert("homonimo del loader fuera del proyecto devuelve command-mismatch", decision(
-  getOperationAuthorizationDecision(bash(`node /etc/evil/sofka-asdd-load-capability.mjs sofka-asdd-developer-bug-fix && ${LOADER} sofka-asdd-developer-unit-test`)),
+  getOperationAuthorizationDecision(bash(`node /etc/evil/asdd-load-capability.mjs asdd-developer-bug-fix && ${LOADER} asdd-developer-unit-test`)),
   "deny", "command-mismatch",
 ));
 assert("cadena en background devuelve command-mismatch", decision(
-  getOperationAuthorizationDecision(bash(`${LOADER} sofka-asdd-developer-bug-fix & ${LOADER} sofka-asdd-developer-unit-test`)),
+  getOperationAuthorizationDecision(bash(`${LOADER} asdd-developer-bug-fix & ${LOADER} asdd-developer-unit-test`)),
   "deny", "command-mismatch",
 ));
 assert("Edit tras la cadena rechazada sigue pidiendo capability", decision(
@@ -345,7 +345,7 @@ approveActiveChallenge();
 getPlanGateDecision(launch());
 assert("permite: test -f .gitignore", allows(getOperationAuthorizationDecision(bash("test -f .gitignore"))));
 assert("permite: loader con >/dev/null", allows(getOperationAuthorizationDecision(bash(
-  `${LOADER} sofka-asdd-developer-bug-fix >/dev/null 2>&1`,
+  `${LOADER} asdd-developer-bug-fix >/dev/null 2>&1`,
 ))));
 assert("deniega: cat > /dev/null.txt", decision(
   getOperationAuthorizationDecision(bash("cat .gitignore >/dev/null.txt")), "deny", "command-mismatch",

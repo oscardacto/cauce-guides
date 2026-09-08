@@ -1,4 +1,4 @@
-description: "Regla: sofka-asdd-stabilization-bug-rules — SBR-001..004 se aplican en bugfix"
+description: "Regla: asdd-stabilization-bug-rules — SBR-001..004 se aplican en bugfix"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

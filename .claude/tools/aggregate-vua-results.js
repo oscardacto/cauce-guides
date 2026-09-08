@@ -119,7 +119,7 @@ function main() {
 
   const vuaRoot = path.join(runFolder, 'visual-ux-a11y');
   if (!fs.existsSync(vuaRoot)) {
-    process.stderr.write(`[aggregate-vua] ERROR: no hay output/{run}/visual-ux-a11y/. Ejecutar /sofka-asdd:qa-web-visual-ux-a11y primero.\n`);
+    process.stderr.write(`[aggregate-vua] ERROR: no hay output/{run}/visual-ux-a11y/. Ejecutar /asdd:qa-web-visual-ux-a11y primero.\n`);
     process.exit(1);
   }
 

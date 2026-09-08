@@ -155,7 +155,7 @@ Se conservan los IDs del INDEX para mantener trazabilidad.
 
 ## 9. Decisiones adicionales que `SPIKE-2` debe elevar
 
-1. precedencia entre `sofka-asdd-producto` y la capa BA standalone;
+1. precedencia entre `asdd-producto` y la capa BA standalone;
 2. handoff BA standalone → flujo de equipo;
 3. semántica única de activación Data frente a `data_platform`;
 4. tratamiento de skills externas Databricks y capacidades planificadas;

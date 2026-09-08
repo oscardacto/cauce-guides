@@ -18,7 +18,7 @@ bloqueo duro.
 
 La evidencia estaba en el propio repositorio. `.claude/.runtime/git-audit.jsonl`
 registraba 5 `decision:"block"` y 6 usos de escape hatch, uno de ellos con el
-detalle `SOFKA_ASDD_GUARD_PUSH_DISABLE=1 · evitó 0 bloqueo(s)`: el equipo ya
+detalle `ASDD_GUARD_PUSH_DISABLE=1 · evitó 0 bloqueo(s)`: el equipo ya
 apagaba los guards a ciegas, antes de saber si iban a bloquear. Cuando el camino
 correcto no funciona, el bypass deja de ser una excepción y pasa a ser el
 procedimiento.
@@ -120,7 +120,7 @@ creyendo que era eso.
 
 El gate PreToolUse parsea `{ ts, head }` con fallback al formato legado, y valida
 el `head` contra el commit que se pushea, igual que el githook nativo. Las
-extensiones de código fuente se leen de `.sofka-asdd/source-exts.json`, fuente
+extensiones de código fuente se leen de `.asdd/source-exts.json`, fuente
 única para ambas capas. El fast-track config-only se evalúa contra el upstream o,
 si no existe, contra la rama de integración — nunca contra `HEAD~1`.
 
@@ -160,7 +160,7 @@ no.
 Al integrar `dev`, dos de las correcciones de este trabajo resultaron ya
 resueltas —y mejor— por el refactor «clasificar por plano en vez de por
 sintaxis» (`5113932`), que unificó el motor de comandos en
-`.claude/hooks/_lib/sofka-asdd-command-plane.mjs`. Se descartaron las propias:
+`.claude/hooks/_lib/asdd-command-plane.mjs`. Se descartaron las propias:
 
 - **El agujero de `git branch`**: su `isReadOnlySegment` ya distingue consulta de
   mutación en la capa compartida, y además rechaza el nombre suelto que CREA la
@@ -181,7 +181,7 @@ venga de donde venga la implementación.
 ## Alternativas descartadas
 
 **Escape hatch documentado para la orden explícita.** Es lo que el equipo ya hace
-de hecho, y el audit log muestra por qué no sirve: `SOFKA_ASDD_GUARD_BRANCH_DISABLE=1`
+de hecho, y el audit log muestra por qué no sirve: `ASDD_GUARD_BRANCH_DISABLE=1`
 apaga GS-001 además de GS-003, y se termina usando por reflejo, incluso cuando no
 había ningún bloqueo que evitar. Un hatch usado a ciegas no es una excepción
 auditable: es enforcement apagado.

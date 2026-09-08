@@ -16,8 +16,8 @@ Formato de fila: `| tipo | fecha | título corto | notas |`.
 _Sin memorias registradas todavía._ Agregá filas siguiendo el procedimiento de abajo.
 
 > Las lecciones transversales del ASDD **no** viven acá: son reglas de
-> `.claude/rules/` (por ejemplo GS-006 y GS-007 en `sofka-asdd-git-safety.md`, o el
-> enforcement ORC en `sofka-asdd-orchestration.md`). Esta tabla es para el contexto
+> `.claude/rules/` (por ejemplo GS-006 y GS-007 en `asdd-git-safety.md`, o el
+> enforcement ORC en `asdd-orchestration.md`). Esta tabla es para el contexto
 > propio de **este** proyecto: lo que no se deriva leyendo el código.
 
 ## Tipos válidos

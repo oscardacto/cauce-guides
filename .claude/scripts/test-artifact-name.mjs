@@ -2,7 +2,7 @@
 /**
  * test-artifact-name.mjs
  *
- * Smoke test para sofka-asdd-artifact-name.mjs
+ * Smoke test para asdd-artifact-name.mjs
  * Ejecutar: node .claude/scripts/test-artifact-name.mjs
  *
  * Casos:
@@ -21,7 +21,7 @@ import { spawnSync } from 'child_process';
 import { tmpdir } from 'os';
 import { randomBytes } from 'crypto';
 import { fileURLToPath } from 'node:url';
-import { deriveArtifactName } from './lib/sofka-asdd-artifact-name-lib.mjs';
+import { deriveArtifactName } from './lib/asdd-artifact-name-lib.mjs';
 
 // ---------------------------------------------------------------------------
 // Utilidades de test
@@ -49,7 +49,7 @@ function makeTmpDir() {
 
 /** Ejecuta el helper con el directorio de proyecto dado. */
 function runHelper(projectDir, extraArgs = []) {
-  const scriptPath = fileURLToPath(import.meta.url).replace('test-artifact-name.mjs', 'sofka-asdd-artifact-name.mjs');
+  const scriptPath = fileURLToPath(import.meta.url).replace('test-artifact-name.mjs', 'asdd-artifact-name.mjs');
   return spawnSync(
     process.execPath,
     [scriptPath, ...extraArgs],

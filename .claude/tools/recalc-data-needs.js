@@ -7,7 +7,7 @@
 // Red de seguridad complementaria a la de design-merge.js (que sólo aplica
 // en merges nuevos en modo `single_hu`). Si un cp_modulo conserva
 // `total_needs: 0` aunque sus CPs tengan `data_needs[]`, este script lo
-// recalcula sin re-ejecutar /sofka-asdd:qa-web-design.
+// recalcula sin re-ejecutar /asdd:qa-web-design.
 //
 // Uso:
 //   node recalc-data-needs.js --cp-file <ruta-cp_modulo>

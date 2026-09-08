@@ -7,7 +7,7 @@
   "source": {
     "branch": "feature/asdd-runtime-efficiency-v2",
     "base_commit": "a941930",
-    "prototype": ".claude/scripts/sofka-asdd-pre-tool-dispatcher-prototype.mjs",
+    "prototype": ".claude/scripts/asdd-pre-tool-dispatcher-prototype.mjs",
     "benchmark": ".claude/scripts/benchmark-pretool-hooks.mjs",
     "differential_test": ".claude/scripts/test-pretool-dispatcher-prototype.mjs",
     "collector_test": ".claude/scripts/test-dispatcher-collector-coexistence.mjs"

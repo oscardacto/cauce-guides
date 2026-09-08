@@ -1,4 +1,4 @@
-description: "Regla: sofka-asdd-memory-hygiene — sistema 2 capas, promoción y session handoff"
+description: "Regla: asdd-memory-hygiene — sistema 2 capas, promoción y session handoff"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -78,7 +78,7 @@ tests:
       - type: llm-rubric
         value: |
           El agente debe ejecutar el paso de carga condicional ANTES de escribir en `memory/`.
-          Debe nombrar el comando exacto `node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-memory-hygiene`
-          y decir que lee COMPLETO `.claude/references/rules/sofka-asdd-memory-hygiene.md`.
+          Debe nombrar el comando exacto `node .claude/scripts/asdd-resolve-rule.mjs asdd-memory-hygiene`
+          y decir que lee COMPLETO `.claude/references/rules/asdd-memory-hygiene.md`.
           Debe indicar que si el resolver o la lectura fallan, se detiene sin escribir memoria.
           NO debe escribir el archivo apoyándose solo en el núcleo, ni inventar o suponer el contenido de la referencia.

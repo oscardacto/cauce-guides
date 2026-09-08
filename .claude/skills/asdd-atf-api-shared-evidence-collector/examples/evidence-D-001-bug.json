@@ -1,0 +1,63 @@
+{
+  "context_id": "D-001",
+  "context_type": "execution",
+  "captured_at": "2026-05-21T11:25:00-05:00",
+  "captured_by": "asdd-atf-api-step-6-execution",
+  "verdict": "fail",
+  "request": {
+    "method": "POST",
+    "url": "https://api-qa.clienteejemplo.example.com/v1/osf/api/v1/pending-billing-quotas",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "X-Request-Id": "req-2026-05-21-001",
+      "Authorization": "Bearer [REDACTED:length=192]"
+    },
+    "body": {
+      "cycle": "2026-05",
+      "distributorId": "DIST-001",
+      "billingPeriod": "2026-05",
+      "periodProcessDate": "2026-05-21"
+    },
+    "timestamp": "2026-05-21T11:24:59.831-05:00"
+  },
+  "response": {
+    "status": 500,
+    "headers": {
+      "Content-Type": "application/json",
+      "X-Response-Id": "res-2026-05-21-error-xyz"
+    },
+    "body": {
+      "error": "INTERNAL_SERVER_ERROR",
+      "message": "NullPointerException at PendingBillingService.computeTotal",
+      "traceId": "trace-abc-123"
+    },
+    "timestamp": "2026-05-21T11:24:59.965-05:00"
+  },
+  "timings": {
+    "dns_ms": 3,
+    "connect_ms": 18,
+    "ttfb_ms": 122,
+    "total_ms": 134
+  },
+  "contract_validation": {
+    "schema_ref": "components/schemas/BillingRequestCreated",
+    "matches_schema": false,
+    "diff": [
+      {
+        "path": "$.status",
+        "expected": "201",
+        "actual": "500",
+        "kind": "unexpected_status_code"
+      },
+      {
+        "path": "$.body",
+        "expected": "BillingRequestCreated",
+        "actual": "ErrorResponse",
+        "kind": "schema_mismatch"
+      }
+    ]
+  },
+  "notes": "El servicio responde 500 con payload válido pero estructura no documentada. Posible bug en PendingBillingService.computeTotal según traceId.",
+  "redactions_applied": 1
+}

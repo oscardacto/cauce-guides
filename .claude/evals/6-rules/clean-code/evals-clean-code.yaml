@@ -1,4 +1,4 @@
-description: "Regla: sofka-asdd-clean-code — SOLID + Clean Code, idioma de código, coverage y Boy Scout Rule"
+description: "Regla: asdd-clean-code — SOLID + Clean Code, idioma de código, coverage y Boy Scout Rule"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -63,5 +63,5 @@ tests:
         value: |
           El agente debe aplicar la Boy Scout Rule: reconocer que el código necesita mejora.
           Pero debe indicar que un refactoring de 120 líneas con CC=22 excede el scope del ticket #4210.
-          Debe recomendar escalar la oportunidad a sofka-asdd-tech-lead o crear un ticket de deuda técnica — NO ignorarlo ni hacerlo silenciosamente en el mismo PR.
+          Debe recomendar escalar la oportunidad a asdd-tech-lead o crear un ticket de deuda técnica — NO ignorarlo ni hacerlo silenciosamente en el mismo PR.
           NO debe decir "déjalo tal cual, no es tu problema" ni tampoco "refactorizalo ahora completo".

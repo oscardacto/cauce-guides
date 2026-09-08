@@ -1,4 +1,4 @@
-# Convención de Nomenclatura — ASDD Sofka
+# Convención de Nomenclatura — ASDD Guide
 
 Guía oficial para nombrar agentes, skills, commands, hooks y rules en
 proyectos ASDD. Versión: template `2.0.0`.
@@ -7,7 +7,7 @@ proyectos ASDD. Versión: template `2.0.0`.
 
 Un proyecto Claude Code mezcla tres fuentes de configuración agéntica:
 
-1. El **template ASDD Sofka** (agentes base como `architect`, skills como `adr`).
+1. El **template ASDD Guide** (agentes base como `architect`, skills como `adr`).
 2. El **proyecto consumidor** (agentes/skills propios del dominio).
 3. **Plugins externos** del marketplace de Claude Code.
 
@@ -27,24 +27,24 @@ disjuntos**, enforzados por el validador.
 
 | Namespace | Prefijo | Quién lo crea | Ejemplo |
 |---|---|---|---|
-| Template ASDD | `sofka-asdd-` | COE Sofka | `sofka-asdd-solution-architect` |
+| Template ASDD | `asdd-` | COE Guide | `asdd-solution-architect` |
 | Proyecto consumidor | `{project.name}-` | Dev del proyecto | `checkout-backend-fraud-detector` |
 | Plugins externos | propio del plugin | Equipo del proyecto | `security-guidance:owasp-review` |
 
-El `project.name` sale de `.sofka-asdd/sofka-asdd.lock → project.name` y debe
+El `project.name` sale de `.asdd/asdd.lock → project.name` y debe
 cumplir la regex `^[a-z][a-z0-9-]{1,30}$`.
 
 ## 3. Convenciones por tipo de artefacto
 
 ### 3.1 Agentes
 
-**Patrón del template:** `sofka-asdd-{role}`
+**Patrón del template:** `asdd-{role}`
 **Patrón del proyecto:** `{project.name}-{role}`
 
 Buenos:
 
-- `sofka-asdd-solution-architect` (del template)
-- `sofka-asdd-meta` (del template, ex `asdd-expert`)
+- `asdd-solution-architect` (del template)
+- `asdd-meta` (del template, ex `asdd-expert`)
 - `checkout-backend-fraud-detector` (del proyecto)
 - `insurance-portal-regulation-checker` (del proyecto)
 
@@ -56,16 +56,16 @@ Malos:
 
 ### 3.2 Skills
 
-**Patrón del template:** `sofka-asdd-{agent-role}-{skill-name}`
+**Patrón del template:** `asdd-{agent-role}-{skill-name}`
 **Patrón del proyecto:** `{project.name}-{agent-role-or-domain}-{skill-name}`
 
 Buenos:
 
-- `sofka-asdd-solution-architect-adr` — skill del template para ADRs
-- `sofka-asdd-developer-unit-test` — skill del template para unit tests
+- `asdd-solution-architect-adr` — skill del template para ADRs
+- `asdd-developer-unit-test` — skill del template para unit tests
 - `checkout-backend-payment-idempotency-check` — skill del proyecto
 - `checkout-backend-developer-pci-validator` — skill del proyecto que
-  extiende al `sofka-asdd-developer-backend`
+  extiende al `asdd-developer-backend`
 
 Malos:
 
@@ -75,13 +75,13 @@ Malos:
 
 ### 3.3 Commands
 
-**Patrón del template:** `/sofka-asdd:{action}` (archivo en `.claude/commands/sofka-asdd/{action}.md`)
+**Patrón del template:** `/asdd:{action}` (archivo en `.claude/commands/asdd/{action}.md`)
 **Patrón del proyecto:** `/{project.name}:{action}` (archivo en `.claude/commands/{project.name}/{action}.md`)
 
 Buenos:
 
-- `/sofka-asdd:specify` (fase Especificar del template)
-- `/sofka-asdd:design` (fase Diseñar)
+- `/asdd:specify` (fase Especificar del template)
+- `/asdd:design` (fase Diseñar)
 - `/checkout-backend:deploy` (acción propia del proyecto)
 - `/insurance-portal:regulatory-audit` (acción propia)
 
@@ -93,13 +93,13 @@ Malos:
 
 ### 3.4 Hooks
 
-**Patrón del template:** `sofka-asdd-{lifecycle}-{purpose}.mjs`
+**Patrón del template:** `asdd-{lifecycle}-{purpose}.mjs`
 **Patrón del proyecto:** `{project.name}-{lifecycle}-{purpose}.mjs`
 
 Buenos:
 
-- `sofka-asdd-pre-tool-use-dangerous-bash.mjs` (bloquea bash destructivos)
-- `sofka-asdd-pre-tool-use-spec-check.mjs` (spec guard)
+- `asdd-pre-tool-use-dangerous-bash.mjs` (bloquea bash destructivos)
+- `asdd-pre-tool-use-spec-check.mjs` (spec guard)
 - `checkout-backend-pre-tool-use-pci-check.mjs` (valida PCI compliance antes de Write/Edit)
 - `insurance-portal-post-tool-use-audit-log.mjs` (log de cambios para auditoría)
 
@@ -111,13 +111,13 @@ Malos:
 
 ### 3.5 Rules
 
-**Patrón del template:** `sofka-asdd-{topic}.md`
+**Patrón del template:** `asdd-{topic}.md`
 **Patrón del proyecto:** `{project.name}-{topic}.md`
 
 Buenos:
 
-- `sofka-asdd-orchestration.md` (reglas del orquestador)
-- `sofka-asdd-workflow.md` (6 fases ASDD)
+- `asdd-orchestration.md` (reglas del orquestador)
+- `asdd-workflow.md` (6 fases ASDD)
 - `checkout-backend-pci-compliance.md` (reglas PCI del proyecto)
 - `insurance-portal-regulatory.md` (reglas regulatorias propias)
 
@@ -126,7 +126,7 @@ Malos:
 - `orchestration.md` → falta prefijo
 - `rules.md` → genérico, no indica dominio ni origen
 
-> **Hogar de las rules (ADR-005):** las rules **universales** (git-safety, anti-loops, data-boundary, etc.) y de **orquestación** (orchestration*, workflow*, routing*) viven en `.claude/rules/` — **auto-cargadas** en cada sesión y heredadas por los sub-agentes. Las rules de **dominio** (específicas de un pipeline, ej. ATF Web, Smart Data) viven en `.claude/reference/{domain}/` — un directorio **no auto-cargado** — y los agentes de ese dominio las leen por path explícito cuando la fase lo requiere. El naming (`sofka-asdd-{topic}.md`) es idéntico en ambos casos; solo cambia el directorio. Ver `docs/adoption/ADR-005-conditional-rule-loading.md`.
+> **Hogar de las rules (ADR-005):** las rules **universales** (git-safety, anti-loops, data-boundary, etc.) y de **orquestación** (orchestration*, workflow*, routing*) viven en `.claude/rules/` — **auto-cargadas** en cada sesión y heredadas por los sub-agentes. Las rules de **dominio** (específicas de un pipeline, ej. ATF Web, Smart Data) viven en `.claude/reference/{domain}/` — un directorio **no auto-cargado** — y los agentes de ese dominio las leen por path explícito cuando la fase lo requiere. El naming (`asdd-{topic}.md`) es idéntico en ambos casos; solo cambia el directorio. Ver `docs/adoption/ADR-005-conditional-rule-loading.md`.
 
 ### 3.6 Memory files
 
@@ -193,16 +193,16 @@ Ejemplos: `2026-06-18-001-DESIGN-003-adr-001-routing.md` y
   no reemplaza la carpeta — la complementa.
 - **D2 — SEQ derivado, nunca manual**: el `SEQ` se deriva del campo
   `artifact_seq` del run state (`.asdd-run.json`). El helper
-  `.claude/scripts/sofka-asdd-artifact-name.mjs` es la **única forma
+  `.claude/scripts/asdd-artifact-name.mjs` es la **única forma
   correcta** de obtener el nombre; los skills lo invocan, nunca estampan a mano.
 - **D3 — PHASE de la lista del schema**: usar solo los tokens definidos en
-  `.sofka-asdd/asdd-run.schema.json → phases` (`specify`, `analyze`, `design`,
+  `.asdd/asdd-run.schema.json → phases` (`specify`, `analyze`, `design`,
   `build`, `verify`, `document`), en MAYÚSCULA. No inventar tokens nuevos.
 - **D4 — Reserva antes del plan**: el orquestador deriva cada nombre antes de
   emitir ORC-010-A e incluye la ruta exacta en `scope[]` y en el prompt. Para
   artefactos posteriores al brief usa:
   ```bash
-  ARTIFACT_NAME=$(node .claude/scripts/sofka-asdd-artifact-name.mjs \
+  ARTIFACT_NAME=$(node .claude/scripts/asdd-artifact-name.mjs \
     --phase {fase} --slug {slug})
   ```
   y usa `$ARTIFACT_NAME` para construir el scope exacto. El agente recibe la
@@ -254,7 +254,7 @@ carpeta bajo `docs/**`.
 
 ## 4. Extender agentes del template con skills del proyecto
 
-Escenario común: **"Quiero agregar un skill al `sofka-asdd-developer-backend` que
+Escenario común: **"Quiero agregar un skill al `asdd-developer-backend` que
 valide idempotencia en mis endpoints de pago".**
 
 Pasos concretos:
@@ -281,12 +281,12 @@ Pasos concretos:
    1. ...
    ```
 
-3. Editar `.claude/agents/sofka-asdd-developer-backend.md` (o `sofka-asdd-developer-frontend.md` según corresponda) y agregar el skill al
+3. Editar `.claude/agents/asdd-developer-backend.md` (o `asdd-developer-frontend.md` según corresponda) y agregar el skill al
    array `skills:`:
 
    ```diff
-   - skills: [sofka-asdd-developer-feature, sofka-asdd-developer-unit-test, sofka-asdd-developer-integration-test, sofka-asdd-developer-refactoring-execute]
-   + skills: [sofka-asdd-developer-feature, sofka-asdd-developer-unit-test, sofka-asdd-developer-integration-test, sofka-asdd-developer-refactoring-execute, checkout-backend-developer-idempotency]
+   - skills: [asdd-developer-feature, asdd-developer-unit-test, asdd-developer-integration-test, asdd-developer-refactoring-execute]
+   + skills: [asdd-developer-feature, asdd-developer-unit-test, asdd-developer-integration-test, asdd-developer-refactoring-execute, checkout-backend-developer-idempotency]
    ```
 
 4. Validar:
@@ -309,7 +309,7 @@ Pasos concretos:
 | Necesito auditar un aspecto específico del dominio | Agente propio |
 | Necesito flujo diferente al ASDD estándar | Command propio `/{project.name}:{phase}` |
 | Necesito protección transversal | Hook propio `{project.name}-{lifecycle}-{purpose}.mjs` |
-| Quiero cambiar cómo funciona `sofka-asdd-solution-architect` | **NO** override — crear agente nuevo `{project.name}-architect-{variant}` |
+| Quiero cambiar cómo funciona `asdd-solution-architect` | **NO** override — crear agente nuevo `{project.name}-architect-{variant}` |
 | Necesito reglas de negocio estables | Rule propia `{project.name}-{topic}.md` |
 
 Principio general: **extender es más barato que duplicar**. Si el problema
@@ -332,7 +332,7 @@ un agente cuesta frontmatter + system prompt en cada invocación.
   prefijan** — son identificadores semánticos de reglas, no artefactos
   referenciables por Claude Code.
 - **Un guión entre componentes**, nunca dos:
-  `sofka-asdd-solution-architect-adr` sí, `sofka--asdd--architect` no.
+  `asdd-solution-architect-adr` sí, `guide--asdd--architect` no.
 
 ## 7. Excepciones — qué NO se prefija
 
@@ -351,7 +351,7 @@ un agente cuesta frontmatter + system prompt en cada invocación.
 ┌────────────────────────────────────────────────────────┐
 │ NAMESPACE RULES (v2.0)                                 │
 ├────────────────────────────────────────────────────────┤
-│ Template:   sofka-asdd-{kind}                          │
+│ Template:   asdd-{kind}                          │
 │ Proyecto:   {project.name}-{kind}                      │
 │ Command:    /{namespace}:{action}                      │
 │ Extensión:  {project.name}-{template-role}-{skill}     │
@@ -359,10 +359,10 @@ un agente cuesta frontmatter + system prompt en cada invocación.
 └────────────────────────────────────────────────────────┘
 
 Ejemplos lado a lado:
-  sofka-asdd-solution-architect         vs  checkout-backend-fraud-detector
-  sofka-asdd-solution-architect-adr     vs  checkout-backend-architect-adr (ext)
-  /sofka-asdd:specify          vs  /checkout-backend:deploy
-  sofka-asdd-orchestration.md  vs  checkout-backend-pci-compliance.md
+  asdd-solution-architect         vs  checkout-backend-fraud-detector
+  asdd-solution-architect-adr     vs  checkout-backend-architect-adr (ext)
+  /asdd:specify          vs  /checkout-backend:deploy
+  asdd-orchestration.md  vs  checkout-backend-pci-compliance.md
 ```
 
 ## 9. FAQ
@@ -375,10 +375,10 @@ al de `.claude/docs/migrations/1-to-2.md`. Los artefactos del template no se toc
 **¿Puedo tener artefactos sin prefijo?**
 No. El check 14 del validador es **strict** — rechaza cualquier artefacto
 en `.claude/{agents,skills,commands,hooks,rules}/` que no tenga prefijo
-válido (`sofka-asdd-` o `{project.name}-`). Memory files quedan exentos.
+válido (`asdd-` o `{project.name}-`). Memory files quedan exentos.
 
 **¿Qué pasa si `project.name` tiene espacios o mayúsculas?**
-El check 14 rechaza primero la regex. Corregir en `.sofka-asdd/sofka-asdd.lock`
+El check 14 rechaza primero la regex. Corregir en `.asdd/asdd.lock`
 para cumplir `^[a-z][a-z0-9-]{1,30}$` y volver a correr.
 
 **¿Se pueden instalar 2 plugins con nombres parecidos?**
@@ -386,7 +386,7 @@ Sí, cada plugin tiene su propio namespace (`{plugin-name}:{action}`). Si
 dos plugins colisionan, es problema del marketplace, no de tu proyecto.
 
 **¿Cómo sé si un agente viene del template o del proyecto?**
-Mirá el prefijo: `sofka-asdd-` → template, `{project.name}-` → proyecto.
+Mirá el prefijo: `asdd-` → template, `{project.name}-` → proyecto.
 Si hay duda, `grep -rn "^name:" .claude/agents/` muestra todos.
 
 **¿Puedo override un agente del template?**
@@ -395,15 +395,15 @@ distinto (`{project.name}-architect-v2`) y usarlo en vez del base; (b) pedir
 al COE una mejora del template (PR al repo `project-structure`).
 
 **¿Qué pasa si adopto el template en un monorepo?**
-Cada subproyecto declara su propio `project.name` en su `.sofka-asdd/`. Los
+Cada subproyecto declara su propio `project.name` en su `.asdd/`. Los
 artefactos propios de cada subproyecto llevan ese prefijo. Los artefactos
 del template viven típicamente en la raíz del monorepo con prefijo
-`sofka-asdd-`.
+`asdd-`.
 
-**¿Puedo importar agentes de otros proyectos Sofka?**
+**¿Puedo importar agentes de otros proyectos Guide?**
 Si los agentes tienen prefijo `{other-project.name}-`, sí — copiarlos tal
 cual. Pero recomendación: **no hagas eso**. Si un agente vale la pena
-compartir, proponé incorporarlo al template (`sofka-asdd-*`).
+compartir, proponé incorporarlo al template (`asdd-*`).
 
 **¿El validador rechaza artefactos sin prefijo?**
 Sí. Check 14 `naming-convention` es `strict`: si hay un agente, skill,
@@ -490,10 +490,10 @@ Si venís de v1.0.x, el cambio clave es:
 
 | Antes (v1.x) | Ahora (v2.0) |
 |--------------|--------------|
-| `architect`, `developer`, `tech-lead`... | `sofka-asdd-solution-architect`, `sofka-asdd-developer-frontend`, `sofka-asdd-developer-backend`... |
-| `architect-adr`, `developer-feature`... | `sofka-asdd-solution-architect-adr`, `sofka-asdd-developer-feature`... |
-| `/project:specify` | `/sofka-asdd:specify` |
-| `asdd-expert` | `sofka-asdd-meta` (rename de rol) |
+| `architect`, `developer`, `tech-lead`... | `asdd-solution-architect`, `asdd-developer-frontend`, `asdd-developer-backend`... |
+| `architect-adr`, `developer-feature`... | `asdd-solution-architect-adr`, `asdd-developer-feature`... |
+| `/project:specify` | `/asdd:specify` |
+| `asdd-expert` | `asdd-meta` (rename de rol) |
 | Validador 13 checks | Validador 14 checks (naming-convention strict) |
 
 Ver `.claude/docs/migrations/1-to-2.md` para el procedimiento de migración.
@@ -505,4 +505,4 @@ Ver `.claude/docs/migrations/1-to-2.md` para el procedimiento de migración.
 - Anthropic — Commands (https://code.claude.com/docs/en/slash-commands)
 - ASDD-VERSIONING.md — sección 10 Convención de nomenclatura
 - .claude/scripts/validate-template.mjs — check 14 implementation
-- .sofka-asdd/cli-contract.json — bloque `naming_convention`
+- .asdd/cli-contract.json — bloque `naming_convention`

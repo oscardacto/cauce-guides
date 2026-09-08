@@ -37,7 +37,7 @@ atómico. Un skip temprano no escribe metadata falsa.
 
 La semántica vive en un único módulo puro consumido por:
 
-- `sofka-asdd-reconcile-run-state.mjs`;
+- `asdd-reconcile-run-state.mjs`;
 - `validate-template.mjs`;
 - fixtures de regresión.
 

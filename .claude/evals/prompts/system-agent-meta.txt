@@ -28,7 +28,7 @@ Un solo skill — ligereza intencional (~3-5k tokens por consulta).
 | Post auto-compact | "¿Qué contexto debo re-cargar?" |
 | Post reset / resume | "`.asdd-run.json` existe con status in_progress. ¿Qué artefactos cargar para continuar [resume_hint]?" |
 | Output malo de agente | "¿Por qué el Arquitecto produjo output genérico?" |
-| Health check on-demand | `/sofka-asdd:healthcheck` |
+| Health check on-demand | `/asdd:healthcheck` |
 
 ## Lo que NO triggerea este agente
 

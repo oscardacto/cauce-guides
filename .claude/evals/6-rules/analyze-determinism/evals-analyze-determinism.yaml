@@ -65,13 +65,13 @@ tests:
           La decisión es automática por el criterio binario.
 
   # AC2: guard de prerrequisito — no existe brief → STOP, dirigir a specify
-  - description: "AC2: no existe brief aprobado → STOP y dirigir a /sofka-asdd:specify"
+  - description: "AC2: no existe brief aprobado → STOP y dirigir a /asdd:specify"
     vars:
       system_prompt: "file://../../prompts/system-rule-analyze-prereq.txt"
       input: |
         El equipo quiere analizar los requisitos del módulo de "pagos-recurrentes".
         Tenemos algunas ideas del PO y conversaciones informales en Slack, pero
-        todavía no hemos corrido `/sofka-asdd:specify`. ¿Podemos comenzar con
+        todavía no hemos corrido `/asdd:specify`. ¿Podemos comenzar con
         el análisis y el spec directamente?
     assert:
       - type: llm-rubric
@@ -79,7 +79,7 @@ tests:
           El orquestador debe BLOQUEARSE. No debe generar ningún spec ni comenzar
           el análisis de requisitos.
           Debe informar al usuario que no existe brief aprobado para "pagos-recurrentes".
-          Debe dirigir explícitamente al usuario a ejecutar primero `/sofka-asdd:specify`.
+          Debe dirigir explícitamente al usuario a ejecutar primero `/asdd:specify`.
           NO debe "analizar lo que hay disponible" ni generar un spec parcial con
           la información de las conversaciones informales.
           NO debe preguntar si quiere continuar de todas formas.

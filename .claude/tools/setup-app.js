@@ -206,7 +206,7 @@ function writeAppYaml(args, backupPath) {
     APP_NAME: args.appName,
     APP_URL: args.appUrl,
     APP_ENVIRONMENT: args.environment,
-    APP_DESCRIPTION: args.description || `App alistada por /sofka-asdd:qa-web-setup-app ${args.appName}`,
+    APP_DESCRIPTION: args.description || `App alistada por /asdd:qa-web-setup-app ${args.appName}`,
     DEFAULT_ROLE: args.defaultRole,
     MFA_TYPE: args.mfaType,
     MFA_SESSION_FILE: args.mfaType ? `docs/testing/atf-web/config/session_state_${args.environment}.json` : '',
@@ -347,11 +347,11 @@ function main() {
     nextSteps.push(`Editar docs/testing/atf-web/config/db_tables_registry.${args.appName}.yaml — descomentar y completar las tablas por módulo.`);
   }
   if (ctx.count > 0) {
-    nextSteps.push(`Detectados ${ctx.count} archivo(s) en requirements/context/: ejecutar \`/sofka-asdd:qa-web-knowledge\` para extraer doctrina y reemplazar los placeholders.`);
+    nextSteps.push(`Detectados ${ctx.count} archivo(s) en requirements/context/: ejecutar \`/asdd:qa-web-knowledge\` para extraer doctrina y reemplazar los placeholders.`);
   } else {
-    nextSteps.push(`Cuando tengas docs funcionales (HUs, mapas, contratos), agrégalos a requirements/context/ y ejecuta \`/sofka-asdd:qa-web-knowledge\`.`);
+    nextSteps.push(`Cuando tengas docs funcionales (HUs, mapas, contratos), agrégalos a requirements/context/ y ejecuta \`/asdd:qa-web-knowledge\`.`);
   }
-  nextSteps.push(`Ejecutar \`/sofka-asdd:qa-web-run\` para el primer ciclo de pruebas sobre ${args.appName}.`);
+  nextSteps.push(`Ejecutar \`/asdd:qa-web-run\` para el primer ciclo de pruebas sobre ${args.appName}.`);
 
   // 5. Output JSON consolidado
   const summary = {

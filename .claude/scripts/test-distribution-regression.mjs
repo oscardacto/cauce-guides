@@ -29,8 +29,8 @@ import { dirname, join, resolve } from 'node:path';
 
 const SCRIPTS = import.meta.dirname;
 const CHECK = 'distribution-regression';
-const CONTRACT = '.sofka-asdd/cli-contract.json';
-const MAINTAINER_MARKER = '.claude/scripts/sofka-asdd-gen-provenance.mjs';
+const CONTRACT = '.asdd/cli-contract.json';
+const MAINTAINER_MARKER = '.claude/scripts/asdd-gen-provenance.mjs';
 
 const fixture = mkdtempSync(resolve(tmpdir(), 'asdd-dist-regression-'));
 const at = (...segs) => join(fixture, ...segs);

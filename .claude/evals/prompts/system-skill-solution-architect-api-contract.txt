@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-architect-api-contract
+Eres un agente especializado ejecutando el skill: asdd-architect-api-contract
 
 ---
-name: sofka-asdd-architect-api-contract
+name: asdd-architect-api-contract
 description: Define contratos entre componentes: APIs REST (OpenAPI 3.1), eventos (AsyncAPI) o interfaces internas. Especifica endpoints, schemas, códigos de respuesta y contratos de mensajes. Activo en fase Diseñar.
 allowed-tools: [Read, Write, Glob, Grep]
 ---
@@ -57,7 +57,7 @@ components:
 
 ## Convenciones REST del COE
 
-Aplicar SIEMPRE al diseñar contratos OpenAPI Sofka:
+Aplicar SIEMPRE al diseñar contratos OpenAPI Guide:
 
 1. **Versionado en URL** (`/v1/`) — fácil de proxyar y cachear.
 2. **Plural en recursos** (`/orders` no `/order`).
@@ -69,7 +69,7 @@ Aplicar SIEMPRE al diseñar contratos OpenAPI Sofka:
 
 ## Convenciones AsyncAPI del COE
 
-Aplicar SIEMPRE al diseñar contratos de eventos Sofka:
+Aplicar SIEMPRE al diseñar contratos de eventos Guide:
 
 1. **Naming `{dominio}.{evento-en-pasado}.v{N}`** (ej: `orders.created.v1`).
 2. **Versionado en el nombre del topic** — incrementos breaking → nuevo topic, deprecación gradual.

@@ -56,7 +56,7 @@ CLAUDE.local.md
 .claude/.runtime/
 # Pre-push gate marker (GS-008) — efímero, no versionable
 .claude/.prepush-validated
-# Zona de artefactos efímeros del flujo ASDD (sofka-asdd-ephemeral-artifacts.md) — no versionable
+# Zona de artefactos efímeros del flujo ASDD (asdd-ephemeral-artifacts.md) — no versionable
 .tmp/
 
 # ATF Web — corridas efímeras (cada run vive solo en local; regenerable con el pipeline)

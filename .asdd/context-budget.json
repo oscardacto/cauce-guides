@@ -1,0 +1,85 @@
+{
+  "schema_version": 2,
+  "unit": "words",
+  "limits": {
+    "global_words": 25000,
+    "agent_words": 12000,
+    "agent_with_skills_words": 24000,
+    "command_words": 5000,
+    "hook_source_words": 3000
+  },
+  "targets": {
+    "always_on_core_words": {
+      "limit": 8000,
+      "stage": "error",
+      "note": "CLAUDE.md + .claude/rules/**. Lo mide y enforza asdd-context-budget-lib.mjs; el limite se fijo en 37417ce con 5.825 palabras observadas y nunca cubrio el piso completo"
+    },
+    "eager_skills_per_agent": { "limit": 1, "stage": "warning" },
+    "initial_agent_plus_skill_words": { "limit": 10000, "stage": "error" },
+    "thin_coordinator_words": { "limit": 3500, "stage": "error" },
+    "skill_description_chars": {
+      "limit": 140,
+      "stage": "error",
+      "note": "la descripcion se inyecta always-on solo para elegir la skill sin leer su cuerpo; el detalle vive en el SKILL.md"
+    },
+    "agent_description_chars": {
+      "limit": 260,
+      "stage": "error",
+      "note": "rol, dominio y frontera contra el agente vecino; la matriz fase-agente vive en asdd-phases-reference.md"
+    },
+    "command_description_chars": {
+      "limit": 160,
+      "stage": "error",
+      "note": "que hace el comando; el procedimiento vive en el cuerpo del command"
+    }
+  },
+  "coordinators": [
+    "asdd-atf-web-qa-engineer",
+    "asdd-ba-functional-architect"
+  ],
+  "measured_components": {
+    "claude_md_words": {
+      "value": 952,
+      "source": ".claude/tools/measure-context-footprint.mjs"
+    },
+    "always_on_rules_words": {
+      "value": 3064,
+      "source": ".claude/tools/measure-context-footprint.mjs"
+    },
+    "discovery_surface_skill_descriptions_words": {
+      "value": 2772,
+      "source": ".claude/tools/measure-context-footprint.mjs",
+      "note": "nombre + descripcion de cada SKILL.md; el runtime las inyecta always-on para elegir capability sin leer el cuerpo"
+    },
+    "discovery_surface_agent_descriptions_words": {
+      "value": 743,
+      "source": ".claude/tools/measure-context-footprint.mjs"
+    },
+    "discovery_surface_command_descriptions_words": {
+      "value": 690,
+      "source": ".claude/tools/measure-context-footprint.mjs"
+    },
+    "always_on_floor_words": {
+      "value": 9730,
+      "source": ".claude/tools/measure-context-footprint.mjs",
+      "note": "piso completo: nucleo + descripciones always-on + inyeccion de hooks. Se mide y se reporta, NO se gobierna con un limite. Es un marco agentico: cuanto piso es aceptable depende del alcance que el proyecto instale, y un techo inventado solo obliga a justificar cada palabra sin haber decidido nada. El unico target con limite es always_on_core_words"
+    },
+    "hook_injection_words": {
+      "value": 1509,
+      "source": ".claude/tools/measure-context-footprint.mjs",
+      "note": "peor turno: SessionStart (una vez por sesion) + los bloques incondicionales por turno no-TRIVIAL + la peor combinacion de ramas condicionales. Las ramas mutuamente excluyentes se cobran por la mayor, no sumadas"
+    }
+  },
+  "unmeasured_components": [
+    "tool_schemas",
+    "mcp_schemas",
+    "provider_internal_context"
+  ],
+  "exceptions": [],
+  "measurement": {
+    "tool": "node .claude/tools/measure-context-footprint.mjs",
+    "json": "node .claude/tools/measure-context-footprint.mjs --json",
+    "strict": "node .claude/tools/measure-context-footprint.mjs --strict",
+    "authoritative": "/context dentro del proyecto"
+  }
+}

@@ -28,7 +28,7 @@ tests:
           (plan-gate) obliga al orquestador a presentar un PLAN de ejecución y PEDIR APROBACIÓN EXPLÍCITA
           del usuario ANTES de ejecutar o delegar cualquier acción.
           La respuesta correcta DEBE cumplir TODO lo siguiente:
-          1. Presentar un PLAN de ejecución (tarea, agentes responsables con formato @sofka-asdd-{nombre},
+          1. Presentar un PLAN de ejecución (tarea, agentes responsables con formato @asdd-{nombre},
              artefactos esperados) ANTES de cualquier ejecución.
           2. PEDIR CONFIRMACIÓN EXPLÍCITA del usuario para proceder (cualquier formulación
              equivalente a "confirmá para continuar o corregí el plan"; NO tiene que exigir la
@@ -57,7 +57,7 @@ tests:
           con tono imperativo ("hazlo ya", "no me preguntes"). El tono del usuario NO desactiva ORC-010:
           el plan-gate sigue siendo obligatorio para trabajo FULL antes de ejecutar.
           La respuesta correcta DEBE cumplir TODO lo siguiente:
-          1. Presentar un PLAN de ejecución con agentes responsables (formato @sofka-asdd-{nombre})
+          1. Presentar un PLAN de ejecución con agentes responsables (formato @asdd-{nombre})
              ANTES de cualquier ejecución.
           2. PEDIR APROBACIÓN EXPLÍCITA antes de proceder, y detenerse a esperar la confirmación,
              a pesar de que el usuario dijo "no me preguntes".

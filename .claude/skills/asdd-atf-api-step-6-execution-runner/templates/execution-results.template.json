@@ -1,0 +1,57 @@
+{
+  "$schema": "Resultado canónico de ejecución de la suite",
+  "run_id": "{run_id}",
+  "test_run_mode": "smoke | regression | critical | full | custom",
+  "started_at": "{ISO 8601}",
+  "completed_at": "{ISO 8601}",
+  "duration_seconds": 0,
+  "execution_environment": {
+    "node_version": "{string}",
+    "bun_version": "{string}",
+    "playwright_version": "{string}",
+    "platform": "win32 | linux | darwin",
+    "ci": false
+  },
+  "wis_executed": ["wi-NNN"],
+  "summary": {
+    "total_cps": 0,
+    "passed": 0,
+    "failed_first_run": 0,
+    "passed_on_retry_flaky": 0,
+    "failed_after_retry": 0,
+    "errors": 0,
+    "flaky_rate_pct": 0.0,
+    "pass_rate_pct": 0.0,
+    "by_priority": {
+      "critical": {"total": 0, "passed": 0, "failed": 0, "flaky": 0},
+      "high": {"total": 0, "passed": 0, "failed": 0, "flaky": 0},
+      "medium": {"total": 0, "passed": 0, "failed": 0, "flaky": 0},
+      "low": {"total": 0, "passed": 0, "failed": 0, "flaky": 0}
+    },
+    "by_wi": {
+      "wi-NNN": {"total": 0, "passed": 0, "failed": 0, "flaky": 0}
+    }
+  },
+  "results_per_cp": [
+    {
+      "cp_id": "CP-NNN",
+      "wi_id": "wi-NNN",
+      "title": "{string}",
+      "status": "passed | failed | flaky | error",
+      "first_run_status": "passed | failed | error",
+      "retry_run_status": "passed | failed | error | not_executed",
+      "duration_ms": 0,
+      "evidence_path": "docs/testing/atf/{run_id}/execution/evidence/CP-NNN/",
+      "failure_details": {
+        "assertion_failed": "{string}",
+        "actual": "{any}",
+        "expected": "{any}",
+        "stack_trace_redacted": "{string}"
+      },
+      "tags": ["{tag}"],
+      "rules_covered": ["RN-NNN"]
+    }
+  ],
+  "regression_delta_vs_baseline": null,
+  "next_step": "asdd-atf-api-step-6-failure-classifier"
+}

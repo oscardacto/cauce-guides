@@ -4,11 +4,11 @@
   "description": "ASDD template — dependencias runtime del framework ATF Web (Playwright E2E)",
   "scripts": {
     "setup": "npm install && npx playwright install chromium",
-    "test": "node .claude/scripts/sofka-asdd-run-test-suites.mjs",
+    "test": "node .claude/scripts/asdd-run-test-suites.mjs",
     "validate": "node .claude/scripts/validate-template.mjs",
-    "hash:regen": "node .claude/scripts/sofka-asdd-regen-hashes.mjs",
-    "provenance:regen": "node .claude/scripts/sofka-asdd-gen-provenance.mjs",
-    "provenance:check": "node .claude/scripts/sofka-asdd-gen-provenance.mjs --check"
+    "hash:regen": "node .claude/scripts/asdd-regen-hashes.mjs",
+    "provenance:regen": "node .claude/scripts/asdd-gen-provenance.mjs",
+    "provenance:check": "node .claude/scripts/asdd-gen-provenance.mjs --check"
   },
   "dependencies": {
     "@playwright/mcp": "^0.0.68",

@@ -1,0 +1,96 @@
+---
+name: asdd-security-dependency-audit
+description: Audita dependencias por CVEs conocidos, licencias incompatibles y paquetes desactualizados.
+---
+
+## Rol
+
+Auditor de dependencias. Evalúa el árbol de dependencias del proyecto en busca de vulnerabilidades conocidas (CVEs), licencias problemáticas y paquetes abandonados.
+
+## Cuándo activar
+
+- Se agregan o actualizan dependencias al proyecto
+- Auditoría periódica de seguridad (recomendado: cada sprint)
+- Antes de releases a producción
+- Fases: **Construir, Verificar**
+
+## Cuándo NO invocar
+
+- El issue es código fuente del proyecto, no librerías — usar `security-code-scan`.
+- Lo que se busca son secrets — usar `security-secrets-scan`.
+- La auditoría requerida es contra estándar formal (PCI-DSS / ASVS) — usar `security-compliance`.
+
+
+## Qué evaluar
+
+### Vulnerabilidades conocidas (CVEs)
+Usar las herramientas de auditoría del ecosistema:
+
+| Ecosistema | Comando | Base de datos |
+|---|---|---|
+| Node.js / npm | `npm audit` | npm Advisory DB |
+| Node.js / yarn | `yarn audit` | npm Advisory DB |
+| Python / pip | `pip-audit` | OSV / PyPI Advisory |
+| Java / Maven | `mvn dependency-check:check` | NVD / OSS Index |
+| Java / Gradle | `gradle dependencyCheckAnalyze` | NVD / OSS Index |
+| .NET | `dotnet list package --vulnerable` | NVD |
+| Go | `govulncheck ./...` | Go Vulnerability DB |
+
+### Severidad de CVEs
+
+| Nivel | CVSS | Acción |
+|---|---|---|
+| **Critical** | 9.0–10.0 | Bloquea release — actualizar o reemplazar |
+| **High** | 7.0–8.9 | Actualizar en el sprint actual |
+| **Medium** | 4.0–6.9 | Ticket de seguimiento |
+| **Low** | 0.1–3.9 | Monitorear |
+
+### Licencias
+Verificar que las licencias de las dependencias son compatibles con la licencia del proyecto:
+
+| Tipo | Compatibilidad típica |
+|---|---|
+| MIT, Apache 2.0, BSD | ✅ Generalmente compatibles |
+| LGPL | ⚠️ Verificar términos de uso |
+| GPL, AGPL | ❌ Incompatible con código propietario — escalar |
+| Sin licencia | ❌ No usar — riesgo legal |
+
+### Dependencias desactualizadas
+Dependencias con versiones major muy atrasadas son candidatas a tener CVEs sin parchear aunque no aparezcan en el audit actual.
+
+## Formato de reporte
+
+```markdown
+## Dependency Audit — {proyecto}
+
+**Fecha**: {YYYY-MM-DD}
+**Ecosistema**: {npm / pip / maven / ...}
+**Total dependencias analizadas**: N
+
+### Vulnerabilidades encontradas
+
+| Paquete | Versión actual | CVE | Severidad | Versión segura | Acción |
+|---|---|---|---|---|---|
+| lodash | 4.17.15 | CVE-2021-23337 | High | 4.17.21 | `npm update lodash` |
+
+### Licencias problemáticas
+
+| Paquete | Licencia | Problema |
+|---|---|---|
+
+### Resultado final
+**Estado**: ✅ Sin bloqueos | ⚠️ Observaciones | ❌ Bloquea release
+```
+
+## Outputs
+
+- `docs/security/dependency-audit-{fecha}.md` — reporte completo con CVEs, licencias y acciones
+
+## Gotchas
+
+- **CVE no aplica si la función vulnerable no se usa** — `npm audit` reporta CVEs por presencia, no por uso. Validar con análisis de alcance: ¿el proyecto invoca la función afectada? Si no, marcar como aceptado con justificación.
+- **Transitive dependencies sin lockfile** — `package-lock.json` ausente o desactualizado deja indeterminado el árbol real. Auditar siempre sobre el árbol con lockfile vigente.
+- **Severidad inflada por la herramienta** — `npm audit` clasifica como High lo que CVSS dice Medium. Usar el CVSS oficial del NVD/OSV como árbitro, no la severidad del scanner.
+- **Actualización mayor que rompe API** — `npm update` no resuelve CVEs si requiere bump major. Planear migración con tiempos, no bloquear release sin alternativa.
+- **Licencia copyleft en dependencia transitiva** — el proyecto usa MIT, pero una dep transitiva trae GPL. Validar el árbol completo con `license-checker`, no solo dependencias directas.
+

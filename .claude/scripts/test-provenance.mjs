@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * test-provenance.mjs — suite de `.sofka-asdd/sofka-asdd-provenance.json` y su generador.
+ * test-provenance.mjs — suite de `.asdd/asdd-provenance.json` y su generador.
  *
  * Qué protege, en orden de importancia:
  *
@@ -22,11 +22,11 @@ import {
   isBinaryBuffer,
   normalizeBufferForHash,
   normalizeForHash,
-} from "./lib/sofka-asdd-hash-normalize-lib.mjs";
+} from "./lib/asdd-hash-normalize-lib.mjs";
 
 const root = resolve(import.meta.dirname, "..", "..");
-const provenancePath = resolve(root, ".sofka-asdd/sofka-asdd-provenance.json");
-const contractPath = resolve(root, ".sofka-asdd/cli-contract.json");
+const provenancePath = resolve(root, ".asdd/asdd-provenance.json");
+const contractPath = resolve(root, ".asdd/cli-contract.json");
 
 const sha256 = (buf) => createHash("sha256").update(buf).digest("hex");
 
@@ -87,7 +87,7 @@ function hasHistory() {
 // ── 2. El archivo existe y tiene la forma esperada ───────────────────────────────────
 assert.ok(
   existsSync(provenancePath),
-  ".sofka-asdd/sofka-asdd-provenance.json no existe — correr `npm run provenance:regen`",
+  ".asdd/asdd-provenance.json no existe — correr `npm run provenance:regen`",
 );
 
 const provenance = JSON.parse(readFileSync(provenancePath, "utf8"));
@@ -110,8 +110,8 @@ for (const path of paths) {
     `${path} está en el provenance pero el contrato no lo distribuye`,
   );
   assert.ok(
-    !path.startsWith(".sofka-asdd/"),
-    `${path} está bajo .sofka-asdd/, que el CLI sobreescribe siempre: no tiene baseline`,
+    !path.startsWith(".asdd/"),
+    `${path} está bajo .asdd/, que el CLI sobreescribe siempre: no tiene baseline`,
   );
 
   const hashes = provenance.files[path];
@@ -158,7 +158,7 @@ assert.deepEqual(paths, [...paths].sort(), "las rutas no están ordenadas");
 {
   const run = spawnSync(
     process.execPath,
-    [resolve(root, ".claude/scripts/sofka-asdd-gen-provenance.mjs"), "--check"],
+    [resolve(root, ".claude/scripts/asdd-gen-provenance.mjs"), "--check"],
     { cwd: root, encoding: "utf8" },
   );
   assert.equal(run.error, undefined, `no se pudo ejecutar el generador: ${run.error?.message}`);

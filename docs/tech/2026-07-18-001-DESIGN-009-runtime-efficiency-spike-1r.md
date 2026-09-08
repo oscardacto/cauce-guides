@@ -11,7 +11,7 @@ comparar decisiones de guards, pero no para latencia: Claude Code ejecuta todos
 los hooks coincidentes en paralelo, espera su terminación y combina resultados.
 Un deny no cancela los hooks hermanos.
 
-Esto también implica que `sofka-collector emit`, instalado globalmente, corre
+Esto también implica que `guide-collector emit`, instalado globalmente, corre
 como proceso independiente y no debe contarse ni integrarse dentro del
 dispatcher ASDD.
 
@@ -48,7 +48,7 @@ valor del dispatcher.
 5. Una tool denegada conserva el Pre collector y no genera Post; ese Pre
    huérfano es semántica de lifecycle, no pérdida causada por el dispatcher.
 6. El dispatcher no invoca, elimina, reemplaza ni reescribe el input de
-   `sofka-collector emit`.
+   `guide-collector emit`.
 
 ### Límites de las métricas existentes
 

@@ -12,7 +12,7 @@ const root = resolve(import.meta.dirname, "..", "..");
 // import.meta.url ya viene resuelto. Sin resolver el symlink acá, los procesos
 // hijos salen con status 0 y stdout vacío — un falso "no hizo nada".
 const consumer = realpathSync(mkdtempSync(resolve(tmpdir(), "asdd-cli-runtime-consumer-")));
-const contract = JSON.parse(readFileSync(resolve(root, ".sofka-asdd/cli-contract.json"), "utf8"));
+const contract = JSON.parse(readFileSync(resolve(root, ".asdd/cli-contract.json"), "utf8"));
 let runSeq = 0;
 
 function copyDistribution() {
@@ -58,7 +58,7 @@ try {
   const validateImports = await run(".claude/scripts/validate-template.mjs", { args: ["--help"] });
   assert.equal(validateImports.status, 0, validateImports.stderr);
 
-  const route = await run(".claude/scripts/sofka-asdd-route-request.mjs", {
+  const route = await run(".claude/scripts/asdd-route-request.mjs", {
     input: JSON.stringify({ request: "¿dónde está health?" }),
   });
   assert.equal(route.status, 0, route.stderr);
@@ -66,22 +66,22 @@ try {
 
   const routeFile = resolve(consumer, "prompt-audit.md");
   writeFileSync(routeFile, "Trabaja READ-ONLY. Audita todos los ADR sin modificar archivos.");
-  const routedFile = await run(".claude/scripts/sofka-asdd-route-request.mjs", { args: ["--file", "prompt-audit.md"] });
+  const routedFile = await run(".claude/scripts/asdd-route-request.mjs", { args: ["--file", "prompt-audit.md"] });
   assert.equal(routedFile.status, 0, routedFile.stderr);
   assert.equal(JSON.parse(routedFile.stdout).depth, "LIGHT");
 
-  const rule = await run(".claude/scripts/sofka-asdd-resolve-rule.mjs", {
-    args: ["sofka-asdd-routing-heuristics"],
+  const rule = await run(".claude/scripts/asdd-resolve-rule.mjs", {
+    args: ["asdd-routing-heuristics"],
   });
   assert.equal(rule.status, 0, rule.stderr);
 
-  const capability = await run(".claude/scripts/sofka-asdd-load-capability.mjs", {
-    args: ["sofka-asdd-developer-bug-fix"],
+  const capability = await run(".claude/scripts/asdd-load-capability.mjs", {
+    args: ["asdd-developer-bug-fix"],
   });
   assert.equal(capability.status, 0, capability.stderr);
   assert.match(capability.stdout, /ASDD capability loaded/u);
 
-  const dispatcher = await run(".claude/hooks/sofka-asdd-pre-tool-dispatcher.mjs", {
+  const dispatcher = await run(".claude/hooks/asdd-pre-tool-dispatcher.mjs", {
     input: JSON.stringify({
       hook_event_name: "PreToolUse", session_id: "cli-consumer", tool_use_id: "deny",
       cwd: consumer, tool_name: "Bash", tool_input: { command: "git reset --hard" },

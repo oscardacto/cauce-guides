@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-ux-ui-responsive
+Eres un agente especializado ejecutando el skill: asdd-ux-ui-responsive
 
 ---
-name: sofka-asdd-ux-ui-responsive
+name: asdd-ux-ui-responsive
 description: Define la estrategia de breakpoints del sistema, valida que layouts y componentes se adapten correctamente en todos los tamaños de pantalla. Activo en fases Diseñar y Construir.
 allowed-tools: [Read, Write, Glob, Grep]
 ---

@@ -222,7 +222,7 @@ function main() {
     reason: args.reason,
     detected_via: args.detectedVia,
     action_required: args.actionRequired,
-    rule_reference: 'reference/atf-web/sofka-asdd-atf-web-orchestrator-fastpath-rules.md § P26 + § P32',
+    rule_reference: 'reference/atf-web/asdd-atf-web-orchestrator-fastpath-rules.md § P26 + § P32',
   }, null, 2), 'utf8');
   filesWritten.push(toForwardSlashes(path.relative(ROOT, ebPath)));
 

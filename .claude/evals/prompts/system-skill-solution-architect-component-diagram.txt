@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-architect-component-diagram
+Eres un agente especializado ejecutando el skill: asdd-architect-component-diagram
 
 ---
-name: sofka-asdd-architect-component-diagram
+name: asdd-architect-component-diagram
 description: Modela la arquitectura de componentes usando notación C4 (Context, Container, Component) con sintaxis Mermaid. Cubre además vistas de secuencia, datos (ERD) y despliegue, con convenciones COE para Excalidraw, Structurizr, Mermaid y PlantUML. Activo en fase Diseñar.
 allowed-tools: [Read, Write, Glob, Grep]
 ---
@@ -50,7 +50,7 @@ graph TB
 
 ## Herramienta de diagramación
 
-- **Default Sofka:** Excalidraw — bocetos rápidos en sesión de discovery / arquitectura colaborativa.
+- **Default Guide:** Excalidraw — bocetos rápidos en sesión de discovery / arquitectura colaborativa.
 - **Alternativas según fin:**
   - Mermaid — diagrama final que vive en `docs/` y debe versionarse (render nativo en GitHub/GitLab).
   - Structurizr DSL — modelado C4 formal con vistas múltiples desde un solo modelo.
@@ -65,7 +65,7 @@ graph TB
 2. **Colores semánticos:** Azul = containers internos / Gris = sistemas externos / Naranja = actores humanos / Verde = bases de datos.
 3. **Etiquetar las flechas** — verbo + protocolo (ej. "calls / HTTPS").
 4. **Exportar a `.excalidraw` y `.png`** — `.excalidraw` para edición, `.png` para previews en MD.
-5. **Path Sofka:** `docs/architecture/diagrams/{feature}-{nivel}.excalidraw`; la imagen junto al `.md` que la referencia.
+5. **Path Guide:** `docs/architecture/diagrams/{feature}-{nivel}.excalidraw`; la imagen junto al `.md` que la referencia.
 
 **Workflow recomendado:** Boceto en Excalidraw durante la sesión → una vez aceptado, formalizar en Mermaid → mantener `.excalidraw` para iteraciones futuras.
 

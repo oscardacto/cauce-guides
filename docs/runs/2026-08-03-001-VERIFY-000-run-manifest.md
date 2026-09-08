@@ -42,5 +42,5 @@ _(sin ADRs enlazados en los artefactos de este run)_
 - Reportes QA ATF: `docs/qa/atf/2026-08-03-001/` (si existe)
 
 ---
-_Generado automáticamente por `sofka-asdd-run-manifest.mjs` (hook SessionStart, Tier C)._
+_Generado automáticamente por `asdd-run-manifest.mjs` (hook SessionStart, Tier C)._
 _No editar manualmente — se sobrescribe en cada sesión mientras el run esté activo._

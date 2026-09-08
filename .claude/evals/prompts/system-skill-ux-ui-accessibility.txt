@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-ux-ui-accessibility
+Eres un agente especializado ejecutando el skill: asdd-ux-ui-accessibility
 
 ---
-name: sofka-asdd-ux-ui-accessibility
+name: asdd-ux-ui-accessibility
 description: Audita interfaces y componentes contra criterios WCAG 2.1 nivel AA. Evalúa contraste, navegación por teclado, atributos ARIA y compatibilidad con lectores de pantalla. Activo en fases Diseñar y Construir.
 allowed-tools: [Read, Glob, Grep, WebFetch]
 ---

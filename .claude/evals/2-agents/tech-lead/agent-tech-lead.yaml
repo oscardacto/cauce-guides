@@ -1,4 +1,4 @@
-description: "sofka-asdd-tech-lead: code review y quality gates"
+description: "asdd-tech-lead: code review y quality gates"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

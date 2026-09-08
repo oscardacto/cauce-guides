@@ -14,8 +14,8 @@
 
 La incorporación del flujo BA/Funcional dejó tres bloqueantes estructurales:
 
-1. **Autoridad funcional duplicada.** `sofka-asdd-producto` y los agentes
-   `sofka-asdd-ba-*` pueden producir requisitos, historias y especificaciones
+1. **Autoridad funcional duplicada.** `asdd-producto` y los agentes
+   `asdd-ba-*` pueden producir requisitos, historias y especificaciones
    funcionales con fronteras de ownership difíciles de distinguir.
 2. **Dos layouts activos para el mismo concepto.** El ciclo ASDD documenta
    artefactos planos ART-001 y la referencia BA viva documenta carpetas por
@@ -53,7 +53,7 @@ activa de este.
 ### Incluido
 
 - contrato de path, naming, ownership, lifecycle y unicidad;
-- retiro planificado del agente paraguas `sofka-asdd-producto`;
+- retiro planificado del agente paraguas `asdd-producto`;
 - redistribución explícita de sus siete capabilities;
 - conservación de Product Strategy como capacidad independiente y limitada;
 - impacto sobre routing, plantillas, guards, manifests, comandos y perfiles;

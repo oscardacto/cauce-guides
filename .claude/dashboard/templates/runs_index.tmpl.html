@@ -10,13 +10,13 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg,#f7f5f2);color:var(--text,#1a1a18);font-family:var(--body,system-ui,sans-serif);font-size:13px;line-height:1.55;min-height:100vh}
 
-/* ── SOFKA PATTERN ── */
-.sofka-bg{position:relative;overflow:hidden}
-.sofka-bg::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent,transparent 14px,rgba(244,121,32,.018) 14px,rgba(244,121,32,.018) 15px);pointer-events:none;z-index:0}
-.sofka-bg>*{position:relative;z-index:1}
+/* ── GUIDE PATTERN ── */
+.guide-bg{position:relative;overflow:hidden}
+.guide-bg::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent,transparent 14px,rgba(244,121,32,.018) 14px,rgba(244,121,32,.018) 15px);pointer-events:none;z-index:0}
+.guide-bg>*{position:relative;z-index:1}
 
 /* Header */
-.page-header{position:sticky;top:0;z-index:50;background:var(--text,#1a1a18);color:var(--sofka-light,#F0EDE8);padding:0 28px;height:56px;display:flex;align-items:center;gap:20px;border-bottom:3px solid var(--orange,#F47920)}
+.page-header{position:sticky;top:0;z-index:50;background:var(--text,#1a1a18);color:var(--guide-light,#F0EDE8);padding:0 28px;height:56px;display:flex;align-items:center;gap:20px;border-bottom:3px solid var(--orange,#F47920)}
 .h-logo{font-family:var(--sans,sans-serif);font-size:13px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
 .h-dot{width:7px;height:7px;border-radius:50%;background:var(--orange,#F47920);box-shadow:0 0 8px var(--orange,#F47920);animation:blink 3s ease-in-out infinite}
 @keyframes blink{0%,88%,100%{opacity:1}94%{opacity:.15}}
@@ -116,10 +116,10 @@ footer span{color:var(--orange,#F47920)}
 <body>
 
 <!-- ── HEADER ── -->
-<header class="page-header sofka-bg">
+<header class="page-header guide-bg">
   <div class="h-logo">
     <span class="h-dot"></span>
-    <span>sofka_ · ATF</span>
+    <span>guide_ · ATF</span>
   </div>
   <span class="h-sep"></span>
   <span class="h-run" id="h-app-name">Historial de Runs</span>
@@ -216,7 +216,7 @@ footer span{color:var(--orange,#F47920)}
 </main>
 
 <footer>
-  <span class="sofka-brand" style="font-family:var(--sans,sans-serif);font-weight:700;font-size:13px;color:var(--text,#1a1a18)">sofka<span style="color:var(--orange,#F47920);font-weight:800">_</span></span>
+  <span class="guide-brand" style="font-family:var(--sans,sans-serif);font-weight:700;font-size:13px;color:var(--text,#1a1a18)">guide<span style="color:var(--orange,#F47920);font-weight:800">_</span></span>
   <span> · </span>Generado por <span>ATF</span> · template v3.1.0 · <span id="footer-date"></span>
   <span> · </span><a href="https://sofka.com.co" style="color:var(--orange,#F47920);text-decoration:none;font-weight:600">sofka.com.co</a>
 </footer>

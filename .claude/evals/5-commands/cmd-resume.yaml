@@ -1,4 +1,4 @@
-description: "CMD /sofka-asdd:resume — retomar workflow desde checkpoint"
+description: "CMD /asdd:resume — retomar workflow desde checkpoint"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -14,7 +14,7 @@ defaultTest:
 tests:
   - description: "CMD resume: retoma desde .asdd-run.json sin reiniciar"
     vars:
-      input: "/sofka-asdd:resume"
+      input: "/asdd:resume"
     assert:
       - type: llm-rubric
         value: |

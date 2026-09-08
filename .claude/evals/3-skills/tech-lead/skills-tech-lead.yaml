@@ -1,4 +1,4 @@
-description: "Skills: sofka-asdd-tech-lead — proceso y output por skill"
+description: "Skills: asdd-tech-lead — proceso y output por skill"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

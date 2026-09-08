@@ -1,7 +1,7 @@
 # Dependencias runtime de ATF Web
 
-> Aplica **solo** si activás el pipeline **ATF Web** (`sofka-asdd-atf-web-qa-engineer`,
-> comandos `/sofka-asdd:qa-web-*`). El core de ASDD (agentes, skills, hooks, workflow
+> Aplica **solo** si activás el pipeline **ATF Web** (`asdd-atf-web-qa-engineer`,
+> comandos `/asdd:qa-web-*`). El core de ASDD (agentes, skills, hooks, workflow
 > de fases) no necesita ninguna de estas dependencias — podés adoptar el template
 > completo sin instalarlas si no vas a correr pruebas E2E guiadas por browser.
 
@@ -20,9 +20,9 @@ repositorio adoptado, no se instalan automáticamente al copiar los artefactos
 |---|---|---|
 | `@playwright/mcp` | dependency | Servidor MCP de Playwright — navegación guiada por browser desde los sub-agentes de ejecución (`.claude/atf-web-steps/execute.md`) |
 | `glob` | dependency | Resolución de patrones de archivos en scripts atómicos de `.claude/tools/` (ej. localizar `.xlsx` de requisitos, artefactos por run) |
-| `mssql` | dependency | Driver de SQL Server — validaciones `SELECT` contra base de datos cuando `db_driver: mssql` en `appweb.yaml` (skill `sofka-asdd-atf-web-db-validator`) |
+| `mssql` | dependency | Driver de SQL Server — validaciones `SELECT` contra base de datos cuando `db_driver: mssql` en `appweb.yaml` (skill `asdd-atf-web-db-validator`) |
 | `@playwright/test` | devDependency | Motor de ejecución E2E — corre los specs generados por el pipeline de diseño de CPs |
-| `axe-core` | devDependency | Motor de auditoría de accesibilidad — usado por `sofka-asdd-atf-web-visual-ux-a11y-validator` |
+| `axe-core` | devDependency | Motor de auditoría de accesibilidad — usado por `asdd-atf-web-visual-ux-a11y-validator` |
 | `mammoth` | devDependency | Conversión de `.docx` a texto plano — parseo de HUs/FRS entregadas en Word (paso 0.4 de diagnóstico) |
 | `pdf-parse` | devDependency | Extracción de texto de `.pdf` — material de referencia adjunto por el cliente |
 | `pptx2json` | devDependency | Parseo de `.pptx` — material de referencia en presentaciones |
@@ -65,13 +65,13 @@ distintas).
 
 Hoy la instalación es manual (este documento). El plan a mediano plazo es
 automatizarla vía el CLI de adopción del template, condicionada a un perfil
-`atf_web` en `.sofka-asdd/sofka-asdd-atf.lock` con fusión determinística de
+`atf_web` en `.asdd/asdd-atf.lock` con fusión determinística de
 `package.json` (`json-deep-merge`), análoga al mecanismo `file_merge` que ya
-usa `.sofka-asdd/cli-contract.json` para `.gitignore`. Es un follow-up sin
+usa `.asdd/cli-contract.json` para `.gitignore`. Es un follow-up sin
 fecha comprometida — hasta que se implemente, seguí los pasos manuales de
 este documento.
 
 ## Referencias
 
-- `.claude/agents/sofka-asdd-atf-web-qa-engineer.md` — agente que consume estas dependencias en runtime.
-- `/sofka-asdd:qa-web-setup-app` — primer comando a ejecutar tras instalar las dependencias, para alistar una app nueva en el pipeline.
+- `.claude/agents/asdd-atf-web-qa-engineer.md` — agente que consume estas dependencias en runtime.
+- `/asdd:qa-web-setup-app` — primer comando a ejecutar tras instalar las dependencias, para alistar una app nueva en el pipeline.

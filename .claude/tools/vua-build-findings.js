@@ -13,7 +13,7 @@
  * Filosofía: cobertura proactiva. Cada arista emite hallazgos ANTES de que
  * el PO haga review manual. Cuando un patrón requiere reasoning semántico
  * (tono editorial, microcopy ambigua), se delega a la fase opcional --deep-llm
- * del comando /sofka-asdd:qa-web-visual-ux-a11y.
+ * del comando /asdd:qa-web-visual-ux-a11y.
  *
  * Output: findings.json por pantalla con shape estandarizado consumido por
  * aggregate-vua-results.js + dashboard.

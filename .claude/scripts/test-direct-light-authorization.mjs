@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { getPlanGateDecision } from "../hooks/sofka-asdd-plan-gate.mjs";
-import { getOperationAuthorizationDecision } from "../hooks/sofka-asdd-plan-authorization-operation.mjs";
+import { getPlanGateDecision } from "../hooks/asdd-plan-gate.mjs";
+import { getOperationAuthorizationDecision } from "../hooks/asdd-plan-authorization-operation.mjs";
 import {
   AUTHORIZATIONS_PATH,
   CHALLENGE_PATH,
   PROJECT_ROOT,
-} from "./lib/sofka-asdd-plan-authorization-lib.mjs";
+} from "./lib/asdd-plan-authorization-lib.mjs";
 import {
   DIRECT_LIGHT_AUTHORIZATION_PATH,
   clearDirectLightAuthorization,
   issueDirectLightAuthorization,
-} from "./lib/sofka-asdd-direct-light-authorization-lib.mjs";
+} from "./lib/asdd-direct-light-authorization-lib.mjs";
 
 let failures = 0;
 const assert = (name, condition) => {
@@ -30,8 +30,8 @@ const fixture = resolve(PROJECT_ROOT, ".claude", ".runtime", "direct-light-test.
 // token.phase de `activeRunScope()`, que lee ese archivo del disco real.
 // Aislamos la suite ocultando temporalmente el run activo: sin él,
 // activeRunScope() retorna null y la lib cae a su propio default `"build"`
-// (ver sofka-asdd-direct-light-authorization-lib.mjs), que resuelve a
-// model=sonnet por sofka-asdd.lock.model_strategy.phase_default — el mismo
+// (ver asdd-direct-light-authorization-lib.mjs), que resuelve a
+// model=sonnet por asdd.lock.model_strategy.phase_default — el mismo
 // modelo que esta suite declara en su marcador de budget. Así la suite queda
 // determinista sin importar la fase del run de trabajo de otra persona, y sin
 // tocar la lib bajo prueba.
@@ -62,11 +62,11 @@ try {
   const launch = {
     tool_name: "Agent",
     tool_input: {
-      subagent_type: "sofka-asdd-producto",
+      subagent_type: "asdd-producto",
       model: "sonnet",
       prompt: [
         `[ASDD-BUDGET route=LIGHT phase=${token.phase} model=sonnet max_turns=10 retries=0]`,
-        "node .claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-producto-pm",
+        "node .claude/scripts/asdd-load-capability.mjs asdd-producto-pm",
         scope,
       ].join("\n"),
     },
@@ -76,12 +76,12 @@ try {
   assert("challenge sintético se consume inmediatamente", !existsSync(CHALLENGE_PATH));
   assert("token directo es de uso único", !existsSync(DIRECT_LIGHT_AUTHORIZATION_PATH));
 
-  const absoluteLoader = `node ${PROJECT_ROOT}/.claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-producto-pm`;
+  const absoluteLoader = `node ${PROJECT_ROOT}/.claude/scripts/asdd-load-capability.mjs asdd-producto-pm`;
   const loaderDecision = getOperationAuthorizationDecision({
     tool_name: "Bash",
     tool_input: { command: absoluteLoader },
     agent_id: "agent-direct-light",
-    agent_type: "sofka-asdd-producto",
+    agent_type: "asdd-producto",
   }, process.env, { now: new Date("2026-07-20T10:00:02Z") });
   assert("loader absoluto del proyecto equivale al loader relativo", loaderDecision === null);
 
@@ -89,7 +89,7 @@ try {
     tool_name: "Edit",
     tool_input: { file_path: fixture },
     agent_id: "agent-direct-light",
-    agent_type: "sofka-asdd-producto",
+    agent_type: "asdd-producto",
   }, process.env, { now: new Date("2026-07-20T10:00:03Z") });
   assert("Edit queda limitado al archivo exacto del prompt", editDecision === null);
 
@@ -97,7 +97,7 @@ try {
     tool_name: "Edit",
     tool_input: { file_path: resolve(PROJECT_ROOT, "README.md") },
     agent_id: "agent-direct-light",
-    agent_type: "sofka-asdd-producto",
+    agent_type: "asdd-producto",
   }, process.env, { now: new Date("2026-07-20T10:00:04Z") });
   assert("Edit fuera del scope directo se deniega", outsideDecision?.decision === "deny");
 
@@ -121,11 +121,11 @@ try {
   const gitLaunch = getPlanGateDecision({
     tool_name: "Agent",
     tool_input: {
-      subagent_type: "sofka-asdd-tech-lead",
+      subagent_type: "asdd-tech-lead",
       model: "sonnet",
       prompt: [
         `[ASDD-BUDGET route=LIGHT phase=${gitToken.phase} model=sonnet max_turns=10 retries=0]`,
-        "node .claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-tech-lead-commit",
+        "node .claude/scripts/asdd-load-capability.mjs asdd-tech-lead-commit",
       ].join("\n"),
     },
   }, new Date("2026-07-20T10:02:01Z"));
@@ -135,7 +135,7 @@ try {
     tool_name: "Edit",
     tool_input: { file_path: resolve(PROJECT_ROOT, "README.md") },
     agent_id: "agent-git-ops",
-    agent_type: "sofka-asdd-tech-lead",
+    agent_type: "asdd-tech-lead",
   }, process.env, { now: new Date("2026-07-20T10:02:02Z") });
   assert("token git no autoriza escrituras", gitWrite?.decision === "deny");
 
@@ -191,8 +191,8 @@ try {
     assert("prompt sin rutas sigue heredando el artefacto del run",
       b16("seguí con lo que estabas")?.scope?.[0] === "docs/specs/b16-spec-del-run.md");
     assert("ruta anidada existente sigue resolviendo",
-      b16("editá .claude/hooks/sofka-asdd-plan-gate.mjs")?.scope?.[0]
-        === ".claude/hooks/sofka-asdd-plan-gate.mjs");
+      b16("editá .claude/hooks/asdd-plan-gate.mjs")?.scope?.[0]
+        === ".claude/hooks/asdd-plan-gate.mjs");
 
     // ── Los negativos que P1(b) existe para cerrar ────────────────────────
     // Un token con punto, sin directorio y que no existe es PROSA. No puede

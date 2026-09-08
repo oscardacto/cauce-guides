@@ -1,8 +1,8 @@
-# Migración de capabilities de `sofka-asdd-producto`
+# Migración de capabilities de `asdd-producto`
 
 ## 1. Regla de retiro
 
-`sofka-asdd-producto` no se elimina como primer paso. Se retira cuando cada una
+`asdd-producto` no se elimina como primer paso. Se retira cuando cada una
 de sus siete capabilities tenga owner, contrato de output, routing, pruebas y
 compatibilidad definidos. Hasta entonces permanece como alias deprecado y no
 como writer alternativo.
@@ -11,13 +11,13 @@ como writer alternativo.
 
 | Capability actual | Destino v4 | Decisión de ownership |
 |---|---|---|
-| `sofka-asdd-producto-pm` | `sofka-asdd-product-strategy` | Se conserva estrategia como agente limitado: visión, valor, priorización, roadmap, OKRs y métricas |
-| `sofka-asdd-producto-ba` | BA Functional Architect + BA Specification Lead | Contexto/EDT al Architect; procesos, reglas, gaps y requisitos al Lead |
-| `sofka-asdd-producto-funcional` | BA Specification Lead | Único writer de `functional/spec.md` y `functional/requirements.md` |
-| `sofka-asdd-producto-po` | Product Strategy + BA Specification Lead + QA | Prioridad en Strategy; requisitos/HU/AC en BA; verificación ejecutable en QA |
-| `sofka-asdd-producto-new-hu` | `sofka-asdd-ba-user-story` | Una sola capability genera `functional/user-stories.md` desde requisitos aprobados |
-| `sofka-asdd-producto-story-planner` | Tech Lead, con input de Solution Architect | Tech Lead escribe `implementation/plan.md`; Architecture define decisiones cross-domain |
-| `sofka-asdd-producto-templates` | capability neutral `sofka-asdd-spec-package-templates` | Templates de SPEC-001 sin pertenecer a un rol de Producto |
+| `asdd-producto-pm` | `asdd-product-strategy` | Se conserva estrategia como agente limitado: visión, valor, priorización, roadmap, OKRs y métricas |
+| `asdd-producto-ba` | BA Functional Architect + BA Specification Lead | Contexto/EDT al Architect; procesos, reglas, gaps y requisitos al Lead |
+| `asdd-producto-funcional` | BA Specification Lead | Único writer de `functional/spec.md` y `functional/requirements.md` |
+| `asdd-producto-po` | Product Strategy + BA Specification Lead + QA | Prioridad en Strategy; requisitos/HU/AC en BA; verificación ejecutable en QA |
+| `asdd-producto-new-hu` | `asdd-ba-user-story` | Una sola capability genera `functional/user-stories.md` desde requisitos aprobados |
+| `asdd-producto-story-planner` | Tech Lead, con input de Solution Architect | Tech Lead escribe `implementation/plan.md`; Architecture define decisiones cross-domain |
+| `asdd-producto-templates` | capability neutral `asdd-spec-package-templates` | Templates de SPEC-001 sin pertenecer a un rol de Producto |
 
 ## 3. Product Strategy: límite formal
 
@@ -75,16 +75,16 @@ Un alias debe:
 - desaparecer en la siguiente major posterior a la ventana acordada.
 
 Cuando una intención antigua es ambigua, el router se detiene. No selecciona
-`sofka-asdd-producto` genérico.
+`asdd-producto` genérico.
 
 ## 6. Superficies impactadas antes del retiro
 
-- `.claude/agents/sofka-asdd-producto.md`;
-- siete directorios `.claude/skills/sofka-asdd-producto-*`;
+- `.claude/agents/asdd-producto.md`;
+- siete directorios `.claude/skills/asdd-producto-*`;
 - capability/rule/coordinator loading manifests;
 - routing de Specify, Analyze, Design y Verify;
 - templates de brief/spec;
-- comandos `/sofka-asdd:*`;
+- comandos `/asdd:*`;
 - evals y prompts de Producto;
 - `CLAUDE.md`, changelog, lock y contrato CLI;
 - documentación que atribuye specs al paraguas;

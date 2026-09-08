@@ -1,0 +1,113 @@
+{
+  "version": "3.7.0",
+  "changelog_url": "./ASDD-CHANGELOG.md",
+  "spec": "agentic-spec-driven-development",
+  "schema": "1.0",
+  "locked": false,
+  "variants": {
+    "claude": {
+      "enabled": true,
+      "path": ".",
+      "version": "3.7.0",
+      "agents": 25,
+      "rules": 18,
+      "skills": 164,
+      "commands": 40,
+      "hooks": 16
+    },
+    "copilot": {
+      "enabled": false,
+      "path": null,
+      "version": null,
+      "agents": 0,
+      "instructions": 0,
+      "prompts": 0,
+      "note": "Pendiente de dise\u00f1o. Abrir issue si se requiere soporte Copilot."
+    }
+  },
+  "repository": {
+    "agents": 0,
+    "rules": 0,
+    "skills": 0,
+    "docs": 0,
+    "note": "Este template no expone agentes/rules/skills meta para auto-gesti\u00f3n."
+  },
+  "model_strategy": {
+    "orchestrator_default": "sonnet",
+    "phase_default": {
+      "specify": "sonnet",
+      "analyze": "sonnet",
+      "design": "opus",
+      "build": "sonnet",
+      "verify": "opus",
+      "document": "haiku"
+    },
+    "agent_pinning": {
+      "asdd-explorer": "haiku"
+    },
+    "skill_override": {}
+  },
+  "routing": {
+    "mode": "adaptive",
+    "always_full": false,
+    "policy_version": 1,
+    "subagent_budget_ref": ".asdd/subagent-budget.json",
+    "depths": [
+      "TRIVIAL",
+      "LIGHT",
+      "MEDIUM",
+      "FULL"
+    ],
+    "confidence_threshold": 0.7,
+    "hard_exclusions": [
+      "auth",
+      "pagos",
+      "PII",
+      "pipelines",
+      "contratos-publicos",
+      "compliance"
+    ]
+  },
+  "detection_thresholds": {
+    "codebase_size": {
+      "source_files": 200,
+      "commits": 300,
+      "docs_files": 30,
+      "signals_required": 2,
+      "source_globs": [
+        "src/**/*.ts",
+        "src/**/*.js",
+        "src/**/*.py",
+        "src/**/*.java",
+        "src/**/*.go"
+      ],
+      "docs_glob": "docs/**/*"
+    }
+  },
+  "project_context": {
+    "maturity": null
+  },
+  "validation": {
+    "rules_size_max": 150
+  },
+  "created_at": "2026-04-20",
+  "updated_at": "2026-08-05",
+  "checksum": null,
+  "capabilities": [
+    "atf-api",
+    "atf-web",
+    "smart-data"
+  ],
+  "sub_locks": {
+    "asdd-atf-web": {
+      "path": ".asdd/asdd-atf-web.lock",
+      "version": "1.0.0",
+      "description": "Configuraci\u00f3n ATF Web QA (E2E guiado por browser). Framework: Playwright + Lighthouse."
+    },
+    "asdd-smart-data": {
+      "path": ".asdd/asdd-smart-data.lock",
+      "version": "1.2.0",
+      "description": "Configuraci\u00f3n del addon Smart Data ASDD (data-architect, data-eng-databricks, data-governance). Se activa cuando data_platform != none."
+    }
+  }
+}

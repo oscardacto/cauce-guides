@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Tests funcionales del hook sofka-asdd-pre-tool-use-coauthorship-guard.mjs (#3649)
+ * Tests funcionales del hook asdd-pre-tool-use-coauthorship-guard.mjs (#3649)
  * Uso: node .claude/scripts/test-coauthorship-guard-hook.mjs
  */
 import { spawnSync } from "node:child_process";
@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const HOOKS_DIR = join(__dirname, "..", "hooks");
-const HOOK = join(HOOKS_DIR, "sofka-asdd-pre-tool-use-coauthorship-guard.mjs");
+const HOOK = join(HOOKS_DIR, "asdd-pre-tool-use-coauthorship-guard.mjs");
 
 let passed = 0;
 let failed = 0;
@@ -37,7 +37,7 @@ function makePayload(command) {
   return JSON.stringify({ tool_name: "Bash", tool_input: { command } });
 }
 
-console.log("\n=== Tests: sofka-asdd-pre-tool-use-coauthorship-guard.mjs (#3649) ===\n");
+console.log("\n=== Tests: asdd-pre-tool-use-coauthorship-guard.mjs (#3649) ===\n");
 
 // ---- C1: git commit con Co-Authored-By Claude → exit 2 ----------------------
 console.log('C1 — git commit con Co-Authored-By Claude → exit 2');

@@ -4,7 +4,7 @@
 **Rama:** `fix/3519-evals-config` (commits `9516f58`, `98a0767`, `95c05c6`, `c679b54`)  
 **Modelo evaluado:** `claude-sonnet-4-6`  
 **Provider:** `claude-code-provider.mjs` (local, suscripción Max — no va al repo)  
-**WI:** [#3519](https://dev.azure.com/Sofka-AI-Center/Sofka%20AI%20Center/_workitems/edit/3519)
+**WI:** [#3519](https://dev.azure.com/Guide-AI-Center/Guide%20AI%20Center/_workitems/edit/3519)
 
 ---
 
@@ -39,7 +39,7 @@
 
 **TODOS los FAILs de 1-orchestrator son artefactos del harness de evaluación**, no regresiones del framework.
 
-**Causa raíz:** El harness `promptfoo` invoca al modelo con un system prompt del agente orquestador pero sin los agentes ASDD registrados como tools reales. El modelo detecta correctamente que `sofka-asdd-developer`, `sofka-asdd-producto`, etc. no están disponibles como Agent tool calls y activa el protocolo ORC-000-B (fallback de delegación), produciendo respuestas del estilo "⚠️ ORC-000-B activado — agente no disponible". El rubric espera delegación real (que es imposible en el harness), por lo que FALLA la evaluación aunque el comportamiento es técnicamente correcto.
+**Causa raíz:** El harness `promptfoo` invoca al modelo con un system prompt del agente orquestador pero sin los agentes ASDD registrados como tools reales. El modelo detecta correctamente que `asdd-developer`, `asdd-producto`, etc. no están disponibles como Agent tool calls y activa el protocolo ORC-000-B (fallback de delegación), produciendo respuestas del estilo "⚠️ ORC-000-B activado — agente no disponible". El rubric espera delegación real (que es imposible en el harness), por lo que FALLA la evaluación aunque el comportamiento es técnicamente correcto.
 
 **Tests que SÍ pasaron (3):** Solo pasan los que no dependen de que los agents estén registrados como tools:
 - `orc-001a`: 1 PASS (el clasificador identifica señal → fase correctamente)
@@ -70,7 +70,7 @@
 
 ### Gaps reales destacados
 
-- **explorer (0/5):** El agente no usa herramientas de filesystem directamente — pide al usuario que ejecute comandos y pegue resultados. Gap real: `sofka-asdd-explorer` tiene acceso a `Glob`, `Grep`, `Read` pero no los usa en el harness sin archivos de proyecto reales.
+- **explorer (0/5):** El agente no usa herramientas de filesystem directamente — pide al usuario que ejecute comandos y pegue resultados. Gap real: `asdd-explorer` tiene acceso a `Glob`, `Grep`, `Read` pero no los usa en el harness sin archivos de proyecto reales.
 - **qa-engineer (2/5):** Partial compliance en rubrics de test-strategy y regression — coverage criteria missing, no menciona ADR como prerequisito.
 - **tech-lead (2/5):** FAILs en estimación técnica (sin profundidad) y output de review (falta completitud de hallazgos).
 - **solution-architect (4/5):** 1 FAIL en selección de skill — no invocó `tradeoff-analysis` antes del ADR (skill routing gap).
@@ -140,7 +140,7 @@ Similar a 1-orchestrator: la mayoría son harness artifacts (los agents no está
 
 ### Clasificación: harness artifacts (100%)
 
-Los slash commands (`/sofka-asdd:build`, `/sofka-asdd:analyze`, etc.) **no se pueden evaluar** con el provider `claude -p --no-session-persistence`. El CLI no tiene las skills ASDD cargadas y responde `Unknown command: /sofka-asdd:...`.
+Los slash commands (`/asdd:build`, `/asdd:analyze`, etc.) **no se pueden evaluar** con el provider `claude -p --no-session-persistence`. El CLI no tiene las skills ASDD cargadas y responde `Unknown command: /asdd:...`.
 
 **Esta categoría necesita un harness distinto:** Claude Code activado con project context, o un mock del runtime de commands. Los FAILs de 5-commands son **esperados y no representan regresiones** — son una limitación conocida del runner actual.
 
@@ -188,7 +188,7 @@ Estimación conservadora quitando los ~50 harness artifacts del denominador:
 | patterns | ✅ | Recomienda Pub-Sub + CQRS con justificación y trade-offs |
 | quality | ❌ | SLOs parciales — falta ventana de medición y consecuencia en algunos SLOs |
 | review | ❌ | Cubre complejidad operativa pero no evalúa si el microservicio es realmente necesario |
-| sofka-docs | ✅ | ADR completo con 2+ alternativas, decisión justificada, consecuencias |
+| guide-docs | ✅ | ADR completo con 2+ alternativas, decisión justificada, consecuencias |
 | tradeoff-analysis | ✅ | Matriz ponderada con contexto (equipo pequeño → peso operativo), recomienda SQS/RabbitMQ |
 
 ### Gap principal: `component-diagram`

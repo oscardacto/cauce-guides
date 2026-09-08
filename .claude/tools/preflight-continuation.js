@@ -235,7 +235,7 @@ async function main() {
     if (found) designStatus = 'DESIGN_OK';
   }
   if (designStatus === 'DESIGN_MISSING') {
-    die(`No se encontraron CPs diseñados en ${DESIGN_DIR}/. Ejecuta /sofka-asdd:qa-web-design antes de continuar con fase_2c.`);
+    die(`No se encontraron CPs diseñados en ${DESIGN_DIR}/. Ejecuta /asdd:qa-web-design antes de continuar con fase_2c.`);
   }
 
   // 3. SYNC — derivar module_id + cp_ids desde tags let tagsArr;
@@ -252,7 +252,7 @@ async function main() {
   }
   if (derived.error === 'multiple_modules') {
     die(`Tags @cp apuntan a múltiples módulos: ${derived.module_ids.join(', ')}. CONTINUATION SHORTCUT solo soporta 1 módulo por invocación. ` +
-        `Si necesitas ejecutar CPs cross-módulo, usa /sofka-asdd:qa-web-exec directo (que sí soporta multi-módulo via exec-preflight.js) ` +
+        `Si necesitas ejecutar CPs cross-módulo, usa /asdd:qa-web-exec directo (que sí soporta multi-módulo via exec-preflight.js) ` +
         `o lanza CONTINUATION 1 vez por módulo.`);
   }
   const moduleId = derived.module_id;

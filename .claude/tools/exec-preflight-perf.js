@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * exec-preflight-perf.js — preflight para `/sofka-asdd:qa-web-perf`. Análogo a
+ * exec-preflight-perf.js — preflight para `/asdd:qa-web-perf`. Análogo a
  * exec-preflight-vua.js. Consolida en 1 invocación Node:
  *   1. validate_run          → run folder existe.
  *   2. read_app_config       → appweb.yaml + performance.enabled === true (gate).
@@ -42,7 +42,7 @@ function parseArgs(argv) {
     else if (a === '--output')           out.output = argv[++i];
     else if (a === '--help' || a === '-h') {
       process.stdout.write(
-        'exec-preflight-perf.js — preflight para /sofka-asdd:qa-web-perf\n' +
+        'exec-preflight-perf.js — preflight para /asdd:qa-web-perf\n' +
         'Uso: --run-id=<id> [--flows=E2E-001,E2E-003] [--output=<path>]\n'
       );
       process.exit(0);
@@ -218,8 +218,8 @@ if (needsStrategist) {
     needs_strategist: true, needs_diagnostics: needsDiagnostics,
     flows_planned: [], flows_planned_count: 0, flows_to_skip_count: 0, perf_context_path: null,
     warnings: needsDiagnostics
-      ? ['Falta diagnóstico (base_pruebas.md). Ejecutar /sofka-asdd:qa-web-diagnose y /sofka-asdd:qa-web-strategize antes.']
-      : ['Falta strategy/execution_plan.json o e2e_flows[]. Auto-disparar /sofka-asdd:qa-web-strategize.']
+      ? ['Falta diagnóstico (base_pruebas.md). Ejecutar /asdd:qa-web-diagnose y /asdd:qa-web-strategize antes.']
+      : ['Falta strategy/execution_plan.json o e2e_flows[]. Auto-disparar /asdd:qa-web-strategize.']
   }, null, 2) + '\n');
   process.exit(0);
 }

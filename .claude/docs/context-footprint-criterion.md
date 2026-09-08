@@ -37,10 +37,10 @@ Reglas **agent-specific** que solo aplican cuando ese agente está activo:
 - Protocolo de tests del developer → `.claude/docs/developer-test-protocol.md`
 - Principios Clean Code/SOLID → `.claude/docs/clean-code-solid.md`
 - Reglas de estabilización/bugfix → `.claude/docs/stabilization-bug-rules.md`
-- DDD Universal → cuerpo de `sofka-asdd-solution-architect.md`
-- UX Universal → cuerpo de `sofka-asdd-ux.md`
-- ISTQB, orchestration ATF, checkpoint, defect-classification → cuerpo de `sofka-asdd-atf-api-qa-engineer.md`
-- Invariantes del executor web → cuerpo de `sofka-asdd-atf-web-qa-engineer.md`
+- DDD Universal → cuerpo de `asdd-solution-architect.md`
+- UX Universal → cuerpo de `asdd-ux.md`
+- ISTQB, orchestration ATF, checkpoint, defect-classification → cuerpo de `asdd-atf-api-qa-engineer.md`
+- Invariantes del executor web → cuerpo de `asdd-atf-web-qa-engineer.md`
 
 ## Test rápido antes de agregar una regla nueva
 

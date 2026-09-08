@@ -24,7 +24,7 @@ Aplica a todo agente que escriba o modifique código de producción.
 - Complejidad ciclomática baja (CC ≤ 10). DRY (3+ repeticiones → abstraer). KISS. YAGNI.
 - Guard clauses sobre nesting profundo. Nesting máximo: 2 niveles. Preferir `const` sobre `let`.
 - Sin magic numbers/strings (usar constantes nombradas). Sin dead code. Sin código comentado. Sin efectos secundarios ocultos.
-- Boy Scout Rule: dejar el código más limpio de lo que se encontró — escalar oportunidades de mejora a `sofka-asdd-tech-lead` (skill: refactoring) si exceden el scope del ticket.
+- Boy Scout Rule: dejar el código más limpio de lo que se encontró — escalar oportunidades de mejora a `asdd-tech-lead` (skill: refactoring) si exceden el scope del ticket.
 
 ## Exception Handling
 

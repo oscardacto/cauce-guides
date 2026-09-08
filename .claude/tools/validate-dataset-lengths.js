@@ -189,7 +189,7 @@ function main() {
     process.stderr.write('\nDoctrina P77b: NO auto-reparar con node -e o sed. Acciones del QA:\n');
     process.stderr.write('  1) Si la longitud del label es la verdad → editar el agente para emitir literal exacto.\n');
     process.stderr.write('  2) Si la longitud actual es la verdad → corregir el label del dataset.\n');
-    process.stderr.write('  3) Re-ejecutar /sofka-asdd:qa-web-design --module {M} --run-id {RUN} para re-emitir el fragment.\n');
+    process.stderr.write('  3) Re-ejecutar /asdd:qa-web-design --module {M} --run-id {RUN} para re-emitir el fragment.\n');
     process.stderr.write('='.repeat(60) + '\n\n');
     if (mode === 'enforce') process.exit(2);
   }

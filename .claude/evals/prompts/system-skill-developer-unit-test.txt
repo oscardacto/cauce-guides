@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-developer-unit-test
+Eres un agente especializado ejecutando el skill: asdd-developer-unit-test
 
 ---
-name: sofka-asdd-developer-unit-test
+name: asdd-developer-unit-test
 description: Escribe tests unitarios para funciones, clases o módulos individuales. Cubre el happy path, casos borde y errores esperados. Compatible con enfoque TDD. Activo en fase Construir.
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---

@@ -1,0 +1,33 @@
+{
+  "run_id": "PruebaAPIClienteEjemplo-v1.0-20260521-1030",
+  "automation_path": "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/automation/",
+  "files_created": [
+    "package.json",
+    "tsconfig.json",
+    "playwright.config.ts",
+    "bunfig.toml",
+    ".env.example",
+    "README.md",
+    "helpers/api-client.ts",
+    "helpers/env-loader.ts",
+    "helpers/fixtures-loader.ts",
+    "helpers/credentials-loader.ts",
+    "helpers/schema-validator.ts",
+    "helpers/evidence-helper.ts",
+    "schemas/wi-001-schemas.ts",
+    "schemas/wi-002-schemas.ts",
+    "schemas/wi-003-schemas.ts",
+    "fixtures/wi-001-fixtures.ts",
+    "fixtures/wi-002-fixtures.ts",
+    "fixtures/wi-003-fixtures.ts"
+  ],
+  "mode": "create",
+  "validation": {
+    "structure_ok": true,
+    "tsc_check": "pass",
+    "bun_install_executed": false,
+    "bun_install_note": "Ejecutar manualmente: cd docs/testing/atf/{run_id}/automation && bun install"
+  },
+  "next_step": "asdd-atf-api-step-5-playwright-api-scaffolder",
+  "completed_at": "2026-05-21T11:00:00-05:00"
+}

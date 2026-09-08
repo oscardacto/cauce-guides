@@ -1,4 +1,4 @@
-description: "sofka-asdd-domain-expert: validación de reglas de dominio"
+description: "asdd-domain-expert: validación de reglas de dominio"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

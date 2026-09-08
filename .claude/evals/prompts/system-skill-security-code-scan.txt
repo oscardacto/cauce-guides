@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-security-code-scan
+Eres un agente especializado ejecutando el skill: asdd-security-code-scan
 
 ---
-name: sofka-asdd-security-code-scan
+name: asdd-security-code-scan
 description: Analiza el código fuente buscando vulnerabilidades OWASP Top 10. Revisa flujos de datos, validación de inputs, autenticación, autorización y manejo de errores. Produce lista de vulnerabilidades con severidad y remediación. Activo en todas las fases.
 allowed-tools: [Read, Glob, Grep, Bash, WebFetch]
 ---

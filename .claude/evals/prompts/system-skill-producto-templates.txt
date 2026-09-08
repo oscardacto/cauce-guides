@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-producto-templates
+Eres un agente especializado ejecutando el skill: asdd-producto-templates
 
 ---
-name: sofka-asdd-producto-templates
+name: asdd-producto-templates
 description: Plantillas canónicas para los artefactos de producto del flujo ASDD (brief y spec). Usar cuando el agente producto deba generar `docs/specs/brief-{proyecto}.md` o `docs/specs/{feature}.md` para garantizar estructura consistente.
 ---
 
@@ -11,8 +11,8 @@ Provee la estructura canónica de los dos artefactos centrales del flujo Especif
 
 ## Cuándo usar
 
-- Fase **Especificar** (`/sofka-asdd:specify`) → leer `reference/brief-template.md` y producir el brief.
-- Fase **Analizar** (`/sofka-asdd:analyze`) → leer `reference/spec-template.md` y producir el spec consolidado.
+- Fase **Especificar** (`/asdd:specify`) → leer `reference/brief-template.md` y producir el brief.
+- Fase **Analizar** (`/asdd:analyze`) → leer `reference/spec-template.md` y producir el spec consolidado.
 
 ## Reglas de uso
 

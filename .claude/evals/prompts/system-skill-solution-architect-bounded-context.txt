@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-architect-bounded-context
+Eres un agente especializado ejecutando el skill: asdd-architect-bounded-context
 
 ---
-name: sofka-asdd-architect-bounded-context
+name: asdd-architect-bounded-context
 description: Identifica y define bounded contexts aplicando DDD. Establece lenguaje ubicuo, context map y relaciones entre contextos (upstream/downstream, ACL, shared kernel). Activo en fase Diseñar.
 allowed-tools: [Read, Write, Glob, Grep]
 ---
@@ -68,7 +68,7 @@ graph LR
 | Open Host Service (OHS) | Upstream publica protocolo público estable |
 | Separate Ways | Sin integración, costo de integrar > beneficio |
 
-## Heurísticas operativas Sofka
+## Heurísticas operativas Guide
 
 Aplicar al modelar bounded contexts:
 

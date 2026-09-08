@@ -77,7 +77,7 @@ como JSON; el dispatcher emite un único resultado Claude Code válido.
 ## Corpus versionado
 
 Fuente:
-`.claude/scripts/fixtures/sofka-asdd-pretool-dispatcher-s1.json`.
+`.claude/scripts/fixtures/asdd-pretool-dispatcher-s1.json`.
 
 - 11 fixtures deterministas, sin red;
 - allow fast path y denies de dangerous/auth/coauthor/artifact/orchestrator;

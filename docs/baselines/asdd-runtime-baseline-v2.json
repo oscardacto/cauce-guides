@@ -28,38 +28,38 @@
     "bash_safe_fast_path_process_startup_ms": 142,
     "largest_agent_with_skills_reported_words": 11108,
     "largest_agent_with_skills_corrected": {
-      "agent": "sofka-asdd-tech-lead",
+      "agent": "asdd-tech-lead",
       "agent_words": 597,
       "skills_words": 19754,
       "total_words": 20351
     },
     "selected_agent_payloads": [
       {
-        "agent": "sofka-asdd-ui",
+        "agent": "asdd-ui",
         "agent_words": 2762,
         "skills_words": 15710,
         "total_words": 18472
       },
       {
-        "agent": "sofka-asdd-solution-architect",
+        "agent": "asdd-solution-architect",
         "agent_words": 1437,
         "skills_words": 12674,
         "total_words": 14111
       },
       {
-        "agent": "sofka-asdd-atf-web-qa-engineer",
+        "agent": "asdd-atf-web-qa-engineer",
         "agent_words": 10679,
         "skills_words": 0,
         "total_words": 10679
       },
       {
-        "agent": "sofka-asdd-ba-constructor",
+        "agent": "asdd-ba-constructor",
         "agent_words": 1870,
         "skills_words": 7037,
         "total_words": 8907
       },
       {
-        "agent": "sofka-asdd-producto",
+        "agent": "asdd-producto",
         "agent_words": 736,
         "skills_words": 8104,
         "total_words": 8840

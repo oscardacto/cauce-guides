@@ -1,0 +1,96 @@
+{
+  "run_id": "PruebaAPIClienteEjemplo-v1.0-20260521-1030",
+  "status": "in_progress",
+  "current_phase": "design",
+  "current_step": "step_4_test_cases",
+  "next_step": "step_5_automation",
+  "steps_completed": [
+    {
+      "step_id": "step_0_orchestrator",
+      "completed_at": "2026-05-21T10:32:00-05:00",
+      "duration_seconds": 12,
+      "artifacts_paths": ["docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/run-manifest.md"]
+    },
+    {
+      "step_id": "step_1_requirement_review",
+      "completed_at": "2026-05-21T10:38:00-05:00",
+      "duration_seconds": 360,
+      "artifacts_paths": [
+        "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/functional-spec/wi-001-functional-spec.md",
+        "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/functional-spec/wi-002-functional-spec.md",
+        "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/functional-spec/wi-003-functional-spec.md"
+      ]
+    },
+    {
+      "step_id": "step_2_api_context",
+      "completed_at": "2026-05-21T10:39:30-05:00",
+      "duration_seconds": 450,
+      "artifacts_paths": [
+        "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/api-context/wi-001-api-context.json",
+        "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/api-context/wi-002-api-context.json",
+        "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/api-context/wi-003-api-context.json"
+      ]
+    },
+    {
+      "step_id": "step_3_test_plan",
+      "completed_at": "2026-05-21T10:50:00-05:00",
+      "duration_seconds": 630,
+      "artifacts_paths": [
+        "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/test-plan/wi-001-test-plan.md",
+        "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/test-plan/wi-002-test-plan.md",
+        "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/test-plan/wi-003-test-plan.md"
+      ]
+    }
+  ],
+  "work_items": {
+    "total": 3,
+    "pending": [],
+    "in_progress": "wi-002",
+    "completed": [
+      {"wi_id": "wi-001", "completed_at": "2026-05-21T10:45:00-05:00", "steps_covered": ["step_1", "step_2", "step_3"]}
+    ]
+  },
+  "step_history": [
+    {
+      "step_id": "step_3_test_plan",
+      "started_at": "2026-05-21T10:39:30-05:00",
+      "completed_at": "2026-05-21T10:50:00-05:00",
+      "duration_seconds": 630,
+      "agent": "asdd-atf-api-step-3-test-plan",
+      "result": "success"
+    },
+    {
+      "step_id": "step_4_test_cases",
+      "started_at": "2026-05-21T10:50:00-05:00",
+      "completed_at": null,
+      "duration_seconds": null,
+      "agent": "asdd-atf-api-step-4-test-cases",
+      "result": "in_progress"
+    }
+  ],
+  "state_transitions": [
+    {
+      "from": "null",
+      "to": "in_progress",
+      "at": "2026-05-21T10:30:15-05:00",
+      "by": "asdd-atf-api-orchestrator",
+      "reason": "run_created"
+    }
+  ],
+  "blockers": [],
+  "knowledge_base_path": "docs/testing/atf/knowledge/",
+  "rate_limit_protocol": "Ver .claude/rules/asdd-atf-api-qa-engineer.md (embedded: ATF API Rate Limit Protocol)",
+  "session_config_snapshot": {
+    "app_url": "https://api-qa.clienteejemplo.example.com/v1",
+    "cycle_type": "baseline",
+    "baseline_run_id": null,
+    "model_strategy_resolved_models": {
+      "step_3": "opus",
+      "step_7": "haiku"
+    }
+  },
+  "created_at": "2026-05-21T10:30:15-05:00",
+  "updated_at": "2026-05-21T10:55:00-05:00",
+  "completed_at": null,
+  "recovered_from_checkpoint": false
+}

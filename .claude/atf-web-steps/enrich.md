@@ -3,8 +3,8 @@ name: "CP Enricher"
 description: "Agente unificado de enriquecimiento. Transforma CPs ambiguos de la matriz en instrucciones deterministas para el executor. Analiza en bloques de 50 (skill enrichment-analyzer), expande playbooks inline (full flatten), resuelve brechas con cascade local-NotebookLM, y delega la escritura final al script cp-enricher.js. Zero inference para el executor. Soporta opt-in deep mode via skill enrich-deep-cp para CPs marcados con @enrich-deep o run con flag --deep."
 model: sonnet
 skills:
-  - sofka-asdd-atf-web-enrichment-analyzer
-  - sofka-asdd-atf-web-enrich-deep-cp
+  - asdd-atf-web-enrichment-analyzer
+  - asdd-atf-web-enrich-deep-cp
 maxTurns: 40
 ---
 
@@ -13,7 +13,7 @@ scope en PASO 0 si no se proporcionaron).
 
 ---
 
-## INPUTS (del comando `/sofka-asdd:qa-web-enrich`)
+## INPUTS (del comando `/asdd:qa-web-enrich`)
 
 | Campo | Tipo | Req. | Descripcion |
 |---|---|---|---|
@@ -21,14 +21,14 @@ scope en PASO 0 si no se proporcionaron).
 | `design_dir` | string | Si | Ruta al directorio de diseno (`docs/testing/atf-web/{run_id}/design/`) |
 | `app_name` | string | Si | Nombre de la app (de `appweb.yaml`) |
 | `run_id` | string | Si | ID del run |
-| `deep_mode` | boolean | No | Si `true`, fuerza deep mode en TODOS los CPs del scope. Default `false`. Origen: flag `--deep` en `/sofka-asdd:qa-web-enrich`. Cascade: `cp.tags["@enrich-deep"] > deep_mode > appweb.yaml.enrichment.default_mode > "shallow"`. Ver [`reference/atf-web/sofka-asdd-atf-web-cp-enricher-invariants-deep.md`](../reference/atf-web/sofka-asdd-atf-web-cp-enricher-invariants-deep.md). |
-| `flatten_setup` | boolean | No | Solo aplica si `deep_mode == true`. Si `true`, fusiona `setup_steps[]` en `steps_raw_enriched` con prefix `[SETUP]` (REGLA 4-DEEP). Default `false`. Origen: flag `--flatten` en `/sofka-asdd:qa-web-enrich`. |
+| `deep_mode` | boolean | No | Si `true`, fuerza deep mode en TODOS los CPs del scope. Default `false`. Origen: flag `--deep` en `/asdd:qa-web-enrich`. Cascade: `cp.tags["@enrich-deep"] > deep_mode > appweb.yaml.enrichment.default_mode > "shallow"`. Ver [`reference/atf-web/asdd-atf-web-cp-enricher-invariants-deep.md`](../reference/atf-web/asdd-atf-web-cp-enricher-invariants-deep.md). |
+| `flatten_setup` | boolean | No | Solo aplica si `deep_mode == true`. Si `true`, fusiona `setup_steps[]` en `steps_raw_enriched` con prefix `[SETUP]` (REGLA 4-DEEP). Default `false`. Origen: flag `--flatten` en `/asdd:qa-web-enrich`. |
 
 ---
 
 ## KNOWLEDGE ACCESS CONTRACT
 
-> Doctrina compartida: [`reference/atf-web/sofka-asdd-atf-web-knowledge-access-contract.md`](../reference/atf-web/sofka-asdd-atf-web-knowledge-access-contract.md). Tabla con archivos específicos de este agente:
+> Doctrina compartida: [`reference/atf-web/asdd-atf-web-knowledge-access-contract.md`](../reference/atf-web/asdd-atf-web-knowledge-access-contract.md). Tabla con archivos específicos de este agente:
 
 | Modo | Archivo |
 |---|---|
@@ -127,7 +127,7 @@ Estados posibles por fila:
 - `➖ OFF`  — feature deshabilitada intencionalmente (NotebookLM).
 
 **Acción del QA al ver `⚠ MISS`:** es una **invitación, no un bloqueo**. Si
-corre `/sofka-asdd:qa-web-enrich` igual, la mitad del valor se pierde pero el pipeline entrega
+corre `/asdd:qa-web-enrich` igual, la mitad del valor se pierde pero el pipeline entrega
 un output consumible (muchos `ENRICHED_PARTIAL`). Para mode `FULL`, crear los
 archivos faltantes antes de relanzar.
 
@@ -185,7 +185,7 @@ Si hay gaps -> mostrar reporte y continuar:
 ```
 WARNING: {N} gaps de playbooks ({M} CPs afectados).
   Continuando enrichment — CPs sin playbook tendran status ENRICHED_PARTIAL.
-  Para re-procesar: crea los playbooks y ejecuta /sofka-asdd:qa-web-enrich de nuevo.
+  Para re-procesar: crea los playbooks y ejecuta /asdd:qa-web-enrich de nuevo.
 ```
 
 ---
@@ -203,7 +203,7 @@ WARNING: {N} gaps de playbooks ({M} CPs afectados).
 ## PASO 3 — Analisis semantico por bloques (skill enrichment-analyzer)
 
 ```
-[SKILL: sofka-asdd-atf-web-enrichment-analyzer]
+[SKILL: asdd-atf-web-enrichment-analyzer]
 cps: {array de hasta 50 CPs}
 notebooklm_inventory: {mapa archivo->status}
 data_recipes: {contenido de data-recipes.md}
@@ -234,7 +234,7 @@ Bloque {N}/{total} [{start}-{end}]  LISTO  ({seconds}s)
 
 > **Solo se ejecuta si hay al menos 1 CP con deep mode resuelto a `true`.**
 > Si todos los CPs del scope son shallow → omitir PASO 3.5 silenciosamente.
-> Ver [`reference/atf-web/sofka-asdd-atf-web-cp-enricher-invariants-deep.md`](../reference/atf-web/sofka-asdd-atf-web-cp-enricher-invariants-deep.md).
+> Ver [`reference/atf-web/asdd-atf-web-cp-enricher-invariants-deep.md`](../reference/atf-web/asdd-atf-web-cp-enricher-invariants-deep.md).
 
 ### 3.5.1 — Resolver modo por CP
 
@@ -260,7 +260,7 @@ Para cada CP deep, leer:
 Invocar:
 
 ```
-[SKILL: sofka-asdd-atf-web-enrich-deep-cp]
+[SKILL: asdd-atf-web-enrich-deep-cp]
 cp: {objeto CP completo}
 notebook_id: {appweb.yaml.notebooklm.notebook_id}
 qa_data: {array, opcional}
@@ -507,12 +507,12 @@ Incluir: lista de acciones para alcanzar 100% READY (playbooks faltantes + datos
 
 | Regla | Fuente | Aplicacion |
 |---|---|---|
-| REGLA 7 | sofka-asdd-atf-web-cp-enricher-invariants.md | Schema del plan y CPs: exacto, sin campos extra |
-| REGLA 8 | sofka-asdd-atf-web-cp-enricher-invariants.md | No inventar pasos ni datos (modo shallow) |
-| REGLA 9 | sofka-asdd-atf-web-cp-enricher-invariants.md | Nunca editar cp_modulo_*.json directamente |
-| REGLA 10 | sofka-asdd-atf-web-cp-enricher-invariants.md | Output exclusivo de cp-enricher.js |
-| REGLA 11 | sofka-asdd-atf-web-cp-enricher-invariants.md | Verificar huella auditable stdout + reporte |
-| REGLA 12 | sofka-asdd-atf-web-cp-enricher-invariants.md | Toda resolucion NotebookLM con entrada en log |
-| REGLA 8-DEEP | sofka-asdd-atf-web-cp-enricher-invariants-deep.md | Inferencia de steps con cita NLM obligatoria (modo deep) |
-| REGLA 4-DEEP | sofka-asdd-atf-web-cp-enricher-invariants-deep.md | Flatten opcional setup_steps → steps (modo deep, opt-in) |
-| REGLA 14-DEEP | sofka-asdd-atf-web-cp-enricher-invariants-deep.md | Deep nunca degrada shallow (sin opt-in = comportamiento intacto) |
+| REGLA 7 | asdd-atf-web-cp-enricher-invariants.md | Schema del plan y CPs: exacto, sin campos extra |
+| REGLA 8 | asdd-atf-web-cp-enricher-invariants.md | No inventar pasos ni datos (modo shallow) |
+| REGLA 9 | asdd-atf-web-cp-enricher-invariants.md | Nunca editar cp_modulo_*.json directamente |
+| REGLA 10 | asdd-atf-web-cp-enricher-invariants.md | Output exclusivo de cp-enricher.js |
+| REGLA 11 | asdd-atf-web-cp-enricher-invariants.md | Verificar huella auditable stdout + reporte |
+| REGLA 12 | asdd-atf-web-cp-enricher-invariants.md | Toda resolucion NotebookLM con entrada en log |
+| REGLA 8-DEEP | asdd-atf-web-cp-enricher-invariants-deep.md | Inferencia de steps con cita NLM obligatoria (modo deep) |
+| REGLA 4-DEEP | asdd-atf-web-cp-enricher-invariants-deep.md | Flatten opcional setup_steps → steps (modo deep, opt-in) |
+| REGLA 14-DEEP | asdd-atf-web-cp-enricher-invariants-deep.md | Deep nunca degrada shallow (sin opt-in = comportamiento intacto) |

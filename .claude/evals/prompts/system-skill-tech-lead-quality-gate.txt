@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-tech-lead-quality-gate
+Eres un agente especializado ejecutando el skill: asdd-tech-lead-quality-gate
 
 ---
-name: sofka-asdd-tech-lead-quality-gate
+name: asdd-tech-lead-quality-gate
 description: Valida cobertura de tests, complejidad ciclomática y métricas de calidad antes de merge o release. Emite decisión explícita PASS / FAIL con evidencia. Activo en fase Verificar.
 allowed-tools: [Read, Glob, Grep, Bash]
 ---

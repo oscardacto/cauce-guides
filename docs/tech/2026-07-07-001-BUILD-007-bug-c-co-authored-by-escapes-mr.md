@@ -1,6 +1,6 @@
 # BUG-C: Co-Authored-By de IA se escapa a MRs
 
-**Módulo**: `.claude/hooks/sofka-asdd-guard-co-authored-by.mjs` (o el nombre real del hook — ver evidencia) + `.claude/skills/sofka-asdd-tech-lead-create-mr/SKILL.md` + `.claude/settings.json` (matchers)
+**Módulo**: `.claude/hooks/asdd-guard-co-authored-by.mjs` (o el nombre real del hook — ver evidencia) + `.claude/skills/asdd-tech-lead-create-mr/SKILL.md` + `.claude/settings.json` (matchers)
 **Severidad**: HIGH
 **Prioridad**: P1
 **Categoría preliminar**: bug
@@ -17,7 +17,7 @@
 
 El guard que impone la prohibición de "Co-Authored-By: Claude" y
 similares atribuciones de IA (regla explícita en los skills
-`sofka-asdd-tech-lead-create-mr` y `sofka-asdd-tech-lead-commit`) tiene
+`asdd-tech-lead-create-mr` y `asdd-tech-lead-commit`) tiene
 cobertura incompleta: solo se registra en el matcher `Bash` con una
 allowlist de 3 comandos (`git commit`, `glab mr create`, `gh pr create`)
 y busca únicamente el trailer literal `Co-Authored-By`. Múltiples
@@ -177,7 +177,7 @@ maliciosa.
   de escanear todo `.md` — la exclusión literal `docs/tech/bug-*.md`
   del contrato original era insuficiente: no cubría el plan maestro
   (`BUILD-001`, sin "bug" en el nombre) ni el `SKILL.md` de
-  `sofka-asdd-tech-lead-create-mr`, y ambos quedaban bloqueados al
+  `asdd-tech-lead-create-mr`, y ambos quedaban bloqueados al
   editarlos porque legítimamente contienen el string
   "Co-Authored-By" como documentación. La contradicción del spec sobre
   `.tmp/` se resuelve a favor del Vector 2: `.tmp/` SÍ es candidato
@@ -185,7 +185,7 @@ maliciosa.
   `--description-file`/`--body-file`), y la allowlist positiva por
   basename evita que documentación del template (`docs/tech/`,
   `SKILL.md`, `CLAUDE.md`, planes maestros) sea escaneada.
-- **C4** — Actualizar el skill `sofka-asdd-tech-lead-create-mr` para
+- **C4** — Actualizar el skill `asdd-tech-lead-create-mr` para
   reforzar la prohibición con ejemplos de los 4 vectores identificados
   (docs). El skill sigue siendo la fuente de conducta esperada; el
   guard es el enforcement mecánico complementario.
@@ -200,12 +200,12 @@ maliciosa.
 
 **Archivos candidatos**:
 
-- `.claude/hooks/sofka-asdd-guard-co-authored-by.mjs` (nombre exacto a
+- `.claude/hooks/asdd-guard-co-authored-by.mjs` (nombre exacto a
   verificar; puede diferir).
 - `.claude/settings.json` (registrar el hook también en matcher
   `Write`).
-- `.claude/skills/sofka-asdd-tech-lead-create-mr/SKILL.md`.
-- `.claude/skills/sofka-asdd-tech-lead-commit/SKILL.md`.
+- `.claude/skills/asdd-tech-lead-create-mr/SKILL.md`.
+- `.claude/skills/asdd-tech-lead-commit/SKILL.md`.
 - Tests del hook (crear o extender).
 
 **Tests requeridos**: enumerados en C5 arriba. Cada vector = 1 test

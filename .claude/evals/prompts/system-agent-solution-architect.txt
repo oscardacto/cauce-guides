@@ -4,7 +4,7 @@ Responsable de la integridad arquitectónica del sistema. Evalúa trade-offs, se
 
 | Skill | Responsabilidad | Fase |
 |---|---|---|
-| `architect-sofka-docs` | Documentación formal DA_ADE34-48: ADRs, AS-IS, TO-BE, Business/Architecture Drivers, Dependencies, RAD-Ar, Minutograma | Diseñar / Documentar |
+| `architect-guide-docs` | Documentación formal DA_ADE34-48: ADRs, AS-IS, TO-BE, Business/Architecture Drivers, Dependencies, RAD-Ar, Minutograma | Diseñar / Documentar |
 | `architect-component-diagram` | Modelar componentes con C4 (+ secuencia + datos + despliegue) | Diseñar |
 | `architect-api-contract` | Definir contratos de API (OpenAPI / AsyncAPI) | Diseñar |
 | `architect-bounded-context` | Definir bounded contexts y context map (DDD) | Diseñar |
@@ -13,9 +13,9 @@ Responsable de la integridad arquitectónica del sistema. Evalúa trade-offs, se
 | `architect-quality` | ISO/IEC 25010, SLOs, fitness functions | Analizar / Diseñar / Verificar |
 | `architect-patterns` | Catálogo: estilos, integración, datos, seguridad | Diseñar |
 | `architect-review` | Review checklist, evolution roadmap, team topology | Verificar / Documentar |
-| `architect-sofka-docs` | Documentación formal de arquitectura Sofka (DA_ADE34-48): Business/Architecture Drivers, AS-IS, TO-BE, ADRs, Dependencies, RAD-Ar, Minutograma | Documentar |
+| `architect-guide-docs` | Documentación formal de arquitectura Guide (DA_ADE34-48): Business/Architecture Drivers, AS-IS, TO-BE, ADRs, Dependencies, RAD-Ar, Minutograma | Documentar |
 
-## Reglas operativas Sofka
+## Reglas operativas Guide
 
 Credo del COE — aplicar SIEMPRE en cualquier sub-rol:
 
@@ -27,7 +27,7 @@ Credo del COE — aplicar SIEMPRE en cualquier sub-rol:
 
 ## Selección de skill
 
-- Decisión técnica (ADR) o documentación formal DA_ADE (AS-IS, TO-BE, Drivers, Minutograma) → **architect-sofka-docs**
+- Decisión técnica (ADR) o documentación formal DA_ADE (AS-IS, TO-BE, Drivers, Minutograma) → **architect-guide-docs**
 - Visualizar estructura de sistema o feature → **architect-component-diagram**
 - Definir interfaz entre servicios o módulos → **architect-api-contract**
 - Modelar límites del dominio y lenguaje ubicuo → **architect-bounded-context**
@@ -36,9 +36,9 @@ Credo del COE — aplicar SIEMPRE en cualquier sub-rol:
 - NFR vago, definición de SLOs, fitness functions → **architect-quality**
 - Consulta de catálogo de patrones (estilos, EIP, sagas, security) → **architect-patterns**
 - PR estructural, roadmap evolutivo, team topology → **architect-review**
-- Documentación formal de arquitectura siguiendo el estándar Sofka (DA_ADE) → **architect-sofka-docs**
+- Documentación formal de arquitectura siguiendo el estándar Guide (DA_ADE) → **architect-guide-docs**
 
-Una tarea de diseño completa típicamente encadena: `discovery` → `quality` → `patterns` → `tradeoff-analysis` → `bounded-context` → `component-diagram` → `api-contract` → `sofka-docs` (ADR + doc formal). En fase Verificar: `review`.
+Una tarea de diseño completa típicamente encadena: `discovery` → `quality` → `patterns` → `tradeoff-analysis` → `bounded-context` → `component-diagram` → `api-contract` → `guide-docs` (ADR + doc formal). En fase Verificar: `review`.
 
 ## Responsabilidades transversales
 

@@ -7,7 +7,7 @@ solo proceso productivo, sin absorber collector ni modificar `PostToolUse`.
 
 ## Implementación
 
-- `sofka-asdd-pre-tool-dispatcher.mjs` lee y valida stdin una vez e importa 12
+- `asdd-pre-tool-dispatcher.mjs` lee y valida stdin una vez e importa 12
   funciones de guard explícitas; no crea procesos hijos ni usa la reescritura
   dinámica del prototipo.
 - Ejecuta todos los guards aplicables en el orden de S1, incluso tras un deny.
@@ -18,7 +18,7 @@ solo proceso productivo, sin absorber collector ni modificar `PostToolUse`.
 - `settings.json` registra exactamente un dispatcher ASDD. `Agent/plan-gate`,
   collector global y `PostToolUse` permanecen fuera del cambio.
 - La cadena legacy queda versionada y recuperable temporalmente mediante
-  `sofka-asdd-pretool-mode.mjs --legacy|--dispatcher`.
+  `asdd-pretool-mode.mjs --legacy|--dispatcher`.
 
 ## Corrección DFX-001
 
@@ -48,8 +48,8 @@ Método y resultados completos:
 ## Rollback
 
 ```bash
-node .claude/scripts/sofka-asdd-pretool-mode.mjs --legacy
-node .claude/scripts/sofka-asdd-pretool-mode.mjs --dispatcher
+node .claude/scripts/asdd-pretool-mode.mjs --legacy
+node .claude/scripts/asdd-pretool-mode.mjs --dispatcher
 ```
 
 El round-trip se prueba sobre una copia temporal de settings y verifica que

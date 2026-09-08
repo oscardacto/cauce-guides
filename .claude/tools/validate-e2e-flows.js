@@ -19,7 +19,7 @@
 //
 // ELIMINADAS (KISS — los flujos son narrativos por diseño):
 //   R10 (anclaje URL) — viola cronología: las URLs se descubren en fases
-//        posteriores (/sofka-asdd:qa-web-design o /sofka-asdd:qa-web-exec). El strategist en pre-exploración no
+//        posteriores (/asdd:qa-web-design o /asdd:qa-web-exec). El strategist en pre-exploración no
 //        las conoce. Decisión usuario: dejar steps narrativos.
 //
 // Modos:
@@ -177,7 +177,7 @@ function main() {
 
   // R10 ELIMINADA (KISS reversal: los flujos E2E aportan
   // valor desde la descripción funcional cross-módulo. Las URLs son detalles
-  // de implementación que se descubren en fases posteriores (/sofka-asdd:qa-web-design, /sofka-asdd:qa-web-exec).
+  // de implementación que se descubren en fases posteriores (/asdd:qa-web-design, /asdd:qa-web-exec).
   // No exigir anclaje URL al strategist en pre-exploración.
 
   const summary = { critical: 0, warning: 0 };
@@ -206,7 +206,7 @@ function main() {
       process.stderr.write(`  ${icon} [${v.rule}] ${v.e2e_id || '(global)'}: ${v.message}\n`);
     }
     process.stderr.write(`\nDoctrina: docs/concepts/e2e-flows.md\n`);
-    process.stderr.write(`Acción del QA: re-ejecutar /sofka-asdd:qa-web-strategize para que el strategist regenere e2e_flows[] respetando las reglas.\n`);
+    process.stderr.write(`Acción del QA: re-ejecutar /asdd:qa-web-strategize para que el strategist regenere e2e_flows[] respetando las reglas.\n`);
     process.stderr.write('='.repeat(60) + '\n\n');
     if (mode === 'enforce' && summary.critical > 0) process.exit(2);
   }

@@ -9,7 +9,7 @@
 
 Es un **conjunto de 5 agentes de apoyo** para que un Analista Funcional pueda descomponer un alcance grande, redactar el contenido funcional de una especificación, controlar su calidad, resolver dudas de dominio, gestionar el alcance y validar con el negocio — de forma disciplinada y trazable, sin depender de memoria ni de plantillas sueltas.
 
-Es una capa **opcional e independiente**: convive con el flujo ASDD normal del equipo (el que usa el agente `sofka-asdd-producto`), **no lo reemplaza**. Ambos caminos producen el mismo tipo de documento final (la especificación funcional); la diferencia es quién lo redacta y en qué contexto.
+Es una capa **opcional e independiente**: convive con el flujo ASDD normal del equipo (el que usa el agente `asdd-producto`), **no lo reemplaza**. Ambos caminos producen el mismo tipo de documento final (la especificación funcional); la diferencia es quién lo redacta y en qué contexto.
 
 ---
 
@@ -174,7 +174,7 @@ con usuarios| LEAD1
 
 **Qué hace:** toma un alcance amplio (un módulo, un proceso completo) y lo parte en piezas manejables — como armar el índice de un libro antes de escribir los capítulos. Cada pieza final es del tamaño justo para redactarse sin agobiar ni quedar vacía. También construye el brief inicial del proyecto si aún no existe.
 
-**Cómo se invoca:** `@sofka-asdd-ba-functional-architect` — se le entrega el alcance a descomponer (o el documento de referencia del proyecto depositado en `docs/specs/Contexto/`).
+**Cómo se invoca:** `@asdd-ba-functional-architect` — se le entrega el alcance a descomponer (o el documento de referencia del proyecto depositado en `docs/specs/Contexto/`).
 
 **Qué entrega:** el mapa completo del trabajo (EDT) con cada pieza numerada jerárquicamente (ej. `1.1.1`), su tamaño estimado y el orden recomendado de construcción.
 
@@ -201,7 +201,7 @@ con usuarios| LEAD1
 
 **Qué hace:** toma **una pieza a la vez** del mapa anterior y redacta el contenido funcional: la historia de usuario, quién puede hacer qué, el paso a paso del proceso, las reglas de negocio y qué preguntas quedan pendientes de resolver. También puede generar documentos adicionales a partir de la spec aprobada (DVF, HU, inventario de requerimientos).
 
-**Cómo se invoca:** `@sofka-asdd-ba-specification-lead` — se le indica qué pieza del mapa redactar (ej. "redactá la pieza 2.1.3 — Renovación Manual").
+**Cómo se invoca:** `@asdd-ba-specification-lead` — se le indica qué pieza del mapa redactar (ej. "redactá la pieza 2.1.3 — Renovación Manual").
 
 **Qué entrega:** el contenido funcional dentro de la especificación del nodo, más los artefactos de salida que correspondan.
 
@@ -233,7 +233,7 @@ con usuarios| LEAD1
 
 **Qué hace:** evalúa la spec producida por el Specification Lead contra 19 puntos de revisión organizados en 5 bloques. No corrige ni reescribe — detecta qué falta y emite un veredicto. Si la spec se rechaza, el AF resuelve los pendientes y el Specification Lead la reconstruye.
 
-**Cómo se invoca:** `@sofka-asdd-ba-specification-auditor` — se le entrega la ruta de la spec a auditar.
+**Cómo se invoca:** `@asdd-ba-specification-auditor` — se le entrega la ruta de la spec a auditar.
 
 **Qué entrega:** un informe con el veredicto y los gaps encontrados, con campos editables para que el AF complete la información faltante.
 
@@ -277,7 +277,7 @@ con usuarios| LEAD1
 
 **Cuándo activar:** cuando el Specification Lead o el Auditor marcan algo con `[DOMINIO_INEXPERTO]` o `[VACÍO_DE_FUENTE]`. No pertenece a un paso fijo del flujo — puede entrar desde cualquier punto donde aparezca una duda de dominio.
 
-**Cómo se invoca:** `@sofka-asdd-ba-functional-sme` — se le entrega la pregunta de dominio concreta.
+**Cómo se invoca:** `@asdd-ba-functional-sme` — se le entrega la pregunta de dominio concreta.
 
 **Dónde escribe (solo bajo demanda explícita del AF):**
 
@@ -311,7 +311,7 @@ Los dos skills pueden combinarse en la misma sesión cuando la pregunta toca amb
 
 **Cuándo activar:** en cualquiera de los tres momentos que se describen abajo. Es un agente transversal — no pertenece a una fase fija.
 
-**Cómo se invoca:** `@sofka-asdd-ba-scope-manager`
+**Cómo se invoca:** `@asdd-ba-scope-manager`
 
 **Dónde escribe:**
 

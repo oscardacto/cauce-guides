@@ -12,9 +12,9 @@ Las decisiones pendientes que detectes durante la descomposición deben clasific
 - **`[CONFLICTO_FUENTES]`** — dos fuentes de verdad describen el mismo aspecto de forma contradictoria; el arquitecto debe dictaminar cuál prevalece.
 - **`[INTERFAZ_PENDIENTE]`** — una integración o contrato de API necesario no está definido, no existe aún, o tiene gaps en su payload.
 - **`[DECISIÓN_ARQUITECTURA]`** — la resolución requiere una ADR o decisión de arquitectura que no se ha tomado todavía.
-- **`[DOMINIO_INEXPERTO]`** — requiere criterio sectorial de sofka-asdd-ba-functional-sme para resolverse.
+- **`[DOMINIO_INEXPERTO]`** — requiere criterio sectorial de asdd-ba-functional-sme para resolverse.
 - **`[ESCALAMIENTO_AL_CLIENTE]`** — solo el cliente (área de negocio, dueño del proceso) puede dictaminar.
-- **`[BRECHA_DE_FILTRO]`** — no aplica a ti directamente; lo levanta sofka-asdd-ba-specification-auditor.
+- **`[BRECHA_DE_FILTRO]`** — no aplica a ti directamente; lo levanta asdd-ba-specification-auditor.
 
 ### Marcador de referencia no verificada: `[ESTIMADO]`
 
@@ -34,7 +34,7 @@ No es un subtipo de decisión pendiente — es un marcador de referencia. Toda h
 
 ### Lo que NO levantas
 
-**No levantas decisiones que sofka-asdd-ba-specification-lead descubrirá naturalmente al redactar cada hoja.** Ejemplos que **NO** debes levantar tú:
+**No levantas decisiones que asdd-ba-specification-lead descubrirá naturalmente al redactar cada hoja.** Ejemplos que **NO** debes levantar tú:
 
 - Plantillas de documentos específicos que faltan.
 - Contratos de API de sistemas legacy no documentados.
@@ -50,7 +50,7 @@ Para estos casos: mencionarlos brevemente en "Notas para el AF" de la hoja afect
 Pregúntate antes de levantar una decisión pendiente: *"¿Esta decisión afecta cómo descompongo el módulo, o afecta cómo se redacta una hoja específica?"*
 
 - Si afecta la descomposición → la levantas tú.
-- Si afecta la redacción de una hoja → sofka-asdd-ba-specification-lead la detectará y la moverá a Sección 14 de la hoja correspondiente.
+- Si afecta la redacción de una hoja → asdd-ba-specification-lead la detectará y la moverá a Sección 14 de la hoja correspondiente.
 
 ---
 
@@ -66,7 +66,7 @@ Para cada DP respondida, añadir en su entrada existente de §4:
 
 | Estado | Cuándo aplicarlo |
 |---|---|
-| `RESUELTA` | La decisión cierra la pregunta completamente; sofka-asdd-ba-specification-lead puede actuar sin restricciones |
+| `RESUELTA` | La decisión cierra la pregunta completamente; asdd-ba-specification-lead puede actuar sin restricciones |
 | `PARCIALMENTE RESUELTA` | Tiene respuesta técnica pero quedan aspectos funcionales o de negocio pendientes de escalamiento |
 | `CONFIRMADO-BLOQUEANTE` | La DP confirma que la fuente o interfaz requerida no está disponible; las hojas afectadas siguen bloqueadas |
 
@@ -75,7 +75,7 @@ Para cada DP respondida, añadir en su entrada existente de §4:
 En cada hoja referenciada por la DP, reemplazar todo lenguaje `DP-XXX abierta` por la nota resuelta. Hacer la sustitución en: `Notas para el AF`, citas inline en `Alcance`, y citas en `Fuentes principales`.
 
 Formato según estado:
-- `✅ **DP-XXX RESUELTA (ver §4):** [resumen ejecutivo de la decisión — suficiente para que sofka-asdd-ba-specification-lead actúe]`
+- `✅ **DP-XXX RESUELTA (ver §4):** [resumen ejecutivo de la decisión — suficiente para que asdd-ba-specification-lead actúe]`
 - `⚠️ **DP-XXX PARCIALMENTE RESUELTA (ver §4):** [qué está definido; qué sigue pendiente]`
 - `🚫 **DP-XXX CONFIRMADO-BLOQUEANTE (ver §4):** [qué falta; cuáles hojas siguen bloqueadas]`
 
@@ -92,7 +92,7 @@ Una vez aplicados los pasos 1-3 para todas las DPs del lote:
 
 **Mantener en §4** únicamente:
 - `CONFIRMADO-BLOQUEANTE` — bloquea hojas activamente y requiere seguimiento de programa.
-- `PARCIALMENTE RESUELTA` — tiene aspectos funcionales abiertos que pueden surgir en sofka-asdd-ba-specification-lead.
+- `PARCIALMENTE RESUELTA` — tiene aspectos funcionales abiertos que pueden surgir en asdd-ba-specification-lead.
 
 **Principio:** §4 es un registro activo de impedimentos, no un historial. Solo viven aquí los ítems que todavía frenan la construcción de una o más hojas. El historial va en §3.5.
 
@@ -112,7 +112,7 @@ Añadir una entrada de versión en §3.5 con:
 - `Artefacto`: actualizar sufijo de versión.
 - Footer: `*Última actualización: AAAA-MM-DD · vX.Y.*`
 
-### Paso 7 — Activar `sofka-asdd-ba-change-log`
+### Paso 7 — Activar `asdd-ba-change-log`
 
 Tipo `ESTADO` sobre el artefacto EDT. Descripción: "EDT vX.Y → vX.(Y+1): resolución de N DPs — [lista de estados]."
 

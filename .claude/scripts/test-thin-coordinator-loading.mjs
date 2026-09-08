@@ -4,11 +4,11 @@ import { createHash } from "node:crypto";
 import { appendFileSync, cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
-import { parseFrontmatter } from "./lib/sofka-asdd-frontmatter-lib.mjs";
-import { readNormalized } from "./lib/sofka-asdd-hash-normalize-lib.mjs";
+import { parseFrontmatter } from "./lib/asdd-frontmatter-lib.mjs";
+import { readNormalized } from "./lib/asdd-hash-normalize-lib.mjs";
 
 const root = resolve(import.meta.dirname, "..", "..");
-const manifest = JSON.parse(readNormalized(resolve(root, ".sofka-asdd/coordinator-loading.json")));
+const manifest = JSON.parse(readNormalized(resolve(root, ".asdd/coordinator-loading.json")));
 const transcript = [];
 const words = (text) => String(text).trim().split(/\s+/u).filter(Boolean).length;
 

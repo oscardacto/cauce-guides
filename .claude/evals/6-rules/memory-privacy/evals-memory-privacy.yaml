@@ -1,4 +1,4 @@
-description: "Regla: sofka-asdd-memory-privacy — convención <private> y datos que NUNCA se persisten"
+description: "Regla: asdd-memory-privacy — convención <private> y datos que NUNCA se persisten"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

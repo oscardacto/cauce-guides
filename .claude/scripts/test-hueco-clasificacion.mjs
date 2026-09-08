@@ -18,8 +18,8 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { describirHueco, formaOperacion, TOPE_OPERACION } from "../hooks/_lib/sofka-asdd-hueco-clasificacion.mjs";
-import { getOrchestratorGuardDecision } from "../hooks/sofka-asdd-orchestrator-guard.mjs";
+import { describirHueco, formaOperacion, TOPE_OPERACION } from "../hooks/_lib/asdd-hueco-clasificacion.mjs";
+import { getOrchestratorGuardDecision } from "../hooks/asdd-orchestrator-guard.mjs";
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 const RAIZ = resolve(AQUI, "..", "..");
@@ -39,7 +39,7 @@ function assert(titulo, condicion, detalle = "") {
 const askDe = (command, cwd = RAIZ) =>
   getOrchestratorGuardDecision(
     { tool_name: "Bash", tool_input: { command }, cwd },
-    { CLAUDE_AGENT_ID: "", SOFKA_ASDD_VERSION: "3.5.0" },
+    { CLAUDE_AGENT_ID: "", ASDD_VERSION: "3.5.0" },
   );
 
 console.log("\n1 · Los valores se descartan, no se enmascaran");
@@ -60,10 +60,10 @@ console.log("\n1 · Los valores se descartan, no se enmascaran");
 }
 
 {
-  const { operacion } = formaOperacion("node .claude/scripts/sofka-asdd-herramienta-inexistente.mjs --modo x");
+  const { operacion } = formaOperacion("node .claude/scripts/asdd-herramienta-inexistente.mjs --modo x");
   assert(
     "de `node <script>` sobrevive el nombre, no la ruta",
-    operacion === "node sofka-asdd-herramienta-inexistente.mjs --modo",
+    operacion === "node asdd-herramienta-inexistente.mjs --modo",
     operacion,
   );
 }
@@ -83,8 +83,8 @@ console.log("\n2 · La descripción es accionable");
 
 {
   const texto = describirHueco({
-    segmento: "node .claude/scripts/sofka-asdd-herramienta-inexistente.mjs --modo x",
-    motivo: "script no declarado en el manifiesto: sofka-asdd-herramienta-inexistente.mjs",
+    segmento: "node .claude/scripts/asdd-herramienta-inexistente.mjs --modo x",
+    motivo: "script no declarado en el manifiesto: asdd-herramienta-inexistente.mjs",
   });
   for (const campo of ["intención", "operación", "motivo", "probado", "sugerencia"]) {
     assert(`la descripción trae «${campo}»`, texto.includes(campo));
@@ -109,7 +109,7 @@ console.log("\n2 · La descripción es accionable");
 console.log("\n3 · El guard describe el hueco y NO escribe nada");
 
 {
-  const decision = askDe("node .claude/scripts/sofka-asdd-herramienta-inexistente.mjs --modo x");
+  const decision = askDe("node .claude/scripts/asdd-herramienta-inexistente.mjs --modo x");
   assert("el veredicto sigue siendo ask", decision?.decision === "ask", JSON.stringify(decision?.decision));
   assert("la razón es la descripción del hueco", Boolean(decision?.reason?.includes("intención")));
   assert(
@@ -142,7 +142,7 @@ console.log("\n3 · El guard describe el hueco y NO escribe nada");
 
   const antes = censo(join(RAIZ, ".claude"));
   for (let i = 0; i < 3; i += 1) {
-    askDe("node .claude/scripts/sofka-asdd-herramienta-inexistente.mjs --modo x");
+    askDe("node .claude/scripts/asdd-herramienta-inexistente.mjs --modo x");
     askDe(`terraform plan -var 'password=hunter2-${i}'`);
   }
   const despues = censo(join(RAIZ, ".claude"));
@@ -160,7 +160,7 @@ console.log("\n3 · El guard describe el hueco y NO escribe nada");
 {
   // Y que el módulo no exporte nada que escriba: la superficie es una sola función
   // de texto más el constructor de la forma.
-  const modulo = await import("../hooks/_lib/sofka-asdd-hueco-clasificacion.mjs");
+  const modulo = await import("../hooks/_lib/asdd-hueco-clasificacion.mjs");
   const exportado = Object.keys(modulo).sort();
   assert(
     "el módulo solo exporta describirHueco, formaOperacion y el tope",
@@ -172,8 +172,8 @@ console.log("\n3 · El guard describe el hueco y NO escribe nada");
 console.log("\n4 · Un hueco repetido se describe de nuevo, y está bien");
 
 {
-  const a = askDe("node .claude/scripts/sofka-asdd-herramienta-inexistente.mjs --modo x");
-  const b = askDe("node .claude/scripts/sofka-asdd-herramienta-inexistente.mjs --modo x");
+  const a = askDe("node .claude/scripts/asdd-herramienta-inexistente.mjs --modo x");
+  const b = askDe("node .claude/scripts/asdd-herramienta-inexistente.mjs --modo x");
   assert("las dos veces da ask", a?.decision === "ask" && b?.decision === "ask");
   assert("y el mensaje es idéntico: no hay contador ni estado", a.reason === b.reason);
 }

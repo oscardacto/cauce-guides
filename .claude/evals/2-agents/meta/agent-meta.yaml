@@ -1,4 +1,4 @@
-description: "sofka-asdd-meta: token budget y governance del framework"
+description: "asdd-meta: token budget y governance del framework"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6
@@ -15,7 +15,7 @@ tests:
   - description: "PROCESO: Responde con formato [ACCION] en una línea"
     vars:
       input: |
-        El contexto está al 45%. Voy a invocar sofka-asdd-developer-backend para implementar
+        El contexto está al 45%. Voy a invocar asdd-developer-backend para implementar
         el módulo de pagos. ¿Procedo?
     assert:
       - type: contains
@@ -29,7 +29,7 @@ tests:
   - description: "PROCESO: Contexto en rojo → recomienda COMPACT o NUEVA-SESION"
     vars:
       input: |
-        El contexto está al 82%. Necesito invocar sofka-asdd-developer-backend + sofka-asdd-qa-engineer
+        El contexto está al 82%. Necesito invocar asdd-developer-backend + asdd-qa-engineer
         en paralelo. ¿Caben?
     assert:
       - type: llm-rubric
@@ -46,7 +46,7 @@ tests:
       - type: llm-rubric
         value: |
           El meta-agente debe responder [PROCEDER] indicando que esa pregunta es de arquitectura,
-          no de plataforma. Debe redirigir al sofka-asdd-solution-architect.
+          no de plataforma. Debe redirigir al asdd-solution-architect.
           NO debe responder la pregunta de microservicios vs monolito — eso no es su dominio.
 
   - description: "PROCESO: Governance — detecta inconsistencias en el framework"
@@ -61,7 +61,7 @@ tests:
           El meta-agente con trigger de healthcheck debe responder [GOVERNANCE] y verificar:
           1. CLAUDE.md lista todos los agentes correctamente
           2. Hooks están configurados
-          3. .sofka-asdd manifest está sincronizado con el filesystem
+          3. .asdd manifest está sincronizado con el filesystem
           Respuesta en el formato establecido, no en párrafos.
 
   - description: "PROCESO: Post-compact — recomienda qué re-cargar mínimo"

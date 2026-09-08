@@ -81,14 +81,14 @@ function initGitRepo(dir) {
 }
 
 // ============================================================================
-// sofka-asdd-codebase-size.mjs
+// asdd-codebase-size.mjs
 // ============================================================================
-console.log("\n=== Ola 2 — sofka-asdd-codebase-size.mjs ===");
-const codesizeHook = join(hooksDir, "sofka-asdd-codebase-size.mjs");
+console.log("\n=== Ola 2 — asdd-codebase-size.mjs ===");
+const codesizeHook = join(hooksDir, "asdd-codebase-size.mjs");
 
 {
   // T11: escape hatch
-  const r = runHook(codesizeHook, { SOFKA_ASDD_CODEBASE_SIZE_DISABLE: "1" });
+  const r = runHook(codesizeHook, { ASDD_CODEBASE_SIZE_DISABLE: "1" });
   assert(r.status === 0 && r.stdout.trim() === "", "T11", "codebase-size: escape hatch → sin output");
 }
 
@@ -97,8 +97,8 @@ const codesizeHook = join(hooksDir, "sofka-asdd-codebase-size.mjs");
   const tmp = makeTmpDir();
   try {
     initGitRepo(tmp);
-    mkdirSync(join(tmp, ".sofka-asdd"), { recursive: true });
-    writeFileSync(join(tmp, ".sofka-asdd", "sofka-asdd.lock"), JSON.stringify({
+    mkdirSync(join(tmp, ".asdd"), { recursive: true });
+    writeFileSync(join(tmp, ".asdd", "asdd.lock"), JSON.stringify({
       project_context: { maturity: "large" }
     }));
     const r = runHookInDir(codesizeHook, tmp);
@@ -114,8 +114,8 @@ const codesizeHook = join(hooksDir, "sofka-asdd-codebase-size.mjs");
   const tmp = makeTmpDir();
   try {
     initGitRepo(tmp);
-    mkdirSync(join(tmp, ".sofka-asdd"), { recursive: true });
-    writeFileSync(join(tmp, ".sofka-asdd", "sofka-asdd.lock"), JSON.stringify({
+    mkdirSync(join(tmp, ".asdd"), { recursive: true });
+    writeFileSync(join(tmp, ".asdd", "asdd.lock"), JSON.stringify({
       project_context: { maturity: "small" }
     }));
     const r = runHookInDir(codesizeHook, tmp);
@@ -136,14 +136,14 @@ const codesizeHook = join(hooksDir, "sofka-asdd-codebase-size.mjs");
 }
 
 // ============================================================================
-// sofka-asdd-model-strategy.mjs
+// asdd-model-strategy.mjs
 // ============================================================================
-console.log("\n=== Ola 2 — sofka-asdd-model-strategy.mjs ===");
-const modelHook = join(hooksDir, "sofka-asdd-model-strategy.mjs");
+console.log("\n=== Ola 2 — asdd-model-strategy.mjs ===");
+const modelHook = join(hooksDir, "asdd-model-strategy.mjs");
 
 {
   // T15: escape hatch
-  const r = runHook(modelHook, { SOFKA_ASDD_MODEL_STRATEGY_DISABLE: "1" });
+  const r = runHook(modelHook, { ASDD_MODEL_STRATEGY_DISABLE: "1" });
   assert(r.status === 0 && r.stdout.trim() === "", "T15", "model-strategy: escape hatch → sin output");
 }
 
@@ -162,8 +162,8 @@ const modelHook = join(hooksDir, "sofka-asdd-model-strategy.mjs");
   const tmp = makeTmpDir();
   try {
     initGitRepo(tmp);
-    mkdirSync(join(tmp, ".sofka-asdd"), { recursive: true });
-    writeFileSync(join(tmp, ".sofka-asdd", "sofka-asdd.lock"), JSON.stringify({
+    mkdirSync(join(tmp, ".asdd"), { recursive: true });
+    writeFileSync(join(tmp, ".asdd", "asdd.lock"), JSON.stringify({
       model_strategy: {
         phase_default: {
           specify: "sonnet", analyze: "sonnet", design: "opus",
@@ -180,14 +180,14 @@ const modelHook = join(hooksDir, "sofka-asdd-model-strategy.mjs");
 }
 
 // ============================================================================
-// sofka-asdd-tdd-state.mjs
+// asdd-tdd-state.mjs
 // ============================================================================
-console.log("\n=== Ola 2 — sofka-asdd-tdd-state.mjs ===");
-const tddHook = join(hooksDir, "sofka-asdd-tdd-state.mjs");
+console.log("\n=== Ola 2 — asdd-tdd-state.mjs ===");
+const tddHook = join(hooksDir, "asdd-tdd-state.mjs");
 
 {
   // T18: escape hatch
-  const r = runHook(tddHook, { SOFKA_ASDD_TDD_STATE_DISABLE: "1" });
+  const r = runHook(tddHook, { ASDD_TDD_STATE_DISABLE: "1" });
   assert(r.status === 0 && r.stdout.trim() === "", "T18", "tdd-state: escape hatch → sin output");
 }
 
@@ -196,8 +196,8 @@ const tddHook = join(hooksDir, "sofka-asdd-tdd-state.mjs");
   const tmp = makeTmpDir();
   try {
     initGitRepo(tmp);
-    mkdirSync(join(tmp, ".sofka-asdd"), { recursive: true });
-    writeFileSync(join(tmp, ".sofka-asdd", "testing-capabilities.yaml"), "strict_tdd: false\n");
+    mkdirSync(join(tmp, ".asdd"), { recursive: true });
+    writeFileSync(join(tmp, ".asdd", "testing-capabilities.yaml"), "strict_tdd: false\n");
     const r = runHookInDir(tddHook, tmp);
     assert(r.status === 0 && r.stdout.trim() === "", "T19", "tdd-state: strict_tdd=false → sin output");
   } finally { rmSync(tmp, { recursive: true, force: true }); }
@@ -208,8 +208,8 @@ const tddHook = join(hooksDir, "sofka-asdd-tdd-state.mjs");
   const tmp = makeTmpDir();
   try {
     initGitRepo(tmp);
-    mkdirSync(join(tmp, ".sofka-asdd"), { recursive: true });
-    writeFileSync(join(tmp, ".sofka-asdd", "testing-capabilities.yaml"),
+    mkdirSync(join(tmp, ".asdd"), { recursive: true });
+    writeFileSync(join(tmp, ".asdd", "testing-capabilities.yaml"),
       "strict_tdd: true\nrunner.command: bun test\n"
     );
     const r = runHookInDir(tddHook, tmp);
@@ -221,14 +221,14 @@ const tddHook = join(hooksDir, "sofka-asdd-tdd-state.mjs");
 }
 
 // ============================================================================
-// sofka-asdd-state-freshness.mjs
+// asdd-state-freshness.mjs
 // ============================================================================
-console.log("\n=== Ola 2 — sofka-asdd-state-freshness.mjs ===");
-const stateHook = join(hooksDir, "sofka-asdd-state-freshness.mjs");
+console.log("\n=== Ola 2 — asdd-state-freshness.mjs ===");
+const stateHook = join(hooksDir, "asdd-state-freshness.mjs");
 
 {
   // T21: escape hatch
-  const r = runHook(stateHook, { SOFKA_ASDD_STATE_FRESHNESS_DISABLE: "1" });
+  const r = runHook(stateHook, { ASDD_STATE_FRESHNESS_DISABLE: "1" });
   assert(r.status === 0 && r.stdout.trim() === "", "T21", "state-freshness: escape hatch → sin output");
 }
 
@@ -262,7 +262,7 @@ const stateHook = join(hooksDir, "sofka-asdd-state-freshness.mjs");
     initGitRepo(tmp);
     writeFileSync(join(tmp, ".asdd-run.json"), JSON.stringify({
       run_id: "2026-06-18-002", status: "in_progress", current_phase: "build",
-      resume_hint: "invocar sofka-asdd-developer-backend con scope payments/"
+      resume_hint: "invocar asdd-developer-backend con scope payments/"
     }));
     const r = runHookInDir(stateHook, tmp);
     assert(

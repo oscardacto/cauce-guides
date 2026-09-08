@@ -77,7 +77,7 @@ adelgazar el coordinador, no lazy skills.
 
 | Comando | p50 | p95 |
 |---|---:|---:|
-| `sofka-asdd-runtime-metrics.mjs` | 31 ms | 32 ms |
+| `asdd-runtime-metrics.mjs` | 31 ms | 32 ms |
 | `validate-template.mjs` | 118 ms | 126 ms |
 
 El costo de medir es suficientemente bajo para validación local por slice.

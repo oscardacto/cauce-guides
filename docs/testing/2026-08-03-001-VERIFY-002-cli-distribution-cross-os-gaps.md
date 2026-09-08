@@ -3,12 +3,12 @@
 | Campo | Valor |
 |---|---|
 | **Tipo de documento** | Auditoría de artefactos / traspaso técnico (read-only) |
-| **Autor** | `sofka-asdd-tech-lead` — capability `sofka-asdd-tech-lead-artifact-audit` |
+| **Autor** | `asdd-tech-lead` — capability `asdd-tech-lead-artifact-audit` |
 | **Fecha** | 2026-08-03 |
 | **Rama** | `fix/os-compatibility` |
 | **`run_id`** | `2026-08-03-001` |
 | **Fase** | VERIFY |
-| **Alcance auditado** | `.sofka-asdd/cli-contract.json` (contract_version `2.3.0`), `.sofka-asdd/checklist.json`, `docs/adoption/contract-spec.md`, `docs/adoption/cli-integration-guide.md`, `ASDD-VERSIONING.md`, `.claude/scripts/**`, `.claude/hooks/**` |
+| **Alcance auditado** | `.asdd/cli-contract.json` (contract_version `2.3.0`), `.asdd/checklist.json`, `docs/adoption/contract-spec.md`, `docs/adoption/cli-integration-guide.md`, `ASDD-VERSIONING.md`, `.claude/scripts/**`, `.claude/hooks/**` |
 | **Veredicto** | **FAIL** — 1 hallazgo bloqueante para la distribución, 2 mayores |
 
 ## Nota de alcance (leer antes que el resto)
@@ -27,14 +27,14 @@ Están fuera de alcance porque **ninguno de los tres se puede cerrar solo en est
   resultado.
 - El hueco 2 exige cambiar dos declaraciones acopladas (`cli-contract.json` y `checklist.json`) y,
   para expresar el piso correcto, exige un cambio en el **mecanismo de verificación del CLI**.
-- El hueco 3 es un cambio coordinado de contrato (v2.4) entre este repositorio y `sofka-ia/cli`,
+- El hueco 3 es un cambio coordinado de contrato (v2.4) entre este repositorio y `guide-ia/cli`,
   que tiene versionado de contrato propio.
 
 Este documento es el **traspaso** a quien tome ese trabajo. Es read-only: no modifica el
 contrato, el checklist ni los documentos de adopción.
 
 > **Advertencia de distribución sobre este mismo documento.** `docs/testing/` es una entrada de
-> `distribution` (`.sofka-asdd/cli-contract.json`, entrada 47 de 54) y **no** figura en
+> `distribution` (`.asdd/cli-contract.json`, entrada 47 de 54) y **no** figura en
 > `clean.files_to_remove`. Es decir, este archivo — contenido interno del mantenedor del
 > template — se copiaría a cada proyecto consumidor. Ver H-0.4.
 
@@ -61,7 +61,7 @@ Este hallazgo no estaba en el encargo. Apareció al investigar los puntos 3 y 4 
 ### Evidencia
 
 `docs/adoption/contract-spec.md:1` se titula "Contrato CLI ASDD — Especificación Formal **v1.0**".
-El contrato real declara `contract_version: "2.3.0"` (`.sofka-asdd/cli-contract.json:3`).
+El contrato real declara `contract_version: "2.3.0"` (`.asdd/cli-contract.json:3`).
 
 Comparando las 15 claves de primer nivel del contrato contra las menciones en la spec:
 
@@ -103,7 +103,7 @@ modelo de allowlist regida por `distribution`, **no** llegan, y el arreglo es ob
 
 Los dos modelos son incompatibles y **ambos están presentes en este repositorio**: uno en la guía,
 el otro implícito en las 54 entradas de `distribution`. La implementación real vive en
-`sofka-ia/cli`, fuera de este repositorio.
+`guide-ia/cli`, fuera de este repositorio.
 
 > **HIPÓTESIS — REQUIERE VALIDACIÓN.** Que el CLI implemente `distribution` como allowlist
 > autoritativa (y no como metadato informativo) no es verificable desde este repositorio.
@@ -184,15 +184,15 @@ distribuidos que no son `docs/**`:
 |---|---|---|
 | `ASDD-CHANGELOG.md` | 11 rutas de `docs/adoption/` y `docs/` raíz | 11 |
 | `CLAUDE.md` | `.claude/docs/adoption/model-strategy.md`, `.claude/docs/adoption/naming-convention.md`, `.claude/docs/mcps-by-domain.md`, `.claude/docs/plugins-by-role.md`, `.claude/docs/validation.md` | 5 |
-| `.claude/references/rules/sofka-asdd-git-safety.md` | `docs/adoption/ADR-007-git-guards-threat-model-reenfoque.md` | 1 |
-| `.claude/references/rules/sofka-asdd-spec-guard.md` | `docs/adoption/ADR-004-spec-per-area-model.md` | 1 |
-| `.claude/commands/sofka-asdd/qa-web-setup-app.md` | `.claude/docs/adoption/atf-web-setup-dependencies.md` | 1 |
-| `.claude/reference/coordinators/sofka-asdd-atf-web-qa-engineer-rollback.md` | `.claude/docs/adoption/atf-web-setup-dependencies.md` | 1 |
-| `.claude/hooks/sofka-asdd-user-prompt-submit.mjs` | `.claude/docs/adoption/smart-data-integration-plan.md` | 1 |
-| `.claude/hooks/sofka-asdd-pre-tool-use-analyze-guard.mjs` | `docs/smart-data/data/smart-data-cliente.xlsx` | 1 |
+| `.claude/references/rules/asdd-git-safety.md` | `docs/adoption/ADR-007-git-guards-threat-model-reenfoque.md` | 1 |
+| `.claude/references/rules/asdd-spec-guard.md` | `docs/adoption/ADR-004-spec-per-area-model.md` | 1 |
+| `.claude/commands/asdd/qa-web-setup-app.md` | `.claude/docs/adoption/atf-web-setup-dependencies.md` | 1 |
+| `.claude/reference/coordinators/asdd-atf-web-qa-engineer-rollback.md` | `.claude/docs/adoption/atf-web-setup-dependencies.md` | 1 |
+| `.claude/hooks/asdd-user-prompt-submit.mjs` | `.claude/docs/adoption/smart-data-integration-plan.md` | 1 |
+| `.claude/hooks/asdd-pre-tool-use-analyze-guard.mjs` | `docs/smart-data/data/smart-data-cliente.xlsx` | 1 |
 | `.mcp.recommended.json` | `.claude/docs/adoption/mcps-quickstart.md` | 1 |
 | `.gitignore` | `docs/smart-data/data/smart-data-cliente.xlsx` | 1 |
-| `.sofka-asdd/workspace.json` | `.claude/docs/adoption/worktree.md` | 1 |
+| `.asdd/workspace.json` | `.claude/docs/adoption/worktree.md` | 1 |
 
 Dos de esas referencias viven en **código de hook** y dos en **reglas que el consumidor
 carga en runtime** — no son prosa que se pueda dejar colgando.
@@ -217,7 +217,7 @@ La decisión es correcta y la contradicción es aparente. Se resuelve reconocien
    referencia como parte del onboarding y dos reglas la citan en runtime.
 
 Mover el grupo 2 a `.claude/docs/` — que ya está en `distribution` (entrada 5) y que la
-propia regla `sofka-asdd-claude-md-maintenance.md` designa como destino del detalle que no
+propia regla `asdd-claude-md-maintenance.md` designa como destino del detalle que no
 cabe en CLAUDE.md — cierra las dos mitades sin conflicto: `docs/**` queda genuinamente
 vacío salvo `.example/`, y las 27 referencias se actualizan en el mismo cambio.
 
@@ -245,7 +245,7 @@ estructuralmente por la allowlist reducida, lo que hace redundantes esas entrada
 | Actualizar `contract-spec.md` a v2.3: documentar `distribution`, `file_merge`, `file_copy_as`, `naming_convention`, `conditional_install`, `model_strategy`, `$schema`. Declarar explícitamente si `distribution` es allowlist autoritativa | Template | 1 |
 | Corregir el paso 6 del pseudocódigo de `cli-integration-guide.md` para que refleje el modelo real | Template + CLI (acuerdo) | 1 |
 | Actualizar el checklist §8 (conteo de checks y claves a revisar) | Template | 2 |
-| Escribir ADR de distribución y versionado del contrato (CORE-005) | `sofka-asdd-solution-architect` | 2 |
+| Escribir ADR de distribución y versionado del contrato (CORE-005) | `asdd-solution-architect` | 2 |
 | **DECIDIDO** — reducir la allowlist `docs/**` a `docs/.example/` + `docs/.gitkeep` y mover el manual del framework a `.claude/docs/` (ver "Decisión del maintainer" arriba) | Template | 1 |
 | Declarar la política no-sobrescritura de `docs/**` en el contrato (`when_target_exists: "skip"`) | Template + CLI (acuerdo) | 2 |
 
@@ -288,12 +288,12 @@ cliente que adopte el template.
 
 Magnitud del daño que esta clase ya causó **dentro** de este template, para dimensionar:
 
-- **5 hashes** de `.sofka-asdd/coordinator-loading.json` estaban almacenados como rendering CRLF
+- **5 hashes** de `.asdd/coordinator-loading.json` estaban almacenados como rendering CRLF
   (regenerados en Windows y commiteados con el valor local). Pasaban en Windows y **fallaban en
   Linux/CI**. Sobre un total de **21 entradas de hash bajo validación** (9 en
   `rule-loading.json` → `entries[].reference_sha256`; 12 en `coordinator-loading.json` →
   `rollback_sha256` y `routes[].sha256` de los coordinadores
-  `sofka-asdd-atf-web-qa-engineer` y `sofka-asdd-ba-functional-architect`), son **casi una cuarta
+  `asdd-atf-web-qa-engineer` y `asdd-ba-functional-architect`), son **casi una cuarta
   parte del universo hasheado**.
 - **16 ítems** reportaban `SHA-256 mismatch` falso en Windows.
 - **124 archivos** tienen CRLF commiteado **dentro del repositorio**, no solo en el working tree.
@@ -331,7 +331,7 @@ Un `SHA-256 mismatch` falso durante la adopción **aborta la instalación comple
 No es un warning cosmético: es una adopción fallida.
 
 Mitigación parcial ya lograda: `.claude/scripts/lib/` **sí** está en `distribution`, así que el
-consumidor recibe `sofka-asdd-hash-normalize-lib.mjs`, y `validate-template.mjs` (también
+consumidor recibe `asdd-hash-normalize-lib.mjs`, y `validate-template.mjs` (también
 distribuido) la importa en la línea 15 y la aplica en su lector (`const read = (f) =>
 normalizeForHash(...)`, línea 63). El validador distribuido, por tanto, ya es CRLF/BOM-insensible.
 
@@ -400,8 +400,8 @@ benchmark o eval que se quedan en el repositorio del mantenedor:
 Los scripts **distribuidos** resuelven su directorio con el patrón compatible desde Node 10:
 
 ```
-.claude/scripts/sofka-asdd-resolve-workspace.mjs:53   const HERE = dirname(fileURLToPath(import.meta.url));
-.claude/scripts/sofka-asdd-run-bootstrap.mjs:17       const HERE = dirname(fileURLToPath(import.meta.url));
+.claude/scripts/asdd-resolve-workspace.mjs:53   const HERE = dirname(fileURLToPath(import.meta.url));
+.claude/scripts/asdd-run-bootstrap.mjs:17       const HERE = dirname(fileURLToPath(import.meta.url));
 ```
 
 **Conclusión:** el piso de Node ≥ 20.11 aplica al **harness del mantenedor**, no al runtime que
@@ -416,12 +416,12 @@ Barrido completo de APIs con piso alto sobre `.claude/scripts/`, `.claude/hooks/
 | API | Piso de Node | Ocurrencias en artefactos **distribuidos** (`archivo:línea`) | Ocurrencias solo en el harness |
 |---|---|---|---|
 | `import.meta.dirname` | 20.11 | **ninguna** | 20 en 17 archivos (lista arriba) |
-| `Object.hasOwn` | 16.9 | `.claude/hooks/sofka-asdd-pre-tool-dispatcher.mjs:38` · `.claude/scripts/lib/sofka-asdd-frontmatter-lib.mjs:142` · `.claude/scripts/lib/sofka-asdd-run-reconciliation-lib.mjs:76` | `test-pretool-dispatcher-contract.mjs:11` |
-| `.at(-1)` | 16.6 | `.claude/scripts/lib/sofka-asdd-frontmatter-lib.mjs:10` | `benchmark-pretool-hooks.mjs:113` |
-| `??=` | 15.0 | `.claude/scripts/lib/sofka-asdd-plan-authorization-lib.mjs:429` · `sofka-asdd-resolve-workspace.mjs:334` · `sofka-asdd-run-bootstrap.mjs:138`, `:167` | `sofka-asdd-pretool-mode.mjs:34` |
+| `Object.hasOwn` | 16.9 | `.claude/hooks/asdd-pre-tool-dispatcher.mjs:38` · `.claude/scripts/lib/asdd-frontmatter-lib.mjs:142` · `.claude/scripts/lib/asdd-run-reconciliation-lib.mjs:76` | `test-pretool-dispatcher-contract.mjs:11` |
+| `.at(-1)` | 16.6 | `.claude/scripts/lib/asdd-frontmatter-lib.mjs:10` | `benchmark-pretool-hooks.mjs:113` |
+| `??=` | 15.0 | `.claude/scripts/lib/asdd-plan-authorization-lib.mjs:429` · `asdd-resolve-workspace.mjs:334` · `asdd-run-bootstrap.mjs:138`, `:167` | `asdd-pretool-mode.mjs:34` |
 | `.replaceAll()` | 15.0 | presente (28 ocurrencias en total, no desglosadas — el piso ya está cubierto por `??=`) | — |
 | `structuredClone` | 17.0 | **ninguna** | `test-lazy-capability-loading.mjs:114` · `test-reconcile-run-state.mjs:103` |
-| `realpathSync.native` | 9.2 | `sofka-asdd-resolve-workspace.mjs:42` | — |
+| `realpathSync.native` | 9.2 | `asdd-resolve-workspace.mjs:42` | — |
 | `.flatMap()` | 11.0 | presente (20 ocurrencias) | — |
 | `Object.groupBy` / `Map.groupBy` | 21.0 | **ninguna** — el único match de `.groupBy` (`.claude/tools/db-adapters/mock-adapter.js:166`) es una propiedad de objeto propio, **falso positivo** | — |
 | `.findLast`, `.toSorted`, `.toReversed`, `Array.fromAsync`, `AbortSignal.timeout`, `fs.cp` | 18–22 | **ninguna** | ninguna |
@@ -433,8 +433,8 @@ consume en el mismo flujo de adopción, y **dos más** de documentación, todos 
 
 | Sitio | Valor actual | ¿Se distribuye? |
 |---|---|:-:|
-| `.sofka-asdd/cli-contract.json:14` → `compatibility.required_tools` | `["node>=18", "git>=2.30"]` | sí (`.sofka-asdd/` completo) |
-| `.sofka-asdd/checklist.json:9` → `pre_install[0].expect_regex` | `^v(1[89]\|[2-9][0-9])\.` | sí (`.sofka-asdd/` completo) |
+| `.asdd/cli-contract.json:14` → `compatibility.required_tools` | `["node>=18", "git>=2.30"]` | sí (`.asdd/` completo) |
+| `.asdd/checklist.json:9` → `pre_install[0].expect_regex` | `^v(1[89]\|[2-9][0-9])\.` | sí (`.asdd/` completo) |
 | `.claude/dashboard/package.json:16-18` → `engines.node` | `>=18` | sí (`.claude/dashboard/`) |
 | `.claude/docs/validation.md:47` y `:186` (prosa) | `Node.js >= 18` | sí |
 | `docs/adoption/contract-spec.md:87` (ejemplo de la spec) | `node>=18` | no (`clean.files_to_remove`) |
@@ -491,7 +491,7 @@ demasiado estrecho.
    `.claude/docs/validation.md:47` y `:186`. Y el ejemplo de `contract-spec.md:87` aunque no se distribuya,
    para que el mantenedor no lo replique.
 3. Corregir el regex de git a algo que exprese `>=2.30` de verdad, o migrar a comparación semver.
-4. Abrir seguimiento en `sofka-ia/cli` para `type: "semver_gte"` en `checklist.pre_install`
+4. Abrir seguimiento en `guide-ia/cli` para `type: "semver_gte"` en `checklist.pre_install`
    (opción C) — bump MINOR de contrato, sin urgencia si se adopta A.
 
 ---
@@ -502,7 +502,7 @@ demasiado estrecho.
 
 ### Evidencia — el contrato no tiene ninguna noción de contenido
 
-Búsqueda literal sobre el JSON completo de `.sofka-asdd/cli-contract.json`:
+Búsqueda literal sobre el JSON completo de `.asdd/cli-contract.json`:
 
 | Clave buscada | Ocurrencias |
 |---|:-:|
@@ -531,13 +531,13 @@ previo: **hay que proponerlo de cero**, no referenciar algo existente.
 Lo que sí existe, y es lo más cercano a una política de actualización, es
 `ASDD-VERSIONING.md:165-169`:
 
-> **¿Cómo actualizo mi proyecto al último template?** Usá `sofka-ai update` si el CLI lo soporta, o
-> compará tu `.sofka-asdd/sofka-asdd.lock.version` contra la versión del repo fuente. Si el bump
+> **¿Cómo actualizo mi proyecto al último template?** Usá `guide-ai update` si el CLI lo soporta, o
+> compará tu `.asdd/asdd.lock.version` contra la versión del repo fuente. Si el bump
 > es PATCH o MINOR, copiar los archivos modificados es seguro. Si es MAJOR, seguí
 > `.claude/docs/migrations/{N-1}-to-{N}.md`.
 
 Ese texto **es exactamente la fricción** que este hueco describe ("copiar los archivos
-modificados" a mano), condicionada a un `sofka-ai update` cuyo soporte no se afirma. Y
+modificados" a mano), condicionada a un `guide-ai update` cuyo soporte no se afirma. Y
 `ASDD-VERSIONING.md` está en `clean.files_to_remove`, igual que `.claude/docs/migrations/`: **el consumidor
 no recibe ni la FAQ de actualización ni las guías de migración**.
 
@@ -553,12 +553,12 @@ Para eso el CLI necesita hashes por archivo y por versión, y el contrato no pub
 
 | Repositorio | Qué necesita aportar |
 |---|---|
-| **Template (este)** | Publicar un manifiesto de hashes por archivo en cada release, calculado **con normalización**. La lib `.claude/scripts/lib/sofka-asdd-hash-normalize-lib.mjs` (fase 2) ya implementa exactamente esa normalización — CRLF→LF y strip de BOM. Y `npm run hash:regen` ya es el generador idempotente |
-| **CLI (`sofka-ia/cli`)** | Consumir el manifiesto y decidir sobreescritura vs merge por archivo. Sería **contract v2.4** |
+| **Template (este)** | Publicar un manifiesto de hashes por archivo en cada release, calculado **con normalización**. La lib `.claude/scripts/lib/asdd-hash-normalize-lib.mjs` (fase 2) ya implementa exactamente esa normalización — CRLF→LF y strip de BOM. Y `npm run hash:regen` ya es el generador idempotente |
+| **CLI (`guide-ia/cli`)** | Consumir el manifiesto y decidir sobreescritura vs merge por archivo. Sería **contract v2.4** |
 
 La pieza del template está más cerca de lo que parece: la normalización ya es fuente única de
 verdad compartida entre validador y generador, por diseño explícito. El generador
-(`.claude/scripts/sofka-asdd-regen-hashes.mjs:36`) importa `readNormalized` de la lib; el validador
+(`.claude/scripts/asdd-regen-hashes.mjs:36`) importa `readNormalized` de la lib; el validador
 (`.claude/scripts/validate-template.mjs:15`) importa `normalizeForHash` de la misma lib y la aplica
 en su lector único (línea 63). El comentario de cabecera del generador (líneas 9 y 15) documenta el
 porqué: los hashes *"se regeneraban a mano con `sha256sum`/`certutil`/`Get-FileHash`, y así fue
@@ -567,11 +567,11 @@ normalización.
 
 ### H-3.a — Nuevo hallazgo: el generador de hashes no se distribuye, y el fallo no dice qué hacer
 
-`.claude/scripts/sofka-asdd-regen-hashes.mjs` **no está en `distribution`** (de los 67 `.mjs` de
+`.claude/scripts/asdd-regen-hashes.mjs` **no está en `distribution`** (de los 67 `.mjs` de
 `.claude/scripts/`, solo **10** se distribuyen individualmente, más `lib/` completo). `package.json`
 tampoco se distribuye, así que **`npm run hash:regen` no existe para el consumidor**.
 
-Pero el consumidor **sí** recibe los archivos hasheados (`.sofka-asdd/` completo) y sus objetivos
+Pero el consumidor **sí** recibe los archivos hasheados (`.asdd/` completo) y sus objetivos
 (`.claude/references/` es la entrada 8 de `distribution`), y **sí** recibe el validador que
 verifica los 21 hashes. Si un consumidor personaliza una referencia de regla — algo que el template
 no prohíbe — el validador falla con un mensaje sin remediación:
@@ -586,11 +586,11 @@ Ninguno menciona un regenerador. Y con `post_install.must_pass: true` + `on_fail
 momento de la adopción eso es una instalación abortada sin salida documentada.
 
 Nota tranquilizadora del mismo barrido: se verificó que **ninguno** de los 7 scripts no
-distribuidos con aspecto de runtime (`sofka-asdd-artifact-runtime`, `sofka-asdd-context-budget`,
-`sofka-asdd-pre-tool-dispatcher-prototype`, `sofka-asdd-pretool-mode`,
-`sofka-asdd-reconcile-run-state`, `sofka-asdd-regen-hashes`, `sofka-asdd-runtime-metrics`) es
+distribuidos con aspecto de runtime (`asdd-artifact-runtime`, `asdd-context-budget`,
+`asdd-pre-tool-dispatcher-prototype`, `asdd-pretool-mode`,
+`asdd-reconcile-run-state`, `asdd-regen-hashes`, `asdd-runtime-metrics`) es
 referenciado desde artefactos distribuidos (agentes, skills, rules, references, commands, hooks,
-`settings.json`, `.sofka-asdd/`, `.claude/docs/validation.md`, `CLAUDE.md`). No hay referencias colgantes:
+`settings.json`, `.asdd/`, `.claude/docs/validation.md`, `CLAUDE.md`). No hay referencias colgantes:
 la allowlist es coherente en ese aspecto. El problema de H-3.a es la **ausencia de una vía de
 remediación**, no una referencia rota.
 
@@ -626,7 +626,7 @@ de magnitud menos que el total si se mira archivo por archivo del árbol complet
    CLI) y solo después **opción A** (manifiesto). C ya elimina el ruido de EOL, que es el problema
    concreto reportado.
 3. Cerrar H-3.a de forma independiente y barata: distribuir
-   `.claude/scripts/sofka-asdd-regen-hashes.mjs`, o bien enriquecer los tres mensajes de
+   `.claude/scripts/asdd-regen-hashes.mjs`, o bien enriquecer los tres mensajes de
    `SHA-256 mismatch` del validador con la instrucción de remediación. Es un arreglo del template,
    sin dependencia del CLI.
 4. Registrar la decisión como ADR (CORE-005), dado que H-0.3 confirma que no existe ninguno sobre
@@ -645,13 +645,13 @@ acuerdo con el CLI, y solo al final lo que necesita un bump de contrato.**
 | **2** | Confirmar que la renormalización del índice queda commiteada en esta rama | Template | No | Sin esto, el template distribuye 124 blobs con CRLF y la política nueva no cambia nada |
 | **3** | Subir el piso de Node a `>=22` en contrato **y** checklist, en el mismo commit (hueco 2, opción A) | Template | **No** | La opción A esquiva el límite del regex sin tocar el CLI. Barato y cierra un piso en fin de vida |
 | **4** | Alinear los sitios de documentación del piso: `.claude/dashboard/package.json`, `.claude/docs/validation.md:47` y `:186` | Template | No | Evita que los 4 sitios distribuidos divergan entre sí |
-| **5** | Distribuir `sofka-asdd-regen-hashes.mjs` o enriquecer los mensajes de mismatch (H-3.a) | Template | No | Da al consumidor una salida ante un fallo que hoy aborta la instalación |
+| **5** | Distribuir `asdd-regen-hashes.mjs` o enriquecer los mensajes de mismatch (H-3.a) | Template | No | Da al consumidor una salida ante un fallo que hoy aborta la instalación |
 | **6** | Actualizar `contract-spec.md` a v2.3 documentando las 6 claves ausentes, en especial la semántica de `distribution` (H-0) | Template | No | Precondición para que los pasos 7-9 no sean a ciegas |
 | **7** | Resolver con el equipo del CLI si `distribution` es allowlist o si rige `copyTree` (H-0.1) | Template + CLI | Sí (pregunta) | Determina si el paso 1 tuvo efecto real. **No bloquea el paso 1**, que es inocuo en ambos escenarios |
 | **8** | Medir la contaminación CRLF en 2-3 proyectos consumidores reales | Template + consumidores | No | Decide si el hueco 3 amerita esfuerzo alto |
 | **9** | Hueco 3, opción C: normalización en memoria antes de comparar, en el CLI | CLI | Sí | Entrega la mayor parte del valor sin manifiesto |
 | **10** | Hueco 3, opción A: manifiesto de hashes + `merge_strategy`. Contract v2.4 | Template + CLI | Sí | Esfuerzo alto, condicionado al paso 8 |
-| **11** | ADR de distribución y versionado del contrato (H-0.3, CORE-005) | `sofka-asdd-solution-architect` | No | Registra las decisiones de los pasos 1-10 |
+| **11** | ADR de distribución y versionado del contrato (H-0.3, CORE-005) | `asdd-solution-architect` | No | Registra las decisiones de los pasos 1-10 |
 
 Los pasos **1 a 6** se ejecutan íntegramente en este repositorio, sin esperar al CLI.
 Cubren el hueco 1 completo, el hueco 2 en su parte accionable, H-3.a y H-0.
@@ -668,7 +668,7 @@ La política de `.gitattributes` protege solo si cada checkout la respeta: si un
 con una configuración que la ignora, si la borra por considerarla ruido del template, o si un
 submódulo/worktree no la hereda, la protección desaparece **silenciosamente** y el fallo reaparece
 como `SHA-256 mismatch` en CI. La normalización en código
-(`.claude/scripts/lib/sofka-asdd-hash-normalize-lib.mjs`) es la defensa que no depende de
+(`.claude/scripts/lib/asdd-hash-normalize-lib.mjs`) es la defensa que no depende de
 configuración externa. Son **capas complementarias, no alternativas**: `.gitattributes` previene
 que el contenido divergente entre al repositorio; la lib garantiza que, si entró, el veredicto no
 cambie según el sistema operativo. Quitar cualquiera de las dos reintroduce la clase de defecto.
@@ -676,10 +676,10 @@ cambie según el sistema operativo. Quitar cualquiera de las dos reintroduce la 
 ### 2. Regenerar hashes a mano con `sha256sum` (o `certutil`, o `Get-FileHash`)
 
 Es exactamente cómo entraron los 5 hashes contaminados de
-`.sofka-asdd/coordinator-loading.json`. Esas herramientas hashean **bytes crudos de disco**, así
+`.asdd/coordinator-loading.json`. Esas herramientas hashean **bytes crudos de disco**, así
 que en Windows con `core.autocrlf=true` producen el hash del rendering CRLF local, que pasa en
 Windows y falla en Linux/CI. El único camino soportado es **`npm run hash:regen`**
-(`.claude/scripts/sofka-asdd-regen-hashes.mjs`), que importa `readNormalized` de la lib compartida
+(`.claude/scripts/asdd-regen-hashes.mjs`), que importa `readNormalized` de la lib compartida
 y es idempotente. El propio encabezado del script documenta este incidente en sus líneas 9 y 15
 para que no vuelva a pasar.
 
@@ -744,11 +744,11 @@ el problema real está en otro lado.
 ### Qué NO se hizo
 
 - **No se modificó ningún artefacto.** El documento es read-only por la capability aplicada
-  (`sofka-asdd-tech-lead-artifact-audit`). No se tocó `cli-contract.json`, `checklist.json`,
+  (`asdd-tech-lead-artifact-audit`). No se tocó `cli-contract.json`, `checklist.json`,
   `contract-spec.md`, `cli-integration-guide.md` ni ningún script.
 - **No se corrigió ninguno de los tres huecos** — están fuera del alcance de la remediación
   cross-OS, según la nota de alcance inicial.
-- **No se verificó el comportamiento real del CLI.** `sofka-ia/cli` es otro repositorio, no
+- **No se verificó el comportamiento real del CLI.** `guide-ia/cli` es otro repositorio, no
   disponible en esta sesión. Todo lo relativo a su implementación está marcado como hipótesis.
 - **No se midió ningún proyecto consumidor real.** Las magnitudes citadas son del template.
 - **No se consultó el calendario oficial de soporte de Node.** Las afirmaciones sobre fin de vida
@@ -763,4 +763,4 @@ el problema real está en otro lado.
 ART-001 (nombre de artefacto run-trazable) · ART-003 (capability cargada como primera operación) ·
 ART-004 (afirmaciones no verificables marcadas como hipótesis) · CORE-005 (deuda de ADR reportada)
 · GS-001 (rama no protegida verificada) · GS-003 (sin commit) ·
-`sofka-asdd-spanish-orthography.md`.
+`asdd-spanish-orthography.md`.

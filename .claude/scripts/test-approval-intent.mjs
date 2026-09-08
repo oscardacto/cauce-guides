@@ -7,7 +7,7 @@
  * cubren FLEXIONES que no están enumeradas en el código — salen de la raíz.
  */
 import assert from "node:assert/strict";
-import { classifyApprovalIntent } from "./lib/sofka-asdd-approval-intent-lib.mjs";
+import { classifyApprovalIntent } from "./lib/asdd-approval-intent-lib.mjs";
 
 let pass = 0;
 let fail = 0;

@@ -1,8 +1,8 @@
 # Brief: Hardening de rendimiento, contexto y seguridad del runtime ASDD
 
-**Proyecto:** project-structure / Sofka ASDD  
+**Proyecto:** project-structure / Guide ASDD  
 **Fecha:** 2026-07-17  
-**Owner:** Maintainers de Sofka ASDD
+**Owner:** Maintainers de Guide ASDD
 
 ## ¿Qué construimos?
 
@@ -18,7 +18,7 @@ Evolucionaremos el runtime agéntico de ASDD para reducir latencia, consumo de c
 
 - Plazo: entrega incremental; cada slice debe ser revertible y medible.
 - Regulaciones: no se introduce un régimen regulatorio específico; aplican secure-by-default, least privilege y trazabilidad.
-- Dependencias: runtime de Claude Code, hooks Node.js sin dependencias externas y contrato de distribución de Sofka ASDD.
+- Dependencias: runtime de Claude Code, hooks Node.js sin dependencias externas y contrato de distribución de Guide ASDD.
 - Restricciones técnicas:
   - No forzar Opus para compensar prompts sobredimensionados.
   - Mantener compatibilidad con macOS, Linux y Windows.

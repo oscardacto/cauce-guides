@@ -5,7 +5,7 @@
 //   · classifySegment  -> el léxico de lectura (GIT_READ)
 //   · isNarrowGitAdd   -> el `git add` acotado
 import assert from "node:assert/strict";
-import { classifySegment, isNarrowGitAdd } from "../hooks/_lib/sofka-asdd-command-plane.mjs";
+import { classifySegment, isNarrowGitAdd } from "../hooks/_lib/asdd-command-plane.mjs";
 
 const root = process.cwd();
 const clase = (c) => classifySegment(c, { caller: "orchestrator", root, isFirst: true }).class;

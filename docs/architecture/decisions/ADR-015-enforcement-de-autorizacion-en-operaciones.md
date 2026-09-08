@@ -8,7 +8,7 @@ Relacionado con: ADR-011, run `2026-07-17-002`, ORC-010, GS-003
 
 ADR-011 definió que una aprobación quedaba ligada a hash, agente, scope y
 comandos. La implementación conservó esos campos, pero
-`sofka-asdd-plan-gate.mjs` llamó `consumeAuthorization(agent)` solo con
+`asdd-plan-gate.mjs` llamó `consumeAuthorization(agent)` solo con
 `subagent_type`. En consecuencia, la prueba E2E permitió que el trabajo real
 fuera hacia un archivo distinto del presentado al usuario.
 

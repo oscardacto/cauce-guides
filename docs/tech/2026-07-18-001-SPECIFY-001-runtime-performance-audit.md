@@ -19,7 +19,7 @@ La evaluación fue estática y local:
 
 1. Conteo de palabras y bytes de `CLAUDE.md`, rules, agents, skills, commands
    y hooks.
-2. Ejecución de `.claude/scripts/sofka-asdd-runtime-metrics.mjs`.
+2. Ejecución de `.claude/scripts/asdd-runtime-metrics.mjs`.
 3. Recalculo independiente de `agent + skills`, soportando listas YAML inline
    y de bloque.
 4. Conteo de hooks aplicables a `Bash`, `Write` y `Edit` desde
@@ -64,7 +64,7 @@ Estos totales no incluyen las 16.973 palabras globales ni schemas de tools/MCP.
 
 ### H-01 — El gate de contexto subestima skills inline
 
-`.claude/scripts/lib/sofka-asdd-context-budget-lib.mjs` reconoce únicamente:
+`.claude/scripts/lib/asdd-context-budget-lib.mjs` reconoce únicamente:
 
 ```yaml
 skills:
@@ -98,7 +98,7 @@ todos toman el fast path, el costo de procesos se acumula por cada tool call.
 
 ### H-04 — Se repite contexto de orquestación por turno
 
-`sofka-asdd-user-prompt-submit.mjs` emite un núcleo ORC de 145 palabras aun
+`asdd-user-prompt-submit.mjs` emite un núcleo ORC de 145 palabras aun
 cuando no hay señal especial. En una conversación de veinte turnos agrega
 aproximadamente 2.900 palabras repetidas al historial.
 
@@ -218,4 +218,4 @@ la futura corrección.
 - `docs/specs/2026-07-17-002-ANALYZE-006-plan-authorization-binding-index.md`
 - `docs/adoption/ADR-005-conditional-rule-loading.md`
 - `docs/baselines/asdd-runtime-baseline.json`
-- `.sofka-asdd/context-budget.json`
+- `.asdd/context-budget.json`

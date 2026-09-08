@@ -120,7 +120,7 @@ function parseBasePruebasFlows(filepath) {
       const cleanTitle = m[2].replace(/⚠️.*$/, '').trim();
       curHu = { hu_id: m[1].trim(), title: cleanTitle, flow: '' };
       // Guardar en header si hay módulo activo, y SIEMPRE en byId para fallback
-      // (P85d maneja HUs huérfanas del modo append de /sofka-asdd:qa-web-diagnose que
+      // (P85d maneja HUs huérfanas del modo append de /asdd:qa-web-diagnose que
       // no emite `## Módulo:` para HUs nuevas — bug pendiente P87 modo acumulativo).
       if (curMod) {
         byHeader[curMod] = byHeader[curMod] || [];
@@ -169,7 +169,7 @@ function huIdNumber(huid) {
 //
 // P85a además: el flow_map ahora se PERSISTE como artefacto
 // auditable en `docs/testing/atf-web/{run_id}/strategy/flow_map.json` (no solo render
-// in-memory). Consumidores futuros (dashboard externo, /sofka-asdd:qa-web-exec, validators)
+// in-memory). Consumidores futuros (dashboard externo, /asdd:qa-web-exec, validators)
 // pueden leerlo sin reconstruirlo desde execution_plan.
 function synthesizeFlowMap(ep, basePruebasPath) {
   if (!ep) return null;
@@ -179,7 +179,7 @@ function synthesizeFlowMap(ep, basePruebasPath) {
 
   // P85d — parsear flujos por HU desde base_pruebas.md (si existe).
   // bpFlows = { byHeader: {...}, byId: {...} } — el byId se usa como fallback
-  // cuando el modo append de /sofka-asdd:qa-web-diagnose no escribe `## Módulo:` para HUs nuevas.
+  // cuando el modo append de /asdd:qa-web-diagnose no escribe `## Módulo:` para HUs nuevas.
   const bpFlows = parseBasePruebasFlows(basePruebasPath);
 
   // E2E cross-module flows.
@@ -1006,12 +1006,12 @@ function main(runId) {
   ingestFile('test_strategy.md',     'strategy/hu_priority.md');
   ingestFile('execution_plan.json',  'strategy/execution_plan.json');
 
-  // Visual + UX + A11y (producido por /sofka-asdd:qa-web-visual-ux-a11y → tools/aggregate-vua-results.js)
+  // Visual + UX + A11y (producido por /asdd:qa-web-visual-ux-a11y → tools/aggregate-vua-results.js)
   // Vive en root del run (no en sub-carpeta) — consumido por renderUX() en dashboard.html.
   // Si no existe, autoHideTabs() del dashboard oculta el tab automáticamente.
   ingestFile('visual_ux_a11y_results.json', 'visual_ux_a11y_results.json');
 
-  // Performance / Core Web Vitals (producido por /sofka-asdd:qa-web-perf → tools/lh-aggregate-results.js)
+  // Performance / Core Web Vitals (producido por /asdd:qa-web-perf → tools/lh-aggregate-results.js)
   // Vive en root del run (no en sub-carpeta) — consumido por renderPerf() en dashboard.html.
   // Si no existe, autoHideTabs() del dashboard oculta el tab automáticamente.
   ingestFile('performance_results.json', 'performance_results.json');
@@ -1057,7 +1057,7 @@ function main(runId) {
     ingest('flow_map.json', flowMapJson);
     // P85a: persistir como artefacto auditable en strategy/.
     // Antes solo vivía en memoria embebido en window.ATF_DATA. Ahora
-    // consumidores externos (validators, /sofka-asdd:qa-web-exec, dashboard externo) pueden
+    // consumidores externos (validators, /asdd:qa-web-exec, dashboard externo) pueden
     // leerlo sin reconstruir desde execution_plan.
     const strategyDir = path.join(runDir, 'strategy');
     if (fs.existsSync(strategyDir)) {

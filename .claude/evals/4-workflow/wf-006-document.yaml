@@ -19,9 +19,9 @@ tests:
         Necesitamos documentar el ciclo: arquitectura final, ADRs, API docs y changelog.
     assert:
       - type: icontains
-        value: "sofka-asdd-tech-lead"
+        value: "asdd-tech-lead"
       - type: icontains
-        value: "sofka-asdd-solution-architect"
+        value: "asdd-solution-architect"
       - type: llm-rubric
         value: |
           WF-006 tiene tech-lead y architect como primarios:

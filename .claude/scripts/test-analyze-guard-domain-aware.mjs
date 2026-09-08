@@ -3,7 +3,7 @@
 // .claude/scripts/test-analyze-guard-domain-aware.mjs
 //
 // Harness de tests para la rama Data del hook analyze-guard
-// (.claude/hooks/sofka-asdd-pre-tool-use-analyze-guard.mjs), según ADR-003
+// (.claude/hooks/asdd-pre-tool-use-analyze-guard.mjs), según ADR-003
 // "domain-aware analyze guard".
 //
 // Verifica los tres modos M1/M2/M3 y la ruta software original, usando fixtures
@@ -36,7 +36,7 @@ const hookFile = join(
   __dirname,
   "..",
   "hooks",
-  "sofka-asdd-pre-tool-use-analyze-guard.mjs"
+  "asdd-pre-tool-use-analyze-guard.mjs"
 );
 
 let passed = 0;

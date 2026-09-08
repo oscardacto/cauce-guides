@@ -1,4 +1,4 @@
-description: "sofka-asdd-ux-ui: componentes, accesibilidad y design system"
+description: "asdd-ux-ui: componentes, accesibilidad y design system"
 
 providers:
   - id: anthropic:messages:claude-sonnet-4-6

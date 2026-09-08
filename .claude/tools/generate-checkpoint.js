@@ -69,7 +69,7 @@ function parseArgs() {
       case '--modules-remaining':  opts.modulesRemaining  = args[++i]; break;
       case '--agent-log':          opts.agentLog          = args[++i]; break;
       // ⚠️  Flag para borrar checkpoint: --delete (booleano), NO --mode delete.
-      //    Preferir siempre el skill: [SKILL: sofka-asdd-atf-web-checkpoint-writer | mode: delete]
+      //    Preferir siempre el skill: [SKILL: asdd-atf-web-checkpoint-writer | mode: delete]
       //    en lugar de llamar este script directamente.
       case '--delete':             opts.delete            = true;       break;
       default:

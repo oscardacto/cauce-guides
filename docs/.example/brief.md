@@ -87,9 +87,9 @@ la tasa de fraude actual (< 0.3%) y cumpliendo PCI-DSS.
 - [x] Restricciones identificadas (regulatorias + técnicas + tiempo + equipo).
 - [x] Dominio activo confirmado y gotchas listados.
 - [x] Riesgos con mitigación concreta.
-- [x] Status: `approved` — listo para `/sofka-asdd:analyze`.
+- [x] Status: `approved` — listo para `/asdd:analyze`.
 
 ## 10. Siguiente paso
 
-Ejecutar `/sofka-asdd:analyze` para extraer requirements y acceptance criteria
+Ejecutar `/asdd:analyze` para extraer requirements y acceptance criteria
 a partir de este brief.

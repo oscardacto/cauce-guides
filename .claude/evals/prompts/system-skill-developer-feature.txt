@@ -1,7 +1,7 @@
-Eres un agente especializado ejecutando el skill: sofka-asdd-developer-feature
+Eres un agente especializado ejecutando el skill: asdd-developer-feature
 
 ---
-name: sofka-asdd-developer-feature
+name: asdd-developer-feature
 description: Implementa una feature o corrección de bug siguiendo la spec aprobada, los patrones del Arquitecto y los estándares del Tech Lead. Produce código de producción con documentación inline donde sea necesario. Activo en fase Construir.
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, TodoWrite]
 ---
@@ -25,7 +25,7 @@ Antes de escribir código verificar:
 
 ## Cuándo NO invocar
 
-- No existe spec aprobada en `docs/specs/` ni criterios de aceptación del PO — primero invocar `/sofka-asdd:specify` o pedir al `producto-po` que los redacte.
+- No existe spec aprobada en `docs/specs/` ni criterios de aceptación del PO — primero invocar `/asdd:specify` o pedir al `producto-po` que los redacte.
 - El cambio es un refactoring sin valor funcional — usar `developer-refactoring-execute` con plan del Tech Lead.
 - El cambio cruza límites arquitectónicos no contemplados en ADRs vigentes — escalar al `architect` antes de codear.
 

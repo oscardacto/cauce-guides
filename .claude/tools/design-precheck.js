@@ -6,7 +6,7 @@
  * eliminando Reads redundantes durante la inferencia. Mismo patrón que
  * `diagnose-merge.js pre-check`.
  *
- * El agente design-team (modo standalone /sofka-asdd:qa-web-design) recibe el path a este JSON y
+ * El agente design-team (modo standalone /asdd:qa-web-design) recibe el path a este JSON y
  * usa los campos pre-resueltos en lugar de hacer Reads de:
  *   - docs/testing/atf-web/knowledge/{app_behavior, test_gotchas}.{app}.md (excerpts)
  *   - {strategy_dir}/execution_plan.json (filtrado al módulo objetivo)

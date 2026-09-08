@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * aggregate-responsive-cp.js — consolida resultados de viewports en el result.json
- * raíz de un CP (REGLA 28 / REGLA 31 de sofka-asdd-atf-web-executor-invariants.md).
+ * raíz de un CP (REGLA 28 / REGLA 31 de asdd-atf-web-executor-invariants.md).
  *
  * Lee todos los {viewport_name}/result.json para el CP dado, aplica la
  * result_policy configurada (strict: FAIL > BLOCKED > PASS) y escribe el
