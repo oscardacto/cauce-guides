@@ -1,0 +1,35 @@
+{
+  "$schema": "Catálogo de técnicas ISTQB aplicables por endpoint",
+  "wi_id": "wi-NNN",
+  "technique_catalog": [
+    {
+      "endpoint": "{METHOD} {path}",
+      "techniques_applied": [
+        {
+          "technique": "EP | BVA | Decision Table | State Transition | Pairwise | Error Guessing | Contract Testing",
+          "target_fields": ["{field_name}"],
+          "rationale": "{justificación con referencia a RN o señal del contrato}",
+          "estimated_cps": 0
+        }
+      ],
+      "techniques_rejected": [
+        {
+          "technique": "{string}",
+          "reason": "{por qué no aplica}"
+        }
+      ],
+      "total_estimated_cps": 0
+    }
+  ],
+  "wi_total_estimated_cps": 0,
+  "techniques_distribution": {
+    "EP": 0,
+    "BVA": 0,
+    "Decision Table": 0,
+    "State Transition": 0,
+    "Pairwise": 0,
+    "Error Guessing": 0,
+    "Contract Testing": 0
+  },
+  "generated_at": "{ISO 8601}"
+}

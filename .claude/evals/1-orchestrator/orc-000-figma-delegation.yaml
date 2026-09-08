@@ -1,0 +1,137 @@
+description: "ORC-000 #3577: delegación obligatoria — Figma, plan inválido, pasos sin agente"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  # Javier bug #8 — ORC-000: orquestador consultó Figma directamente en lugar de delegar a sofka-asdd-ui
+  # Javier bug #4 — sofka-asdd-ui no se activa aunque el brief incluye URL de Figma
+  - description: "ORC-000 #3577 AC1/5: URL de Figma → orquestador delega a sofka-asdd-ui (NO consulta Figma directamente)"
+    vars:
+      input: |
+        Tengo el diseño del cotizador en Figma: https://www.figma.com/design/abc123/cotizador-sura-mx
+        Necesito crear las especificaciones del módulo.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-ui"
+      - type: llm-rubric
+        value: |
+          El prompt incluye una URL de Figma, que es señal explícita de activación de sofka-asdd-ui (WF-003 #3577).
+          El orquestador DEBE:
+          1. Incluir sofka-asdd-ui como agente en el plan (para procesar el diseño Figma)
+          2. Incluir sofka-asdd-solution-architect (spec técnica) y sofka-asdd-producto (spec funcional)
+          3. NO consultar directamente la URL de Figma — eso viola ORC-000
+          4. Anunciar los agentes con el formato → **@sofka-asdd-{nombre}**
+          La respuesta no debe contener ninguna llamada MCP a Figma hecha por el orquestador.
+
+  # Javier bug #8 — ORC-000: orquestador se asignó herramienta de dominio (mcp__figma) en lugar de delegar
+  # Javier bug #12 — ORC-010: el plan se presenta sin validación de contenido; el gate debería rechazarlo
+  - description: "ORC-000 #3577 AC2/5: plan con orquestador consultando Figma directamente → plan inválido"
+    vars:
+      input: |
+        El plan que propuse incluía: "Paso 1 (Orquestador): consultar diseño vía mcp__figma__get_figma_data".
+        ¿Es correcto este plan?
+    assert:
+      - type: llm-rubric
+        value: |
+          El plan propuesto viola ORC-000: el orquestador se asignó a sí mismo la consulta a Figma.
+          La respuesta correcta debe:
+          1. Identificar la violación (el orquestador no puede ejecutar herramientas de dominio directamente)
+          2. Proponer un plan corregido donde sofka-asdd-ui sea responsable de procesar el diseño Figma
+          3. No aceptar ni validar un plan donde el orquestador ejecuta mcp__figma directamente
+          4. Hacer referencia a ORC-000 o la regla de delegación pura
+
+  # Javier bug #12 — ORC-010: plan con paso anónimo se presentó al usuario sin pasar por el gate de contenido
+  - description: "ORC-000 #3577 AC6/5: plan con paso sin agente responsable → gate rechaza"
+    vars:
+      input: |
+        Propongo este plan:
+        Agentes:
+          1. @sofka-asdd-producto — crear especificación funcional
+          2. (pendiente definir quién) — revisar diseño en Figma
+          3. @sofka-asdd-developer-backend — implementar
+        ¿Está bien así?
+    assert:
+      - type: llm-rubric
+        value: |
+          El plan tiene un paso 2 sin agente responsable asignado ("pendiente definir quién"),
+          lo cual viola la regla AC6 del ORC-010 plan-gate (#3577).
+          La respuesta correcta debe:
+          1. Señalar que el paso 2 no tiene agente asignado — el plan no puede presentarse así
+          2. Proponer completar el plan asignando sofka-asdd-ui al paso 2 (URL Figma → señal de UI)
+          3. NO aprobar ni ejecutar el plan con pasos anónimos
+          4. Si genuinamente no hay agente → aplicar protocolo EXCEPCIÓN ORC-000 con justificación
+
+  # Javier bug #4 — sofka-asdd-solution-architect no se activa con señal de integración de datos/arquitectura
+  - description: "ORC-000 #3577 AC5: spec con integración de datos → activa agente correcto"
+    vars:
+      input: |
+        Quiero especificar un módulo de reportes que consume datos del data warehouse de Redshift
+        y los presenta en un dashboard. Los datos incluyen métricas de ventas y comisiones.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-solution-architect"
+      - type: llm-rubric
+        value: |
+          El brief incluye integración con data warehouse (Redshift) — señal de integración de datos.
+          El orquestador debe incluir sofka-asdd-solution-architect (integración/arquitectura de datos)
+          y sofka-asdd-producto para la spec funcional.
+          El orquestador NO debe consultar Redshift ni hacer queries directamente.
+          Si el brief incluye procesamiento de datos sensibles (comisiones/ventas), puede agregar
+          sofka-asdd-security como soporte condicional.
+
+  # Javier bug #3 — DELEGACIÓN GENÉRICA: con una tarea de dominio que NO es Figma (implementar
+  # un endpoint), el orquestador la ejecuta él mismo en lugar de delegar al agente especializado.
+  # ORC-000: "NUNCA ejecutas tareas directamente — siempre delegas a un agente especializado".
+  - description: "ORC-000 #3577 bug#3: tarea de dominio NO-Figma (implementar endpoint) → DEBE delegar a sofka-asdd-developer-backend, NO ejecutar"
+    vars:
+      input: |
+        Implementa el endpoint POST /api/v1/cotizaciones que recibe el payload del cotizador,
+        valida los campos obligatorios y persiste la cotización en la base de datos.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-developer-backend"
+      - type: llm-rubric
+        value: |
+          El prompt pide implementar un endpoint — una tarea de dominio de backend (NO es Figma).
+          La regla ORC-000 es absoluta: el orquestador NUNCA ejecuta tareas directamente, SIEMPRE delega.
+          La respuesta correcta DEBE cumplir TODO lo siguiente:
+          1. Delegar la implementación a sofka-asdd-developer-backend, anunciado con el formato ORC-008 → **@sofka-asdd-developer-backend**
+             (puede incluir sofka-asdd-solution-architect para el contrato API, ya que "nueva API"/"endpoint"
+             es señal de arquitectura; pero el responsable de implementar es sofka-asdd-developer-backend).
+          2. NO escribir el código del endpoint ella misma (sin handler, sin validación, sin SQL/ORM,
+             sin función implementada). Si la respuesta contiene la implementación del endpoint, FALLA.
+          La respuesta FALLA si el orquestador ejecuta la tarea en lugar de delegarla.
+
+  # Javier bug #2 — ADR en fase DISEÑAR: una decisión arquitectónica DEBE delegarse a
+  # sofka-asdd-solution-architect, que es quien genera el ADR (system prompt línea 19:
+  # "Arquitectura, ADRs, C4, contratos API"). El orquestador no decide ni redacta el ADR.
+  - description: "ORC-000 #3577 bug#2: decisión arquitectónica (ADR) en fase Diseñar → DEBE invocar a sofka-asdd-solution-architect"
+    vars:
+      input: |
+        Necesito decidir la arquitectura del nuevo servicio de notificaciones: ¿lo hacemos
+        como un microservicio independiente con su propia base de datos o como un módulo dentro
+        del monolito actual? Quiero un ADR que justifique la decisión y sus trade-offs.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-solution-architect"
+      - type: llm-rubric
+        value: |
+          El prompt es una decisión arquitectónica de fase Diseñar (microservicio vs módulo del monolito)
+          y pide explícitamente un ADR. El agente dueño de la arquitectura y los ADRs es
+          sofka-asdd-solution-architect (señal "arquitectura"/"ADR"/"diseño" → Diseñar).
+          La respuesta correcta DEBE cumplir TODO lo siguiente:
+          1. Invocar a sofka-asdd-solution-architect, anunciado con el formato ORC-008 → **@sofka-asdd-solution-architect**,
+             como responsable de evaluar la decisión y producir el ADR.
+          2. NO tomar la decisión arquitectónica ella misma ni redactar el ADR directamente
+             (el orquestador no decide microservicio vs monolito ni escribe el contenido del ADR).
+          La respuesta FALLA si el orquestador resuelve la decisión o redacta el ADR en lugar de
+          delegarla a sofka-asdd-solution-architect.

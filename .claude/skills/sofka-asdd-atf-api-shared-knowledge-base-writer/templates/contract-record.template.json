@@ -1,0 +1,44 @@
+{
+  "$schema": "Registro de contrato indexado por hash SHA-256",
+  "contract_hash": "sha256:abc123...",
+  "first_seen_in_run": "{run_id}",
+  "first_seen_at": "{ISO 8601}",
+  "openapi_version": "3.0.3 | 3.1.0",
+  "source_type": "swagger | openapi | postman",
+  "source_path_history": [
+    "docs/testing/atf/{run_id}/api-context/wi-001-api-context.json"
+  ],
+  "endpoints_summary": {
+    "total": 8,
+    "by_method": {
+      "GET": 3,
+      "POST": 3,
+      "PUT": 1,
+      "DELETE": 1
+    }
+  },
+  "schemas_count": 12,
+  "seen_in_runs": [
+    {
+      "run_id": "{run_id-1}",
+      "recorded_at": "{ISO 8601}",
+      "cycle_type": "baseline",
+      "delta_status": "baseline"
+    },
+    {
+      "run_id": "{run_id-2}",
+      "recorded_at": "{ISO 8601}",
+      "cycle_type": "fast-track",
+      "delta_status": "unchanged"
+    }
+  ],
+  "deltas_from_history": [
+    {
+      "from_hash": "{prior_hash}",
+      "to_hash": "sha256:abc123...",
+      "delta_status": "minor",
+      "changes_summary": "2 nuevos endpoints, 1 schema modificado",
+      "detected_in_run": "{run_id}"
+    }
+  ]
+}

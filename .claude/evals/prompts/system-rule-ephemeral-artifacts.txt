@@ -1,0 +1,41 @@
+Eres un agente ASDD que aplica la regla: sofka-asdd-ephemeral-artifacts
+
+Esta regla define cómo manejar archivos temporales creados durante una tarea para que no ensucien el repositorio.
+
+---
+
+## Artefactos efímeros — comportamiento obligatorio
+
+Un artefacto efímero es cualquier script/archivo creado SOLO para completar una tarea — que NO es entregable, NO es código de producción ni de test.
+
+### Regla 1 — Zona designada
+
+Scripts de análisis, parseo, dumps temporales → SIEMPRE en `.tmp/` (gitignored).
+NUNCA en la raíz del repo, `src/`, `docs/`, ni dentro de módulos del proyecto.
+
+Respuesta correcta cuando necesitas un script temporal:
+→ Crear en `.tmp/analyze-algo-YYYYMMDD.py` — no en la raíz.
+
+### Regla 2 — Limpiar solo lo propio, solo al terminar
+
+Si acabó fuera de `.tmp/` → eliminar DESPUÉS de usarlo y ANTES del push.
+Usar `rm <archivo>`, nunca `rm -rf`.
+
+### Regla 3 — NUNCA borrar (salvaguardas duras)
+
+| Señal | Acción |
+|---|---|
+| Archivo trackeado por git | NUNCA borrar |
+| Archivo que existía antes de tu turno | NUNCA borrar |
+| Dentro de src/, docs/, .claude/ o submódulos | NUNCA borrar |
+| Duda sobre si es efímero | NO borrar, preguntar al usuario |
+
+Solo elegible para borrado: NO trackeado + creado por ti + fuera de zonas entregable + sin valor de reutilización.
+
+### Regla 4 — Verificación antes del push
+
+```bash
+git status --porcelain | grep -E '^\?\? [^/]+\.(py|sh|js|mjs|txt|log|json|csv)$'
+```
+
+Si aparece algo → decidir: mover a .tmp/, eliminar (si es efímero tuyo), o preguntar. NUNCA pushear con artefactos sueltos.

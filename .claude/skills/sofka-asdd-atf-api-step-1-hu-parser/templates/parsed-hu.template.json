@@ -1,0 +1,62 @@
+{
+  "$schema": "Estructura canónica devuelta por hu-parser",
+  "wi_id": "wi-NNN",
+  "parsed_from": ["{relative path}"],
+  "metadata": {
+    "title": "{string}",
+    "version": "{string|null}",
+    "author": "{string|null}",
+    "last_modified": "{ISO date|null}"
+  },
+  "sections": {
+    "description": {
+      "raw_text": "{texto completo de la sección}",
+      "summary": "{1 frase}"
+    },
+    "business_definitions": [
+      {"term": "{string}", "definition": "{string}"}
+    ],
+    "business_rules": [
+      {
+        "id_in_source": "{ID como aparece, ej: RN-008 o R8}",
+        "id_normalized": "{RN-NNN o null si no había ID}",
+        "text": "{texto literal}",
+        "category": "validation | flow | state-transition | calculation | integration",
+        "location_in_doc": {"section": "{string}", "line_approx": 0},
+        "relevance_to_wi": "high | medium | low"
+      }
+    ],
+    "acceptance_criteria": [
+      {
+        "raw_text": "{texto literal}",
+        "format_detected": "given-when-then | bullet-list | narrative | table",
+        "associated_rules": ["RN-NNN"]
+      }
+    ],
+    "examples": [
+      {
+        "title": "{string}",
+        "raw_block": "{string — bloque tal cual}",
+        "type": "request-example | response-example | flow-example"
+      }
+    ],
+    "open_references": [
+      {"text": "{string}", "status": "broken | external | internal"}
+    ]
+  },
+  "endpoints_mentioned": [
+    {
+      "method": "GET | POST | PUT | DELETE | PATCH",
+      "path": "{path}",
+      "appears_in_sections": ["{section}"]
+    }
+  ],
+  "warnings": [
+    {"severity": "info | warning | error", "message": "{string}"}
+  ],
+  "parse_metadata": {
+    "parser_version": "1.0.0",
+    "parsed_at": "{ISO 8601}",
+    "elapsed_ms": 0
+  }
+}

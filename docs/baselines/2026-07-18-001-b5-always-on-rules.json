@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "slice": "B5",
+  "status": "complete",
+  "captured_at": "2026-07-18",
+  "contract": {
+    "always_on_words_max": 8000,
+    "stretch_always_on_words_max": 6000,
+    "loading_strategy": "compact always-on core plus explicit full-reference reader",
+    "compacted_rules": 9,
+    "failure_mode": "fail-closed before acting",
+    "rollback_scope": "one rule at a time"
+  },
+  "method": {
+    "before_source": "docs/baselines/2026-07-18-001-b1-context-budget.json",
+    "before_b5_effective_context_derivation": "B1 largest effective context 41858 minus B4 normal hook injection reduction 145 = 41713",
+    "after_source": ".claude/scripts/sofka-asdd-runtime-metrics.mjs",
+    "integrity_manifest": ".sofka-asdd/rule-loading.json",
+    "consumer_test": ".claude/scripts/test-conditional-rule-loading.mjs",
+    "word_count": "whitespace-delimited words using the shared context-budget library"
+  },
+  "results": {
+    "always_on_words": {
+      "before": 16973,
+      "after": 5822,
+      "reduction_words": 11151,
+      "change_percent": -65.7
+    },
+    "claude_md_words": {
+      "before": 2108,
+      "after": 2108
+    },
+    "rules_words": {
+      "before": 14865,
+      "after": 3714,
+      "reduction_words": 11151,
+      "change_percent": -75.02
+    },
+    "largest_measured_effective_context_words": {
+      "before_b5": 41713,
+      "after": 30562,
+      "reduction_words": 11151,
+      "change_percent": -26.73
+    },
+    "context_budget_warnings": {
+      "before": 22,
+      "after": 21
+    }
+  },
+  "acceptance": {
+    "always_on_lte_8000": true,
+    "always_on_lte_6000_stretch": true,
+    "manifest_entries_valid": "9/9 PASS",
+    "reference_hashes_valid": "9/9 PASS",
+    "required_markers_in_core_and_reference": "9/9 PASS",
+    "isolated_consumer_resolve_read_act": "9/9 PASS",
+    "missing_reference_fails_before_action": "PASS",
+    "per_rule_rollback_does_not_touch_siblings": "PASS",
+    "always_on_gate_promoted_to_error": true
+  },
+  "unmeasured_components": [
+    "provider tokenization",
+    "tool schemas",
+    "MCP schemas",
+    "provider internal context"
+  ]
+}

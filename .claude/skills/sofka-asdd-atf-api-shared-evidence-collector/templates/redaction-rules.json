@@ -1,0 +1,52 @@
+{
+  "$schema": "Reglas de redacción aplicadas por shared-evidence-collector",
+  "case_insensitive": true,
+  "headers_to_redact": [
+    "authorization",
+    "proxy-authorization",
+    "x-api-key",
+    "api-key",
+    "apikey",
+    "x-auth-token",
+    "auth-token",
+    "cookie",
+    "set-cookie",
+    "x-csrf-token"
+  ],
+  "header_patterns_to_redact": [
+    "(?i).*secret.*",
+    "(?i).*token.*",
+    "(?i).*password.*",
+    "(?i).*credential.*"
+  ],
+  "body_keys_to_redact": [
+    "password",
+    "passwd",
+    "pwd",
+    "token",
+    "accessToken",
+    "refreshToken",
+    "idToken",
+    "secret",
+    "clientSecret",
+    "apiSecret",
+    "creditCard",
+    "cardNumber",
+    "cvv",
+    "cvc",
+    "ssn",
+    "nationalId",
+    "taxId",
+    "documentNumber",
+    "pin"
+  ],
+  "redaction_format": "[REDACTED:length={original_length}]",
+  "preserve_original_length": true,
+  "preserve_original_type": false,
+  "binary_content_handling": "replace_with_metadata",
+  "binary_content_replacement": {
+    "type": "binary",
+    "size_bytes": "{original_size}",
+    "checksum_sha256": "{computed}"
+  }
+}

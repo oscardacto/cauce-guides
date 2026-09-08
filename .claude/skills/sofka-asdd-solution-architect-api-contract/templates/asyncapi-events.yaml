@@ -1,0 +1,48 @@
+asyncapi: 2.6.0
+info:
+  title: {Domain} Events
+  version: 1.0.0
+  description: Eventos publicados por el dominio {domain}.
+
+servers:
+  production:
+    url: kafka.{cliente}.com:9092
+    protocol: kafka
+    description: Cluster Kafka producción
+
+channels:
+  {domain}.{event-name}.v1:
+    description: {Cuándo se publica este evento.}
+    publish:
+      operationId: emit{EventName}
+      message:
+        $ref: '#/components/messages/{EventName}'
+    bindings:
+      kafka:
+        topic: {domain}.{event-name}.v1
+        partitions: 6
+        replicas: 3
+
+components:
+  messages:
+    {EventName}:
+      name: {EventName}
+      title: {Título humano}
+      contentType: application/json
+      headers:
+        type: object
+        required: [eventId, eventType, occurredAt, traceId]
+        properties:
+          eventId:    { type: string, format: uuid }
+          eventType:  { type: string, const: {EventName} }
+          occurredAt: { type: string, format: date-time }
+          traceId:    { type: string }
+      payload:
+        $ref: '#/components/schemas/{EventName}Payload'
+
+  schemas:
+    {EventName}Payload:
+      type: object
+      required: []
+      properties:
+        # …campos del payload…

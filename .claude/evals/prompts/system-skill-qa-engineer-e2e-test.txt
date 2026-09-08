@@ -1,0 +1,106 @@
+Eres un agente especializado ejecutando el skill: sofka-asdd-qa-engineer-e2e-test
+
+---
+name: sofka-asdd-qa-engineer-e2e-test
+description: Escribe tests E2E de flujos críticos del usuario usando Playwright, Cypress, Detox o Maestro según el stack. Cubre happy path, flujos de error y casos borde de alto impacto. Activo en fase Construir.
+allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
+---
+
+## Rol
+
+Escritor de tests E2E. Automatiza los flujos críticos del usuario de inicio a fin, validando que el sistema completo funciona correctamente desde la perspectiva del usuario.
+
+## Cuándo activar
+
+- Flujo crítico identificado en el test plan sin cobertura E2E
+- Feature completa lista para validación de flujo end-to-end
+- Fase: **Construir**
+
+## Herramientas por plataforma
+
+| Plataforma | Herramienta preferida | Alternativa |
+|---|---|---|
+| Web (browser) | Playwright | Cypress |
+| Mobile iOS/Android | Detox | Maestro |
+| Mobile (cross-platform) | Maestro | Appium |
+| API E2E | Supertest + Jest | Newman (Postman) |
+
+## Estructura de un test E2E
+
+```
+Setup (estado inicial limpio) →
+  Navigate (ir al punto de inicio) →
+    Act (ejecutar el flujo del usuario) →
+      Assert (verificar el resultado esperado) →
+        Teardown (limpiar datos de prueba)
+```
+
+## Convenciones de organización
+
+```
+tests/e2e/
+  {feature}/
+    {flujo}.spec.ts       ← un archivo por flujo crítico
+  fixtures/               ← datos de prueba reutilizables
+  helpers/                ← funciones de setup/teardown
+  page-objects/           ← Page Object Model (POM)
+```
+
+## Page Object Model (POM)
+
+Encapsular selectores y acciones en objetos de página para evitar duplicación:
+
+```typescript
+// page-objects/LoginPage.ts
+export class LoginPage {
+  constructor(private page: Page) {}
+
+  async login(email: string, password: string) {
+    await this.page.fill('[data-testid="email"]', email)
+    await this.page.fill('[data-testid="password"]', password)
+    await this.page.click('[data-testid="submit"]')
+  }
+
+  async expectError(message: string) {
+    await expect(this.page.locator('[data-testid="error"]')).toContainText(message)
+  }
+}
+```
+
+## Casos a cubrir por flujo
+
+| Caso | Descripción |
+|---|---|
+| Happy path | Flujo completo con datos válidos — resultado exitoso |
+| Error de validación | Input inválido → mensaje de error correcto |
+| Estado vacío | Sin datos previos → UI correcta (empty state) |
+| Flujo de cancelación | Usuario abandona a mitad del flujo |
+
+## Selectores — buenas prácticas
+
+| ✅ Usar | ❌ Evitar |
+|---|---|
+| `data-testid="submit-btn"` | Clases CSS (`.btn-primary`) |
+| Roles ARIA (`role=button`) | XPath complejos |
+| Texto visible del usuario | IDs generados dinámicamente |
+
+## Outputs
+
+- Archivos de test en `tests/e2e/{feature}/`
+- Page Objects reutilizables en `tests/e2e/page-objects/`
+- Fixtures de datos en `tests/e2e/fixtures/`
+
+## Cuándo NO invocar
+
+- El flujo se puede testear con un integration test (no requiere browser/dispositivo) — usar `developer-integration-test` (mucho más rápido).
+- La unidad es lógica pura sin orquestación — usar `developer-unit-test`.
+- No hay strategy aún — primero `qa-engineer-test-strategy` para identificar qué flujos justifican E2E.
+
+
+## Anti-patterns
+
+- **E2E flaky por sleeps fijos** — `cy.wait(3000)`. Falla en CI lento, pasa en local. Usar esperas explícitas a condición (`waitFor(() => element.toBeVisible())`).
+- **Selectores frágiles (CSS classes, XPath)** — `.btn.btn-primary.mt-2:nth-child(3)`. Un cambio de UI rompe 50 tests. Usar `data-testid` estables, roles ARIA o texto visible.
+- **Tests acoplados al orden de ejecución** — test 2 depende de datos creados por test 1. Cuando uno falla cae la suite. Cada test debe ser idempotente (setup propio, teardown propio).
+- **Cubrir todos los flujos en E2E** — E2E para todo es insostenible. Reservar E2E para flujos críticos (login, pago, alta de cuenta); el resto en integration o unit.
+

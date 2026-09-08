@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "slice": "B6",
+  "status": "complete",
+  "captured_at": "2026-07-18",
+  "contract": {
+    "migrated_agents": 6,
+    "manifest_agents": 8,
+    "initial_capabilities_per_agent": 1,
+    "max_explicit_dependencies": 1,
+    "migrated_max_eager_skills": 0,
+    "protected_operations_require_primary_loaded": true,
+    "load_tracking": "ephemeral authorization store"
+  },
+  "method": {
+    "before_source": "B5 runtime metrics at commit fbaf030",
+    "after_source": ".claude/scripts/sofka-asdd-runtime-metrics.mjs",
+    "integrity_manifest": ".sofka-asdd/capability-loading.json",
+    "consumer_test": ".claude/scripts/test-lazy-capability-loading.mjs",
+    "word_count": "whitespace-delimited words using the shared context-budget library"
+  },
+  "results": {
+    "six_agent_initial_payload_words": {
+      "before": 78927,
+      "after": 9885,
+      "reduction_words": 69042,
+      "change_percent": -87.48
+    },
+    "agents": {
+      "sofka-asdd-tech-lead": { "before": 20349, "after": 675, "change_percent": -96.68 },
+      "sofka-asdd-ui": { "before": 18470, "after": 2845, "change_percent": -84.60 },
+      "sofka-asdd-solution-architect": { "before": 14109, "after": 1515, "change_percent": -89.26 },
+      "sofka-asdd-producto": { "before": 8838, "after": 820, "change_percent": -90.72 },
+      "sofka-asdd-ux": { "before": 8728, "after": 2224, "change_percent": -74.52 },
+      "sofka-asdd-devops-engineer": { "before": 8433, "after": 1806, "change_percent": -78.58 }
+    },
+    "eager_skill_references_in_six_agents": {
+      "before": 54,
+      "after": 0
+    },
+    "largest_agent_with_skills_words": {
+      "before": 20349,
+      "after": 11073,
+      "change_percent": -45.59
+    },
+    "largest_measured_effective_context_words": {
+      "before": 30562,
+      "after": 21289,
+      "change_percent": -30.34
+    },
+    "always_on_words": {
+      "before": 5822,
+      "after": 5825,
+      "reason": "three-word ORC-010 core clarification for primary/dependency binding"
+    },
+    "context_budget_warnings": {
+      "before": 21,
+      "after": 12
+    }
+  },
+  "acceptance": {
+    "manifest_catalogs_resolve": "8/8 PASS",
+    "migrated_agents_have_no_eager_skills": "6/6 PASS",
+    "consumer_primary_plus_dependency_then_act": "6/6 PASS",
+    "dependency_does_not_replace_primary": "PASS",
+    "protected_operation_before_primary": "capability-not-loaded PASS",
+    "unapproved_second_or_third_capability": "capability-mismatch PASS",
+    "more_than_one_dependency": "fail-closed PASS",
+    "per_agent_rollback_isolated": "PASS",
+    "validator": "29 OK, 2 expected warnings, 0 errors"
+  },
+  "remaining_staged_debt": {
+    "global_eager_skill_gate": "warning",
+    "warning_count": 12,
+    "migrated_manifest_gate": "error",
+    "reason": "specialized and coordinator agents outside B6 remain visible for later slices or explicit exceptions"
+  },
+  "unmeasured_components": [
+    "provider tokenization",
+    "tool schemas",
+    "MCP schemas",
+    "provider internal context"
+  ]
+}

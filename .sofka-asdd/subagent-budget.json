@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "enforcement": "blocking",
+  "orchestrator_default": "sonnet",
+  "model_ids": {
+    "haiku": "haiku",
+    "sonnet": "sonnet",
+    "opus": "opus"
+  },
+  "precedence": ["skill_override", "agent_pinning", "phase_default", "agent_frontmatter"],
+  "routes": {
+    "TRIVIAL": { "max_agents": 0, "max_concurrent": 0, "turns": null, "max_retries": 0, "models": ["sonnet"] },
+    "LIGHT": { "max_agents": 1, "max_concurrent": 1, "turns": { "min": 10, "max": 20 }, "max_retries": 1, "models": ["haiku", "sonnet", "opus"] },
+    "MEDIUM": { "max_agents": 2, "max_concurrent": 2, "turns": { "min": 20, "max": 35 }, "support_turns": { "min": 10, "max": 20 }, "max_retries": 1, "models": ["sonnet", "opus"] },
+    "FULL": { "max_agents": 3, "max_concurrent": 3, "turns": { "min": 30, "max": 50 }, "support_turns": { "min": 10, "max": 25 }, "max_retries": 1, "models": ["haiku", "sonnet", "opus"] }
+  },
+  "high_risk": {
+    "required_route": "FULL",
+    "required_model": "opus",
+    "escalate_before_tools": true
+  },
+  "launch_marker": "[ASDD-BUDGET route={route} phase={phase} model={model} max_turns={max_turns} retries={retries}]",
+  "telemetry": {
+    "path": ".claude/agent-memory/subagent-invocations.jsonl",
+    "allowed_fields": ["timestamp", "event", "request_id", "route", "phase", "model", "agent", "capability", "max_turns", "turns", "retries", "duration_ms", "escalation_reason", "result"],
+    "forbidden_fields": ["prompt", "output", "command", "tool_input"]
+  }
+}

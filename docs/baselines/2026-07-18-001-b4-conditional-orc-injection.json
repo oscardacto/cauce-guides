@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "slice": "B4",
+  "status": "complete",
+  "captured_at": "2026-07-18",
+  "contract": {
+    "normal_prompt_injected_words_max": 40,
+    "normal_behavior": "none or compact signal",
+    "specialized_behavior": "signal-specific reminder only",
+    "full_core_delivery": [
+      "SessionStart",
+      "post-compact SessionStart",
+      "explicit recovery"
+    ]
+  },
+  "method": {
+    "legacy_normal_words_source": "docs/baselines/2026-07-18-001-spike-1-runtime-benchmark.json",
+    "legacy_repeated_core_words": 145,
+    "warmup_samples": 5,
+    "measured_samples": 30,
+    "execution": "isolated UserPromptSubmit Node process per sample",
+    "authorization_modules": "loaded lazily only for approval-shaped prompts"
+  },
+  "results": {
+    "normal": {
+      "injected_words": 0,
+      "output_bytes": 0,
+      "p50_ms": 56.7,
+      "p95_ms": 67.46,
+      "pre_b4_injected_words": 145,
+      "change_percent": -100.0
+    },
+    "figma": {
+      "injected_words": 76,
+      "output_bytes": 593,
+      "p50_ms": 60.52,
+      "p95_ms": 74.85,
+      "pre_b4_injected_words": 221,
+      "change_percent": -65.61
+    },
+    "authorization_security": {
+      "injected_words": 56,
+      "output_bytes": 473,
+      "p50_ms": 62.43,
+      "p95_ms": 74.8,
+      "pre_b4_injected_words": 201,
+      "change_percent": -72.14
+    },
+    "ambiguity": {
+      "injected_words": 91,
+      "output_bytes": 736,
+      "p50_ms": 61.12,
+      "p95_ms": 70.09,
+      "pre_b4_injected_words": 236,
+      "change_percent": -61.44
+    },
+    "explicit_recovery": {
+      "injected_words": 145,
+      "output_bytes": 1189,
+      "p50_ms": 62.36,
+      "p95_ms": 72.13,
+      "pre_b4_injected_words": "not_applicable: explicit recovery mode added by B4",
+      "change_percent": 0
+    }
+  },
+  "acceptance": {
+    "normal_words_lte_40": true,
+    "normal_does_not_repeat_core": true,
+    "specialized_routing_regressions": "Figma/security/data/software/ambiguity PASS",
+    "challenge_atomicity": "preserved",
+    "anti_orphan_session_start_post_compact": "PASS",
+    "deterministic_output": "30/30 identical per scenario"
+  },
+  "unmeasured_components": [
+    "provider tokenization",
+    "provider internal context",
+    "end-to-end model response latency"
+  ]
+}

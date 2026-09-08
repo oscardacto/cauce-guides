@@ -1,0 +1,42 @@
+description: "WF-005 PROCESO+OUTPUT: Fase Verificar — QA+Security primarios, sign-off requerido"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "PROCESO WF-005: Pre-release → qa-engineer + security como primarios"
+    vars:
+      input: |
+        El módulo de pagos está implementado y los unit tests pasan.
+        Necesitamos el sign-off antes del release a producción.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-qa-engineer"
+      - type: icontains
+        value: "sofka-asdd-security"
+      - type: llm-rubric
+        value: |
+          WF-005 requiere qa-engineer Y security como primarios pre-release.
+          Sin el PASS de ambos, no se puede considerar completo.
+          El orquestador debe invocar ambos y esperar los dos sign-offs.
+
+  - description: "PROCESO WF-005: Tres sign-offs requeridos para completar"
+    vars:
+      input: |
+        Verificando el módulo de autenticación. ¿Qué necesitamos para declararlo completo?
+    assert:
+      - type: llm-rubric
+        value: |
+          Para declarar WF-005 completo, el orquestador debe exigir los tres sign-offs:
+          1. sofka-asdd-qa-engineer PASS (tests, coverage, regression)
+          2. sofka-asdd-security PASS (SAST, secrets, dependencies, compliance)
+          3. sofka-asdd-producto firma los acceptance criteria
+          Sin los tres, el ciclo NO está completo.

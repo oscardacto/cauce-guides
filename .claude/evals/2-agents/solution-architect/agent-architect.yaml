@@ -1,0 +1,87 @@
+description: "sofka-asdd-solution-architect: decisiones técnicas y ADRs"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../../prompts/system-agent-solution-architect.txt
+
+tests:
+  - description: "PROCESO: Selección de skill correcto — ADR vs otros skills"
+    vars:
+      input: |
+        Necesito decidir si usar PostgreSQL o MongoDB para el módulo de catálogo de productos.
+        Hay múltiples opciones viables.
+    assert:
+      - type: llm-rubric
+        value: |
+          Ante múltiples opciones viables antes de un ADR, el arquitecto debe activar
+          el skill 'tradeoff-analysis' para evaluar trade-offs antes de decidir.
+          Luego 'sofka-docs' para documentar el ADR resultante.
+          NO debe hacer el ADR directamente sin el análisis previo.
+
+  - description: "PROCESO: ADR — evalúa al menos 2 alternativas con trade-offs concretos"
+    vars:
+      input: |
+        Crea el ADR para decidir la estrategia de autenticación: JWT stateless vs
+        sessions con Redis vs OAuth2 con un servidor de autorización propio.
+    assert:
+      - type: llm-rubric
+        value: |
+          El ADR debe:
+          1. Evaluar AL MENOS 2 alternativas con trade-offs concretos (no genéricos)
+          2. Justificar la decisión final con al menos UN criterio explícito (costo, performance, ops)
+          3. Seguir el naming: ADR-{NNN}-{titulo-kebab}.md
+          4. Incluir contexto, decisión, consecuencias
+          No puede decir 'otra opción' sin describir trade-offs reales.
+
+  - description: "PROCESO: Credo Sofka — empezar simple, no diseñar para 5 años"
+    vars:
+      input: |
+        Diseña la arquitectura para una startup fintech con 10 usuarios activos actualmente.
+        El CTO quiere microservicios desde el día 1 para 'escalar bien en el futuro'.
+    assert:
+      - type: llm-rubric
+        value: |
+          El arquitecto debe aplicar el credo Sofka: 'Empezar simple, evolucionar bajo presión'.
+          Debe cuestionar la decisión de microservicios para 10 usuarios y proponer
+          una alternativa más simple (monolito modular) con un camino claro de evolución.
+          NO debe diseñar microservicios desde el día 1 sin justificación de escala real.
+
+  - description: "OUTPUT: Diagrama C4 en Mermaid sintácticamente válido"
+    vars:
+      input: |
+        Genera el diagrama C4 nivel 1 (Context) y nivel 2 (Container) para un sistema
+        de e-commerce con frontend web, API REST, base de datos PostgreSQL y servicio de pagos externo.
+    assert:
+      - type: icontains
+        value: "C4Context"
+      - type: icontains
+        value: "C4Container"
+      - type: llm-rubric
+        value: |
+          Los diagramas C4 deben:
+          1. Usar sintaxis Mermaid con C4Context para nivel 1 y C4Container para nivel 2
+          2. Ser sintácticamente válidos (sin errores de sintaxis Mermaid obvios)
+          3. Incluir actores externos, sistemas y las relaciones entre ellos
+          4. Vivir en docs/architecture/diagrams/ según la convención ASDD
+
+  - description: "OUTPUT: Checklist de salida — ADR referencia bounded contexts y alcance explícito"
+    vars:
+      input: |
+        ADR para separar el dominio de 'Pagos' del dominio de 'Créditos' en el sistema bancario.
+        Define qué cambia y qué NO cambia.
+    assert:
+      - type: llm-rubric
+        value: |
+          Antes de retornar el ADR, el arquitecto debe verificar su checklist de salida:
+          - Los bounded contexts asumidos están documentados o el ADR los define explícitamente
+          - Se reporta qué partes del sistema NO se tocan (alcance explícito)
+          - La decisión referencia al menos 2 alternativas con trade-offs
+          - Si hay diagramas C4, están en Mermaid (no imágenes binarias)
+

@@ -1,0 +1,98 @@
+description: "sofka-asdd-tech-lead: code review y quality gates"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../../prompts/system-agent-tech-lead.txt
+
+tests:
+  - description: "PROCESO: skill code-review — evalúa SOLID y clean code"
+    vars:
+      input: |
+        Revisa este código:
+        ```python
+        def process(data):
+            if data['type'] == 'credit':
+                db.execute('INSERT INTO credits VALUES ...')
+                email.send(data['email'], 'Credit approved')
+                sms.send(data['phone'], 'Credit approved')
+                audit.log(data)
+            elif data['type'] == 'debit':
+                db.execute('INSERT INTO debits VALUES ...')
+                email.send(data['email'], 'Debit approved')
+                audit.log(data)
+        ```
+    assert:
+      - type: llm-rubric
+        value: |
+          El tech-lead en code review debe identificar:
+          1. Violación SRP — la función hace demasiado (DB + email + SMS + audit)
+          2. Duplicación de lógica entre credit y debit
+          3. Falta de manejo de errores
+          4. Magic strings ('credit', 'debit')
+          5. Recomendar separación en servicios/clases con responsabilidad única
+
+  - description: "PROCESO: skill quality-gate — métricas con umbrales"
+    vars:
+      input: |
+        Define el quality gate para el módulo de autenticación antes del merge a main.
+        El equipo tiene SonarQube disponible.
+    assert:
+      - type: llm-rubric
+        value: |
+          El tech-lead debe definir métricas con umbrales concretos, no genéricos:
+          - Coverage mínimo: X% (ej: 80%)
+          - Code smells: 0 críticos
+          - Duplicación: < Y%
+          - Complejidad ciclomática máxima: Z por función
+          Los umbrales deben ser verificables y cuantificados.
+
+  - description: "PROCESO: skill refactoring-plan — plan antes de ejecutar"
+    vars:
+      input: |
+        El módulo de pagos tiene una clase de 800 líneas (GodClass).
+        Necesitamos refactorizarla sin romper funcionalidad.
+    assert:
+      - type: llm-rubric
+        value: |
+          El tech-lead con skill refactoring-plan debe:
+          1. Identificar las responsabilidades actuales de la GodClass
+          2. Proponer la división en clases/módulos con responsabilidades claras
+          3. Definir el orden seguro de refactoring (qué mover primero)
+          4. Indicar qué tests necesitan existir antes de refactorizar
+          NO debe ejecutar el refactoring — solo el plan. El developer lo ejecuta.
+
+  - description: "PROCESO: Estimación técnica — factibilidad y riesgos"
+    vars:
+      input: |
+        ¿Es factible migrar la base de datos de MongoDB a PostgreSQL en 2 semanas
+        con un equipo de 2 developers? El sistema tiene 50M registros y está en producción.
+    assert:
+      - type: llm-rubric
+        value: |
+          El tech-lead debe evaluar:
+          1. Factibilidad real de la migración en 2 semanas (probablemente NO)
+          2. Riesgos técnicos específicos (downtime, inconsistencias de datos, cambios de esquema)
+          3. Pasos mínimos requeridos (estrategia blue/green, backfill, rollback)
+          4. Estimación honesta y justificada, no optimista por defecto
+
+  - description: "OUTPUT: Review con hallazgos clasificados por severidad"
+    vars:
+      input: |
+        Revisa el PR: se agrega autenticación OAuth2 con Google. El código maneja tokens,
+        sesiones y refresh tokens. ¿Qué encontrás?
+    assert:
+      - type: llm-rubric
+        value: |
+          El output del code review debe:
+          1. Clasificar hallazgos por severidad (Crítico/Mayor/Menor/Sugerencia)
+          2. Incluir al menos una buena práctica detectada (refuerzo positivo)
+          3. Para cada hallazgo: qué encontró, impacto y recomendación concreta
+          4. Verificar aspectos de seguridad en OAuth2 (state parameter, PKCE, token storage)
+

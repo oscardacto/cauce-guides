@@ -1,0 +1,81 @@
+# OS artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE artifacts
+.idea/
+*.swp
+*.swo
+
+# Runtime artifacts
+__pycache__/
+*.pyc
+node_modules/
+dist/
+build/
+*.log
+
+# Environment variables — NEVER commit
+.env
+.env.*
+.env.local
+.env.*.local
+
+# Secrets (safety net — should never be committed)
+*.pem
+*.key
+*.p12
+secrets/
+credentials/
+
+# Test output
+coverage/
+
+# AI tooling — local memory (non-versionable by convention)
+.engram/
+
+# Claude Code — local overrides (por convención, no se versionan)
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/agent-memory/
+
+# Backups locales de configuración — no versionables
+*.bak
+.claude/settings.json.bak
+
+# Promptfoo eval results — locales, el baseline consolidado va en BASELINE-*.md
+.claude/evals/.results/
+
+# Estado efímero del plan gate (ORC-010) — no versionable.
+# `.claude/.runtime/plan-authorization/` guarda challenge, autorizaciones y el
+# marcador de elegibilidad. `.claude/.plan-approved` es el marcador legado del
+# diseño anterior: se conserva ignorado para checkouts viejos, el runtime ya no
+# lo escribe ni lo lee.
+.claude/.plan-approved
+.claude/.runtime/
+# Pre-push gate marker (GS-008) — efímero, no versionable
+.claude/.prepush-validated
+# Zona de artefactos efímeros del flujo ASDD (sofka-asdd-ephemeral-artifacts.md) — no versionable
+.tmp/
+
+# ATF Web — corridas efímeras (cada run vive solo en local; regenerable con el pipeline)
+docs/testing/atf-web/*/
+!docs/testing/atf-web/config/
+!docs/testing/atf-web/knowledge/
+!docs/testing/atf-web/requirements/
+# Playwright CLI — output local
+.playwright-cli/
+
+# Smart Data — Excel de trabajo por cliente (ADR-003): contiene datos del cliente,
+# no se versiona. La plantilla sanitizada sí se versiona como equivalente-brief.
+docs/smart-data/data/*.xlsx
+!docs/smart-data/data/smart-data-eng-cliente.xlsx
+docs/smart-data/data/~$*.xlsx
+
+# AI Dev Kit / Databricks aitools — estado de instalación local, no versionable
+.ai-dev-kit/.installed-skills
+.ai-dev-kit/.skills-profile
+.ai-dev-kit/.agent-b-skills
+.ai-dev-kit/version
+.databricks/aitools/skills/.state.json

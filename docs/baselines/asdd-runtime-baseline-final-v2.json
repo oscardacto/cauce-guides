@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "feature": "ASDD Runtime Efficiency v2",
+  "status": "initiative_complete_release_checks_pending",
+  "captured_at": "2026-07-18",
+  "source": {
+    "branch": "feature/asdd-runtime-efficiency-v2",
+    "commit": "f039fde3145a73d89ab7cbd5b21878ac3d7890ff",
+    "baseline_evidence": "docs/baselines/2026-07-18-001-b9-runtime-integral.json"
+  },
+  "method": {
+    "unit": "words for context; milliseconds for local/provider latency; USD and provider tokens for model diagnostic",
+    "local": "5 warm-ups plus 30 isolated-process samples per scenario; p50/p95",
+    "provider": "one structured-output diagnostic sample per exact model and scenario; not an SLO",
+    "privacy": "aggregate metrics and fixture ids only; no prompts, outputs, commands or tool inputs"
+  },
+  "final": {
+    "always_on_words": {
+      "before": 16973,
+      "after": 5863,
+      "change_percent": -65.46
+    },
+    "normal_prompt_words": {
+      "before": 145,
+      "after": 0,
+      "change_percent": -100
+    },
+    "bash_pretool_processes": {
+      "before": 7,
+      "after": 1
+    },
+    "edit_pretool_processes": {
+      "before": 8,
+      "after": 1
+    },
+    "bash_fast_path": {
+      "legacy_p95_ms": 55.57,
+      "final_p95_ms": 35.18,
+      "change_percent": -36.69
+    },
+    "edit_fast_path": {
+      "legacy_p95_ms": 55.7,
+      "final_p95_ms": 33.69,
+      "change_percent": -39.52
+    },
+    "largest_agent_with_skills_words": 8905,
+    "largest_measured_effective_context_words": 19159,
+    "consumer_e2e": {
+      "passed": 16,
+      "total": 16
+    },
+    "model_quality": {
+      "claude-opus-4-8": {
+        "passed": 4,
+        "cases": 4,
+        "pass_rate": 1,
+        "cost_usd": 0.130354,
+        "output_tokens": 1997,
+        "latency": {
+          "p50_ms": 6779,
+          "p95_ms": 11701,
+          "ttft_p50_ms": 4549,
+          "ttft_p95_ms": 6257
+        }
+      },
+      "claude-sonnet-4-6": {
+        "passed": 4,
+        "cases": 4,
+        "pass_rate": 1,
+        "cost_usd": 0.102729,
+        "output_tokens": 3936,
+        "latency": {
+          "p50_ms": 15821,
+          "p95_ms": 34859,
+          "ttft_p50_ms": 14927,
+          "ttft_p95_ms": 33711
+        }
+      }
+    }
+  },
+  "acceptance": {
+    "blocking_gates": "PASS 6/6 in B9",
+    "validator": "PASS 32 ok, 2 staged warnings, 0 errors",
+    "security_and_routing_regressions": 0,
+    "cli_distribution_consumer": "required by DOC-1; runtime scripts/libs copied and E2E verified",
+    "adrs": [
+      "ADR-017",
+      "ADR-018",
+      "ADR-019"
+    ]
+  },
+  "staged_debt": {
+    "eager_skills_warning_count": 9,
+    "policy": "visible warning; not converted to a false pass or silent exception"
+  },
+  "release_readiness": {
+    "initiative_complete": true,
+    "release_ready": false,
+    "required_external_checks": [
+      "native macOS performance distribution",
+      "native Windows performance distribution"
+    ],
+    "already_covered": "Linux WSL2 measurements plus Windows path semantics"
+  },
+  "unmeasured_components": [
+    "tool schemas",
+    "MCP schemas",
+    "provider internal context"
+  ],
+  "rollback": "B1-B8 rollbacks remain slice-scoped; DOC-1 distribution/doc artifacts are additive and independently revertible"
+}

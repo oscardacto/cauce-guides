@@ -1,0 +1,28 @@
+description: "CMD /sofka-asdd:document — fase Documentar"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "CMD document: consolida documentación final del ciclo"
+    vars:
+      input: "/sofka-asdd:document Cerrar el ciclo del módulo de pagos. Todos los sign-offs obtenidos."
+    assert:
+      - type: icontains
+        value: "sofka-asdd-tech-lead"
+      - type: icontains
+        value: "sofka-asdd-solution-architect"
+      - type: llm-rubric
+        value: |
+          El comando document debe: invocar tech-lead y architect como primarios,
+          producir ADR index actualizado, C4 final en Mermaid, API docs y changelog.
+          El estado final de docs/ debe reflejar el sistema real.
+

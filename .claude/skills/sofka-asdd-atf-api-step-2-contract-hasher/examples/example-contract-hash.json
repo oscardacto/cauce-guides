@@ -1,0 +1,22 @@
+{
+  "wi_id": "wi-001",
+  "contract_hash": "sha256:7a3b8c2f9d1e4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b",
+  "hash_mode": "strict",
+  "algorithm": "SHA-256",
+  "hashed_at": "2026-05-21T10:40:30-05:00",
+  "canonical_size_bytes": 4521,
+  "sub_hashes": {
+    "endpoints": "sha256:1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+    "schemas": "sha256:9z8y7x6w5v4u3t2s1r0q9p8o7n6m5l4k3j2i1h0g9f8e7d6c5b4a3z2y1x0w9v8u",
+    "responses": "sha256:0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b",
+    "auth": "sha256:f1e2d3c4b5a6978869574635241302f1e0d9c8b7a6958473625140d9c8b7a695"
+  },
+  "canonicalization_settings": {
+    "keys_sorted_alphabetically": true,
+    "null_values_removed": true,
+    "description_fields_excluded": ["summary", "description", "title", "info.description", "info.contact", "info.license"],
+    "examples_excluded": true,
+    "base_url_excluded": true
+  },
+  "_note": "Mismo contrato lógico → mismo hash, independiente de orden de claves, whitespace o cambios cosméticos"
+}

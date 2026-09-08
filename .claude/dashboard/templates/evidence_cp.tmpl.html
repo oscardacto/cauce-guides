@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<!-- ATF_TEMPLATE_VERSION: 3.0.0 | evidence_cp -->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title id="page-title">Evidencia CP — ATF</title>
+<style>
+/* ATF:INJECT_TOKENS */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--body,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif);font-size:14px;color:var(--text,#1a1a18);background:var(--bg,#f7f5f2)}
+
+/* ── SOFKA PATTERN ── */
+.sofka-bg{position:relative;overflow:hidden}
+.sofka-bg::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent,transparent 14px,rgba(244,121,32,.018) 14px,rgba(244,121,32,.018) 15px);pointer-events:none;z-index:0}
+.sofka-bg>*{position:relative;z-index:1}
+
+/* Container */
+.container{max-width:1100px;margin:2rem auto;padding:0 1.5rem}
+
+/* Report header */
+.report-header{background:var(--text,#1a1a18);color:var(--sofka-light,#F0EDE8);border-radius:var(--r,8px);padding:1.5rem 2rem;margin-bottom:2rem;border-bottom:3px solid var(--orange,#F47920);animation:atf-fade-up .35s ease both}
+.header-title{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;position:relative;z-index:1}
+.header-icon{font-size:2rem;display:flex;align-items:center}
+.header-title h1{font-size:1.3rem;font-weight:700;font-family:var(--sans,sans-serif)}
+.header-sub{color:rgba(239,234,228,.6);font-size:.9rem;margin-top:.2rem}
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;position:relative;z-index:1}
+.meta-item{display:flex;flex-direction:column;gap:.2rem}
+.meta-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:rgba(239,234,228,.5);font-family:var(--sans,sans-serif);font-weight:700}
+.meta-value{font-size:.85rem;color:var(--sofka-light,#efeae4)}
+.verdict-badge{font-weight:700;font-size:.95rem;color:var(--bad,#e02020)}
+.verdict-badge.pass{color:var(--go,#18a34a)}
+
+/* Steps section */
+section{background:var(--bg2,#fff);border-radius:var(--r,8px);padding:1.5rem 2rem;margin-bottom:2rem;border:1px solid var(--border,#ddd8d0)}
+section h2{font-family:var(--sans,sans-serif);font-size:1rem;font-weight:700;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:2px solid var(--border,#ddd8d0);color:var(--text,#1a1a18)}
+.section-count{font-size:.8rem;color:var(--text3,#8a8478);font-weight:400}
+
+/* Evidence mode indicator */
+.ev-mode-indicator{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--r,8px);font-size:11px;font-family:var(--font-head,sans-serif);font-weight:600;border:1.5px solid;margin-bottom:1rem}
+.ev-mode-all{background:var(--go-bg);color:var(--go);border-color:var(--go-b)}
+.ev-mode-failures{background:var(--orange-bg);color:var(--text2);border-color:var(--orange-b)}
+.ev-mode-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* Steps */
+.step{border:1px solid var(--border,#ddd8d0);border-radius:var(--r,8px);margin-bottom:1rem;overflow:hidden}
+.step-fail{border-left:4px solid var(--bad,#e02020)}
+.step-pass{border-left:3px solid var(--go,#18a34a)}
+.step-fail .step-header{background:rgba(224,32,32,.05)}
+.step-header{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;background:var(--bg3,#f0ede8);border-bottom:1px solid var(--border,#ddd8d0)}
+.step-icon{font-size:1.1rem;display:flex;align-items:center}
+.step-num{font-size:.72rem;font-weight:700;color:var(--text3,#8a8478);min-width:3.5rem;font-family:var(--sans,sans-serif)}
+.step-title{flex:1;font-weight:500;font-size:.87rem;color:var(--text,#1a1a18)}
+.step-badge{padding:2px 10px;border-radius:999px;font-size:.68rem;font-weight:700;white-space:nowrap;font-family:var(--sans,sans-serif)}
+.badge-fail{background:var(--bad-bg,rgba(224,32,32,.08));color:var(--bad,#e02020);border:1px solid var(--bad-b,rgba(224,32,32,.25))}
+.badge-pass{background:var(--go-bg,rgba(24,163,74,.08));color:var(--go,#18a34a);border:1px solid var(--go-b,rgba(24,163,74,.25))}
+.step-error{padding:.6rem 1rem;background:var(--bad-bg,rgba(224,32,32,.08));border-bottom:1px solid var(--bad-b,rgba(224,32,32,.25));color:var(--bad,#e02020);font-size:.82rem}
+.step-error code{display:block;margin-top:.3rem;white-space:pre-wrap;word-break:break-all;font-family:var(--mono,monospace);font-size:.8rem}
+.step-evidence{padding:1rem;background:var(--bg2,#fff);text-align:center}
+.step-screenshot{max-width:100%;border:2px solid var(--border,#ddd8d0);border-radius:var(--r,8px);box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:zoom-in;transition:opacity .15s}
+.step-screenshot:hover{opacity:.9}
+.step-pass .step-screenshot{border-color:var(--go,#18a34a);box-shadow:0 2px 8px rgba(24,163,74,.15)}
+.step-fail .step-screenshot{border-color:var(--bad,#e02020);box-shadow:0 2px 8px rgba(224,32,32,.15)}
+.step-screenshot-placeholder{color:var(--text3,#8a8478);font-size:.8rem;font-style:italic;padding:.5rem}
+.step-capture-failed{color:var(--orange,#e07020);font-size:.8rem;font-weight:600;padding:.75rem;background:rgba(224,112,32,.06);border:1px dashed rgba(224,112,32,.3);border-radius:var(--r,8px);display:flex;align-items:center;justify-content:center;gap:4px}
+.step-no-capture-expected{color:var(--text3,#8a8478);font-size:.78rem;font-style:italic;padding:.4rem;opacity:.7}
+
+/* Bug shot */
+.bug-shot-section h2{border-color:var(--bad,#e02020) !important;color:var(--bad,#e02020)}
+.bug-screenshot{max-width:100%;border:1px solid var(--border,#ddd8d0);border-radius:var(--r,8px);box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:zoom-in;transition:opacity .15s}
+.bug-screenshot:hover{opacity:.9}
+
+/* Empty state */
+.empty-steps{padding:2rem;text-align:center;color:var(--text3,#8a8478);font-size:.9rem;font-style:italic}
+
+/* Modal */
+.atf-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out}
+.atf-modal.open{display:flex}
+.atf-modal img{max-width:94vw;max-height:94vh;border-radius:6px;box-shadow:0 8px 32px rgba(0,0,0,.6)}
+.modal-close{position:absolute;top:1rem;right:1.5rem;color:rgba(255,255,255,.7);font-size:2.4rem;cursor:pointer;line-height:1;font-weight:300}
+.modal-close:hover{color:#fff}
+</style>
+</head>
+<body>
+
+<!-- ── BREADCRUMB ── -->
+<nav class="atf-breadcrumb">
+  <a class="bc-link" href="../../runs_index.html">ATF Dashboard</a>
+  <span class="bc-sep"></span>
+  <a class="bc-link" id="bc-run-link" href="../report.html">Run: —</a>
+  <span class="bc-sep"></span>
+  <span class="bc-current" id="bc-current">—</span>
+</nav>
+
+<div class="container">
+
+  <!-- ── REPORT HEADER ── -->
+  <div class="report-header sofka-bg" id="report-header">
+    <div class="header-title">
+      <span class="header-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <rect x="6" y="4" width="20" height="24" rx="3" stroke="currentColor" stroke-width="2"/>
+          <path d="M11 11h10M11 16h10M11 21h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <div>
+        <h1 id="header-title">Evidencia de Ejecución</h1>
+        <p class="header-sub" id="header-sub"></p>
+      </div>
+    </div>
+    <div class="meta-grid" id="meta-grid">
+      <div class="meta-item"><span class="meta-label">CP ID</span><span class="meta-value" id="meta-cp-id">—</span></div>
+      <div class="meta-item"><span class="meta-label">Módulo</span><span class="meta-value" id="meta-module">—</span></div>
+      <div class="meta-item"><span class="meta-label">HU Asociada</span><span class="meta-value" id="meta-hu">—</span></div>
+      <div class="meta-item"><span class="meta-label">Risk Level</span><span class="meta-value" id="meta-risk">—</span></div>
+      <div class="meta-item"><span class="meta-label">Ejecutado</span><span class="meta-value" id="meta-date">—</span></div>
+      <div class="meta-item"><span class="meta-label">Paso que falla</span><span class="meta-value" id="meta-failed-step" style="color:var(--bad,#e02020);font-weight:700">—</span></div>
+      <div class="meta-item"><span class="meta-label">Resultado</span><span class="verdict-badge" id="meta-verdict">—</span></div>
+      <div class="meta-item"><span class="meta-label">Error</span><span class="meta-value" id="meta-error" style="font-size:.78rem;color:var(--bad,#e02020)">—</span></div>
+    </div>
+  </div>
+
+  <!-- ── CP SPECIFICATION SECTION (preconditions → steps_raw → expected_result) ── -->
+  <section id="section-cp-spec" style="display:none">
+    <h2>Especificación del Caso
+      <span class="section-count" id="cp-spec-tags" style="display:inline-flex;gap:4px;flex-wrap:wrap;vertical-align:middle"></span>
+    </h2>
+    <div id="cp-spec-preconditions" style="display:none;margin-bottom:1rem">
+      <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text3,#8a8478);font-weight:700;font-family:var(--sans,sans-serif);margin-bottom:.3rem">Precondiciones</div>
+      <div id="cp-spec-preconditions-text" style="padding:.6rem .8rem;background:var(--bg3,#f0ede8);border-radius:4px;border:1px solid var(--border,#ddd8d0);white-space:pre-line;font-size:.87rem"></div>
+    </div>
+    <div id="cp-spec-steps-raw" style="display:none;margin-bottom:1rem">
+      <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text3,#8a8478);font-weight:700;font-family:var(--sans,sans-serif);margin-bottom:.3rem">Pasos</div>
+      <div id="cp-spec-steps-raw-text" style="padding:.6rem .8rem;background:var(--bg3,#f0ede8);border-radius:4px;border:1px solid var(--border,#ddd8d0);white-space:pre-line;font-size:.87rem"></div>
+    </div>
+    <div id="cp-spec-expected" style="display:none">
+      <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text3,#8a8478);font-weight:700;font-family:var(--sans,sans-serif);margin-bottom:.3rem">Resultado Esperado</div>
+      <div id="cp-spec-expected-text" style="padding:.6rem .8rem;background:var(--bg3,#f0ede8);border-radius:4px;border:1px solid var(--border,#ddd8d0);white-space:pre-line;font-size:.87rem"></div>
+    </div>
+  </section>
+
+  <!-- ── SETUP STEPS SECTION (ADR-001 Opción C' — playbooks de precondición) ── -->
+  <section id="section-setup-steps" style="display:none">
+    <details>
+      <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:.5rem">
+        <span style="font-size:.85rem;font-weight:700;color:var(--text2,#5a5650);font-family:var(--sans,sans-serif);text-transform:uppercase;letter-spacing:.05em">
+          ⚙ Setup de precondición
+        </span>
+        <span class="section-count" id="setup-steps-count" style="font-size:.78rem"></span>
+        <span style="font-size:.72rem;color:var(--text3,#8a8478);margin-left:auto;font-weight:400;font-style:italic">
+          Pasos preparatorios del playbook — no evalúan PASS/FAIL del test
+        </span>
+      </summary>
+      <div id="setup-steps-container" style="margin-top:1rem">
+        <div class="empty-steps">Sin setup de precondición.</div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ── STEPS SECTION ── -->
+  <section>
+    <h2>Pasos de Ejecución <span class="section-count" id="steps-count"></span></h2>
+    <div id="steps-container">
+      <div class="empty-steps">Sin detalle de pasos disponible.</div>
+    </div>
+  </section>
+
+  <!-- ── BUG SCREENSHOT SECTION ── -->
+  <section id="section-bug-shot" class="bug-shot-section" style="display:none;text-align:center">
+    <h2>Estado al Fallar — Bug Screenshot Anotado</h2>
+    <img id="bug-screenshot" class="bug-screenshot" src="" alt="Bug screenshot" onclick="openModal(this.src)">
+  </section>
+
+  <!-- ── ALM BUG REPORT SECTION (solo FAIL) ── -->
+  <section id="section-alm" style="display:none">
+    <h2 style="color:var(--bad,#e02020);display:flex;align-items:center;gap:.5rem">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M7 10h6M10 7v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Reporte para ALM
+      <button id="alm-copy-btn" onclick="copyAlmText()" style="margin-left:auto;padding:4px 14px;border:1px solid var(--border,#ddd);border-radius:6px;background:var(--bg3,#f0ede8);color:var(--text,#1a1a18);font-size:11px;cursor:pointer;font-weight:600">Copiar al portapapeles</button>
+    </h2>
+    <div id="alm-content" style="margin-top:1rem;font-size:.85rem;line-height:1.7"></div>
+    <pre id="alm-raw" style="display:none;margin-top:1rem;padding:1rem;background:var(--bg3,#f0ede8);border:1px solid var(--border,#ddd);border-radius:6px;font-size:.78rem;white-space:pre-wrap;word-break:break-word;color:var(--text,#1a1a18);max-height:400px;overflow:auto"></pre>
+  </section>
+
+  <!-- ── DB CONNECTION BANNER (REGLA 7 — alerta global al tope) ── -->
+  <div id="db-conn-banner-global" style="display:none;padding:.75rem 1rem;margin-bottom:1.5rem;background:rgba(245,158,11,.08);color:#b45309;border:1px solid rgba(245,158,11,.3);border-radius:6px;font-size:.82rem">
+    ⚠️ La conexión a BD falló en al menos una validación. El resultado del CP no se ve afectado (REGLA 7) — solo la evidencia BD no pudo capturarse.
+  </div>
+
+  <!-- ── DB VALIDATIONS SECTION (solo para banner "feature activa sin matches" o huérfanas) ── -->
+  <section id="section-db-validations" style="display:none">
+    <h2 style="display:flex;align-items:center;gap:.5rem">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="5" rx="7" ry="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M3 5v10c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5" stroke="currentColor" stroke-width="1.5"/><path d="M3 10c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5" stroke="currentColor" stroke-width="1.5"/></svg>
+      Validaciones de Base de Datos
+      <span class="section-count" id="db-validations-count"></span>
+    </h2>
+    <div id="db-validations-container"></div>
+  </section>
+
+  <!-- ── SOFKA FOOTER ── -->
+  <div class="sofka-footer">
+    <span class="sofka-brand">sofka<span class="underscore">_</span></span> · Generado por <span style="color:var(--orange,#F47920)">ATF</span> · <span id="gen-date"></span> · <a href="https://sofka.com.co">sofka.com.co</a>
+  </div>
+
+</div>
+
+<!-- ── MODAL ── -->
+<div id="atf-modal" class="atf-modal" role="dialog" aria-modal="true">
+  <span class="modal-close" onclick="document.getElementById('atf-modal').classList.remove('open')">&#x2715;</span>
+  <img id="atf-modal-img" src="" alt="Screenshot ampliado">
+</div>
+
+<!-- ── DATA PLACEHOLDER (replaced by generator) ── -->
+<script id="atf-cp-data-placeholder">window.CP_DATA = null;</script>
+
+<script>
+/* ── MODAL ── */
+function openModal(src){
+  document.getElementById('atf-modal-img').src=src;
+  document.getElementById('atf-modal').classList.add('open');
+}
+document.getElementById('atf-modal').addEventListener('click',function(){this.classList.remove('open')});
+
+/* ── RENDER ── */
+(function(){
+  var d = window.CP_DATA;
+  if (!d) return;
+
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  /* title */
+  document.title = 'Evidencia — ' + d.cp_id + ' | ATF';
+  document.getElementById('page-title').textContent = 'Evidencia — ' + d.cp_id + ' | ATF';
+  document.getElementById('header-title').textContent = 'Evidencia de Ejecución — ' + d.cp_id;
+  document.getElementById('header-sub').textContent = d.module_id + ' · ' + d.hu_id;
+
+  /* breadcrumb */
+  document.getElementById('bc-run-link').textContent = 'Run: ' + (d.run_id || '—');
+  document.getElementById('bc-current').textContent = d.cp_id || '—';
+
+  /* meta grid */
+  document.getElementById('meta-cp-id').textContent = d.cp_id;
+  document.getElementById('meta-module').textContent = d.module_id;
+  document.getElementById('meta-hu').textContent = d.hu_id;
+  var riskDescMap = {
+    critical: 'Fallo afecta transacciones, autenticación o integridad de datos.',
+    high:     'Fallo impacta flujos de alta frecuencia sin workaround inmediato.',
+    medium:   'Fallo impacta funcionalidad con workaround disponible.',
+    low:      'Fallo cosmético o en flujos de baja frecuencia.',
+  };
+  var riskLvl = (d.risk_level || '').toLowerCase();
+  var riskDesc = riskDescMap[riskLvl] || '';
+  document.getElementById('meta-risk').innerHTML = '<strong>' + esc(d.risk_level || '—') + '</strong>'
+    + (riskDesc ? '<span style="display:block;font-size:.72rem;color:rgba(239,234,228,.55);margin-top:.15rem">' + riskDesc + '</span>' : '');
+  document.getElementById('meta-date').textContent = d.dateStr;
+  document.getElementById('meta-failed-step').textContent = d.failed_step ? 'Paso ' + d.failed_step : '—';
+  var vb = document.getElementById('meta-verdict');
+  var isFail = d.status === 'FAIL';
+  vb.textContent = d.status + (isFail
+    ? ' — ' + d.passCount + ' PASS | ' + d.failCount + ' FAIL'
+    : ' — ' + d.passCount + '/' + d.steps.length + ' pasos exitosos');
+  if (!isFail) {
+    vb.className = 'verdict-badge pass';
+    document.getElementById('meta-failed-step').parentElement.style.display = 'none';
+    document.getElementById('meta-error').parentElement.style.display = 'none';
+  } else {
+    document.getElementById('meta-error').textContent = d.error_message || '';
+  }
+
+  /* CP specification (preconditions → steps_raw → expected_result + tags) */
+  var hasPrecond  = !!(d.preconditions && String(d.preconditions).trim());
+  var hasStepsRaw = !!(d.steps_raw && String(d.steps_raw).trim());
+  var hasExpected = !!(d.expected_result && String(d.expected_result).trim());
+  var cpTags = Array.isArray(d.tags) ? d.tags : [];
+  if (hasPrecond || hasStepsRaw || hasExpected || cpTags.length) {
+    document.getElementById('section-cp-spec').style.display = '';
+    if (hasPrecond) {
+      document.getElementById('cp-spec-preconditions').style.display = '';
+      document.getElementById('cp-spec-preconditions-text').textContent = d.preconditions;
+    }
+    if (hasStepsRaw) {
+      document.getElementById('cp-spec-steps-raw').style.display = '';
+      document.getElementById('cp-spec-steps-raw-text').textContent = d.steps_raw;
+    }
+    if (hasExpected) {
+      document.getElementById('cp-spec-expected').style.display = '';
+      document.getElementById('cp-spec-expected-text').textContent = d.expected_result;
+    }
+    if (cpTags.length) {
+      // Semántica de tags (alineada con gherkin-writer/SKILL.md PASO 1):
+      //   @bd                     → BD (azul) — opt-in REGLA 7
+      //   @requiere-validacion    → ámbar — supuesto pendiente de PO
+      //   @supuesto-*             → púrpura — asunción del agente
+      //   @cp-derivado            → gris azulado — origen NO literal (cross-cutting/transversal)
+      //   @charter-only           → outline naranja — pertenece a charter, NO al .feature
+      //   @known_bug              → rojo suave — bug histórico tolerado
+      //   @security / @validation → tono diferenciado por dimensión funcional
+      //   default                 → gris neutro
+      function tagStyle(t){
+        var lower = String(t).toLowerCase();
+        if (lower === '@bd') return {
+          bg:'var(--blue-bg,rgba(10,122,122,.07))', fg:'var(--blue,#0A7A7A)', bd:'var(--blue-b,rgba(10,122,122,.22))',
+          title:'Incluye validación contra Base de Datos (REGLA 7)'
+        };
+        if (lower === '@requiere-validacion') return {
+          bg:'rgba(244,165,24,.10)', fg:'#A06000', bd:'rgba(244,165,24,.40)',
+          title:'CP descansa en supuesto sin confirmación del PO — revisar antes de ejecutar'
+        };
+        if (lower.indexOf('@supuesto-') === 0) return {
+          bg:'rgba(123,87,194,.10)', fg:'#5E3CA3', bd:'rgba(123,87,194,.35)',
+          title:'Asunción del agente al diseñar el CP — confirmar con producto'
+        };
+        if (lower === '@cp-derivado') return {
+          bg:'rgba(96,125,139,.12)', fg:'#37474F', bd:'rgba(96,125,139,.35)',
+          title:'CP NO trazable a CA literal (cross-cutting / transversal / AI_EDGE)'
+        };
+        if (lower === '@charter-only') return {
+          bg:'transparent', fg:'#D2691E', bd:'#D2691E',
+          title:'Pertenece al charter exploratorio, no al .feature ejecutable'
+        };
+        if (lower === '@known_bug') return {
+          bg:'rgba(220,53,69,.08)', fg:'#A02830', bd:'rgba(220,53,69,.30)',
+          title:'Bug conocido tolerado — no marca FAIL automático'
+        };
+        if (lower === '@security' || lower === '@high' && false) {
+          // dejado para extensión futura
+        }
+        if (lower === '@security') return {
+          bg:'rgba(190,40,40,.07)', fg:'#7A1F1F', bd:'rgba(190,40,40,.25)',
+          title:'CP de seguridad funcional'
+        };
+        if (lower === '@validation' || lower === '@boundary') return {
+          bg:'rgba(40,140,180,.08)', fg:'#0E5A78', bd:'rgba(40,140,180,.25)',
+          title:''
+        };
+        return {
+          bg:'var(--bg3,#f0ede8)', fg:'var(--text2,#5a5650)', bd:'var(--border,#ddd8d0)',
+          title:''
+        };
+      }
+      document.getElementById('cp-spec-tags').innerHTML = cpTags.map(function(t){
+        var s = tagStyle(t);
+        var titleAttr = s.title ? ' title="'+esc(s.title)+'"' : '';
+        var style = 'background:'+s.bg+';color:'+s.fg+';border:1px solid '+s.bd;
+        return '<span class="step-badge"'+titleAttr+' style="'+style+';font-weight:700;font-size:.68rem;padding:2px 8px;border-radius:999px;font-family:var(--sans,sans-serif)">'+esc(t)+'</span>';
+      }).join('');
+    }
+  }
+
+  /* setup_steps (ADR-001 Opción C' — playbooks de precondición) */
+  var setupSteps = d.setup_steps || [];
+  if (setupSteps.length > 0) {
+    var setupSection = document.getElementById('section-setup-steps');
+    setupSection.style.display = 'block';
+
+    // Contar playbooks únicos
+    var uniquePlaybooks = {};
+    setupSteps.forEach(function(s){ if(s.playbook_id) uniquePlaybooks[s.playbook_id] = true; });
+    var playbookIds = Object.keys(uniquePlaybooks);
+    document.getElementById('setup-steps-count').textContent =
+      '(' + setupSteps.length + ' paso' + (setupSteps.length === 1 ? '' : 's') +
+      (playbookIds.length > 0 ? ' · playbooks: ' + playbookIds.join(', ') : '') + ')';
+
+    var setupContainer = document.getElementById('setup-steps-container');
+    setupContainer.innerHTML = setupSteps.map(function(s, idx){
+      var stepNum = s.n || (idx + 1);
+      var isFail = s.status === 'FAIL';
+      var imgB64 = s.imgB64 || null;
+      var imgHtml = imgB64
+        ? '<img src="data:image/png;base64,'+imgB64+'" class="step-screenshot" onclick="openModal(this.src)" title="Clic para ampliar">'
+        : '<div class="step-no-capture-expected">Sin captura</div>';
+      var icon = isFail
+        ? '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="var(--bad-bg)" stroke="var(--bad)" stroke-width="1.5"/><path d="M5 5l6 6M11 5l-6 6" stroke="var(--bad)" stroke-width="1.5" stroke-linecap="round"/></svg>'
+        : '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="var(--go-bg)" stroke="var(--go)" stroke-width="1.5"/><path d="M4.5 8l2.5 2.5 4.5-4.5" stroke="var(--go)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      var pbTag = s.playbook_id
+        ? '<span style="padding:2px 8px;border-radius:4px;font-size:.65rem;font-weight:700;background:var(--orange-bg,rgba(244,121,32,.08));color:var(--orange,#F47920);border:1px solid rgba(244,121,32,.25);font-family:var(--sans,sans-serif)">' + esc(s.playbook_id) + '</span>'
+        : '';
+      return '<div class="step '+(isFail?'step-fail':'step-pass')+'">'
+        +'<div class="step-header">'
+        +'<span class="step-icon">'+icon+'</span>'
+        +'<span class="step-num">Setup '+stepNum+'</span>'
+        +pbTag
+        +'<span class="step-title">'+esc(s.text||'')+'</span>'
+        +'<span class="step-badge '+(isFail?'badge-fail':'badge-pass')+'">'+s.status+'</span>'
+        +'</div>'
+        +(isFail && s.error ? '<div class="step-error"><code>'+esc(s.error)+'</code></div>' : '')
+        +'<div class="step-evidence">'+imgHtml+'</div>'
+        +'</div>';
+    }).join('');
+  }
+
+  /* BLOCKED por limitación ambiental o setup failure */
+  if (d.status === 'BLOCKED' && d.blocked_reason) {
+    var blockedBanner = document.createElement('div');
+    blockedBanner.style.cssText = 'padding:1rem 1.5rem;margin-bottom:1.5rem;background:var(--orange-bg,rgba(244,121,32,.08));border:1.5px solid var(--orange-b,rgba(244,121,32,.25));border-radius:var(--r,8px);color:var(--text,#1a1a18);font-size:.9rem';
+    var envNote = d.environmental_limitation
+      ? ' <em style="display:block;margin-top:.4rem;font-size:.8rem;color:var(--text2,#5a5650)">⚠ Limitación del ambiente — no es un bug del sistema bajo prueba. El test no pudo ejecutarse.</em>'
+      : ' <em style="display:block;margin-top:.4rem;font-size:.8rem;color:var(--text2,#5a5650)">⚠ Setup de precondición falló — revisar el playbook aplicado o el ambiente.</em>';
+    blockedBanner.innerHTML = '<strong style="color:var(--orange,#F47920)">🚫 CP BLOQUEADO:</strong> ' + esc(d.blocked_reason) + envNote;
+    var firstSection = document.querySelector('section');
+    if (firstSection) firstSection.parentNode.insertBefore(blockedBanner, firstSection);
+  }
+
+  /* ── DB VALIDATIONS — index por step_num (para render inline) ── */
+  var dbValidations = Array.isArray(d.db_validations) ? d.db_validations : [];
+  var dbFeatureOn   = d.db_feature_enabled === true;
+  var dbCpOptedIn   = d.db_cp_opted_in === true;   // 2026-04-24 — REGLA 7 gate CP-level
+  var dbByStep      = {};
+  var dbOrphans     = [];
+  dbValidations.forEach(function(v) {
+    var key = (v.step_num !== null && v.step_num !== undefined) ? String(v.step_num) : null;
+    if (key === null) { dbOrphans.push(v); return; }
+    if (!dbByStep[key]) dbByStep[key] = [];
+    dbByStep[key].push(v);
+  });
+
+  /* renderDbBlock(v, {inline}) — misma forma, dos envoltorios (inline: <details>, final: <div>) */
+  function renderDbBlock(v, opts) {
+    opts = opts || {};
+    var inline = opts.inline === true;
+    var status = v.status || 'DB_SKIPPED';
+    var statusColor = status === 'DB_PASS'    ? 'var(--go,#18a34a)' :
+                      status === 'DB_FAIL'    ? 'var(--bad,#e02020)' :
+                      status === 'DB_ERROR'   ? '#b45309' :
+                      status === 'DB_SKIPPED' ? 'var(--orange,#F47920)' : 'var(--text3,#8a8478)';
+    var statusBg    = status === 'DB_PASS'    ? 'rgba(24,163,74,.06)' :
+                      status === 'DB_FAIL'    ? 'rgba(224,32,32,.06)' :
+                      status === 'DB_ERROR'   ? 'rgba(245,158,11,.06)' :
+                      status === 'DB_SKIPPED' ? 'var(--bg3,#f0ede8)' : 'rgba(138,132,120,.06)';
+    var icon        = status === 'DB_PASS'    ? '✅' :
+                      status === 'DB_FAIL'    ? '❌' :
+                      status === 'DB_ERROR'   ? '⚠️' :
+                      status === 'DB_SKIPPED' ? '⏭️' : 'ℹ️';
+    var openByDefault = (status === 'DB_FAIL' || status === 'DB_ERROR');
+
+    var html = '';
+    var headerInner = '<span style="font-size:' + (inline ? '.95rem' : '1rem') + '">' + icon + '</span>' +
+      '<span style="font-weight:600">' + (inline ? 'Validación BD' : 'Paso ' + (v.step_num || '—')) + '</span>' +
+      (v.table ? '<span style="font-family:var(--mono,monospace);font-size:.8rem;color:var(--text2,#595953)">· ' + esc(v.table) + '</span>' : '') +
+      (v.record_id ? '<span style="font-family:var(--mono,monospace);font-size:.8rem;color:var(--text3,#8a8478)">· ' + esc(v.record_id) + '</span>' : '') +
+      '<span style="margin-left:auto;padding:2px 10px;border-radius:999px;font-size:.7rem;font-weight:700;color:' + statusColor + ';border:1px solid ' + statusColor + '">' + status + '</span>';
+
+    if (inline) {
+      html += '<details class="db-block-inline"' + (openByDefault ? ' open' : '') +
+        ' style="margin:.6rem 1rem 0;border:1px solid var(--border,#ddd8d0);border-left:4px solid ' + statusColor + ';border-radius:6px;background:var(--bg2,#fff);overflow:hidden">';
+      html += '<summary style="cursor:pointer;list-style:none;padding:.55rem .85rem;display:flex;align-items:center;gap:.5rem;font-size:.82rem;background:' + statusBg + '">' + headerInner + '</summary>';
+      html += '<div>';
+    } else {
+      html += '<div class="db-block" style="border:1px solid var(--border,#ddd8d0);border-left:4px solid ' + statusColor + ';border-radius:6px;margin-bottom:1rem;overflow:hidden">';
+      html += '<div style="display:flex;align-items:center;gap:.5rem;padding:.7rem 1rem;background:' + statusBg + ';border-bottom:1px solid var(--border,#ddd8d0)">' + headerInner + '</div>';
+    }
+
+    /* Query (collapsible) */
+    if (v.query) {
+      html += '<details style="padding:.5rem 1rem;border-bottom:1px solid var(--border,#ddd8d0)">';
+      html += '<summary style="cursor:pointer;font-size:.82rem;font-weight:600;color:var(--text2,#595953)">Invocación (SELECT)</summary>';
+      html += '<pre style="margin-top:.5rem;padding:.75rem;background:var(--bg3,#f0ede8);border-radius:4px;font-family:var(--mono,monospace);font-size:.78rem;white-space:pre-wrap;word-break:break-word">' + esc(v.query) + '</pre>';
+      html += '</details>';
+    }
+
+    /* Result summary (collapsible) */
+    if (typeof v.row_count === 'number' || Array.isArray(v.rows)) {
+      var rowCount = (typeof v.row_count === 'number') ? v.row_count : (Array.isArray(v.rows) ? v.rows.length : 0);
+      var duration = (typeof v.duration_ms === 'number') ? (v.duration_ms + 'ms') : '';
+      html += '<details style="padding:.5rem 1rem;border-bottom:1px solid var(--border,#ddd8d0)">';
+      html += '<summary style="cursor:pointer;font-size:.82rem;font-weight:600;color:var(--text2,#595953)">Respuesta (' + rowCount + ' fila' + (rowCount === 1 ? '' : 's') + (duration ? ' · ' + duration : '') + ')</summary>';
+      if (Array.isArray(v.rows) && v.rows.length > 0) {
+        var cols = Object.keys(v.rows[0] || {});
+        html += '<div style="margin-top:.5rem;overflow-x:auto">';
+        html += '<table style="width:100%;font-size:.78rem;border-collapse:collapse">';
+        html += '<thead><tr>';
+        cols.forEach(function(c){ html += '<th style="text-align:left;padding:.4rem;border-bottom:2px solid var(--border,#ddd8d0);font-family:var(--mono,monospace);background:var(--bg3,#f0ede8)">' + esc(c) + '</th>'; });
+        html += '</tr></thead><tbody>';
+        v.rows.forEach(function(r) {
+          html += '<tr>';
+          cols.forEach(function(c){
+            var val = r[c];
+            var display = (val === null || val === undefined) ? '<em style="color:var(--text3,#8a8478)">null</em>' : esc(String(val));
+            html += '<td style="padding:.35rem .4rem;border-bottom:1px solid var(--border,#ddd8d0);font-family:var(--mono,monospace);font-size:.77rem">' + display + '</td>';
+          });
+          html += '</tr>';
+        });
+        html += '</tbody></table></div>';
+      } else {
+        html += '<p style="margin-top:.5rem;padding:.5rem;color:var(--text3,#8a8478);font-style:italic">Sin filas retornadas.</p>';
+      }
+      html += '</details>';
+    }
+
+    /* Findings */
+    if (Array.isArray(v.findings) && v.findings.length > 0) {
+      html += '<div style="padding:.75rem 1rem;border-bottom:1px solid var(--border,#ddd8d0)">';
+      html += '<div style="font-size:.82rem;font-weight:600;margin-bottom:.5rem;color:var(--text2,#595953)">Findings</div>';
+      html += '<table style="width:100%;font-size:.8rem;border-collapse:collapse">';
+      html += '<thead><tr>';
+      html += '<th style="text-align:left;padding:.4rem;border-bottom:2px solid var(--border,#ddd8d0);font-family:var(--mono,monospace);background:var(--bg3,#f0ede8)">Columna</th>';
+      html += '<th style="text-align:left;padding:.4rem;border-bottom:2px solid var(--border,#ddd8d0);font-family:var(--mono,monospace);background:var(--bg3,#f0ede8)">Valor en BD</th>';
+      html += '<th style="text-align:left;padding:.4rem;border-bottom:2px solid var(--border,#ddd8d0);font-family:var(--mono,monospace);background:var(--bg3,#f0ede8)">Esperado</th>';
+      html += '<th style="text-align:left;padding:.4rem;border-bottom:2px solid var(--border,#ddd8d0);font-family:var(--mono,monospace);background:var(--bg3,#f0ede8)">Assessment</th>';
+      html += '</tr></thead><tbody>';
+      v.findings.forEach(function(f) {
+        var assIsPass = (f.assessment && String(f.assessment).toUpperCase().startsWith('PASS'));
+        var assColor  = assIsPass ? 'var(--go,#18a34a)' : 'var(--bad,#e02020)';
+        var assIcon   = assIsPass ? '✅' : '❌';
+        var valDb = (f.value_in_db === null || f.value_in_db === undefined) ? '<em style="color:var(--text3,#8a8478)">null</em>' : esc(String(f.value_in_db));
+        html += '<tr>';
+        html += '<td style="padding:.4rem;border-bottom:1px solid var(--border,#ddd8d0);font-family:var(--mono,monospace)">' + esc(f.column || '') + '</td>';
+        html += '<td style="padding:.4rem;border-bottom:1px solid var(--border,#ddd8d0);font-family:var(--mono,monospace)">' + valDb + '</td>';
+        html += '<td style="padding:.4rem;border-bottom:1px solid var(--border,#ddd8d0)">' + esc(String(f.expected || '')) + '</td>';
+        html += '<td style="padding:.4rem;border-bottom:1px solid var(--border,#ddd8d0);color:' + assColor + ';font-weight:600">' + assIcon + ' ' + esc(String(f.assessment || '')) + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      html += '</div>';
+    }
+
+    /* Skip reason + error detail */
+    if (v.reason && status === 'DB_SKIPPED') {
+      html += '<div style="padding:.6rem 1rem;background:var(--bg3,#f0ede8);border-bottom:1px solid var(--border,#ddd8d0);color:var(--text2,#595953);font-size:.82rem">' +
+              '<strong style="color:var(--text,#1a1a18)">Skip reason:</strong> <code style="font-family:var(--mono,monospace);background:var(--bg2,#fff);padding:1px 5px;border-radius:3px">' + esc(v.reason) + '</code>' +
+              (v.message ? '<div style="margin-top:.3rem;color:var(--text3,#8a8478);font-size:.78rem">' + esc(v.message) + '</div>' : '') +
+              '</div>';
+    }
+    if (v.error_detail) {
+      html += '<div style="padding:.6rem 1rem;background:rgba(245,158,11,.06);border-bottom:1px solid var(--border,#ddd8d0);color:#b45309;font-size:.82rem">' + esc(v.error_detail) + '</div>';
+    }
+    if (v.evidence_file) {
+      html += '<div style="padding:.5rem 1rem;background:var(--bg3,#f0ede8);font-size:.78rem"><a href="' + esc(v.evidence_file) + '" target="_blank" style="color:var(--orange,#F47920);text-decoration:none">Ver evidencia raw → ' + esc(v.evidence_file) + '</a></div>';
+    }
+
+    if (inline) {
+      html += '</div></details>';
+    } else {
+      html += '</div>';
+    }
+    return html;
+  }
+
+  /* Banner global db_connection_failed (sobrevive aunque la sección final quede oculta) */
+  if (d.db_connection_failed === true) {
+    var gBanner = document.getElementById('db-conn-banner-global');
+    if (gBanner) gBanner.style.display = 'block';
+  }
+
+  /* steps */
+  var steps = d.steps || [];
+  document.getElementById('steps-count').textContent = '(' + steps.length + ' pasos)';
+
+  /* evidence mode indicator */
+  var evMode = d.evidence_mode || 'failures_only';
+  var isAll = evMode === 'all';
+  var stepsSection = document.querySelector('section');
+  if (stepsSection) {
+    var ind = document.createElement('div');
+    ind.className = 'ev-mode-indicator ' + (isAll ? 'ev-mode-all' : 'ev-mode-failures');
+    ind.innerHTML = '<span class="ev-mode-dot"></span>'
+      + (isAll
+        ? '<strong>Evidencia completa</strong> — captura en cada paso'
+        : '<strong>Modo eficiencia</strong> — capturas solo en pasos FAIL. Los pasos sin screenshot son correctos.');
+    var h2 = stepsSection.querySelector('h2');
+    if (h2) h2.parentNode.insertBefore(ind, h2.nextSibling);
+  }
+
+  if (steps.length > 0) {
+    var container = document.getElementById('steps-container');
+    container.innerHTML = steps.map(function(s, idx) {
+      var stepNum = s.n || (idx + 1);
+      var isStepFail = s.status === 'FAIL';
+      var imgB64 = s.imgB64 || null;
+      var evStatus = s.evidence_status || (imgB64 ? 'captured' : null);
+      var imgHtml;
+      if (imgB64) {
+        imgHtml = '<img src="data:image/png;base64,'+imgB64+'" class="step-screenshot" onclick="openModal(this.src)" title="Clic para ampliar">';
+      } else if (evStatus === 'capture_failed') {
+        imgHtml = '<div class="step-capture-failed">'
+          + '<svg width="18" height="18" viewBox="0 0 20 20" fill="none" style="flex-shrink:0"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5" fill="rgba(224,112,32,.08)"/><path d="M10 6v5M10 13.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
+          + 'Captura fallida' + (s.evidence_error ? ' (' + esc(s.evidence_error) + ')' : '')
+          + (s.evidence_retry ? ' — reintentado' : '')
+          + '</div>';
+      } else if (evStatus === 'not_captured' || evMode === 'failures_only') {
+        imgHtml = isStepFail
+          ? '<div class="step-screenshot-placeholder">Screenshot no disponible</div>'
+          : '<div class="step-no-capture-expected">Sin captura (modo eficiencia — failures_only)</div>';
+      } else {
+        imgHtml = isStepFail
+          ? '<div class="step-screenshot-placeholder">Screenshot no disponible</div>'
+          : '';
+      }
+      var icon = isStepFail
+        ? '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--bad-bg)" stroke="var(--bad)" stroke-width="1.5"/><path d="M5 5l6 6M11 5l-6 6" stroke="var(--bad)" stroke-width="1.5" stroke-linecap="round"/></svg>'
+        : '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--go-bg)" stroke="var(--go)" stroke-width="1.5"/><path d="M4.5 8l2.5 2.5 4.5-4.5" stroke="var(--go)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      var dbInline = (dbByStep[String(stepNum)] || []).map(function(v){ return renderDbBlock(v, {inline: true}); }).join('');
+      return '<div class="step '+(isStepFail?'step-fail':'step-pass')+'">'
+        +'<div class="step-header">'
+        +'<span class="step-icon">'+icon+'</span>'
+        +'<span class="step-num">Paso '+stepNum+'</span>'
+        +'<span class="step-title">'+esc(s.text||s.action||s.description||'')+'</span>'
+        +'<span class="step-badge '+(isStepFail?'badge-fail':'badge-pass')+'">'+s.status+'</span>'
+        +'</div>'
+        +(isStepFail?'<div class="step-error"><code>'+esc(s.error||d.error_message||'Error desconocido')+'</code></div>':'')
+        +'<div class="step-evidence">'+imgHtml+'</div>'
+        +dbInline
+        +(dbInline?'<div style="height:.5rem"></div>':'')
+        +'</div>';
+    }).join('');
+  }
+
+  /* bug screenshot */
+  if (d.bugShotB64) {
+    document.getElementById('bug-screenshot').src = 'data:image/png;base64,'+d.bugShotB64;
+    document.getElementById('section-bug-shot').style.display = '';
+  }
+
+  /* alm report section */
+  var jr = d.alm_report;
+  if (jr) {
+    document.getElementById('section-alm').style.display = '';
+    var fields = [
+      { label: 'Titulo', value: jr.title },
+      { label: 'Matriz / CA de referencia', value: jr.matrix_ref },
+      { label: 'Entorno', value: jr.environment },
+      { label: 'Pasos para replicar', value: jr.steps_to_reproduce, pre: true },
+      { label: 'Resultado esperado', value: jr.expected_result },
+      { label: 'Resultado actual', value: jr.actual_result },
+      { label: 'Evidencia', value: (jr.evidence_files || []).join(', ') || 'Ver screenshots arriba' },
+      { label: 'Prioridad', value: jr.priority },
+      { label: 'Severidad', value: jr.severity },
+      { label: 'Etiquetas', value: (jr.labels || []).join(', ') },
+      { label: 'Asignado a', value: jr.assignee },
+      { label: 'Estado inicial', value: jr.initial_status },
+      { label: 'Tipo de proyecto', value: jr.project_type },
+    ];
+    if (jr.root_cause) fields.push({ label: 'Causa raiz (hipotesis)', value: jr.root_cause });
+    if (jr.recommended_action) fields.push({ label: 'Accion recomendada', value: jr.recommended_action });
+    if (jr.policy_number) fields.push({ label: 'Poliza de prueba', value: jr.policy_number });
+
+    var labelStyle = 'font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text3,#8a8478);font-weight:700;font-family:var(--sans,sans-serif)';
+    var valueStyle = 'margin-top:.15rem;padding:.4rem .6rem;background:var(--bg3,#f0ede8);border-radius:4px;border:1px solid var(--border,#ddd8d0)';
+
+    document.getElementById('alm-content').innerHTML = fields.map(function(f) {
+      var val = esc(f.value || '—');
+      if (f.pre) val = '<pre style="white-space:pre-wrap;margin:0;font-family:inherit">'+val+'</pre>';
+      return '<div style="margin-bottom:.75rem"><div style="'+labelStyle+'">'+esc(f.label)+'</div><div style="'+valueStyle+'">'+val+'</div></div>';
+    }).join('');
+
+    // Build plain-text for clipboard
+    var rawText = fields.map(function(f) { return f.label + ': ' + (f.value || '—'); }).join('\n');
+    document.getElementById('alm-raw').textContent = rawText;
+    window.__almRawText = rawText;
+  }
+
+  /* ── DB VALIDATIONS FINAL SECTION ──
+     Solo se renderiza cuando: (a) feature on + CP con @bd + 0 matches (banner informativo), o
+     (b) hay validaciones huérfanas (sin step_num matcheable). El caso común
+     (matches inline) ya se mostró dentro de cada paso — la sección final queda oculta.
+     2026-04-24 — REGLA 7 doble opt-in: si el CP NO tiene @bd, no se renderiza ni
+     el banner "feature activa, sin matches" (el CP nunca iba a validar BD). */
+  var emptyDbFeature = (dbValidations.length === 0 && dbFeatureOn && dbCpOptedIn);
+  var hasOrphans     = dbOrphans.length > 0;
+
+  if (emptyDbFeature || hasOrphans) {
+    var dbSection   = document.getElementById('section-db-validations');
+    var dbCount     = document.getElementById('db-validations-count');
+    var dbContainer = document.getElementById('db-validations-container');
+    dbSection.style.display = 'block';
+
+    if (emptyDbFeature) {
+      dbCount.textContent = '(0 — CP con @bd, sin matches)';
+      dbContainer.innerHTML = '<div style="padding:.9rem 1rem;background:var(--bg3,#f0ede8);border:1px solid var(--border,#ddd8d0);border-left:3px solid var(--orange,#F47920);border-radius:var(--r,8px);color:var(--text2,#595953);font-size:.82rem;line-height:1.55;font-family:var(--body,sans-serif)">' +
+        '<div style="font-weight:600;color:var(--text,#1a1a18);margin-bottom:.4rem">ℹ️ CP con <code style="font-family:var(--mono,monospace);background:var(--bg2,#fff);padding:1px 5px;border-radius:3px">@bd</code>, sin matches de validación</div>' +
+        '<div style="color:var(--text3,#8a8478);margin-bottom:.5rem">El CP está opt-in a validación BD (tag <code style="font-family:var(--mono,monospace);background:var(--bg2,#fff);padding:1px 4px;border-radius:3px">@bd</code>), la app tiene feature activa, pero ningún paso disparó un SELECT. Causas posibles:</div>' +
+        '<ol style="margin:0 0 .5rem 1.25rem;padding:0">' +
+        '<li style="margin-bottom:.2rem">El módulo no está listado en <code style="font-family:var(--mono,monospace);font-size:.78rem;background:var(--bg2,#fff);padding:1px 5px;border-radius:3px">db_tables_registry.&lbrace;app&rbrace;.yaml → modules</code></li>' +
+        '<li style="margin-bottom:.2rem">Los <code style="font-family:var(--mono,monospace);font-size:.78rem;background:var(--bg2,#fff);padding:1px 5px;border-radius:3px">steps_raw</code> no contienen keywords <em>write</em> (guardar, confirmar, crear…) ni <em>read</em> (verificar, visualizar, listar…)</li>' +
+        '<li>El executor decidió no invocar el skill por semántica (ej. un CP de SQL injection valida el DOM, no la tabla)</li>' +
+        '</ol>' +
+        '<div style="color:var(--text3,#8a8478);font-size:.78rem">Si este CP no debería validar BD, retirar <code style="font-family:var(--mono,monospace);background:var(--bg2,#fff);padding:1px 4px;border-radius:3px">@bd</code> del array <code style="font-family:var(--mono,monospace);background:var(--bg2,#fff);padding:1px 4px;border-radius:3px">tags[]</code>. Ver <a href="../../../../.claude/reference/atf-web/sofka-asdd-atf-web-executor-invariants.md" style="color:var(--orange,#F47920);text-decoration:none;font-weight:600">REGLA 7</a>.</div>' +
+        '</div>';
+    } else {
+      dbCount.textContent = '(' + dbOrphans.length + ' sin step asociado)';
+      dbContainer.innerHTML = '<div style="margin-bottom:.75rem;padding:.5rem .8rem;background:var(--bg3,#f0ede8);border-radius:4px;font-size:.8rem;color:var(--text2,#595953)">Validaciones sin <code style="font-family:var(--mono,monospace);background:var(--bg2,#fff);padding:1px 4px;border-radius:3px">step_num</code> — se muestran aquí por no poder anclarse a un paso específico.</div>' +
+        dbOrphans.map(function(v){ return renderDbBlock(v, {inline: false}); }).join('');
+    }
+  }
+
+  /* footer date */
+  var gd = document.getElementById('gen-date');
+  if (gd) gd.textContent = d.dateStr || new Date().toLocaleString('es-CO');
+})();
+
+function copyAlmText() {
+  var text = window.__almRawText || document.getElementById('alm-raw').textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      var btn = document.getElementById('alm-copy-btn');
+      btn.textContent = 'Copiado!'; btn.style.background = 'var(--go-bg)'; btn.style.color = 'var(--go)';
+      setTimeout(function(){ btn.textContent='Copiar al portapapeles'; btn.style.background=''; btn.style.color=''; }, 2000);
+    });
+  } else {
+    var pre = document.getElementById('alm-raw');
+    pre.style.display = ''; pre.select && pre.select();
+    alert('Selecciona el texto del recuadro y copia manualmente (Ctrl+C)');
+  }
+}
+</script>
+</body>
+</html>

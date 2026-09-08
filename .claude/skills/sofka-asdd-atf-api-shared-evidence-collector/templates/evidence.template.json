@@ -1,0 +1,47 @@
+{
+  "$schema": "Estructura canónica de una evidencia capturada (request.json + response.json combinados conceptualmente)",
+  "context_id": "{CP-NNN | finding-NNN | scenario-name | D-NNN}",
+  "context_type": "execution | security | performance | retest",
+  "captured_at": "{ISO 8601}",
+  "captured_by": "{agent_name}",
+  "verdict": "pass | fail | flaky | error",
+  "request": {
+    "method": "POST",
+    "url": "https://api-qa.example.com/v1/path",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer [REDACTED:length=192]",
+      "X-Request-Id": "req-abc-123"
+    },
+    "body": {
+      "fieldA": "value",
+      "password": "[REDACTED:length=11]"
+    },
+    "timestamp": "{ISO 8601}"
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json",
+      "X-Response-Id": "res-xyz-789"
+    },
+    "body": {
+      "id": "abc-123",
+      "createdAt": "2026-05-21T11:10:00-05:00"
+    },
+    "timestamp": "{ISO 8601}"
+  },
+  "timings": {
+    "dns_ms": 4,
+    "connect_ms": 12,
+    "ttfb_ms": 87,
+    "total_ms": 134
+  },
+  "contract_validation": {
+    "schema_ref": "components/schemas/BillingRequestCreated",
+    "matches_schema": true,
+    "diff": []
+  },
+  "notes": "Opcional — observaciones del agente",
+  "redactions_applied": 2
+}

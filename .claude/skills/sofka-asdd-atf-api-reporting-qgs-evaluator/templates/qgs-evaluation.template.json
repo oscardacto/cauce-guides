@@ -1,0 +1,25 @@
+{
+  "$schema": "Evaluación del Quality Gate Score",
+  "run_id": "{run_id}",
+  "cycle_type": "baseline | regression | fast-track | retest",
+  "verdict": "PASS | FAIL",
+  "evaluated_at": "{ISO 8601}",
+  "metrics": [
+    {
+      "metric": "{string}",
+      "observed": 0,
+      "unit": "pct | count | ms | other",
+      "threshold": 0,
+      "threshold_operator": ">= | <= | == | !=",
+      "result": "pass | fail",
+      "blocking": true
+    }
+  ],
+  "blocking_failures": ["{string}"],
+  "non_blocking_observations": ["{string}"],
+  "thresholds_applied": {
+    "source": "baseline | regression",
+    "table_version": "1.0"
+  },
+  "next_action": "{string — qué tiene que pasar para llegar a PASS, o cómo cerrar la corrida si ya es PASS}"
+}

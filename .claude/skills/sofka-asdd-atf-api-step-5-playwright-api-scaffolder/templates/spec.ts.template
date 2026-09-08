@@ -1,0 +1,62 @@
+/**
+ * {CP-ID} — {CP title}
+ *
+ * Cubre:
+ *   - {RN-NNN} ({nota))
+ *   - {AC-NNN}
+ *
+ * Técnica: {technique}
+ * Endpoint: {METHOD} {path}
+ * Prioridad: {priority}
+ * Generado: {ISO 8601} por sofka-asdd-atf-api-step-5-playwright-api-scaffolder
+ */
+import { test, expect } from '@playwright/test';
+import { ApiClient } from '../helpers/api-client';
+import { loadFixtures } from '../helpers/fixtures-loader';
+import { validateSchema } from '../helpers/schema-validator';
+import { captureEvidence } from '../helpers/evidence-helper';
+import { {SchemaName} } from '../schemas/{wi-id}-schemas';
+
+test.describe('{tags concatenados con espacio}', () => {
+  test('{CP title}', async ({ request }) => {
+    const client = new ApiClient(request);
+    const fixtures = await loadFixtures('{wi-id}');
+
+    // Arrange — preconditions
+    // {precondition 1}
+    // {precondition 2}
+
+    const body = {
+      // resueltos desde fixtures.{ID}
+    };
+
+    // Act
+    const result = await client.call({
+      cpId: '{CP-ID}',
+      wiId: '{wi-id}',
+      method: '{METHOD}',
+      url: '{path}',
+      headers: { 'Content-Type': 'application/json' },
+      body,
+    });
+
+    // Assert — status ({RN cubierta})
+    expect(result.status, 'Expected {status} per {RN}').toBe({expected_status});
+
+    // Assert — body assertions
+    // 1 expect por cada body_assertion del CP, con mensaje claro
+
+    // Assert — schema (si schema_ref existe)
+    const schemaResult = validateSchema({SchemaName}, result.body);
+    expect(schemaResult.valid, `Schema {SchemaName}: ${schemaResult.errors?.join('; ')}`).toBe(true);
+
+    // Capture evidence
+    await captureEvidence({
+      contextId: '{CP-ID}',
+      contextType: 'execution',
+      verdict: result.status === {expected_status} ? 'pass' : 'fail',
+      request: { method: '{METHOD}', url: '{path}', body, headers: { 'Content-Type': 'application/json' } },
+      response: result,
+    });
+  });
+});

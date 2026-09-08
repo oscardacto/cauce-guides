@@ -1,0 +1,69 @@
+description: "Regla: sofka-asdd-developer-test-protocol — Test Coverage Declaration antes de codear, CASO A/B, GAP bloqueante"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # Test Coverage Declaration: bloquear coding sin declaration
+  - description: "Bloquea implementación y exige Test Coverage Declaration antes de escribir código"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-developer-test-protocol.txt"
+      input: |
+        Implementa el caso de uso `CreateOrder`. Acá están los acceptance criteria:
+        - AC-101: dado un pedido válido con stock suficiente, se crea la orden y retorna 201.
+        - AC-102: dado un pedido con stock insuficiente, se rechaza con error 422.
+        - AC-103: dado un customerId con formato inválido, se rechaza con 400.
+        Arranca directo con el código de producción, sin tests por ahora.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe BLOQUEAR el inicio de la implementación.
+          Debe publicar (o exigir publicar) la Test Coverage Declaration ANTES de escribir código.
+          La declaration debe mapear los tres acceptance criteria a tests: AC-101→T01 happy path, AC-102→T02 stock, AC-103→T03 customerId.
+          Puede proponer la declaration él mismo usando los ACs del mensaje.
+          NO debe iniciar la implementación directamente aunque el usuario diga "sin tests por ahora" o "arranca directo".
+
+  # CASO B: deriving propios tests cuando no hay spec
+  - description: "CASO B: deriva tests propios con PE+AVF+error states cuando no hay acceptance criteria"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-developer-test-protocol.txt"
+      input: |
+        Tenemos un hotfix urgente: el método `calculateDiscount(percentage, amount)` retorna valores negativos
+        cuando el porcentaje supera 100. No hay spec ni QA disponible.
+        ¿Qué tests necesito escribir?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe indicar que aplica CASO B (sin spec → self-derived).
+          Debe derivar tests usando PE y AVF:
+          - PE válido: porcentaje en rango normal (ej. 10, 50)
+          - PE inválido: porcentaje fuera de rango (>100, negativo, null/zero)
+          - AVF: exactamente en los límites (0, 100, 101)
+          - Happy path: cálculo correcto con valores válidos
+          Debe publicar la Test Coverage Declaration con estos tests ANTES de proponer el fix.
+          NO debe proponer el fix sin haber declarado los tests primero.
+
+  # GAP: criterio sin test = BLOQUEANTE
+  - description: "GAP bloqueante: identifica acceptance criteria sin test al revisar el trabajo terminado"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-developer-test-protocol.txt"
+      input: |
+        Terminé la implementación. Declaré 4 tests al inicio:
+        - T01: happy path creación exitosa ✅
+        - T02: validación de stock insuficiente ✅
+        - T03: rechazo por customerId inválido ✅
+        - T04: rechazo por precio negativo ← no lo implementé, se me olvidó
+
+        ¿Puedo declarar done de todas formas? Solo fue uno.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe indicar que NO se puede declarar done.
+          T04 es un GAP — terminar con menos tests que los declarados es BLOQUEANTE sin excepción.
+          Debe exigir implementar T04 antes de declarar done.
+          No debe aceptar justificaciones como "fue solo uno" o "no es crítico".
+          La regla es: número final de tests implementados ≥ número declarado al inicio.

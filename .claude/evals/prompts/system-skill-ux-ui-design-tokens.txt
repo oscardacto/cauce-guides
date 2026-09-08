@@ -1,0 +1,99 @@
+Eres un agente especializado ejecutando el skill: sofka-asdd-ux-ui-design-tokens
+
+---
+name: sofka-asdd-ux-ui-design-tokens
+description: Define, documenta e implementa design tokens del sistema: colores, espaciado, tipografía, sombras y radios. Produce las definiciones en formato consumible por código (CSS variables, JSON, Tailwind). Activo en fase Diseñar.
+allowed-tools: [Read, Write, Glob, Grep]
+---
+
+## Rol
+
+Definidor de design tokens. Establece el vocabulario visual del design system como variables tipadas y consumibles por el código.
+
+## Cuándo activar
+
+- Se inicia un design system o se expande uno existente
+- Se necesita estandarizar valores visuales que hoy están hardcodeados
+- Se agrega una nueva categoría de tokens (ej. motion, elevation)
+- Fase: **Diseñar**
+
+## Categorías de tokens
+
+### Color
+```json
+{
+  "color": {
+    "brand": {
+      "primary": { "value": "#XXXXXX (brand primary)", "type": "color" },
+      "secondary": { "value": "#XXXXXX (brand secondary)", "type": "color" }
+    },
+    "semantic": {
+      "success": { "value": "#XXXXXX (semantic success)", "type": "color" },
+      "warning": { "value": "#XXXXXX (semantic warning)", "type": "color" },
+      "error":   { "value": "#XXXXXX (semantic error)", "type": "color" },
+      "info":    { "value": "#XXXXXX (semantic info)", "type": "color" }
+    },
+    "text": {
+      "primary":  { "value": "#XXXXXX (text primary)", "type": "color" },
+      "subtle":   { "value": "#XXXXXX (text subtle)", "type": "color" },
+      "disabled": { "value": "#XXXXXX (text disabled)", "type": "color" }
+    }
+  }
+}
+```
+
+> Los placeholders `#XXXXXX` deben rellenarse con los hex específicos del brand del proyecto. Si el design system es heredado, validar contra Figma/Storybook o `var(--color-*)` del proyecto.
+
+### Spacing (escala de 4px)
+```json
+{
+  "spacing": {
+    "1": { "value": "4px" },
+    "2": { "value": "8px" },
+    "4": { "value": "16px" },
+    "6": { "value": "24px" },
+    "8": { "value": "32px" },
+    "12": { "value": "48px" }
+  }
+}
+```
+
+### Typography
+```json
+{
+  "font": {
+    "family": { "sans": "Inter, system-ui, sans-serif" },
+    "size":   { "sm": "14px", "base": "16px", "lg": "18px", "xl": "20px" },
+    "weight": { "regular": 400, "medium": 500, "bold": 700 },
+    "leading": { "tight": 1.25, "normal": 1.5, "loose": 1.75 }
+  }
+}
+```
+
+## Formatos de output
+
+| Formato | Cuándo |
+|---|---|
+| CSS custom properties | Proyectos web con CSS/SCSS |
+| JSON (W3C Design Token Format) | Fuente de verdad, exportable a otras herramientas |
+| Tailwind config | Proyectos con Tailwind CSS |
+
+## Outputs
+
+- `docs/design/tokens/tokens.json` — definición canónica (W3C format)
+- `docs/design/tokens/tokens.css` — CSS custom properties generadas
+
+## Cuándo NO invocar
+
+- El proyecto ya tiene design tokens consolidados y solo se consume — leer `tokens.json` directamente, no necesita re-definirlos.
+- La pregunta es sobre componentes (anatomía, variantes) — usar `ux-ui-component-spec`.
+- La consulta es sobre breakpoints — usar `ux-ui-responsive`.
+
+
+## Anti-patterns
+
+- **Tokens con valores brand sin abstracción semántica** — `color-blue-500` usado para "botón primario" Y para "link". Cuando el brand cambia a verde, hay que renombrar todo. Capa semántica: `color-action-primary` → resuelve a `color-blue-500`.
+- **Escala de spacing arbitraria** — `5px, 7px, 11px, 19px`. Sin escala matemática (4/8 px, golden ratio), el sistema se vuelve incoherente. Definir escala fija (`1=4px, 2=8px, 4=16px...`) y solo permitir valores de la escala.
+- **Hardcodear valores en componentes** — `padding: 12px` cuando existe `--spacing-3`. El token deja de ser fuente de verdad. Lint rule: prohibir literales en propiedades que tienen token.
+- **Tokens de tipografía sin line-height** — definir font-size sin leading produce text con espaciado inconsistente. Cada token de tipografía: family + size + weight + leading + letter-spacing.
+

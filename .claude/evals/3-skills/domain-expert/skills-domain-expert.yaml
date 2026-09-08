@@ -1,0 +1,88 @@
+description: "Skills: sofka-asdd-domain-expert — proceso y output por skill"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # skill: fintech
+  - description: "PROCESO fintech: valida reglas contra regulación financiera colombiana"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-domain-expert-fintech.txt"
+      input: "El equipo quiere permitir transferencias P2P de hasta $10,000,000 COP sin ningún tipo de verificación de identidad. ¿Esto cumple la regulación colombiana?"
+    assert:
+      - type: llm-rubric
+        value: |
+          El domain expert fintech debe: identificar que el monto supera umbrales que requieren
+          KYC en Colombia (UIAF, SARLAFT), mencionar el Decreto 1357/2018 para pagos electrónicos,
+          y recomendar implementar KYC y monitoreo de transacciones inusuales.
+          No debe aprobar sin señalar los riesgos regulatorios.
+
+  # skill: insurance
+  - description: "PROCESO insurance: conoce flujos de pólizas y regulación"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-domain-expert-insurance.txt"
+      input: "En el sistema de seguros, ¿qué información mínima debe registrarse cuando se genera un siniestro de automóviles?"
+    assert:
+      - type: llm-rubric
+        value: |
+          El domain expert de seguros debe mencionar los datos mínimos de un siniestro de autos:
+          fecha/hora/lugar del evento, número de póliza, datos del asegurado, daños reportados,
+          terceros involucrados, datos del ajustador, y número de radicado.
+          Si conoce requerimientos de la Superfinanciera, debe incluirlos.
+
+  # skill: retail
+  - description: "PROCESO retail: conoce inventario, pricing y experiencia de compra"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-domain-expert-retail.txt"
+      input: "¿Cómo debe manejarse el inventario cuando un producto está en carrito pero aún no se ha pagado? ¿Se reserva el stock?"
+    assert:
+      - type: llm-rubric
+        value: |
+          El domain expert retail debe explicar: el problema del over-selling (2 usuarios compran el último item),
+          opciones de reserva (hard reserve en carrito, soft reserve por tiempo limitado, no reserva),
+          implicaciones de cada estrategia para la UX y el inventario,
+          y recomendar la mejor práctica según el tipo de producto (perecedero, alta rotación, etc.).
+
+  # skill: health
+  - description: "PROCESO health: privacidad de datos médicos y consentimiento"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-domain-expert-health.txt"
+      input: "¿Puede el médico de atención primaria ver el historial completo de un paciente, incluyendo consultas de psiquiatría y VIH?"
+    assert:
+      - type: llm-rubric
+        value: |
+          El domain expert de salud debe: identificar que datos de psiquiatría y VIH tienen
+          protección especial adicional en Colombia (Ley 1616/2013 y regulación MSPS),
+          el acceso debe ser por necesidad clínica y consentimiento explícito,
+          y el sistema debe implementar ACL por tipo de dato sensible, no acceso omnisciente.
+
+  # skill: logistics
+  - description: "PROCESO logistics: conoce cadena de suministro y trazabilidad"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-domain-expert-logistics.txt"
+      input: "¿Cuántos estados debería tener un pedido en una plataforma de última milla (last-mile delivery)?"
+    assert:
+      - type: llm-rubric
+        value: |
+          El domain expert de logística debe definir los estados del ciclo de vida de un pedido:
+          estados base (creado, asignado a conductor, en camino, entregado, fallido),
+          sub-estados importantes (intento fallido, reprogramado, devuelto),
+          y transiciones permitidas vs inválidas. No puede limitarse a 'creado' y 'entregado'.
+
+  # skill: education
+  - description: "PROCESO education: conoce flujos pedagógicos y certificaciones"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-domain-expert-education.txt"
+      input: "Para una plataforma de e-learning universitario en Colombia, ¿qué requisitos legales existen para emitir certificados digitales de cursos completados?"
+    assert:
+      - type: llm-rubric
+        value: |
+          El domain expert de educación debe mencionar: requisitos del MEN (Ministerio de Educación),
+          si los certificados requieren firma digital reconocida (Ley 527/1999 de comercio electrónico),
+          diferencia entre certificado de asistencia (más simple) y certificado de competencia (más regulado),
+          y recomendar hablar con el área legal de la institución para validación específica.
+

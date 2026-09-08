@@ -1,0 +1,83 @@
+{
+  "run_id": "PruebaAPIClienteEjemplo-v1.0-20260521-1030",
+  "project_root": "docs/testing/atf",
+  "output_folder": "docs/testing/atf/PruebaAPIClienteEjemplo-v1.0-20260521-1030",
+  "knowledge_base_path": "docs/testing/atf/knowledge",
+  "app": {
+    "name": "Prueba API ClienteEjemplo",
+    "url": "https://api-qa.clienteejemplo.example.com/v1",
+    "version": "v1.0",
+    "environment": "qa",
+    "description": "Microservicio de consulta de cuotas pendientes de facturar"
+  },
+  "cycle": {
+    "type": "baseline",
+    "baseline_run_id": null,
+    "defect_id": null
+  },
+  "auth": {
+    "requires_auth": false,
+    "default_role": null,
+    "additional_roles": []
+  },
+  "functional_docs": {
+    "folder": "docs/testing/atf/requirements",
+    "primary_files": [
+      "Microservicio_consulta_cuotas_pendientes.md"
+    ]
+  },
+  "optional_pipelines": {
+    "security": false,
+    "performance": false
+  },
+  "test_run": {
+    "mode": "full",
+    "custom_tags": [],
+    "custom_flow_scope": "all"
+  },
+  "credentials": {
+    "_redacted": true,
+    "_note": "Use {credentials.{ROLE}} references in artifacts. Real values resolved at runtime by Step 5 via env vars.",
+    "available_roles": [],
+    "base_url": "https://api-qa.clienteejemplo.example.com/v1"
+  },
+  "model_strategy": {
+    "resolved_model": "sonnet",
+    "resolution_source": "agent_pinning",
+    "skill_override": {},
+    "agent_pinning": {
+      "sofka-asdd-atf-api-orchestrator": "sonnet",
+      "sofka-asdd-atf-api-step-3-test-plan": "opus",
+      "sofka-asdd-atf-reporting-qa-engineer": "haiku"
+    },
+    "phase_default": {
+      "bootstrap": "sonnet",
+      "analyze": "sonnet",
+      "design": "opus",
+      "automate": "sonnet",
+      "execute": "sonnet",
+      "report": "haiku"
+    }
+  },
+  "routing": {
+    "mode": "adaptive",
+    "always_full": false,
+    "hard_exclusions": ["auth", "pagos", "PII", "compliance", "contratos-publicos"]
+  },
+  "testing_capabilities": {
+    "runner": {
+      "command": "bun test",
+      "framework": "Bun + Playwright TS"
+    },
+    "api_specific": {
+      "runner": "Bun",
+      "test_framework": "Playwright Test",
+      "contract_validation": "ajv + openapi schema",
+      "manual_collection": "Newman",
+      "performance": "k6",
+      "security": "OWASP API Top 10 + ZAP"
+    }
+  },
+  "loaded_at": "2026-05-21T10:30:15-05:00",
+  "loaded_by": "sofka-asdd-atf-api-orchestrator"
+}

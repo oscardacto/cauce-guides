@@ -1,0 +1,64 @@
+# ============================================================
+# ATF API v3 — Configuración de la Sesión de Prueba
+# ============================================================
+# Este archivo es el ÚNICO punto de configuración por corrida.
+# Actualizarlo ANTES de cada ejecución del pipeline.
+#
+# Lo estable (agentes, skills, modelos, routing) vive en:
+#   - CLAUDE.md
+#   - .sofka-asdd/sofka-asdd-atf.lock
+#
+# El dashboard ASDD sobreescribe automáticamente este archivo
+# al crear una corrida desde la interfaz.
+# ============================================================
+
+# --- Identificación de la API ---
+app:
+  name: "Prueba API Petshop"
+  url: "https://petstore.swagger.io/v2"
+  version: "v1.0"
+  environment: "qa"
+  description: "prueba de concepto para ATF API"
+
+# --- Ciclo de ejecución ---
+# baseline   → pipeline completo desde cero
+# regression → vs baseline_run_id, ejecuta solo steps afectados por delta
+# fast-track → contrato sin cambios, salta steps 3, 4, 5
+# retest     → ejecuta solo el spec del defect_id
+cycle:
+  type: baseline
+  baseline_run_id: ""    # Requerido para: regression, fast-track, retest
+  defect_id: ""          # Requerido solo para: retest
+
+# --- Autenticación ---
+auth:
+  requires_auth: false
+  default_role: ""
+  additional_roles: []
+
+# --- Documentación funcional ---
+functional_docs:
+  folder: "docs/testing/atf/requirements"
+  primary_files: []      # opcional — si vacío, procesa todos los archivos de la carpeta
+
+# --- Modos opcionales (security + performance) ---
+# Activación de pipelines paralelos opcionales dentro de la Fase 4 (Automate).
+# Default: ambos en false. El usuario los activa cuando aplica.
+optional_pipelines:
+  security: true         # Módulo Security — OWASP API Top 10 + ZAP (activado por Q-003: HU-005 incluye SQLi/XSS)
+  performance: false     # Módulo Performance — k6 (smoke/load/stress/spike/soak)
+
+# --- Modo de ejecución (filtro de suite en Step 6) ---
+test_run:
+  mode: full             # smoke | regression | critical | full | custom
+  custom_tags: []        # solo si mode: custom
+  custom_flow_scope: all # critical | high | all — solo si mode: custom
+
+# --- Identificador de corrida ---
+# Se genera automáticamente si se deja vacío.
+# Formato: {app.name}-v{app.version}-{YYYYMMDD}-{HHmm}
+# El dashboard ASDD lo asigna automáticamente al crear la corrida.
+run_id: ""
+
+# --- Notas de la sesión (opcional) ---
+session_notes: ""

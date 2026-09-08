@@ -1,0 +1,75 @@
+{
+  "run_id": "PruebaAPIClienteEjemplo-v1.0-20260521-1030",
+  "scan_started_at": "2026-05-21T11:00:00-05:00",
+  "scan_completed_at": "2026-05-21T11:08:00-05:00",
+  "scope": {
+    "endpoints_audited": 2,
+    "checks_executed": ["API2", "API3", "API4", "API8", "API9"],
+    "checks_skipped": [
+      {"code": "API1", "reason": "endpoints sin path_param de objeto — no aplica BOLA"},
+      {"code": "API5", "reason": "auth no requerida en esta API por diseño actual"},
+      {"code": "API6", "reason": "no se declara flow sensible que requiera rate-limit per business action"},
+      {"code": "API7", "reason": "schemas no aceptan URLs ni callbacks"},
+      {"code": "API10", "reason": "integración con OSF es side-effect, no APIs consumidas dinámicamente"}
+    ]
+  },
+  "findings": [
+    {
+      "id": "SEC-001",
+      "owasp_code": "API2",
+      "owasp_name": "Broken Authentication",
+      "severity": "high",
+      "cvss_approx": 7.5,
+      "title": "Endpoint POST /pending-billing-quotas accesible sin autenticación",
+      "description": "El contrato no declara securitySchemes y el endpoint responde 201 sin token de auth. Mutación crítica del ciclo de facturación queda expuesta sin control de identidad.",
+      "affected_endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "evidence_path": "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/security/evidence/SEC-001/",
+      "remediation": "1. Agregar securitySchemes (Bearer JWT o API-Key) al contrato OpenAPI. 2. Configurar el gateway para exigir token. 3. Validar token en el servicio antes de procesar. 4. Establecer roles: 'billing-writer' para POST, 'billing-reader' para GET.",
+      "owasp_reference": "https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/"
+    },
+    {
+      "id": "SEC-002",
+      "owasp_code": "API3",
+      "owasp_name": "Broken Object Property Level Authorization",
+      "severity": "medium",
+      "cvss_approx": 5.5,
+      "title": "Schema BillingRequest permite additionalProperties sin restricción",
+      "description": "El schema BillingRequest tiene `additionalProperties: true`. Probe confirma que el campo `internalNotes: \"hacker-was-here\"` se acepta sin error y aparece en el response.",
+      "affected_endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "evidence_path": "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/security/evidence/SEC-002/",
+      "remediation": "1. Cambiar additionalProperties a false. 2. Validar en backend con strict schema validation. 3. Si propiedades extra son válidas, listarlas explícitamente.",
+      "owasp_reference": "https://owasp.org/API-Security/editions/2023/en/0xa3-broken-object-property-level-authorization/"
+    },
+    {
+      "id": "SEC-003",
+      "owasp_code": "API8",
+      "owasp_name": "Security Misconfiguration",
+      "severity": "medium",
+      "cvss_approx": 5.0,
+      "title": "Response 500 expone stack trace con NullPointerException",
+      "description": "El response de error 500 incluye `message: \"java.lang.NullPointerException at BillingRequestValidator.checkCycle\"`. Esto revela información de implementación interna útil para un atacante.",
+      "affected_endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "evidence_path": "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/security/evidence/SEC-003/",
+      "remediation": "1. Implementar global exception handler que reemplace stack traces con mensaje genérico. 2. Loguear el detalle internamente pero responder con `{error: \"INTERNAL_ERROR\", message: \"Ocurrió un error procesando la solicitud\"}`. 3. (Relacionado con D-001 — corregir el bug subyacente también.)",
+      "owasp_reference": "https://owasp.org/API-Security/editions/2023/en/0xa8-security-misconfiguration/"
+    },
+    {
+      "id": "SEC-004",
+      "owasp_code": "API4",
+      "owasp_name": "Unrestricted Resource Consumption",
+      "severity": "low",
+      "cvss_approx": 3.5,
+      "title": "No hay rate-limit visible en endpoints de mutación",
+      "description": "Probe de 50 requests/segundo durante 10 segundos no fue rechazado por rate-limit. 500 requests procesados sin throttling.",
+      "affected_endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "evidence_path": "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/security/evidence/SEC-004/",
+      "remediation": "1. Configurar rate-limit en API gateway (sugerido: 100 req/min por IP, 1000 req/min por API key). 2. Documentar en contrato OpenAPI con header `X-RateLimit-Limit`. 3. Responder `429 Too Many Requests` con header `Retry-After`.",
+      "owasp_reference": "https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/"
+    }
+  ],
+  "summary": {
+    "total_findings": 4,
+    "by_severity": {"critical": 0, "high": 1, "medium": 2, "low": 1},
+    "blocking_step_7": ["critical", "high"]
+  }
+}

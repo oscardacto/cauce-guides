@@ -1,0 +1,39 @@
+{
+  "wi_id": "wi-001",
+  "risk_matrix": [
+    {
+      "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "probability": 4,
+      "impact": 4,
+      "risk_score": 16,
+      "category": "high",
+      "probability_signals": [
+        "operation_id 'createBillingRequest' implica mutación",
+        "4 campos requeridos",
+        "Decision Table de 4 condiciones — complejidad lógica media-alta",
+        "Sin baseline previa (cycle: baseline)"
+      ],
+      "impact_signals": [
+        "Response 201 — creación de recurso de facturación (mutación)",
+        "RN-008 categorizada como 'flow' del ciclo de facturación de ClienteEjemplo",
+        "Endpoint que arranca el ciclo completo (sin él, wi-002 y wi-003 no operan)"
+      ],
+      "recommended_cps": 9,
+      "recommended_effort_pct": 35
+    }
+  ],
+  "wi_summary": {
+    "highest_risk_endpoint": "POST /osf/api/v1/pending-billing-quotas",
+    "category_distribution": {
+      "critical": 0,
+      "high": 1,
+      "medium": 0,
+      "low": 0
+    },
+    "estimated_total_effort_hours": 12
+  },
+  "priorization_for_step_6": [
+    "1. POST /osf/api/v1/pending-billing-quotas (high) — ejecutar primero, bloquea wi-002 y wi-003"
+  ],
+  "generated_at": "2026-05-21T10:51:00-05:00"
+}

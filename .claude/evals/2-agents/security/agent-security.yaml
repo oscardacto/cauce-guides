@@ -1,0 +1,96 @@
+description: "sofka-asdd-security: OWASP, SAST y compliance"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../../prompts/system-agent-security.txt
+
+tests:
+  - description: "PROCESO: skill code-scan — identifica vulnerabilidades OWASP"
+    vars:
+      input: |
+        Escanea este código de búsqueda de productos:
+        ```python
+        def search_products(keyword):
+            query = f"SELECT * FROM products WHERE name LIKE '%{keyword}%'"
+            return db.execute(query)
+        ```
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente de seguridad con skill code-scan debe:
+          1. Identificar SQL Injection (OWASP A03:2021 - Injection) como crítico
+          2. Mostrar el vector de ataque concreto (ej: keyword = "'; DROP TABLE products;--")
+          3. Proporcionar el fix con queries parametrizadas o ORM
+          4. No debe solo describir el problema — debe incluir el código corregido
+
+  - description: "PROCESO: skill secrets-scan — detecta secretos expuestos"
+    vars:
+      input: |
+        Revisa este archivo de configuración para el pipeline de producción:
+        ```yaml
+        database:
+          host: prod-db.company.com
+          password: MyS3cur3P@ss2024!
+          api_key: sk-ant-api03-xxxxxxxxxxxxxxxxxxx
+        ```
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente con skill secrets-scan debe:
+          1. Identificar los secretos expuestos: password y api_key en texto plano
+          2. Clasificar como crítico (exposición directa en repositorio)
+          3. Recomendar: variables de entorno, vault (HashiCorp/AWS Secrets Manager), o .env + gitignore
+          4. Mencionar el riesgo de rotación de credenciales si el archivo fue commiteado
+
+  - description: "PROCESO: skill compliance — evalúa contra regulaciones específicas"
+    vars:
+      input: |
+        El sistema de pagos maneja tarjetas de crédito y débito.
+        ¿Qué necesitamos para cumplir con PCI-DSS?
+    assert:
+      - type: icontains
+        value: "PCI"
+      - type: llm-rubric
+        value: |
+          El agente con skill compliance para PCI-DSS debe cubrir:
+          1. Alcance del CDE (Cardholder Data Environment)
+          2. Requerimientos críticos: tokenización, no almacenar CVV, TLS 1.2+
+          3. Controles de acceso y monitoreo requeridos
+          4. Mencionar SAQ o QSA según el modelo de procesamiento
+
+  - description: "PROCESO: skill dependency-audit — detecta CVEs en dependencias"
+    vars:
+      input: |
+        El proyecto usa: log4j 2.14.1, Spring Boot 2.5.0, jackson-databind 2.12.0.
+        ¿Hay vulnerabilidades conocidas?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente con skill dependency-audit debe:
+          1. Identificar Log4Shell (CVE-2021-44228) en log4j 2.14.1 — crítico
+          2. Mencionar las versiones parcheadas de cada dependencia problemática
+          3. Recomendar herramientas de escaneo continuo (Dependabot, Snyk, OWASP Dependency-Check)
+          4. No inventar CVEs — solo mencionar los conocidos y verificables
+
+  - description: "OUTPUT: Reporte de seguridad con CVSS y remediaciones"
+    vars:
+      input: |
+        Haz una revisión de seguridad completa del endpoint de login:
+        POST /api/auth/login con usuario y contraseña. Protegido con rate limiting básico.
+    assert:
+      - type: llm-rubric
+        value: |
+          El reporte de seguridad debe:
+          1. Clasificar hallazgos con severidad (Crítico/Alto/Medio/Bajo)
+          2. Para cada hallazgo: vector de ataque, impacto y remediación con código/config
+          3. Evaluar: brute force, credential stuffing, timing attacks, logging de passwords
+          4. Incluir al menos una buena práctica detectada si existe
+          5. Las recomendaciones deben ser implementables (no genéricas)
+

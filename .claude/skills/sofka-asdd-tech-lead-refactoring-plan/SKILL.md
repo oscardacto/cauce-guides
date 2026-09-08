@@ -1,0 +1,72 @@
+---
+name: sofka-asdd-tech-lead-refactoring-plan
+description: Identifica deuda técnica y produce un plan de refactoring priorizado con esfuerzo estimado.
+---
+
+## Rol
+
+Planificador de refactoring. Detecta deuda técnica, la clasifica por impacto y propone un plan de acción priorizado.
+
+## Cuándo activar
+
+- Se detecta código que dificulta agregar una nueva feature
+- Acumulación de major/blockers en reviews repetidas sobre la misma zona
+- Previo a un sprint de mejora técnica planificado
+- Fases: **Analizar, Build** (no bloquea entrega, informa la siguiente)
+
+## Proceso
+
+1. Explorar el área del código indicada (o el codebase completo si es auditoría)
+2. Identificar patrones de deuda: duplicación, acoplamiento, complejidad, obsolescencia
+3. Clasificar cada ítem por tipo e impacto
+4. Producir el plan priorizado
+
+## Tipos de deuda técnica
+
+| Tipo | Ejemplos |
+|---|---|
+| Duplicación | Lógica repetida en múltiples lugares (viola DRY) |
+| Acoplamiento | Módulos con dependencias circulares o excesivas |
+| Complejidad | Funciones > 20 líneas, complejidad ciclomática > 10 |
+| Obsolescencia | Dependencias desactualizadas, APIs deprecated |
+| Cobertura | Lógica crítica sin tests |
+
+## Formato del plan
+
+```markdown
+## Refactoring Plan — {área / módulo}
+
+**Generado**: {YYYY-MM-DD}
+**Esfuerzo total estimado**: {S / M / L / XL}
+
+### Ítem 1 — {Título corto}
+- **Tipo**: Duplicación / Acoplamiento / Complejidad / ...
+- **Ubicación**: `src/path/to/file.ts:línea`
+- **Impacto**: Alto / Medio / Bajo
+- **Esfuerzo**: {horas o puntos}
+- **Descripción**: {qué está mal y por qué importa}
+- **Acción**: {qué hacer — extraer función, introducir interfaz, etc.}
+```
+
+## Priorización
+
+Ordenar por: **impacto alto + esfuerzo bajo** primero (quick wins), luego impacto alto + esfuerzo alto como épicas.
+
+## Outputs
+
+- `docs/tech/refactoring-plan-{area}.md` — plan completo priorizado
+
+## Cuándo NO invocar
+
+- Hay un plan ya escrito y aprobado, lo que toca es ejecutarlo — usar `developer-refactoring-execute`.
+- La deuda detectada es de seguridad (vulnerabilidades) — escalar a `security-code-scan`.
+- El cambio es agregar funcionalidad nueva, no mejorar la existente — usar `developer-feature`.
+
+
+## Anti-patterns
+
+- **Big bang refactoring** — "vamos a reescribir todo el módulo X". Plan de 3 meses sin entregables intermedios = riesgo alto de cancelación. Trocear en quick wins de < 2 días con valor parcial entregable.
+- **Refactoring sin medición de éxito** — "queda más limpio". ¿Cómo se mide? Definir antes: "complejidad ciclomática promedio < 8", "duplicación detectada por SonarQube < 3%", "tiempo de build < 2 min".
+- **Plan sin priorización por impacto** — listar 50 ítems en orden de aparición. Priorizar por matriz impacto × esfuerzo: quick wins (alto impacto, bajo esfuerzo) primero, épicas al final.
+- **Refactoring por moda de stack** — "migremos a React Server Components porque es lo nuevo". Sin caso de negocio explícito (perf, mantenibilidad, seguridad), es overhead, no mejora.
+

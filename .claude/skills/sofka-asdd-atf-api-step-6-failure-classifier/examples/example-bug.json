@@ -1,0 +1,48 @@
+{
+  "id": "D-001",
+  "run_id": "PruebaAPIClienteEjemplo-v1.0-20260521-1030",
+  "wi_id": "wi-001",
+  "cp_id": "CP-004",
+  "category": "bug",
+  "severity": "high",
+  "title": "POST /pending-billing-quotas devuelve 500 cuando falta cycle (esperado 400)",
+  "description": "El contrato y la RN-001 establecen que el servicio debe responder 400 con código MISSING_REQUIRED_FIELD cuando un campo obligatorio está ausente. El servicio responde 500 con NullPointerException, dejando expuesta la traza interna.",
+  "request": {
+    "method": "POST",
+    "url": "/osf/api/v1/pending-billing-quotas",
+    "headers_redacted": {"Content-Type": "application/json"},
+    "body_redacted": {
+      "distributorId": "DIST-TEST-001",
+      "billingPeriod": "2026-05",
+      "periodProcessDate": "2026-05-21"
+    }
+  },
+  "response": {
+    "status": 500,
+    "headers": {"Content-Type": "application/json"},
+    "body": {
+      "error": "INTERNAL_SERVER_ERROR",
+      "message": "java.lang.NullPointerException at BillingRequestValidator.checkCycle"
+    }
+  },
+  "expected": {
+    "status": 400,
+    "body_schema": "BadRequest",
+    "body_assertions_summary": "$.error debe equals 'MISSING_REQUIRED_FIELD'"
+  },
+  "rule_violated": "RN-001",
+  "evidence_path": "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/execution/evidence/CP-004/",
+  "evidence_summary": "Response 500 con NPE en BillingRequestValidator.checkCycle — el validador no maneja el caso de campo cycle ausente. Trace expone implementación interna (también un hallazgo de seguridad menor).",
+  "promoted_to_backlog": false,
+  "backlog_target": "jira",
+  "reproducibility": "always",
+  "classified_at": "2026-05-21T11:40:00-05:00",
+  "classified_by": "sofka-asdd-atf-api-step-6-execution",
+  "classification_path": [
+    "DEF-002 step 1 — contract mismatch (status 500 fuera del rango 2xx/4xx documentado)",
+    "Confirmación: schema BadRequest esperado no coincide con ErrorResponse interno recibido",
+    "Conclusión: bug del servicio"
+  ],
+  "reclassifiable": true,
+  "defects_history": []
+}

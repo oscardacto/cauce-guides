@@ -1,0 +1,28 @@
+description: "CMD /sofka-asdd:verify — fase Verificar con sign-offs"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "CMD verify: tres sign-offs requeridos para completar"
+    vars:
+      input: "/sofka-asdd:verify Módulo de pagos completado. Necesitamos verificación pre-release."
+    assert:
+      - type: icontains
+        value: "sofka-asdd-qa-engineer"
+      - type: icontains
+        value: "sofka-asdd-security"
+      - type: llm-rubric
+        value: |
+          El comando verify debe requerir los tres sign-offs: qa-engineer PASS,
+          security PASS, y producto firma acceptance criteria.
+          Sin los tres, el módulo NO está listo para release.
+

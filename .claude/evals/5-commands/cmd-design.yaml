@@ -1,0 +1,26 @@
+description: "CMD /sofka-asdd:design — fase Diseñar"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "CMD design: arquitecto primario, genera ADR"
+    vars:
+      input: "/sofka-asdd:design Módulo de notificaciones en tiempo real con WebSockets. Spec en docs/specs/notifications.md aprobada."
+    assert:
+      - type: icontains
+        value: "sofka-asdd-solution-architect"
+      - type: llm-rubric
+        value: |
+          El comando design debe: invocar sofka-asdd-solution-architect como primario,
+          producir al menos un ADR documentando la decisión de WebSockets,
+          y los artefactos van en docs/architecture/decisions/ y docs/architecture/diagrams/.
+

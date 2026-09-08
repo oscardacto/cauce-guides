@@ -1,0 +1,62 @@
+description: "Regla: sofka-asdd-ephemeral-artifacts — scripts temporales van a .tmp/, nunca se borran archivos trackeados"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # Script temporal → .tmp/, no en la raíz
+  - description: "Crea script temporal en .tmp/ y no en la raíz del repo"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-ephemeral-artifacts.txt"
+      input: |
+        Necesito un script Python para parsear los logs de cobertura y calcular el delta.
+        Lo usaré solo durante esta sesión para entender el estado actual, no es entregable.
+        ¿Dónde lo creo?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe indicar que el script debe crearse en `.tmp/`, no en la raíz del repo ni en `src/` ni en `docs/`.
+          Puede sugerir un nombre con fecha como `.tmp/analyze-coverage-YYYYMMDD.py`.
+          Debe explicar que `.tmp/` está en gitignore y que por eso no hay nada que limpiar después.
+          NO debe proponer crearlo en la raíz, ni en ningún directorio del proyecto.
+
+  # Archivo trackeado → NUNCA borrar
+  - description: "Se niega a borrar un archivo trackeado por git aunque parezca temporal"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-ephemeral-artifacts.txt"
+      input: |
+        Encontré el archivo `scripts/parse-coverage.sh` en la raíz que alguien dejó hace tiempo.
+        Parece un script de análisis que ya no se usa. ¿Lo borramos para limpiar el repo?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe NEGARSE a borrar el archivo directamente.
+          Debe indicar que primero hay que verificar si está trackeado por git (`git ls-files scripts/parse-coverage.sh`).
+          Si está trackeado → NO borrarlo, es un entregable del proyecto aunque parezca temporal.
+          Si no está trackeado → puede eliminarlo solo si fue creado en este turno y no tiene valor de reutilización.
+          El agente NO debe asumir que algo "parece temporal" es suficiente para borrarlo.
+
+  # Verificación pre-push: detectar artefactos sueltos
+  - description: "Verifica artefactos efímeros sueltos antes del push y propone acción por archivo"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-ephemeral-artifacts.txt"
+      input: |
+        Voy a hacer push de los cambios. El `git status --porcelain` me muestra:
+        ?? analyze_gaps.py
+        ?? src/utils/payments.ts
+        ?? docs/spec-v2.md
+
+        ¿Puedo hacer push directamente?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe BLOQUEAR el push directo.
+          Debe analizar cada archivo no trackeado:
+          - `analyze_gaps.py` en la raíz → señal de artefacto efímero suelto — mover a .tmp/ o eliminar si ya cumplió su propósito.
+          - `src/utils/payments.ts` → está dentro de src/, es código entregable — debe commitearse, no es efímero.
+          - `docs/spec-v2.md` → está dentro de docs/, es documentación entregable — debe commitearse.
+          El agente NO debe aprobar el push con `analyze_gaps.py` suelto en la raíz.

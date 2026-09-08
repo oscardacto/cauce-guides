@@ -1,0 +1,48 @@
+{
+  "$schema": "Estructura canónica de un defecto clasificado",
+  "id": "D-NNN",
+  "run_id": "{run_id}",
+  "wi_id": "wi-NNN",
+  "cp_id": "CP-NNN",
+  "category": "bug | precondition | env_issue | script_issue | flaky | needs_more_info",
+  "severity": "critical | high | medium | low",
+  "title": "{título conciso, no genérico}",
+  "description": "{2-3 frases con qué pasó vs qué se esperaba}",
+  "request": {
+    "method": "{METHOD}",
+    "url": "{url}",
+    "headers_redacted": {},
+    "body_redacted": {}
+  },
+  "response": {
+    "status": 0,
+    "headers": {},
+    "body": {}
+  },
+  "expected": {
+    "status": 0,
+    "body_schema": "{schema_name | null}",
+    "body_assertions_summary": "{string}"
+  },
+  "rule_violated": "RN-NNN | null",
+  "evidence_path": "docs/testing/atf/{run_id}/execution/evidence/CP-NNN/",
+  "evidence_summary": "{string — qué se observó en la evidencia}",
+  "promoted_to_backlog": false,
+  "backlog_target": "jira | ado | none",
+  "reproducibility": "always | intermittent | flaky",
+  "classified_at": "{ISO 8601}",
+  "classified_by": "sofka-asdd-atf-api-step-6-execution",
+  "classification_path": [
+    "{paso del árbol DEF-002 — ej: 'step 1 — contract mismatch (status fuera de rango documentado)'}"
+  ],
+  "reclassifiable": true,
+  "defects_history": [
+    {
+      "at": "{ISO 8601}",
+      "from": "{categoría previa}",
+      "to": "{categoría nueva}",
+      "by": "{quién — agente o usuario via LIGHT}",
+      "evidence": "{justificación}"
+    }
+  ]
+}

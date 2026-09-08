@@ -1,0 +1,73 @@
+description: "Regla: sofka-asdd-skill-preflight — PRE-FLIGHT bloquea ejecución cuando la rama es protegida, los tests fallan o hay duplicados"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # Rama protegida → STOP absoluto
+  - description: "PRE-FLIGHT: bloquea skill de creación cuando se está en una rama protegida"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-skill-preflight.txt"
+      input: |
+        Estoy en la rama `main`. Quiero ejecutar el skill de scaffolding para crear un nuevo módulo de pagos.
+        ¿Podemos continuar directamente?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe BLOQUEAR la ejecución del skill.
+          Debe indicar explícitamente que `main` es una rama protegida y que NO se puede continuar.
+          Debe sugerir crear una rama dedicada antes de continuar (feat/, fix/, etc.).
+          NO debe ejecutar ni iniciar el scaffolding bajo ninguna circunstancia.
+
+  # Tests rotos → STOP, no avanzar con el fix
+  - description: "PRE-FLIGHT: bloquea skill de modificación cuando el baseline de tests ya falla"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-skill-preflight.txt"
+      input: |
+        Estoy en la rama `feat/3510-refactor-payments`. Al correr los tests antes de empezar el refactoring,
+        veo que 3 tests de `PaymentServiceTest` ya fallaban antes de mis cambios.
+        ¿Procedo con el refactoring de todas formas para no perder tiempo?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe BLOQUEAR el refactoring.
+          Debe indicar que con tests rotos en el baseline no puede continuar — es imposible distinguir regresiones introducidas por el refactoring de fallos preexistentes.
+          Debe exigir que el baseline quede verde ANTES de tocar cualquier código.
+          NO debe proponer continuar con el refactoring "con cuidado" ni ninguna variante de eso.
+
+  # Skill READ-ONLY: Scope Declaration obligatoria antes de analizar
+  - description: "PRE-FLIGHT: skill de verificación publica Scope Declaration antes de analizar"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-skill-preflight.txt"
+      input: |
+        Voy a usar el skill de auditoría de seguridad (solo lectura — no crea ni modifica archivos).
+        El módulo objetivo es `src/auth/`, que contiene: `AuthService.ts`, `JwtStrategy.ts`, `guards/RolesGuard.ts`.
+        ¿Cuál es el primer paso del skill antes de comenzar el análisis?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe publicar un Scope Declaration ANTES de comenzar el análisis.
+          Debe listar los archivos que va a revisar (AuthService.ts, JwtStrategy.ts, guards/RolesGuard.ts, o similar).
+          Debe dejar claro que este skill es READ-ONLY — no crea ni modifica archivos.
+          NO debe omitir la declaración de scope ni saltar directamente al análisis.
+          NO necesita verificar rama protegida ni tests — eso aplica solo a skills de creación/modificación.
+
+  # Carga condicional: el nucleo manda resolver la referencia antes de actuar
+  - description: "Carga condicional: antes del Paso 0 de un skill que escribe resuelve la referencia"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-skill-preflight.txt"
+      input: |
+        Estoy en la rama `feat/3521-nuevo-modulo` y voy a lanzar el skill de scaffolding, que crea archivos.
+        ¿Arranco con el Paso 0?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe ejecutar el paso de carga condicional ANTES del Paso 0 del skill.
+          Debe nombrar el comando exacto `node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-skill-preflight`
+          y decir que lee COMPLETO `.claude/references/rules/sofka-asdd-skill-preflight.md`.
+          Debe indicar que si el resolver o la lectura fallan, se detiene sin crear ni modificar archivos.
+          NO debe arrancar el PRE-FLIGHT apoyándose solo en el núcleo, ni inventar o suponer el contenido de la referencia.

@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "contract": "ADR-018/S1",
+  "root_token": "$ROOT",
+  "fixtures": [
+    {
+      "id": "bash-allow-fast-path",
+      "category": "representative",
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Bash",
+        "tool_input": { "command": "git status" },
+        "cwd": "$ROOT"
+      },
+      "expected": { "decision": "allow", "minimum_winning_reasons": 0 }
+    },
+    {
+      "id": "bash-dangerous-reset",
+      "category": "dangerous-operation",
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Bash",
+        "tool_input": { "command": "git reset --hard" },
+        "cwd": "$ROOT"
+      },
+      "expected": { "decision": "deny", "minimum_winning_reasons": 1 }
+    },
+    {
+      "id": "bash-dangerous-reset-quoted",
+      "category": "shell-quoting",
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Bash",
+        "tool_input": { "command": "git 'reset' --hard" },
+        "cwd": "$ROOT"
+      },
+      "expected": { "decision": "deny", "minimum_winning_reasons": 1 }
+    },
+    {
+      "id": "bash-dangerous-reset-git-c",
+      "category": "shell-global-option",
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Bash",
+        "tool_input": { "command": "git -C . reset --hard" },
+        "cwd": "$ROOT"
+      },
+      "expected": { "decision": "deny", "minimum_winning_reasons": 1 }
+    },
+    {
+      "id": "bash-authorization-control",
+      "category": "authorization",
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Bash",
+        "tool_input": { "command": "node .claude/scripts/sofka-asdd-plan-authorization.mjs issue" },
+        "cwd": "$ROOT"
+      },
+      "expected": { "decision": "deny", "minimum_winning_reasons": 1 }
+    },
+    {
+      "id": "bash-ai-coauthorship",
+      "category": "coauthorship",
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Bash",
+        "tool_input": {
+          "command": "git commit -m 'fix: sample Co-Authored-By: Claude <noreply@anthropic.com>'"
+        },
+        "cwd": "$ROOT"
+      },
+      "expected": { "decision": "deny", "minimum_winning_reasons": 1 }
+    },
+    {
+      "id": "edit-multiple-denies",
+      "category": "multiple-winning-reasons",
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Edit",
+        "tool_input": {
+          "file_path": "$ROOT/.tmp/pr-body.md",
+          "old_string": "before",
+          "new_string": "Generated with Claude Code"
+        },
+        "cwd": "$ROOT"
+      },
+      "expected": { "decision": "deny", "minimum_winning_reasons": 2 }
+    },
+    {
+      "id": "write-invalid-artifact-multiple-denies",
+      "category": "artifact-and-orchestrator",
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "$ROOT/docs/specs/invalid.md",
+          "content": "# Invalid"
+        },
+        "cwd": "$ROOT"
+      },
+      "expected": { "decision": "deny", "minimum_winning_reasons": 2 }
+    },
+    {
+      "id": "edit-path-with-spaces",
+      "category": "path-portability",
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Edit",
+        "tool_input": {
+          "file_path": "$ROOT/path with spaces/README.md",
+          "old_string": "x",
+          "new_string": "y"
+        },
+        "cwd": "$ROOT"
+      },
+      "expected": { "decision": "deny", "minimum_winning_reasons": 1 }
+    },
+    {
+      "id": "edit-windows-style-path",
+      "category": "path-portability",
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Edit",
+        "tool_input": {
+          "file_path": "C:\\repo\\path with spaces\\README.md",
+          "old_string": "x",
+          "new_string": "y"
+        },
+        "cwd": "$ROOT"
+      },
+      "expected": { "decision": "deny", "minimum_winning_reasons": 1 }
+    },
+    {
+      "id": "malformed-json",
+      "category": "schema-fail-closed",
+      "raw": "{not-json",
+      "tool_name": "Bash",
+      "reason_policy": "stable_schema_error",
+      "expected": { "decision": "deny", "minimum_winning_reasons": 1 }
+    }
+  ]
+}

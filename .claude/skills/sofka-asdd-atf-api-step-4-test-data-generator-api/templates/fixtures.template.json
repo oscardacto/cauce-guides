@@ -1,0 +1,39 @@
+{
+  "$schema": "Catálogo de fixtures de test data por WI",
+  "wi_id": "wi-NNN",
+  "fixtures": [
+    {
+      "id": "{slug-kebab-case}",
+      "type": "string | number | boolean | array | object | date | uuid",
+      "value": "{valor o placeholder {runtime:*} o {credentials.*}}",
+      "category": "valid | missing | wrong-type | wrong-pattern | out-of-enum | boundary-below | boundary-above | empty | null | oversized | injection | temporal | credential",
+      "field_target": "{nombre del campo del schema al que aplica}",
+      "schema_compliance": {"pattern": "{regex}", "format": "{string}", "type": "{json type}"},
+      "rule_compliance": ["RN-NNN"],
+      "expected_to_fail": "{boolean — true para inválidas}",
+      "expected_error_code": "{código de error si expected_to_fail}",
+      "resolution_strategy": "static | runtime | env-vars-at-runtime"
+    }
+  ],
+  "coverage": {
+    "fields_covered": ["{field}"],
+    "fixtures_count": {
+      "valid": 0,
+      "missing": 0,
+      "wrong-type": 0,
+      "wrong-pattern": 0,
+      "out-of-enum": 0,
+      "boundary-below": 0,
+      "boundary-above": 0,
+      "empty": 0,
+      "null": 0,
+      "oversized": 0,
+      "injection": 0,
+      "temporal": 0,
+      "credential": 0
+    }
+  },
+  "unresolved_references": ["{fixture-ID referenciado en CPs pero no generado}"],
+  "warnings": [],
+  "generated_at": "{ISO 8601}"
+}

@@ -1,0 +1,88 @@
+description: "sofka-asdd-ux-ui: componentes, accesibilidad y design system"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../../prompts/system-agent-ux-ui.txt
+
+tests:
+  - description: "PROCESO: skill component-spec — especifica componentes antes de implementar"
+    vars:
+      input: |
+        Especifica el componente 'PaymentForm' para el checkout. Incluye campos de tarjeta,
+        estados de loading/error/success y validaciones inline.
+    assert:
+      - type: llm-rubric
+        value: |
+          El UX/UI con skill component-spec debe producir:
+          1. Props del componente con tipos (TypeScript-style)
+          2. Estados del componente (idle, loading, error, success)
+          3. Comportamiento por estado (qué muestra, qué deshabilita)
+          4. Eventos emitidos (onSuccess, onError, onChange)
+          5. Notas de accesibilidad (labels, aria, focus management)
+          NO debe escribir el código React/Vue — solo la especificación.
+
+  - description: "PROCESO: skill accessibility — evalúa WCAG 2.1 AA"
+    vars:
+      input: |
+        Revisa el formulario de registro para accesibilidad. Tiene labels visuales,
+        pero no usa atributos aria. Los campos de error aparecen en rojo.
+    assert:
+      - type: llm-rubric
+        value: |
+          El UX/UI con skill accessibility debe evaluar contra WCAG 2.1 AA:
+          1. Labels: ¿están asociados correctamente con htmlFor/id o aria-labelledby?
+          2. Errores: ¿solo color rojo viola criterion 1.4.1 (no usar solo color)?
+          3. Indicar qué atributos aria faltan (aria-required, aria-invalid, aria-describedby)
+          4. Focus management: ¿dónde va el foco al enviar con errores?
+
+  - description: "PROCESO: skill design-tokens — define sistema de diseño consistente"
+    vars:
+      input: |
+        Define los design tokens para el sistema bancario: colores, tipografía, espaciado.
+        El brand color es #1B4F9A (azul corporativo).
+    assert:
+      - type: llm-rubric
+        value: |
+          El UX/UI con skill design-tokens debe definir:
+          1. Paleta de colores semántica (primary, secondary, success, error, warning, neutral)
+          2. Escala tipográfica (base, scale ratio, line-heights)
+          3. Escala de espaciado (sistema consistente, ej: 4px base)
+          4. Tokens en formato usable (CSS variables, JSON, o design token notation)
+          5. Verificar que el color primario cumple contraste WCAG AA sobre blanco
+
+  - description: "PROCESO: skill responsive — define breakpoints y comportamiento adaptativo"
+    vars:
+      input: |
+        El dashboard de analytics tiene 4 tarjetas KPI, una tabla de transacciones y un gráfico.
+        Especifica cómo debe verse en mobile (360px), tablet (768px) y desktop (1440px).
+    assert:
+      - type: llm-rubric
+        value: |
+          El UX/UI con skill responsive debe especificar:
+          1. Layout de cada breakpoint (columnas, orden de elementos)
+          2. Comportamiento de la tabla en mobile (scroll horizontal, cards, etc.)
+          3. Tamaño mínimo de touch targets (44px × 44px según WCAG 2.5.5)
+          4. Qué elementos se ocultan o colapsan en mobile y por qué
+
+  - description: "OUTPUT: Wireframe o especificación procesable por el developer"
+    vars:
+      input: |
+        Diseña el flujo de onboarding de 3 pasos: datos personales → documentos → confirmación.
+        El developer necesita la especificación para implementar.
+    assert:
+      - type: llm-rubric
+        value: |
+          La especificación del UX/UI debe ser implementable directamente por el developer:
+          1. Estructura de cada pantalla (componentes y su jerarquía)
+          2. Transiciones entre pasos (next/back, validación por paso)
+          3. Estados de cada campo y mensajes de error específicos
+          4. Comportamiento del botón de confirmación final (loading, disabled)
+          No puede ser vago ('un formulario con campos') — debe ser concreto y preciso.
+

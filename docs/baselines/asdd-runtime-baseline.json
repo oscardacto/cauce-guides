@@ -1,0 +1,16 @@
+{
+  "schema_version": 2,
+  "captured_at": "2026-07-17",
+  "reconciled_at": "2026-07-18",
+  "method": {
+    "unit": "words",
+    "agent_frontmatter": "YAML-semantic canonicalization; inline and block lists are equivalent",
+    "note": "The previous 12000 ceiling was based on a parser that ignored inline skills. 21000 is a corrected regression ceiling; ADR-017 keeps the 10000 migration target in warning stage."
+  },
+  "limits": {
+    "always_on_words_max": 18000,
+    "registered_hooks_max": 16,
+    "session_start_hooks_max": 2,
+    "largest_agent_with_skills_max": 21000
+  }
+}

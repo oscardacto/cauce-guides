@@ -1,0 +1,58 @@
+description: "WF-002 PROCESO+OUTPUT: Fase Analizar — orden ba→funcional→po y artefactos"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "PROCESO WF-002: Fase analizar → orden explícito ba → funcional → po"
+    vars:
+      input: |
+        Brief aprobado: sistema de créditos para PYMES. Necesito generar la spec completa
+        con reglas de negocio, casos de uso e historias de usuario.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-producto"
+      - type: llm-rubric
+        value: |
+          El orquestador debe invocar sofka-asdd-producto con el orden EXPLÍCITO:
+          1. skill ba (levanta reglas de negocio RN-XXX y procesos AS-IS/TO-BE)
+          2. skill funcional (detalla casos de uso CU-XXX con flujos)
+          3. skill po (escribe historias con criterios Given/When/Then)
+          Este orden NO es negociable. ba debe ir primero, po debe ir último.
+
+  - description: "PROCESO WF-002: Spec con dato PII → invoca security como soporte condicional antes del cierre"
+    vars:
+      input: |
+        Analizando el módulo de autenticación biométrica (huella dactilar + reconocimiento facial).
+        Necesito la spec completa con todos los flujos y criterios de aceptación.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-security"
+      - type: llm-rubric
+        value: |
+          La biometría es dato PII regulado. El orquestador debe incluir sofka-asdd-security
+          como soporte condicional ANTES de cerrar la spec, para que sus outputs alimenten
+          la sección 'Requisitos de seguridad' del documento.
+
+  - description: "OUTPUT WF-002: Spec generada contiene reglas de negocio, casos de uso e historias"
+    vars:
+      input: |
+        Genera la spec para: módulo de transferencias bancarias internacionales.
+        Los usuarios deben poder enviar dinero a cuentas en otros países.
+    assert:
+      - type: llm-rubric
+        value: |
+          El plan de ejecución del orquestador debe garantizar que la spec final incluya:
+          - Reglas de negocio (RN-001...) — producidas por ba
+          - Casos de uso (CU-001...) con flujos — producidos por funcional
+          - Historias de usuario con criterios Given/When/Then — producidas por po
+          - (Si aplica) Restricciones de seguridad — producidas por security
+          El artefacto debe vivir en docs/specs/{feature}.md

@@ -1,0 +1,45 @@
+{
+  "status": "partial",
+  "interrupted_at": "2026-05-21T11:02:30-05:00",
+  "interrupted_by": "sofka-asdd-atf-api-step-4-test-cases",
+  "reason": "rate_limit_signal",
+  "completed_units": ["CP-001", "CP-002"],
+  "pending_units": ["CP-003", "CP-004", "CP-005"],
+  "resume_instructions": "Reanudar procesando SOLO pending_units. Al completar, sobreescribir con status: complete y completed_units_history.",
+  "wi_id": "wi-002",
+  "wi_title": "Proceso batch y ciclo de vida",
+  "test_cases": [
+    {
+      "id": "CP-001",
+      "title": "Solicitud batch ejecutada en fecha de ciclo válida — transición PENDING → EXECUTION",
+      "priority": "critical",
+      "technique": "decision-table",
+      "rule_covered": "RN-008",
+      "request": {
+        "method": "POST",
+        "url": "/osf/api/v1/pending-billing-quotas",
+        "body": {"cycle": "2026-05", "distributorId": "DIST-001"}
+      },
+      "expected_response": {
+        "status": 201,
+        "schema_ref": "components/schemas/BillingRequestCreated"
+      }
+    },
+    {
+      "id": "CP-002",
+      "title": "Solicitud batch con fecha futura — debe rechazarse",
+      "priority": "high",
+      "technique": "boundary-value-analysis",
+      "rule_covered": "RN-010",
+      "request": {
+        "method": "POST",
+        "url": "/osf/api/v1/pending-billing-quotas",
+        "body": {"cycle": "2027-01", "distributorId": "DIST-001"}
+      },
+      "expected_response": {
+        "status": 400,
+        "error_code": "INVALID_CYCLE_DATE"
+      }
+    }
+  ]
+}

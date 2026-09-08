@@ -1,0 +1,25 @@
+description: "CMD /sofka-asdd:resume — retomar workflow desde checkpoint"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "CMD resume: retoma desde .asdd-run.json sin reiniciar"
+    vars:
+      input: "/sofka-asdd:resume"
+    assert:
+      - type: llm-rubric
+        value: |
+          El comando resume debe: leer .asdd-run.json para conocer el estado del workflow,
+          NO reiniciar desde cero si status != complete,
+          presentar resumen del estado actual al usuario,
+          y proponer continuar desde el resume_hint registrado.
+

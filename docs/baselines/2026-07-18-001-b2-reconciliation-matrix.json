@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "slice": "B2",
+  "captured_at": "2026-07-18",
+  "source": {
+    "branch": "feature/asdd-runtime-efficiency-v2",
+    "base_commit": "37417ced26e7319031aa3859e9e7091242d3b3d9",
+    "capture_state": "B2 working tree based on base_commit"
+  },
+  "matrix": [
+    { "case": "no active run", "expected": "skip:no-active-run", "result": "PASS" },
+    { "case": "Specify active without INDEX", "expected": "skip:before-analyze-complete", "result": "PASS" },
+    { "case": "Specify complete without INDEX", "expected": "skip:before-analyze-complete", "result": "PASS" },
+    { "case": "Analyze active without INDEX", "expected": "skip:analyze-in-progress", "result": "PASS" },
+    { "case": "Analyze complete without INDEX", "expected": "error:index-required", "result": "PASS" },
+    { "case": "Design or later without INDEX", "expected": "error:index-required", "result": "PASS" },
+    { "case": "INDEX ref present early but points to brief", "expected": "error:not-index", "result": "PASS" },
+    { "case": "INDEX ref present but empty", "expected": "error:missing-index", "result": "PASS" },
+    { "case": "INDEX ref escapes project", "expected": "error:outside-project", "result": "PASS" },
+    { "case": "valid INDEX present during Specify", "expected": "checked:not-required", "result": "PASS" },
+    { "case": "Build with corrected SPIKE-1 and SPIKE-1R", "expected": "checked:two-terminal", "result": "PASS" },
+    { "case": "required INDEX without reconciliation provenance", "expected": "drift:missing-provenance", "result": "PASS" },
+    { "case": "INDEX/state drift", "expected": "drift:missing-and-stale", "result": "PASS" },
+    { "case": "duplicate slice and atomic write", "expected": "error-then-synchronized", "result": "PASS" }
+  ],
+  "current_run": {
+    "outcome": "checked",
+    "terminal_slices_before_b2_close": 7,
+    "pending_slices_before_b2_close": 9,
+    "errors": 0,
+    "drift": 0
+  },
+  "validation": {
+    "matrix": "14/14 PASS",
+    "validate_template_errors": 0,
+    "prototype_or_fake_index_created": false
+  }
+}

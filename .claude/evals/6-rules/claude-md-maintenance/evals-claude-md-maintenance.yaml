@@ -1,0 +1,78 @@
+description: "Regla: sofka-asdd-claude-md-maintenance — qué va en CLAUDE.md, triggers obligatorios, anti-patrones"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # Trigger obligatorio: nuevo endpoint → actualizar CLAUDE.md en mismo commit
+  - description: "Trigger: nuevo endpoint en backend requiere actualizar CLAUDE.md del módulo en el mismo commit"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-claude-md-maintenance.txt"
+      input: |
+        Implementé el endpoint `POST /api/orders/bulk-cancel` en el módulo `orders`.
+        El ticket está listo, hice el commit del código. ¿Puedo cerrar el ticket?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe indicar que el ticket NO está completo.
+          Un nuevo controller/endpoint es un trigger obligatorio para actualizar el CLAUDE.md del módulo `orders`.
+          La actualización debe ir en el MISMO commit que el código (o en un commit inmediatamente siguiente antes del push).
+          NO debe aprobar cerrar el ticket sin haber actualizado el CLAUDE.md.
+
+  # Anti-patrón: CLAUDE.md con procedimientos paso-a-paso
+  - description: "Anti-patrón: rechaza agregar procedimiento paso-a-paso dentro de CLAUDE.md"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-claude-md-maintenance.txt"
+      input: |
+        Quiero agregar al CLAUDE.md raíz del proyecto las instrucciones paso-a-paso de cómo hacer deploy:
+        1. Ejecutar `npm run build`
+        2. Subir artefacto a S3
+        3. Actualizar la tarea ECS
+        4. Verificar health check
+        ¿Lo agrego al CLAUDE.md?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe indicar que los procedimientos paso-a-paso NO van en CLAUDE.md.
+          Debe señalar que ese contenido pertenece a un skill (`.claude/skills/`) o a una doc en `.claude/docs/` o `docs/`.
+          CLAUDE.md es para contexto de arquitectura, no runbooks.
+          NO debe aprobar agregar los pasos de deploy directamente en CLAUDE.md.
+
+  # Límite de líneas: CLAUDE.md demasiado grande
+  - description: "Límite: CLAUDE.md con más de 200 líneas debe partirse en docs específicos"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-claude-md-maintenance.txt"
+      input: |
+        El CLAUDE.md del módulo `auth` tiene 280 líneas. Incluye: propósito del módulo, componentes clave,
+        reglas de seguridad detalladas con ejemplos de código, una guía de troubleshooting con 15 escenarios,
+        y la lista completa de endpoints con sus parámetros. ¿Está bien así?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe indicar que 280 líneas excede el límite (~150 líneas, máximo 200).
+          Debe identificar qué debe moverse:
+          - Reglas de seguridad detalladas con ejemplos → `.claude/rules/` o `.claude/docs/`
+          - Guía de troubleshooting con 15 escenarios → `.claude/docs/` o un skill
+          - Lista completa de endpoints con parámetros → documentación OpenAPI o `.claude/docs/`
+          El CLAUDE.md debe quedar como índice de contexto, no como documentación exhaustiva.
+          NO debe aprobar el CLAUDE.md de 280 líneas tal como está.
+
+  # Carga condicional: el nucleo manda resolver la referencia antes de actuar
+  - description: "Carga condicional: antes de cerrar un feature con trigger resuelve la referencia"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-claude-md-maintenance.txt"
+      input: |
+        Cerré el feature: agregué dos aggregates y un domain event nuevo en el módulo `billing`.
+        Voy a dar el feature por terminado. ¿Procede?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe ejecutar el paso de carga condicional ANTES de cerrar el feature.
+          Debe nombrar el comando exacto `node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-claude-md-maintenance`
+          y decir que lee COMPLETO `.claude/references/rules/sofka-asdd-claude-md-maintenance.md`.
+          Debe indicar que si el resolver o la lectura fallan, se detiene sin cerrar el feature.
+          NO debe cerrar el feature apoyándose solo en el núcleo, ni inventar o suponer el contenido de la referencia.

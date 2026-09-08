@@ -1,0 +1,82 @@
+description: "sofka-asdd-meta: token budget y governance del framework"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../../prompts/system-agent-meta.txt
+
+tests:
+  - description: "PROCESO: Responde con formato [ACCION] en una línea"
+    vars:
+      input: |
+        El contexto está al 45%. Voy a invocar sofka-asdd-developer-backend para implementar
+        el módulo de pagos. ¿Procedo?
+    assert:
+      - type: contains
+        value: "[PROCEDER]"
+      - type: llm-rubric
+        value: |
+          El meta-agente SIEMPRE responde con formato [ACCION] + recomendación en una línea.
+          Con 45% de contexto (verde), la respuesta debe ser [PROCEDER] ya que está bajo el 50%.
+          NO debe escribir párrafos ni análisis extensos — una línea máximo.
+
+  - description: "PROCESO: Contexto en rojo → recomienda COMPACT o NUEVA-SESION"
+    vars:
+      input: |
+        El contexto está al 82%. Necesito invocar sofka-asdd-developer-backend + sofka-asdd-qa-engineer
+        en paralelo. ¿Caben?
+    assert:
+      - type: llm-rubric
+        value: |
+          Con 82% de contexto (rojo), el meta-agente debe responder [COMPACT] o [NUEVA-SESION].
+          No puede recomendar [PROCEDER] — el contexto está demasiado alto para 2 agentes en paralelo.
+          La respuesta debe ser una sola línea con el cálculo de por qué no caben.
+
+  - description: "PROCESO: No toma decisiones de producto ni arquitectura"
+    vars:
+      input: |
+        ¿Debo usar microservicios o monolito para el nuevo sistema?
+    assert:
+      - type: llm-rubric
+        value: |
+          El meta-agente debe responder [PROCEDER] indicando que esa pregunta es de arquitectura,
+          no de plataforma. Debe redirigir al sofka-asdd-solution-architect.
+          NO debe responder la pregunta de microservicios vs monolito — eso no es su dominio.
+
+  - description: "PROCESO: Governance — detecta inconsistencias en el framework"
+    vars:
+      input: |
+        Healthcheck del framework ASDD. ¿Está todo configurado correctamente?
+    assert:
+      - type: icontains
+        value: "[GOVERNANCE]"
+      - type: llm-rubric
+        value: |
+          El meta-agente con trigger de healthcheck debe responder [GOVERNANCE] y verificar:
+          1. CLAUDE.md lista todos los agentes correctamente
+          2. Hooks están configurados
+          3. .sofka-asdd manifest está sincronizado con el filesystem
+          Respuesta en el formato establecido, no en párrafos.
+
+  - description: "PROCESO: Post-compact — recomienda qué re-cargar mínimo"
+    vars:
+      input: |
+        Se hizo /compact. El .asdd-run.json dice: phase=design, in_progress,
+        completed_steps=[specify, analyze], resume_hint='architect component-diagram pagos'.
+    assert:
+      - type: icontains
+        value: "[DIAGNOSTICO]"
+      - type: llm-rubric
+        value: |
+          Tras un compact, el meta-agente debe responder [DIAGNOSTICO] indicando:
+          1. Qué archivos cargar mínimo para continuar (solo los de la fase actual: design)
+          2. NO re-cargar fases completadas (specify, analyze)
+          3. Próximo paso concreto según el resume_hint
+          En formato de lista concisa, no párrafos.
+

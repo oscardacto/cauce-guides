@@ -1,0 +1,2953 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATF · config</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* ── Sofka Brand Palette 2026 (sofka_style_manual.md §2) ── */
+  --orange:    #F47920;
+  --orange-bg: rgba(244,121,32,.08);
+  --orange-b:  rgba(244,121,32,.22);
+  --sofka-light: #F0EDE8;
+  --sofka-dark:  #B8A894;
+
+  /* ── Backgrounds (Light Professional) ── */
+  --bg:    #F7F5F2;
+  --bg2:   #FFFFFF;
+  --bg3:   #F0EDE8;
+  --bg4:   #E8E4DE;
+  --border:#DDD8D0;
+  --bord2: #C8C0B4;
+
+  /* ── Semantic ── */
+  --go:    #1A8A3E; --go-bg:  rgba(26,138,62,.07); --go-b:  rgba(26,138,62,.22);
+  --warn:  #C56500; --warn-bg:rgba(197,101,0,.07);  --warn-b:rgba(197,101,0,.22);
+  --bad:   #D42020; --bad-bg: rgba(212,32,32,.07);  --bad-b: rgba(212,32,32,.22);
+  --blue:  #0A7A7A; --blue-bg:rgba(10,122,122,.07); --blue-b:rgba(10,122,122,.22);
+  --p3c:   #D46800;
+
+  /* ── Text (§2 + §3) ── */
+  --text:  #1A1A1A; --text2: #555555; --text3: #888888;
+
+  /* ── Typography (§3) ── */
+  --mono:'JetBrains Mono','Courier New',monospace;
+  --sans:'Barlow Condensed','Montserrat',Arial Narrow,sans-serif;
+  --body:'Montserrat','Roboto',Arial,sans-serif;
+  --r:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14px;line-height:1.55;min-height:100vh}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:2px}
+
+/* ── SOFKA PATTERN (diagonal strokes) ── */
+.sofka-bg{position:relative;overflow:hidden}
+.sofka-bg::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(
+  -45deg,
+  transparent,transparent 14px,
+  rgba(244,121,32,.025) 14px,rgba(244,121,32,.025) 15px
+);pointer-events:none;z-index:0}
+.sofka-bg>*{position:relative;z-index:1}
+
+/* ── SOFKA ORANGE ACCENT BORDER ── */
+.accent-l{border-left:3px solid var(--orange) !important}
+.accent-l-go{border-left:3px solid var(--go) !important}
+.accent-l-bad{border-left:3px solid var(--bad) !important}
+
+/* ── SOFKA CLAIM CHIP ── */
+.claim-chip{display:inline-flex;align-items:center;gap:6px;background:var(--orange-bg);border:1px solid var(--orange-b);border-radius:20px;padding:3px 10px 3px 7px;font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange)}
+.claim-dot{width:5px;height:5px;border-radius:50%;background:var(--orange)}
+
+/* ── SOFKA SECTION LABELS ── */
+.slabel{font-size:9px;color:var(--orange);text-transform:uppercase;letter-spacing:.22em;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-family:var(--sans);font-weight:700}
+.slabel::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--orange-b),transparent)}
+
+/* ── CARD: tighter, more Sofka ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px;animation:up .4s ease both;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bord2);box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:11px;border-bottom:1px solid var(--border)}
+.ct{font-family:var(--sans);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--text2)}
+
+/* ── STILE (stat tile) Sofka ── */
+.stile{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;border-left:3px solid var(--border);transition:border-color .2s,box-shadow .2s}
+.stile:hover{border-left-color:var(--bord2);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.sv{font-family:var(--sans);font-size:28px;font-weight:900;line-height:1;margin-bottom:4px;letter-spacing:-.02em}
+.sl{font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:.16em;font-family:var(--sans);font-weight:700}
+.ss{font-size:10px;color:var(--text3);margin-top:3px}
+
+/* ── PILLS: Sofka ── */
+.pill{font-size:8px;padding:2px 7px;border-radius:10px;font-family:var(--sans);font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:inline-block}
+.p-go  {background:var(--go-bg);color:var(--go);border:1px solid var(--go-b)}
+.p-warn{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-b)}
+.p-bad {background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad-b)}
+.p-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}
+.p-dim {background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
+
+/* ── FRS big number Sofka ── */
+.frs-big{font-family:var(--sans);font-size:96px;font-weight:900;line-height:1;letter-spacing:-.06em}
+.frs-meta-item{background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:10px 12px;transition:border-color .2s}
+.frs-meta-item:hover{border-color:var(--orange-b)}
+.frs-mk{font-size:8px;color:var(--orange);text-transform:uppercase;letter-spacing:.14em;margin-bottom:3px;font-family:var(--sans);font-weight:700}
+.frs-mv{font-size:12px;color:var(--text);font-family:var(--body)}
+
+/* ── DIMCARD Sofka ── */
+.dimcard{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:7px;transition:border-color .2s,transform .15s}
+.dimcard:hover{border-color:var(--orange-b);transform:translateY(-1px)}
+.dimn{font-size:8px;color:var(--orange);text-transform:uppercase;letter-spacing:.12em;font-family:var(--sans);font-weight:700}
+.dimv{font-family:var(--sans);font-size:24px;font-weight:900;line-height:1;letter-spacing:-.03em}
+.dimw{font-size:8px;color:var(--text3)}
+.dimbar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:2px}
+.dimfill{height:100%;border-radius:2px;transition:width 1s ease .3s}
+
+/* ── HU TABLE Sofka ── */
+.hu-table th{text-align:left;padding:7px 10px;font-size:8px;color:var(--orange);text-transform:uppercase;letter-spacing:.14em;border-bottom:1px solid var(--border);font-weight:700;white-space:nowrap;background:var(--bg3);font-family:var(--sans)}
+.hu-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;font-family:var(--body)}
+.hu-table tr:hover td{background:var(--bg3)}
+.hu-name{color:var(--text);min-width:180px;font-weight:500}
+
+/* ── FINDING SECTION ── */
+.finding-dim{font-family:var(--sans);font-size:11px;font-weight:800;color:var(--text);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.06em}
+
+/* ── RISK ITEM Sofka ── */
+.risk-item{display:flex;gap:14px;align-items:flex-start;padding:12px;margin-bottom:8px;background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:var(--r);transition:border-left-color .2s}
+.risk-item:hover{border-left-color:var(--orange)}
+.risk-num{font-family:var(--sans);font-size:24px;font-weight:900;line-height:1;letter-spacing:-.03em}
+.risk-unit{font-size:7px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;font-family:var(--sans);font-weight:700}
+
+/* ── DE-ROW (Design+Execution) ── */
+.de-row{padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.de-row:hover{background:var(--bg3)}
+.de-detail.open{display:block !important}
+
+/* ── FEATURE CARDS Sofka ── */
+.feat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.feat-card:hover{border-color:var(--bord2)}
+.feat-name{color:var(--orange);font-size:11px;font-weight:700;flex:1;font-family:var(--sans)}
+.feat-head{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;transition:background .15s}
+.feat-head:hover{background:var(--bg4)}
+.feat-arrow{font-size:11px;color:var(--orange);transition:transform .2s;flex-shrink:0;font-weight:700}
+
+/* ── VERDICT Sofka ── */
+.verdict{border-radius:8px;border:1px solid var(--border);padding:24px 28px;margin-bottom:22px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:36px;position:relative;overflow:hidden;animation:up .45s ease both}
+.v-stripe{position:absolute;left:0;top:0;bottom:0;width:4px}
+.go  .v-stripe{background:var(--go);box-shadow:2px 0 12px var(--go)}
+.warn .v-stripe{background:var(--orange);box-shadow:2px 0 12px var(--orange)}
+.bad  .v-stripe{background:var(--bad);box-shadow:2px 0 12px var(--bad)}
+.pend .v-stripe{background:var(--sofka-dark)}
+
+/* Sofka diagonal in verdict */
+.verdict::after{content:'';position:absolute;right:0;top:0;bottom:0;width:200px;background-image:repeating-linear-gradient(-45deg,transparent,transparent 10px,rgba(244,121,32,.025) 10px,rgba(244,121,32,.025) 11px);pointer-events:none}
+
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;z-index:999}
+.ld-logo{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--text2)}
+.ld-track{width:200px;height:1px;background:var(--border)}
+.ld-bar{height:1px;background:linear-gradient(90deg,var(--orange),var(--blue));animation:ldfill 1.5s cubic-bezier(.4,0,.2,1) forwards;box-shadow:0 0 12px var(--orange)}
+@keyframes ldfill{from{width:0}to{width:100%}}
+.ld-sub{font-size:10px;color:var(--text3);letter-spacing:.1em}
+
+/* UPLOAD */
+#upload-zone{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:90}
+#upload-zone.on{display:flex}
+.up-card{border:1px solid var(--bord2);border-radius:var(--r);padding:52px 68px;text-align:center;max-width:460px;background:var(--bg2);transition:border-color .2s;position:relative;overflow:hidden}
+.up-card:hover,.up-card.drag{border-color:var(--blue)}
+.up-h{font-family:var(--sans);font-size:17px;font-weight:600;margin-bottom:8px}
+.up-sub{font-size:11px;color:var(--text2);line-height:1.8;margin-bottom:26px}
+.up-sub code{color:var(--blue);background:var(--blue-bg);padding:1px 5px;border-radius:3px}
+.btn{display:inline-block;background:var(--blue);color:#fff;border:none;border-radius:var(--r);padding:9px 22px;font-family:var(--body);font-size:11px;letter-spacing:.05em;cursor:pointer;transition:opacity .15s}
+.btn:hover{opacity:.9;transform:translateY(-1px)}
+#folder-input{display:none}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:50;background:var(--bg2);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 22px;gap:20px;overflow:hidden}
+.h-logo{font-family:var(--sans);font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;display:flex;align-items:center;gap:7px}
+.h-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);box-shadow:0 0 8px var(--orange);animation:blink 3s ease-in-out infinite}
+@keyframes blink{0%,88%,100%{opacity:1}94%{opacity:.15}}
+.h-sep{width:1px;height:18px;background:var(--border)}
+.h-run{font-size:11px;color:var(--text3)}
+.h-run b{color:var(--text2);font-weight:400}
+.h-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.h-env{font-size:9px;padding:2px 7px;border-radius:3px;border:1px solid var(--bord2);color:var(--text2);letter-spacing:.1em;text-transform:uppercase}
+
+/* APP */
+#app{display:none}
+#app.on{display:block}
+.main{max-width:1500px;margin:0 auto;padding:22px}
+
+/* VERDICT */
+.verdict{border-radius:var(--r);border:1px solid var(--border);padding:26px 30px;margin-bottom:22px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:36px;position:relative;overflow:hidden;animation:up .45s ease both}
+.verdict.go  {border-color:var(--go-b);background:var(--go-bg)}
+.verdict.warn{border-color:var(--orange-b);background:var(--orange-bg)}
+.verdict.bad {border-color:var(--bad-b);background:var(--bad-bg)}
+.verdict.pend{border-color:var(--border);background:var(--bg2)}
+.v-stripe{position:absolute;left:0;top:0;bottom:0;width:3px}
+.go .v-stripe  {background:var(--go);box-shadow:2px 0 10px var(--go)}
+.warn .v-stripe{background:var(--warn);box-shadow:2px 0 10px var(--warn)}
+.bad .v-stripe {background:var(--bad);box-shadow:2px 0 10px var(--bad)}
+.pend .v-stripe{background:var(--sofka-dark)}
+.v-ey{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
+.v-word{font-family:var(--sans);font-size:38px;font-weight:900;line-height:1;letter-spacing:-.03em;text-transform:uppercase}
+.go .v-word  {color:var(--go)}
+.warn .v-word{color:var(--warn)}
+.bad .v-word {color:var(--bad)}
+.pend .v-word{color:var(--text3)}
+.v-sub{font-size:10px;color:var(--text3);margin-top:5px}
+.v-kpis{display:flex;gap:28px}
+.kpi-val{font-family:var(--sans);font-size:24px;font-weight:800;line-height:1;color:var(--text)}
+.kpi-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.10em;margin-top:3px;font-family:var(--sans);font-weight:700}
+/* verdict — FPY display */
+
+/* ── VERDICT DETAIL PANEL ── */
+#verdict-detail{margin-bottom:6px}
+.vd-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;margin-bottom:6px}
+.vd-title{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+.vd-comp-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bg3)}
+.vd-comp-row:last-child{border-bottom:none}
+.vd-comp-name{font-size:11px;color:var(--text2);flex:1 1 180px}
+.vd-comp-bar-wrap{flex:1 1 120px;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.vd-comp-bar{height:100%;border-radius:3px;transition:width .4s ease}
+.vd-comp-score{font-family:var(--mono);font-size:11px;font-weight:700;text-align:right;min-width:38px}
+.vd-comp-weight{font-size:9px;color:var(--text4);min-width:32px;text-align:right}
+.vd-comp-contrib{font-family:var(--mono);font-size:10px;color:var(--text3);min-width:52px;text-align:right}
+.vd-comp-lowest{display:inline-block;font-size:8px;background:var(--warn);color:#fff;border-radius:3px;padding:1px 5px;margin-left:5px;vertical-align:middle}
+.vd-total-row{display:flex;justify-content:flex-end;gap:8px;padding-top:8px;margin-top:4px;border-top:1px solid var(--border)}
+.vd-total-lbl{font-size:10px;color:var(--text3)}
+.vd-total-val{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--text)}
+.vd-crit-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:11px}
+.vd-crit-icon{font-size:13px;line-height:1;flex-shrink:0}
+.vd-crit-label{flex:1;color:var(--text2)}
+.vd-crit-status{font-size:10px;font-weight:700}
+.vd-threshold-bar{display:flex;height:6px;border-radius:3px;overflow:hidden;margin:8px 0;gap:1px}
+.vd-th-seg{flex:1;height:100%}
+.vd-threshold-legend{display:flex;justify-content:space-between;font-size:9px;color:var(--text4)}
+.vd-missing-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:11px;color:var(--text3);border-bottom:1px solid var(--bg3)}
+.vd-missing-row:last-child{border-bottom:none}
+.vd-missing-icon{font-size:12px;color:var(--text4)}
+.vd-missing-phase{font-size:9px;color:var(--blue);margin-left:auto}
+
+/* ── DELTA BANNER ── */
+.delta-banner{display:flex;gap:10px;flex-wrap:wrap;padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);margin-bottom:4px}
+.delta-kpi{display:flex;flex-direction:column;gap:2px;padding:8px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;min-width:90px}
+.delta-lbl{font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;font-family:var(--sans);font-weight:700}
+.delta-val{font-family:var(--sans);font-size:20px;font-weight:900;line-height:1;letter-spacing:-.03em}
+.delta-pos{color:var(--go)}.delta-neg{color:var(--bad)}.delta-neu{color:var(--text3)}
+.delta-ref{font-size:9px;color:var(--text3);font-style:italic}
+
+/* ── HISTORY TABLE ── */
+.hist-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.hist-tbl th{text-align:left;padding:7px 10px;font-size:8px;color:var(--orange);text-transform:uppercase;letter-spacing:.14em;border-bottom:1px solid var(--border);font-weight:700;white-space:nowrap;background:var(--bg3);font-family:var(--sans)}
+.hist-tbl td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;font-family:var(--body)}
+.hist-tbl tr:hover td{background:var(--bg3)}
+.hist-tbl .run-id{font-family:var(--mono);font-size:10px;color:var(--text)}
+.hist-tbl .run-link{color:var(--orange);text-decoration:none;font-size:10px}
+.hist-tbl .run-link:hover{text-decoration:underline}
+
+/* ── TREND CHART ── */
+.trend-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.trend-title{font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text2);margin-bottom:12px;font-family:var(--sans)}
+.chart-svg{width:100%;overflow:visible}
+.chart-axis{stroke:var(--border);stroke-width:1}
+.chart-grid{stroke:var(--border);stroke-width:1;stroke-dasharray:3,3;opacity:.6}
+.chart-line{fill:none;stroke:var(--orange);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.chart-dot{fill:var(--orange);stroke:var(--bg2);stroke-width:2}
+.chart-bar-go{fill:var(--go);opacity:.8}
+.chart-bar-bad{fill:var(--bad);opacity:.8}
+.chart-label{font-size:9px;fill:var(--text3);font-family:var(--sans)}
+
+/* TABS — high contrast */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:22px;overflow-x:auto;scrollbar-width:none;background:var(--bg2);border-radius:var(--r) var(--r) 0 0;padding:0 4px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 16px;font-family:var(--sans);font-size:10px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;position:relative;bottom:-2px;transition:color .15s,border-color .15s,background .15s}
+.tab:hover{color:var(--text2);background:var(--bg3);border-radius:4px 4px 0 0;border-bottom-color:var(--bord2)}
+.tab.on{color:var(--text);border-bottom-color:var(--orange);background:var(--bg3);border-radius:4px 4px 0 0}
+.tbadge{display:inline-flex;align-items:center;justify-content:center;background:var(--bg4);color:var(--text2);border-radius:8px;font-size:9px;padding:0 5px;margin-left:4px;min-width:16px;height:14px}
+.tab.on .tbadge{background:var(--orange);color:#fff}
+
+/* PANES */
+.pane{display:none;animation:up .3s ease both}
+.pane.on{display:block}
+@keyframes up{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px;animation:up .4s ease both;box-shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:11px;border-bottom:1px solid var(--border)}
+.ct{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text2)}
+
+/* PILLS */
+.pill{font-size:10px;padding:3px 8px;border-radius:12px;font-family:var(--body);letter-spacing:.03em;display:inline-block}
+.p-go  {background:var(--go-bg);color:var(--go);border:1px solid var(--go-b)}
+.p-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-b)}
+.p-bad {background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad-b)}
+.p-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}
+.p-dim {background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
+
+/* STAT TILE */
+.stile{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px}
+.sv{font-family:var(--sans);font-size:30px;font-weight:700;line-height:1;margin-bottom:3px}
+.sl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.ss{font-size:10px;color:var(--text3);margin-top:3px}
+
+/* SECTION LABEL */
+.slabel{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.slabel::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* EMPTY */
+.empty{padding:28px;text-align:center;color:var(--text3);font-size:11px;border:1px dashed var(--border);border-radius:var(--r)}
+
+/* ── TESTABILIDAD ── */
+.frs-top{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:start;margin-bottom:26px}
+.frs-big{font-family:var(--sans);font-size:88px;font-weight:800;line-height:1;letter-spacing:-.05em}
+.frs-right{display:flex;flex-direction:column;gap:8px;padding-top:6px}
+.frs-status{font-family:var(--sans);font-size:14px;font-weight:700}
+.frs-gate{font-size:11px;color:var(--text2);line-height:1.6;max-width:480px}
+.frs-meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:22px}
+.frs-meta-item{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:10px 12px}
+.frs-mk{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
+.frs-mv{font-size:12px;color:var(--text)}
+
+/* Dimensions */
+.dim5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px}
+.dimcard{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:7px}
+.dimn{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.08em}
+.dims{display:flex;align-items:baseline;gap:5px}
+.dimv{font-family:var(--sans);font-size:26px;font-weight:700;line-height:1}
+.dimw{font-size:9px;color:var(--text3)}
+.dimbar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.dimfill{height:100%;border-radius:2px;transition:width 1s ease .3s}
+
+/* Summary table */
+.sum-table{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:22px}
+.sum-cell{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;font-size:11px}
+.sum-k{color:var(--text2)}
+.sum-v{font-family:var(--sans);font-weight:700;color:var(--text);font-size:13px}
+
+/* HU table */
+.hu-wrap{overflow-x:auto;margin-bottom:20px}
+.hu-table{width:100%;border-collapse:collapse;font-size:11px;min-width:700px}
+.hu-table th{text-align:left;padding:8px 10px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border);font-weight:600;white-space:nowrap;background:var(--bg3)}
+.hu-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+.hu-table tr:last-child td{border-bottom:none}
+.hu-table tr:hover td{background:var(--bg3)}
+.hu-id{color:var(--text3);font-size:10px;white-space:nowrap}
+.hu-name{color:var(--text);min-width:180px}
+.hu-score{font-family:var(--sans);font-weight:700;font-size:13px}
+.score-dot{display:inline-block;width:28px;height:28px;border-radius:50%;font-size:10px;font-weight:700;text-align:center;line-height:28px;font-family:var(--sans)}
+
+/* Findings */
+.finding-section{margin-bottom:20px}
+.finding-dim{font-family:var(--sans);font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.finding-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border)}
+.finding-item:last-child{border-bottom:none}
+.finding-tag{flex-shrink:0;margin-top:2px}
+.finding-text{font-size:11px;color:var(--text2);line-height:1.6}
+.finding-text strong{color:var(--text);font-weight:600}
+.finding-text em{color:var(--text2);font-style:normal;font-family:var(--body);font-size:10px;background:var(--bg4);padding:0 4px;border-radius:2px}
+
+/* ── DISCOVERY ── */
+.flow-row{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px}
+.flow-row:last-child{border-bottom:none}
+.fdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.fc{background:var(--bad);box-shadow:0 0 5px var(--bad)}
+.fh{background:var(--warn)}
+.fm{background:var(--p3c)}
+.fl{background:var(--go)}
+.fname{flex:1;color:var(--text)}
+.ftags{display:flex;gap:3px}
+.ftag{font-size:8px;padding:2px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:.04em}
+.ft-dim{background:var(--bg4);color:var(--text3)}
+.ft-red{background:rgba(212,32,32,.10);color:var(--bad)}
+.ft-warn{background:rgba(197,101,0,.10);color:var(--warn)}
+
+/* ── PLANNING / RISKS ── */
+.risk-item{display:flex;gap:14px;align-items:flex-start;padding:12px;margin-bottom:8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r)}
+.risk-badge-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px}
+.risk-num{font-family:var(--sans);font-size:22px;font-weight:800;line-height:1}
+.risk-unit{font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.risk-info{flex:1}
+.risk-id-row{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.risk-id{font-size:9px;color:var(--text3)}
+.risk-desc{font-size:11px;color:var(--text2);line-height:1.5}
+
+/* ── FEATURES ── */
+.feat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.feat-head{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;transition:background .15s}
+.feat-head:hover{background:var(--bg4)}
+.feat-arrow{font-size:10px;color:var(--text3);transition:transform .2s;flex-shrink:0}
+.feat-arrow.open{transform:rotate(90deg)}
+.feat-name{color:var(--blue);font-size:11px;font-weight:500;flex:1}
+.feat-tags{display:flex;gap:3px;flex-wrap:wrap}
+.feat-count{font-size:10px;color:var(--text3);white-space:nowrap}
+.feat-body{overflow:hidden;max-height:0;transition:max-height .3s ease}
+
+/* Gherkin renderer */
+.gh-feature{padding:12px 14px;border-top:1px solid var(--border)}
+.gh-desc{font-size:10px;color:var(--text3);margin-bottom:12px;padding-left:12px;border-left:2px solid var(--border);line-height:1.6}
+.gh-bg{background:var(--bg4);border-radius:3px;padding:8px 12px;margin-bottom:12px;font-size:10px}
+.gh-bg-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.gh-step{color:var(--text2);padding:1px 0}
+.gh-kw{color:var(--blue);font-weight:500;margin-right:4px}
+.gh-str{color:var(--go);font-style:italic}
+.gh-scenario{margin-bottom:10px;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.gh-sc-head{display:flex;align-items:center;gap:7px;padding:7px 12px;background:var(--bg4);border-bottom:1px solid var(--border)}
+.gh-sc-tags{display:flex;gap:3px}
+.gh-sc-name{font-size:11px;color:var(--text);font-weight:500;flex:1}
+.gh-steps{padding:8px 12px;display:flex;flex-direction:column;gap:2px}
+
+/* ── EXECUTION ── */
+.exec-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:11px}
+.exec-row:last-child{border-bottom:none}
+.exec-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.exec-name{flex:1;color:var(--text)}
+.exec-diag{width:100%;font-size:9px;padding-left:17px;margin-top:-4px;font-style:italic}
+.exec-track{width:80px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.exec-bar{height:100%;border-radius:2px}
+.exec-pct{font-family:var(--sans);font-size:12px;font-weight:600;min-width:34px;text-align:right}
+.exec-ct{font-size:10px;color:var(--text3);white-space:nowrap}
+
+/* ── KEY METRICS ── */
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mtile{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.vt-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.vt-name{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em}
+.vt-num{font-family:var(--sans);font-size:28px;font-weight:700;line-height:1;margin-bottom:6px}
+.vt-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.vt-fill{height:100%;border-radius:2px;transition:width 1s ease .3s}
+.vt-thresh{display:flex;justify-content:space-between;font-size:9px;color:var(--text3)}
+
+/* ── DEFECTS ── */
+.def-item{display:flex;gap:12px;padding:12px;margin-bottom:7px;background:var(--bg3);border:1px solid var(--border);border-left-width:3px;border-radius:var(--r)}
+.def-item.dp1{border-left-color:var(--bad)}
+.def-item.dp2{border-left-color:var(--warn)}
+.def-item.dp3{border-left-color:var(--p3c)}
+.def-item.dp4{border-left-color:var(--blue)}
+.def-sev{font-family:var(--sans);font-size:11px;font-weight:700;min-width:22px;text-align:center}
+.def-content{flex:1}
+.def-head{display:flex;align-items:center;gap:7px;margin-bottom:3px}
+.def-id{font-size:9px;color:var(--text3)}
+.def-title{color:var(--text);font-weight:500;flex:1}
+.def-desc{font-size:11px;color:var(--text2);line-height:1.5}
+.def-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.def-release{font-size:10px;margin-top:5px;line-height:1.4;font-weight:600}
+.def-impact{font-size:10px;color:var(--text2);margin-top:5px;line-height:1.4;padding:5px 8px;background:rgba(244,121,32,.05);border-left:2px solid var(--orange-b);border-radius:0 3px 3px 0}
+.def-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.def-file-link{font-family:var(--mono);font-size:10px;color:var(--text3);text-decoration:none;word-break:break-all}
+.def-file-link:hover{color:var(--blue);text-decoration:underline}
+.def-evidence-link{font-size:10px;color:var(--blue);text-decoration:none;padding:2px 7px;border:1px solid var(--blue-b);border-radius:10px;background:var(--blue-bg);white-space:nowrap}
+.def-evidence-link:hover{text-decoration:underline}
+.p-mod{background:rgba(80,180,120,.12);color:#3a9e6a;border:1px solid rgba(80,180,120,.3)}
+.p-cp{background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
+.p-hu{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}
+
+/* ── METRICS ── */
+.met-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.met-row:last-child{border-bottom:none}
+.met-name{flex:1;font-size:12px;color:var(--text2)}
+.met-track{width:150px;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.met-fill{height:100%;border-radius:3px;transition:width 1.2s ease .2s}
+.met-val{font-family:var(--sans);font-size:14px;font-weight:600;width:40px;text-align:right}
+.met-wt{font-size:9px;color:var(--text3);width:30px;text-align:right}
+
+/* ── UX ── */
+.h10-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.h10-row:last-child{border-bottom:none}
+.h10-n{flex:1;font-size:11px;color:var(--text2)}
+.h10-bar-wrap{width:80px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.h10-bar{height:100%;border-radius:2px}
+.h10-val{font-family:var(--sans);font-size:13px;font-weight:600;width:36px;text-align:right}
+
+/* COLOR UTILS */
+.c-go  {color:var(--go)}
+.c-warn{color:var(--warn)}
+.c-bad {color:var(--bad)}
+.c-blue{color:var(--blue)}
+.c-dim {color:var(--text3)}
+.c-txt {color:var(--text)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:12px 22px;display:flex;justify-content:space-between;align-items:center;font-size:9px;color:var(--text3);margin-top:28px}
+
+/* ── PIPELINE PROGRESS BAR ── */
+#pipeline-progress{display:none;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 18px;margin-bottom:16px}
+#pipeline-progress.on{display:block}
+.pp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pp-title{font-family:var(--sans);font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text2)}
+.pp-badge-live{display:inline-flex;align-items:center;gap:5px;background:rgba(244,121,32,.10);border:1px solid var(--orange-b);border-radius:12px;padding:2px 9px 2px 6px;font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);animation:pp-glow 2s ease-in-out infinite}
+.pp-badge-done{display:inline-flex;align-items:center;gap:5px;background:var(--go-bg);border:1px solid var(--go-b);border-radius:12px;padding:2px 9px;font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--go)}
+.pp-badge-partial{display:inline-flex;align-items:center;gap:5px;background:rgba(244,121,32,.08);border:1px solid var(--orange-b);border-radius:12px;padding:2px 9px;font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--orange)}
+@keyframes pp-glow{0%,100%{box-shadow:0 0 4px rgba(244,121,32,.25)}50%{box-shadow:0 0 12px rgba(244,121,32,.45)}}
+.pp-dot-live{width:5px;height:5px;border-radius:50%;background:var(--orange);animation:pp-pulse 1.4s ease-in-out infinite}
+@keyframes pp-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.pp-steps{display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none}
+.pp-steps::-webkit-scrollbar{display:none}
+.pp-step{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:64px;padding:4px 6px;position:relative}
+.pp-step-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--border);background:var(--bg3);transition:all .3s}
+.pp-step.done .pp-step-dot{background:var(--go);border-color:var(--go);box-shadow:0 0 6px rgba(26,138,62,.35)}
+.pp-step.running .pp-step-dot{background:var(--orange);border-color:var(--orange);box-shadow:0 0 8px rgba(244,121,32,.4);animation:pp-pulse 1.4s ease-in-out infinite}
+.pp-step.pending .pp-step-dot{background:var(--bg3);border-color:var(--bord2)}
+.pp-step.skipped .pp-step-dot{background:var(--bg3);border-color:var(--border)}
+.pp-step-label{font-family:var(--sans);font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);text-align:center;white-space:nowrap}
+.pp-step.done .pp-step-label{color:var(--go)}
+.pp-step.running .pp-step-label{color:var(--orange)}
+.pp-step.skipped .pp-step-label{color:var(--text3);text-decoration:line-through}
+.pp-connector{width:20px;height:2px;background:var(--border);flex-shrink:0;margin-top:-12px}
+.pp-connector.done{background:var(--go)}
+.pp-sub{font-size:9px;color:var(--text3);margin-top:6px;text-align:center}
+
+/* ── PENDING EMPTY STATE ── */
+.empty-pending{padding:28px;text-align:center;color:var(--text3);font-size:11px;border:1px dashed var(--orange-b);border-radius:var(--r);background:rgba(244,121,32,.03)}
+.empty-pending::before{content:'⏳ ';font-size:13px}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.g4,.g5{grid-template-columns:repeat(2,1fr)}.dim5{grid-template-columns:repeat(3,1fr)}.metrics-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.g2,.g3,.g4{grid-template-columns:1fr}.dim5{grid-template-columns:1fr 1fr}.frs-top{grid-template-columns:1fr}.verdict{grid-template-columns:1fr}.v-kpis{display:none}.metrics-grid{grid-template-columns:1fr}.pp-steps{flex-wrap:wrap}}
+</style>
+
+<script>
+window.ATF_DATA = {
+  "__run_id": "config",
+  "qa_report.json": "{\n  \"fpy\": null,\n  \"coverage_pct\": null,\n  \"total_executed\": 0,\n  \"total_designed\": 0,\n  \"total_passed\": 0,\n  \"total_failed\": 0,\n  \"total_blocked\": 0\n}",
+  "__evidence_mode": "failures_only",
+  "__pipeline_status": "{\"status\":\"partial\",\"current_phase\":\"fase_0\",\"phases\":{\"fase_0\":\"pending\",\"fase_1\":\"pending\",\"fase_1c\":\"pending\",\"fase_1d\":\"pending\",\"fase_2c\":\"pending\",\"consolidation\":\"pending\"},\"last_updated\":\"2026-08-05T18:20:02.788Z\"}"
+};
+</script>
+</head>
+<body>
+
+<div id="loader">
+  <div class="ld-logo">ATF · Quality Intelligence</div>
+  <div class="ld-track"><div class="ld-bar"></div></div>
+  <div class="ld-sub" style="color:var(--orange);letter-spacing:.12em">Better happens every day</div>
+</div>
+
+<div id="upload-zone">
+  <div class="up-card" id="drop-zone">
+    <div style="font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);margin-bottom:6px">sofka_ · ATF</div>
+    <div class="up-h">Selecciona el run a visualizar</div>
+    <div class="up-sub">Abre la carpeta del run:<br><code>output/{run_id}/</code><br><span style="font-size:10px;color:var(--sofka-dark)">Para el reporte completo usa: <code style="color:var(--blue)">node .claude/dashboard/generate-report.js</code></span></div>
+    <input type="file" id="folder-input" webkitdirectory multiple>
+    <button class="btn" onclick="document.getElementById('folder-input').click()">Abrir carpeta de run</button>
+  </div>
+  <div style="margin-top:12px;font-size:10px;color:var(--text3)">Los datos no salen de tu equipo</div>
+</div>
+
+<header>
+  <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent,transparent 16px,rgba(244,121,32,.02) 16px,rgba(244,121,32,.02) 17px);pointer-events:none"></div>
+  <div class="h-logo" style="position:relative"><div class="h-dot"></div><span style="color:var(--orange)">ATF</span><span style="color:var(--text3);font-size:9px;font-weight:400;letter-spacing:.05em"> · sofka_</span></div>
+  <div class="h-sep" style="position:relative"></div>
+  <div class="h-run" id="h-run" style="position:relative">—</div>
+  <div class="h-right" style="position:relative">
+    <div class="claim-chip"><div class="claim-dot"></div>Better happens every day</div>
+    <div class="h-sep"></div>
+    <div class="h-env" id="h-env">—</div>
+    <div style="font-size:9px;color:var(--text3)" id="h-ts">—</div>
+  </div>
+</header>
+
+<div id="app">
+<div class="main">
+
+  <!-- pipeline-progress removed -->
+
+  <div class="verdict pend sofka-bg" id="verdict">
+    <div class="v-stripe"></div>
+    <div>
+      <div style="font-family:var(--sans);font-size:8px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:6px">Resumen del Ciclo</div>
+      <div class="v-word" id="v-word">EN CURSO</div>
+      <div class="v-sub" id="v-sub">—</div>
+    </div>
+    <div class="v-kpis">
+      <div><div class="kpi-val" id="kpi-designed">—</div><div class="kpi-lbl">CPs Diseñados</div></div>
+      <div><div class="kpi-val" id="kpi-executed">—</div><div class="kpi-lbl">Ejecutados</div></div>
+      <div><div class="kpi-val" id="kpi-bugs">—</div><div class="kpi-lbl">Bugs</div></div>
+      <div><div class="kpi-val" id="kpi-fpy">—</div><div class="kpi-lbl"><abbr title="FPY — Tasa de Éxito en Primera Ejecución (First-Pass Yield): % de CPs que pasan sin retries ni workarounds">FPY</abbr></div></div>
+    </div>
+  </div>
+
+  <div id="verdict-detail" style="display:none"></div>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="testability">Testabilidad</button>
+    <button class="tab" data-tab="discovery">Descubrimiento</button>
+    <button class="tab" data-tab="planning">Planificación</button>
+    <button class="tab" data-tab="design">Diseño + Ejecución <span class="tbadge" id="tb-design">0</span></button>
+    <button class="tab" data-tab="ux">Visual + UX + A11y</button>
+    <button class="tab" data-tab="perf">Performance</button>
+    <button class="tab" data-tab="responsive">Responsive <span class="tbadge" id="tb-responsive">0</span></button>
+    <button class="tab" data-tab="defects">Defectos <span class="tbadge" id="tb-defects">0</span></button>
+    <button class="tab" data-tab="automation">Automatización <span class="tbadge" id="tb-auto">0</span></button>
+  </div>
+
+  <!-- TESTABILIDAD -->
+  <div class="pane on" id="pane-testability">
+    <div id="test-content"><div class="empty">testability_score.md no encontrado</div></div>
+  </div>
+
+  <!-- DESCUBRIMIENTO -->
+  <div class="pane" id="pane-discovery">
+    <!-- sección 1: flujos E2E reales (cross-módulo) -->
+    <div class="card">
+      <div class="ch"><div class="ct">Flujos E2E (cross-módulo)</div><div class="pill p-dim" id="disc-e2e-pill">0 flujos</div></div>
+      <div id="disc-e2e-flows"><div class="empty">e2e_flows[] no encontrados</div></div>
+    </div>
+    <!-- sección 2: módulos individuales (lo que antes mostraba como flujos) -->
+    <div class="card" style="margin-top:12px">
+      <div class="ch"><div class="ct">Módulos individuales</div><div class="pill p-dim" id="disc-fp">0 módulos</div></div>
+      <div id="disc-flows"><div class="empty">flow_map.json no encontrado</div></div>
+    </div>
+  </div>
+
+  <!-- PLANIFICACIÓN -->
+  <div class="pane" id="pane-planning">
+    <div class="g4" id="plan-stats"></div>
+    <div class="slabel">Riesgos Identificados</div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="ch"><div class="ct">Matriz de Riesgos</div><div class="pill p-dim" id="plan-rp">0</div></div>
+      <div id="plan-risks-source-banner" style="display:none"></div>
+      <div id="plan-risks"><div class="empty">risk_matrix.json no encontrado</div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="ch"><div class="ct">Base de Pruebas — Detalle por HU</div><div class="pill p-dim" id="plan-bp-pill">0 HUs</div></div>
+      <div id="plan-base-pruebas"><div class="empty">base_pruebas.md no encontrado</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Estrategia de Pruebas</div></div>
+      <div id="plan-strategy"><div class="empty">test_strategy.md no encontrado</div></div>
+    </div>
+  </div>
+
+  <!-- DISEÑO + EJECUCIÓN -->
+  <div class="pane" id="pane-design">
+    <div class="g4" id="de-stats"></div>
+    <div class="card">
+      <div class="ch">
+        <div class="ct">Casos de Prueba</div>
+        <span id="de-xlsx-btn"></span>
+        <div class="pill p-dim" id="de-pill">0 CPs</div>
+      </div>
+      <div id="de-filters" style="display:flex;gap:8px;flex-wrap:wrap;padding:0 0 12px;border-bottom:1px solid var(--border);margin-bottom:12px">
+        <select id="de-f-mod" onchange="applyDesignFilters()" style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)">
+          <option value="">Todos los módulos</option>
+        </select>
+        <select id="de-f-status" onchange="applyDesignFilters()" style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)">
+          <option value="">Todos los estados</option>
+          <option value="PASS">PASS</option>
+          <option value="FAIL">FAIL</option>
+          <option value="BLOCKED">BLOCKED</option>
+          <option value="Pendiente">Pendiente</option>
+        </select>
+        <select id="de-f-risk" onchange="applyDesignFilters()" style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)">
+          <option value="">Todos los riesgos</option>
+          <option value="critical">Critical</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <select id="de-f-tag" onchange="applyDesignFilters()" title="Filtrar por tag" style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)">
+          <option value="">Todos los tags</option>
+        </select>
+        <input id="de-f-search" oninput="applyDesignFilters()" placeholder="Buscar CP, HU o título..." style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text);flex:1;min-width:150px">
+        <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3)">
+          <span>Ejecutado:</span>
+          <input id="de-f-date-from" type="date" onchange="applyDesignFilters()" title="Desde (inclusive)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)">
+          <span>→</span>
+          <input id="de-f-date-to" type="date" onchange="applyDesignFilters()" title="Hasta (inclusive)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)">
+          <button type="button" onclick="document.getElementById('de-f-date-from').value='';document.getElementById('de-f-date-to').value='';applyDesignFilters()" title="Limpiar rango" style="font-size:10px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text3);cursor:pointer">✕</button>
+        </div>
+        <label style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3);cursor:pointer" title="Al filtrar por fecha, incluir los CPs sin ejecutar (no tienen fecha)">
+          <input type="checkbox" id="de-f-include-pending" checked onchange="applyDesignFilters()"> Incluir pendientes
+        </label>
+      </div>
+      <div id="de-table"><div class="empty">Sin CPs diseñados</div></div>
+    </div>
+  </div>
+
+
+  <!-- VISUAL + UX + A11y -->
+  <div class="pane" id="pane-ux">
+    <div id="vua-summary" class="card" style="margin-bottom:14px">
+      <div class="ch"><div class="ct">Resumen del análisis</div></div>
+      <div id="vua-stats" class="g4" style="margin-top:8px"></div>
+      <div id="vua-coverage-banner" style="margin-top:10px;display:none"></div>
+      <div id="vua-flows-pills" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+    <div id="vua-content"><div class="empty">visual_ux_a11y_results.json no encontrado — ejecutar /visual-ux-a11y</div></div>
+    <div id="vua-incidents" class="card" style="margin-top:14px;display:none">
+      <div class="ch"><div class="ct">⚠ Incidencias de la fase</div></div>
+      <div id="vua-incidents-list"></div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE (Core Web Vitals) -->
+  <div class="pane" id="pane-perf">
+    <div class="card" style="margin-bottom:14px">
+      <div class="ch"><div class="ct">Resumen Performance — Core Web Vitals</div></div>
+      <div id="perf-stats" class="g4" style="margin-top:8px"></div>
+      <div id="perf-coverage-banner" style="margin-top:10px"></div>
+    </div>
+    <div id="perf-content"><div class="empty">performance_results.json no encontrado — ejecutar /sofka-asdd:qa-web-perf</div></div>
+  </div>
+
+  <!-- RESPONSIVE -->
+  <div class="pane" id="pane-responsive">
+    <!-- Viewport config summary -->
+    <div class="card" style="margin-bottom:14px" id="resp-config-card">
+      <div class="ch">
+        <div class="ct">Configuración Responsive</div>
+        <div id="resp-config-badges" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+      </div>
+      <div id="resp-config-meta" style="display:flex;gap:2rem;font-size:.78rem;color:var(--text2);flex-wrap:wrap"></div>
+    </div>
+    <!-- Per-module viewport matrix -->
+    <div id="resp-modules-container"></div>
+    <!-- Fallback when data is not available -->
+    <div id="resp-empty" class="empty" style="display:none">
+      responsive_config.json no encontrado — ejecutar run con <code>responsive.enabled: true</code> en appweb.yaml
+    </div>
+  </div>
+
+  <!-- DEFECTOS -->
+  <div class="pane" id="pane-defects">
+    <div class="g4" id="def-stats"></div>
+    <div class="card">
+      <div class="ch"><div class="ct">Defectos Clasificados</div><div class="pill p-bad" id="def-pill">0</div></div>
+      <div id="def-filters" style="display:flex;gap:8px;flex-wrap:wrap;padding:0 0 12px;border-bottom:1px solid var(--border);margin-bottom:12px">
+        <select id="def-f-sev" onchange="applyDefectFilters()" style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)">
+          <option value="">Todas las severidades</option>
+          <option value="P1">P1 · Crítico</option>
+          <option value="P2">P2 · Alto</option>
+          <option value="P3">P3 · Medio</option>
+          <option value="P4">P4 · Bajo</option>
+        </select>
+        <select id="def-f-mod" onchange="applyDefectFilters()" style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)">
+          <option value="">Todos los módulos</option>
+        </select>
+        <input id="def-f-search" oninput="applyDefectFilters()" placeholder="Buscar bug ID, título o CP..." style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text);flex:1;min-width:150px">
+      </div>
+      <div id="def-list"><div class="empty">defects_classified.json no encontrado</div></div>
+    </div>
+  </div>
+
+  <!-- AUTOMATIZACIÓN -->
+  <div class="pane" id="pane-automation">
+    <div class="g4" id="auto-stats"></div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="ch">
+        <div class="ct">Mapa de Cobertura E2E — Automatización</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="pill p-dim" id="auto-scope-pill">scope: —</div>
+          <button id="auto-run-btn" onclick="document.getElementById('auto-modal').style.display='flex'"
+            style="font-family:var(--sans);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:4px;border:1px solid var(--orange);background:transparent;color:var(--orange);cursor:pointer;transition:background .15s,color .15s"
+            onmouseover="this.style.background='var(--orange)';this.style.color='#fff'"
+            onmouseout="this.style.background='transparent';this.style.color='var(--orange)'">
+            ▶ Cómo ejecutar
+          </button>
+        </div>
+      </div>
+      <div id="auto-flows"><div class="empty">automation_coverage.json no encontrado — ejecutar Fase 3 para generar scripts</div></div>
+    </div>
+  </div>
+
+  <!-- MODAL: instrucciones de ejecución -->
+  <div id="auto-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;max-width:600px;width:calc(100% - 32px);max-height:90vh;overflow-y:auto;padding:24px 28px;position:relative">
+      <button onclick="document.getElementById('auto-modal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text3)">✕</button>
+      <div style="font-family:var(--sans);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:4px">Scripts Playwright — ATF</div>
+      <div id="auto-modal-title" style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:20px">Instrucciones de ejecución</div>
+      <div id="auto-modal-body"></div>
+    </div>
+  </div>
+
+</div>
+<footer style="background:var(--bg2);border-top:2px solid var(--orange);padding:14px 22px;text-align:center">
+  <span style="font-family:var(--sans);font-weight:700;font-size:15px;color:var(--text)">sofka<span style="color:var(--orange);font-weight:800">_</span></span><span style="color:var(--text3)"> · ATF · Agentic Testing Framework</span>
+  <span id="footer-ts" style="margin:0 6px">—</span>
+  <span style="color:var(--text3)">·</span> <a href="https://sofka.com.co" style="color:var(--orange);text-decoration:none;font-weight:600">sofka.com.co</a>
+</footer>
+</div>
+
+<script>
+// ── TABS ──────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(x => x.classList.remove('on'));
+  t.classList.add('on');
+  document.getElementById('pane-' + t.dataset.tab).classList.add('on');
+}));
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const S = { files:{}, runId:null, pipelineStatus:null };
+
+// ─── XSS hardening (P9, 2026-04-27) ───────────────────────────────
+// Escapa entidades HTML en cualquier string que se interpole al `innerHTML`.
+// REGLA: TODO `${campo}` dentro de un template literal que termine en innerHTML
+// y provenga de un archivo JSON (results, designs, defects, flows, risks, CPs)
+// DEBE pasar por esc(). NUNCA interpolar raw — los CPs de @security inyectan
+// payloads literales `<script>`, `<img onerror>`, polyglots, etc. Sin esc(),
+// el dashboard ejecuta esos scripts cuando se renderiza el reporte.
+//
+// Acepta null/undefined → ''. Escapa <, >, &, ", '.
+// Para atributos HTML, sirve igual (las dobles comillas también se escapan).
+// KISS reversal — strip de URLs en render de e2e_flow.execution_sequence.
+// Los flujos son narrativos por doctrina (P98 revertido). La data en disco
+// puede tener URLs (audit trail) pero el render las omite para foco en la
+// descripción funcional. Heurística: elimina paths URL "en/a/desde/via /xxx"
+// preservando la narrativa.
+function stripUrls(action) {
+  if (!action) return '';
+  let s = String(action);
+  // 1) Eliminar fragmentos "en /url", "a /url", "desde /url", "via /url" con su preposición
+  s = s.replace(/\s+(?:en|a|desde|via|hacia|de)\s+\/[A-Za-z][\w\-/.{}]+/g, '');
+  // 2) Eliminar URLs sueltas que queden ("Refrescar /web/...")
+  s = s.replace(/\s*\/[A-Za-z][\w\-/.{}]{4,}/g, '');
+  // 3) Limpiar comas/dobles espacios/puntos huérfanos
+  s = s.replace(/\s+,/g, ',').replace(/,\s*,/g, ',').replace(/\s{2,}/g, ' ').trim();
+  s = s.replace(/^,\s*/, '').replace(/\s+\.$/, '.');
+  return s;
+}
+
+function esc(s) {
+  if (s === null || s === undefined) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => setTimeout(() => {
+  document.getElementById('loader').style.display = 'none';
+  if (window.ATF_DATA) ingestData(window.ATF_DATA);
+  else document.getElementById('upload-zone').classList.add('on');
+}, 1600));
+
+// ── DRAG/DROP ─────────────────────────────────────────────────────────────────
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag'); load(e.dataTransfer.files); });
+document.getElementById('folder-input').addEventListener('change', e => load(e.target.files));
+
+async function load(list) {
+  await Promise.all(Array.from(list).map(f => f.text().then(c => {
+    const path = f.webkitRelativePath || f.name;
+    S.files[path.split('/').pop()] = { content:c, path };
+    if (!S.runId) { const p = path.split('/'); if (p.length>1) S.runId = p[0]; }
+  })));
+  document.getElementById('upload-zone').classList.remove('on');
+  document.getElementById('app').classList.add('on');
+  render();
+}
+
+function ingestData(d) {
+  Object.entries(d).forEach(([k,v]) => { if(!k.startsWith('__')) S.files[k]={content:v,path:k}; });
+  S.runId = d['__run_id']||'run';
+  if (d['__pipeline_status']) {
+    try { S.pipelineStatus = typeof d['__pipeline_status'] === 'string' ? JSON.parse(d['__pipeline_status']) : d['__pipeline_status']; } catch { S.pipelineStatus = null; }
+  }
+  document.getElementById('upload-zone').classList.remove('on');
+  document.getElementById('app').classList.add('on');
+  render();
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+const pj = n => { const f=S.files[n]; if(!f) return null; try{return JSON.parse(f.content)}catch{return null} };
+const gf = n => S.files[n]?.content||null;
+const byExt = ext => Object.entries(S.files).filter(([n])=>n.endsWith(ext)).map(([n,f])=>({name:n,content:f.content}));
+
+function sc(n) { return n>=80?'var(--go)':n>=60?'var(--warn)':'var(--bad)'; }
+function sp(n) { return n>=80?'p-go':n>=60?'p-warn':'p-bad'; }
+
+function stile(val, lbl, sub, col) {
+  const cs = col ? `style="color:${col}"` : '';
+  return `<div class="stile"><div class="sv" ${cs}>${val}</div><div class="sl">${lbl}</div>${sub?`<div class="ss">${sub}</div>`:''}</div>`;
+}
+
+function extractFRS() {
+  const md = gf('testability_score.md');
+  if (!md) return null;
+  const m = md.match(/Functional Readiness Score[:\s*]+(\d+(?:\.\d+)?)%/i)
+    || md.match(/FRS Global[:\s*]+(\d+(?:\.\d+)?)%/i)
+    || md.match(/\*\*FRS[:\s*]+\*\*\s*(\d+(?:\.\d+)?)%/i)
+    || md.match(/\*\*FRS:\*\*\s*(\d+(?:\.\d+)?)%/i)
+    || md.match(/(\d+(?:\.\d+)?)%/);
+  return m ? parseInt(m[1]) : null;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  renderHeader(); renderVerdict();
+  renderTestability(); renderDiscovery(); renderPlanning();
+  renderDesignExecution();
+  renderUX(); renderPerf(); renderResponsive(); renderDefects(); renderAutomation();
+  autoHideTabs();
+}
+
+/** Hide tabs that have no meaningful data to show */
+function autoHideTabs() {
+  const hasData = (key) => {
+    const f = S.files[key];
+    return f && f.content && f.content.trim().length > 2;
+  };
+  // Map: tab data-tab value → data key(s) required
+  const tabDataReqs = {
+    'ux':          () => hasData('visual_ux_a11y_results.json') || hasData('a11y_results.json') || hasData('visual_results.json'),
+    'perf':        () => hasData('performance_results.json'),
+    'responsive':  () => hasData('responsive_config.json'),
+    'defects':     () => hasData('defects_classified.json'),
+    'automation':  () => hasData('automation_seed.json'),
+  };
+  document.querySelectorAll('.tab[data-tab]').forEach(tab => {
+    const check = tabDataReqs[tab.dataset.tab];
+    if (check && !check()) {
+      tab.style.display = 'none';
+    }
+  });
+}
+
+// ── PIPELINE STATUS HELPER ───────────────────────────────────────────────────
+const PHASE_LABELS = {
+  fase_0:'F0 Diag',fase_1:'F1 Strat',fase_1c:'F1C Design',fase_1d:'F1D Cob',
+  fase_2c:'F2C Exec',consolidation:'Final'
+};
+const PHASE_TAB_MAP = {
+  fase_0:'FASE 0',fase_1:'FASE 1',fase_1c:'FASE 1C',fase_1d:'FASE 1D',
+  fase_2c:'FASE 2C',consolidation:'Consolidación'
+};
+/** Returns true if the pipeline still has pending phases */
+function isLive() { const s = S.pipelineStatus?.status; return s === 'running' || s === 'partial'; }
+/** Returns the state of a phase: 'done'|'running'|'pending'|'skipped'|null */
+function phaseState(phaseKey) { return S.pipelineStatus?.phases?.[phaseKey] || null; }
+/** Returns pending-HTML for a section that depends on a specific phase */
+function pendingHtml(phaseName) {
+  return `<div class="empty-pending">Pendiente — se completará en ${phaseName}</div>`;
+}
+/** Decide whether to show pending message or regular empty */
+function emptyOrPending(phaseKey, defaultMsg) {
+  if (isLive() && phaseState(phaseKey) !== 'done' && phaseState(phaseKey) !== 'skipped') {
+    return pendingHtml(PHASE_TAB_MAP[phaseKey] || phaseKey);
+  }
+  return `<div class="empty">${defaultMsg}</div>`;
+}
+
+function renderHeader() {
+  const y = gf('appweb.yaml')||'';
+  const g = k => { const m=y.match(new RegExp(k+':\\s*["\']?([^"\'\\n]+)')); return m?m[1].trim():'—'; };
+  document.getElementById('h-run').innerHTML = `<b>${g('name')}</b> · ${g('url')} · ${S.runId||'—'}`;
+  document.getElementById('h-env').textContent = g('environment').toUpperCase();
+  const ts = new Date().toLocaleString('es-CO');
+  document.getElementById('h-ts').textContent = ts;
+  document.getElementById('footer-ts').textContent = ts;
+}
+
+function renderVerdict() {
+  const r = pj('qa_report.json');
+  const defs = pj('defects_classified.json');
+  const nb = defs?.defects?.length||defs?.bugs?.length||0;
+  // Count designed CPs from cp_modulo_*.json files
+  const cpFiles = Object.entries(S.files).filter(([n])=>n.startsWith('cp_modulo_')&&n.endsWith('.json'));
+  let nDesigned = 0;
+  cpFiles.forEach(([n,f])=>{ try{ const d=JSON.parse(f.content); nDesigned+=(d.test_cases||[]).length; }catch{} });
+  // Count executed CPs from *_result.json files
+  const ef=Object.entries(S.files).filter(([n])=>n.endsWith('_result.json'));
+  let nExecuted=0;
+  ef.forEach(([n,f])=>{ try{ const d=JSON.parse(f.content); nExecuted+=(d.summary?.executed??(d.summary?.passed??0)+(d.summary?.failed??0)); }catch{} });
+
+  document.getElementById('kpi-designed').textContent = nDesigned||'—';
+  document.getElementById('kpi-executed').textContent = nExecuted ? `${nExecuted} / ${nDesigned}` : '—';
+  document.getElementById('kpi-bugs').textContent  = nb;
+  if (nb>0) document.getElementById('kpi-bugs').className = 'kpi-val c-bad';
+  const el=document.getElementById('verdict'), vw=document.getElementById('v-word'),
+        vs=document.getElementById('v-sub');
+  if (r) {
+    const fpyVal = typeof r.fpy === 'number' ? r.fpy : null;
+    const fpy = fpyVal !== null ? Math.round(fpyVal <= 1 ? fpyVal * 100 : fpyVal) + '%' : '—';
+    vw.textContent = 'CICLO EJECUTADO';
+    vs.textContent = `FPY ${fpy} · run ${S.runId||'—'}`;
+    document.getElementById('kpi-fpy').textContent = fpy;
+    el.className = 'verdict sofka-bg pend';
+  } else {
+    const frs=extractFRS();
+    el.className='verdict sofka-bg pend'; vw.textContent='EN PROGRESO';
+    vs.textContent=`Fases 0–1 completadas · run ${S.runId||'—'}`;
+    document.getElementById('kpi-fpy').textContent='—';
+  }
+  renderVerdictDetail(r);
+}
+
+function renderVerdictDetail(r) {
+  const det = document.getElementById('verdict-detail');
+  if (!det) return;
+  det.innerHTML = '';
+}
+
+// ── TESTABILIDAD ──────────────────────────────────────────────────────────────
+function renderTestability() {
+  const md = gf('testability_score.md');
+  if (!md) { document.getElementById('test-content').innerHTML = emptyOrPending('fase_0', 'testability_score.md no encontrado'); return; }
+
+  const frs = extractFRS() || 0;
+  const frsCol = frs >= 75 ? 'var(--go)' : frs >= 50 ? 'var(--warn)' : 'var(--bad)';
+  const frsLbl = frs >= 75
+    ? 'Pipeline continúa a Fase 1 sin restricciones'
+    : frs >= 50 ? 'Continúa con supuestos documentados'
+    : 'Documentación insuficiente — pipeline bloqueado';
+
+  // ── meta fields ──
+  const getF = k => {
+    const m = md.match(new RegExp('\\*\\*' + k + ':\\*\\*\\s*(.+)', 'i'));
+    return m ? m[1].replace(/\*\*/g, '').trim() : '—';
+  };
+
+  // ── summary table: parse | Key | Value | rows ──
+  const sumRows = [];
+  const sumSec = md.match(/\| Métrica \| Valor \|([\s\S]*?)(?=\n---|\n##)/);
+  if (sumSec) {
+    sumSec[1].split('\n').forEach(l => {
+      if (!l.startsWith('|') || l.includes('---')) return;
+      const c = l.split('|').map(x => x.trim()).filter(Boolean);
+      if (c.length >= 2) sumRows.push({ k: c[0], v: c[1] });
+    });
+  }
+
+  // ── HU table: parse full matrix ──
+  const huRows = [];
+  const huSec = md.match(/## Matriz de Evaluación[^#]*([\s\S]*?)(?=\n---|\n## [^M]|$)/);
+  if (huSec) {
+    huSec[1].split('\n').forEach(l => {
+      if (!l.startsWith('|') || l.includes('---') || l.includes('| ID |')) return;
+      const c = l.split('|').map(x => x.trim()).filter(Boolean);
+      if (c.length < 8) return;
+      // cols: ID | Nombre | Claridad | Completitud | CriteriosAC | Trazabilidad | Atomicidad | Score | Estado
+      const score = parseInt(c[7].replace(/\*\*/g, '').replace('%', '')) || 0;
+      huRows.push({
+        id: c[0], name: c[1],
+        dims: [parseInt(c[2])||0, parseInt(c[3])||0, parseInt(c[4])||0, parseInt(c[5])||0, parseInt(c[6])||0],
+        score, ok: c[8] ? c[8].includes('✅') : c[7].includes('✅')
+      });
+    });
+  }
+
+  // ── dimension averages from HU table ──
+  const dimNames = ['Claridad', 'Completitud', 'Criterios AC', 'Trazabilidad', 'Atomicidad'];
+  const dimWeights = [25, 25, 25, 15, 10];
+  const dimAvgs = [0,1,2,3,4].map(i => {
+    const vals = huRows.map(r => r.dims[i]).filter(v => v > 0);
+    return vals.length ? Math.round(vals.reduce((a,b) => a+b, 0) / vals.length) : null;
+  });
+
+  // ── parse findings sections ──
+  const findingsHtml = parseFindingsMD(md);
+
+  // ── parse observations ──
+  const obsSec = md.match(/## Observaciones de Valor[\s\S]*?(?=\n---|\n## |$)/);
+  const obsHtml = obsSec ? `
+    <div class="card" style="margin-bottom:14px">
+      <div class="ch"><div class="ct">Observaciones de Valor para el Pipeline</div></div>
+      <div>${renderMdSimple(obsSec[0].replace('## Observaciones de Valor para el Pipeline','').trim(), 40)}</div>
+    </div>` : '';
+
+  // ── assumptions.md ──
+  const assumptionsMd = gf('assumptions.md');
+  const nSup = assumptionsMd ? (assumptionsMd.match(/\| SUP-/g)||[]).length : 0;
+  const assumHtml = assumptionsMd ? `
+    <div class="card" style="margin-bottom:14px">
+      <div class="ch">
+        <div class="ct">Supuestos de Prueba</div>
+        <span class="pill p-warn" style="font-size:8px">${nSup} supuestos</span>
+      </div>
+      <div>${renderMdSimple(assumptionsMd, 100)}</div>
+    </div>` : '';
+
+  // ── preguntas_cliente.md ──
+  const preguntasMd = gf('preguntas_cliente.md');
+  const nPq = preguntasMd ? (preguntasMd.match(/\| PQ-/g)||[]).length : 0;
+  const preguntasHtml = preguntasMd ? `
+    <div class="card" style="margin-bottom:14px">
+      <div class="ch">
+        <div class="ct">Preguntas al Cliente</div>
+        <span class="pill p-blue" style="font-size:8px">${nPq} preguntas</span>
+      </div>
+      <div>${renderPreguntasCliente(preguntasMd)}</div>
+    </div>` : '';
+
+  // ── INVEST table v2 — rediseño UX/UI completo ──
+  const investData = pj('invest_table.json');
+  const investEntries = investData?.entries || [];
+  const investHtml = investEntries.length ? (() => {
+
+    // ── Metadatos INVEST: nombre completo, descripción, mensaje de fallo ──────
+    const INVEST_META = {
+      I: { full: 'Independiente', desc: 'Puede desarrollarse sin depender de otra HU',
+           failMsg: 'Tiene dependencias con otras HUs — evaluar si puede desacoplarse' },
+      N: { full: 'Negociable',    desc: 'Los detalles son conversables, no un contrato fijo',
+           failMsg: 'Detalles de implementación fijados — abrir espacio a la negociación con el equipo' },
+      V: { full: 'Valiosa',       desc: 'Entrega valor concreto al usuario o al negocio',
+           failMsg: 'El valor de negocio no es explícito — vincular con objetivo del sprint o KPI' },
+      E: { full: 'Estimable',     desc: 'El equipo puede dimensionar el esfuerzo requerido',
+           failMsg: 'Demasiado ambigua para estimar — descomponer o aclarar alcance con ejemplos' },
+      S: { full: 'Small',         desc: 'Puede completarse dentro de un sprint sin subdividirse',
+           failMsg: 'Alcance excesivo — considerar dividir en sub-historias más acotadas' },
+      T: { full: 'Testeable',     desc: 'Tiene criterios de aceptación verificables',
+           failMsg: 'Sin criterios de aceptación medibles — definir condiciones de verificación concretas' },
+    };
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    const isOk  = v => typeof v === 'string' && v.includes('✅');
+    const isWrn = v => typeof v === 'string' && v.includes('⚠');
+    const isBad = v => typeof v === 'string' && v.includes('❌');
+
+    // SVG icons — sin emoji, lenguaje visual consistente con el design system
+    const svgCheck = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="7" fill="var(--go-bg)" stroke="var(--go)" stroke-width="1.4"/>
+      <polyline points="4.8,8.2 6.8,10.4 11.2,5.6" stroke="var(--go)" stroke-width="1.7"
+        stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+    const svgWarn = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M8 2L15 14H1L8 2Z" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.4"
+        stroke-linejoin="round"/>
+      <line x1="8" y1="6.5" x2="8" y2="9.5" stroke="var(--warn)" stroke-width="1.7" stroke-linecap="round"/>
+      <circle cx="8" cy="11.8" r="0.9" fill="var(--warn)"/>
+    </svg>`;
+    const svgBad = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="7" fill="var(--bad-bg)" stroke="var(--bad)" stroke-width="1.4"/>
+      <line x1="5.5" y1="5.5" x2="10.5" y2="10.5" stroke="var(--bad)" stroke-width="1.7" stroke-linecap="round"/>
+      <line x1="10.5" y1="5.5" x2="5.5" y2="10.5" stroke="var(--bad)" stroke-width="1.7" stroke-linecap="round"/>
+    </svg>`;
+    const svgNeutral = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="7" fill="var(--bg4)" stroke="var(--border)" stroke-width="1.4"/>
+      <line x1="5" y1="8" x2="11" y2="8" stroke="var(--text3)" stroke-width="1.7" stroke-linecap="round"/>
+    </svg>`;
+    const icon = v => isOk(v) ? svgCheck : isWrn(v) ? svgWarn : isBad(v) ? svgBad : svgNeutral;
+
+    // Progreso circular SVG (r=13, circ≈81.7)
+    const circleScore = (score, color) => {
+      const r = 13, circ = 2 * Math.PI * r;
+      const dash = Math.min((score / 100) * circ, circ);
+      return `<div style="position:relative;width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center">
+        <svg width="42" height="42" viewBox="0 0 42 42" style="transform:rotate(-90deg);position:absolute;top:0;left:0">
+          <circle cx="21" cy="21" r="${r}" fill="none" stroke="var(--bg4)" stroke-width="3"/>
+          <circle cx="21" cy="21" r="${r}" fill="none" stroke="${color}" stroke-width="3"
+            stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}" stroke-linecap="round"/>
+        </svg>
+        <span style="font-family:var(--sans);font-size:9px;font-weight:800;color:${color};line-height:1;z-index:1">${score}%</span>
+      </div>`;
+    };
+
+    // Diagnóstico inteligente: muestra mensajes solo para criterios fallidos
+    const buildDiagnosis = (criteria) => {
+      const issues = Object.entries(INVEST_META)
+        .filter(([k]) => isWrn(criteria[k]) || isBad(criteria[k]))
+        .map(([k, meta]) => {
+          const severity = isBad(criteria[k]) ? 'bad' : 'warn';
+          const dot = `<span style="display:inline-block;width:5px;height:5px;border-radius:50%;
+            background:var(--${severity});flex-shrink:0;margin-top:4px"></span>`;
+          return `<div style="display:flex;gap:5px;align-items:flex-start;margin-bottom:4px;line-height:1.4">
+            ${dot}
+            <span><strong style="color:var(--${severity});font-size:9px">${k} · ${meta.full}:</strong>
+            <span style="font-size:10px;color:var(--text2)"> ${meta.failMsg}</span></span>
+          </div>`;
+        });
+      if (!issues.length)
+        return `<div style="display:flex;align-items:center;gap:5px">
+          ${svgCheck}
+          <span style="font-size:10px;color:var(--go);font-weight:600">Historia bien definida — sin observaciones</span>
+        </div>`;
+      return issues.join('');
+    };
+
+    // ── Estadísticas globales ──────────────────────────────────────────────────
+    const nGreen  = investEntries.filter(e => e.status === 'green').length;
+    const nYellow = investEntries.filter(e => e.status === 'yellow').length;
+    const nRed    = investEntries.filter(e => e.status === 'red').length;
+    const total   = investEntries.length;
+    // Tasa de salud: % de criterios individuales cumplidos
+    const allCriteria = investEntries.flatMap(e => Object.values(e.criteria || {}));
+    const totalOk = allCriteria.filter(isOk).length;
+    const healthPct = allCriteria.length ? Math.round((totalOk / allCriteria.length) * 100) : 0;
+    const healthColor = healthPct >= 90 ? 'var(--go)' : healthPct >= 70 ? 'var(--warn)' : 'var(--bad)';
+
+    // ── Leyenda INVEST ────────────────────────────────────────────────────────
+    const legendItems = Object.entries(INVEST_META).map(([k, v]) =>
+      `<div style="display:flex;align-items:center;gap:5px;white-space:nowrap">
+        <span style="font-family:var(--sans);font-size:10px;font-weight:800;color:var(--bg2);
+          background:var(--text2);border-radius:4px;width:18px;height:18px;display:inline-flex;
+          align-items:center;justify-content:center;flex-shrink:0;letter-spacing:0">${k}</span>
+        <span style="font-size:10px;color:var(--text2)">${v.full}</span>
+      </div>`
+    ).join('');
+
+    // ── Filas de la tabla ─────────────────────────────────────────────────────
+    const borderCol = s => s === 'green' ? 'var(--go)' : s === 'yellow' ? 'var(--warn)' : 'var(--bad)';
+    const rowBgTint = s => s === 'red' ? 'background:rgba(212,32,32,.025)' : s === 'yellow' ? 'background:rgba(197,101,0,.02)' : '';
+
+    const rows = investEntries.map((e, idx) => {
+      const c = e.criteria || {};
+      const score = e.frs_item != null ? Math.round(e.frs_item) : null;
+      const scoreColor = score >= 80 ? 'var(--go)' : score >= 65 ? 'var(--warn)' : 'var(--bad)';
+      const bc = borderCol(e.status);
+      const rowClass = `invest-row-${idx}`;
+      return `<tr class="${rowClass}" style="border-left:3px solid ${bc};${rowBgTint(e.status)};
+          transition:background .15s;cursor:default"
+          onmouseover="this.style.background='var(--bg3)'"
+          onmouseout="this.style.background='${e.status === 'red' ? 'rgba(212,32,32,.025)' : e.status === 'yellow' ? 'rgba(197,101,0,.02)' : 'transparent'}'">
+        <td style="padding:10px 8px 10px 14px;vertical-align:middle">
+          <span style="font-family:var(--sans);font-size:11px;font-weight:800;
+            color:var(--text1);letter-spacing:.03em;white-space:nowrap">${e.hu_id}</span>
+        </td>
+        <td style="padding:10px 8px;vertical-align:middle;max-width:190px">
+          <span style="font-size:11px;color:var(--text2);line-height:1.4;display:block">${e.title}</span>
+        </td>
+        <td style="padding:10px 8px;text-align:center;vertical-align:middle">
+          ${score != null ? circleScore(score, scoreColor) : '<span style="color:var(--text3);font-size:10px">—</span>'}
+        </td>
+        ${['I','N','V','E','S','T'].map(k =>
+          `<td title="${INVEST_META[k].full}: ${isOk(c[k]) ? 'Cumple' : isWrn(c[k]) ? 'Alerta' : isBad(c[k]) ? 'No cumple' : 'N/D'}"
+            style="text-align:center;padding:10px 5px;vertical-align:middle">${icon(c[k])}</td>`
+        ).join('')}
+        <td style="padding:10px 10px 10px 8px;vertical-align:middle;min-width:200px;max-width:280px">
+          ${buildDiagnosis(c)}
+        </td>
+      </tr>`;
+    }).join('');
+
+    // ── Filtro tabs — tbodyId único; onclick usa global window.__investFilter ──
+    const tbodyId = `invest-tbody-${Math.random().toString(36).slice(2,7)}`;
+
+    return `<div class="card" data-invest-card style="margin-bottom:14px">
+
+      <!-- ── Header ── -->
+      <div class="ch" style="margin-bottom:14px">
+        <div>
+          <div class="ct">Validación INVEST por Historia de Usuario</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:var(--sans)">
+            Framework ágil de calidad — ${total} historia${total !== 1 ? 's' : ''} analizadas
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          ${nGreen  ? `<span class="pill p-go"   style="font-size:8px">✓ ${nGreen} sin obs.</span>` : ''}
+          ${nYellow ? `<span class="pill p-warn"  style="font-size:8px">⚠ ${nYellow} alerta${nYellow !== 1 ? 's' : ''}</span>` : ''}
+          ${nRed    ? `<span class="pill p-bad"   style="font-size:8px">✗ ${nRed} crítica${nRed !== 1 ? 's' : ''}</span>` : ''}
+        </div>
+      </div>
+
+      <!-- ── Barra de salud global + leyenda INVEST ── -->
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;
+          padding:12px 14px;background:var(--bg3);border-radius:6px;border:1px solid var(--border);
+          margin-bottom:14px">
+        <!-- Salud global -->
+        <div style="display:flex;align-items:center;gap:10px;padding-right:16px;border-right:1px solid var(--border)">
+          <div>
+            <div style="font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:.14em;
+                font-family:var(--sans);font-weight:700;margin-bottom:3px">Salud INVEST</div>
+            <div style="font-family:var(--sans);font-size:28px;font-weight:900;line-height:1;
+                color:${healthColor};letter-spacing:-.03em">${healthPct}<span style="font-size:14px;font-weight:600">%</span></div>
+            <div style="font-size:9px;color:var(--text3);margin-top:2px">${totalOk}/${allCriteria.length} criterios</div>
+          </div>
+          <!-- mini barra lineal -->
+          <div style="width:80px">
+            <div style="height:6px;background:var(--bg4);border-radius:3px;overflow:hidden">
+              <div style="height:6px;width:${healthPct}%;background:${healthColor};border-radius:3px;
+                  transition:width .6s cubic-bezier(.4,0,.2,1)"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Leyenda INVEST -->
+        <div style="display:flex;flex-wrap:wrap;gap:8px 16px">${legendItems}</div>
+      </div>
+
+      <!-- ── Filtros ── -->
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <button data-invest-filter="all"
+          onclick="__investFilter(this,'all','${tbodyId}')"
+          style="font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.06em;
+            text-transform:uppercase;padding:4px 10px;border-radius:5px;cursor:pointer;
+            background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-b);
+            transition:all .15s">Todas (${total})</button>
+        ${(nYellow + nRed) > 0 ? `<button data-invest-filter="alerts"
+          onclick="__investFilter(this,'alerts','${tbodyId}')"
+          style="font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.06em;
+            text-transform:uppercase;padding:4px 10px;border-radius:5px;cursor:pointer;
+            background:var(--bg4);color:var(--text2);border:1px solid var(--border);
+            transition:all .15s">Con alertas (${nYellow + nRed})</button>` : ''}
+      </div>
+
+      <!-- ── Tabla ── -->
+      <div class="hu-wrap">
+      <table class="hu-table" style="border-collapse:separate;border-spacing:0 2px">
+        <thead>
+          <tr>
+            <th style="padding-left:14px;min-width:58px">HU</th>
+            <th style="min-width:140px">Historia</th>
+            <th style="text-align:center;min-width:52px" title="Puntaje FRS del ítem (0–100%)">Calidad</th>
+            ${Object.entries(INVEST_META).map(([k, v]) =>
+              `<th style="text-align:center;min-width:32px" title="${k} — ${v.full}: ${v.desc}">${k}</th>`
+            ).join('')}
+            <th style="min-width:200px">Diagnóstico</th>
+          </tr>
+        </thead>
+        <tbody id="${tbodyId}">${rows}</tbody>
+      </table></div>
+
+    </div>`;
+  })() : '';
+
+  // ── build HTML ──
+
+  const dimsHtml = dimAvgs.some(d => d !== null) ? `
+    <div class="slabel" style="margin-bottom:11px">Promedio por Dimensión</div>
+    <div class="dim5" style="margin-bottom:22px">
+      ${dimNames.map((n, i) => {
+        const v = dimAvgs[i]; if (v === null) return '';
+        const c = v >= 75 ? 'var(--go)' : v >= 50 ? 'var(--warn)' : 'var(--bad)';
+        return `<div class="dimcard">
+          <div class="dimn">${n} <span style="color:var(--text3);font-size:8px">${dimWeights[i]}%</span></div>
+          <div class="dims"><div class="dimv" style="color:${c}">${v}</div><div class="dimw">/ 100</div></div>
+          <div class="dimbar"><div class="dimfill" style="width:${v}%;background:${c}"></div></div>
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+  const sumHtml = sumRows.length ? `
+    <div class="slabel" style="margin-bottom:10px">Resumen de Evaluación</div>
+    <div class="sum-table" style="margin-bottom:22px">
+      ${sumRows.map(r => {
+        const isGood = r.v.includes('100%') || (parseInt(r.v) > 0 && r.k.toLowerCase().includes('testeable'));
+        const isBad  = r.v === '0' || r.v.startsWith('0 ');
+        return `<div class="sum-cell">
+          <span class="sum-k">${r.k}</span>
+          <span class="sum-v" style="${isGood && !r.k.toLowerCase().includes('no') ? 'color:var(--go)' : isBad && r.k.toLowerCase().includes('no') ? 'color:var(--go)' : ''}">${r.v}</span>
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+  // ── HU table: Resumen Ejecutivo con Drill-down (accordion) ──────────────────
+  // Master row: fila de promedios totalizadora, siempre visible
+  // Detail tbody: filas individuales por HU, inicialmente colapsadas
+  const huTableHtml = huRows.length ? (() => {
+    const nDims = huRows[0]?.dims?.length || 5;
+    // Calcular promedio por dimensión
+    const dimAvgs = Array.from({ length: nDims }, (_, di) => {
+      const vals = huRows.map(r => r.dims[di] || 0).filter(v => v > 0);
+      return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
+    });
+    const avgScore = Math.round(huRows.reduce((s, r) => s + r.score, 0) / huRows.length);
+    const okCount  = huRows.filter(r => r.ok).length;
+    const avgScoreColor = avgScore >= 75 ? 'var(--go)' : avgScore >= 50 ? 'var(--warn)' : 'var(--bad)';
+
+    const masterDimCells = dimAvgs.map(d => {
+      const dc = d >= 80 ? 'var(--go)' : d >= 60 ? 'var(--warn)' : 'var(--bad)';
+      return `<td style="text-align:center"><span style="font-size:11px;color:${dc};font-family:var(--sans);font-weight:700">${d}</span></td>`;
+    }).join('');
+
+    const masterRow = `<tr id="hu-master-row"
+        style="cursor:pointer;background:var(--bg3);border-top:2px solid var(--border)"
+        onclick="(function(){
+          var tb=document.getElementById('hu-detail-body');
+          var ch=document.getElementById('hu-chevron');
+          var open=tb.style.display!=='none'&&tb.style.display!=='';
+          tb.style.display=open?'none':'table-row-group';
+          ch.textContent=open?'▶':'▼';
+        })()">
+      <td class="hu-id" colspan="2" style="padding:8px 10px">
+        <span id="hu-chevron" style="margin-right:6px;font-size:9px;color:var(--text3);transition:transform .15s">▶</span>
+        <span style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);font-weight:700">PROMEDIO</span>
+        <span style="font-size:9px;color:var(--text3);margin-left:5px;font-weight:400">${huRows.length} HUs · clic para expandir</span>
+      </td>
+      ${masterDimCells}
+      <td style="text-align:center">
+        <span style="font-family:var(--sans);font-size:13px;font-weight:800;color:${avgScoreColor}">${avgScore}%</span>
+      </td>
+      <td style="text-align:center;font-size:11px;color:var(--text2);white-space:nowrap">${okCount}/${huRows.length} OK</td>
+    </tr>`;
+
+    const detailRows = huRows.map(r => {
+      const sc_ = r.score >= 75 ? 'var(--go)' : r.score >= 50 ? 'var(--warn)' : 'var(--bad)';
+      const dimCells = r.dims.map(d => {
+        const dc = d >= 80 ? 'var(--go)' : d >= 60 ? 'var(--warn)' : 'var(--bad)';
+        return `<td style="text-align:center"><span style="font-size:11px;color:${dc};font-family:var(--sans);font-weight:600">${d}</span></td>`;
+      }).join('');
+      return `<tr>
+        <td class="hu-id">${r.id}</td>
+        <td class="hu-name">${r.name}</td>
+        ${dimCells}
+        <td style="text-align:center">
+          <span style="font-family:var(--sans);font-size:13px;font-weight:700;color:${sc_}">${r.score}%</span>
+        </td>
+        <td style="text-align:center">${r.ok
+          ? '<span style="color:var(--go);font-size:13px">✓</span>'
+          : '<span style="color:var(--bad);font-size:13px">✗</span>'}</td>
+      </tr>`;
+    }).join('');
+
+    return `
+    <div class="slabel" style="margin-bottom:10px">Evaluación por Historia de Usuario <span style="color:var(--text3);font-size:9px;font-weight:400;letter-spacing:0">(${huRows.length} ítems)</span></div>
+    <div class="hu-wrap">
+    <table class="hu-table">
+      <thead><tr>
+        <th>ID</th>
+        <th>Historia de Usuario</th>
+        <th title="Claridad (25%)">Clar.</th>
+        <th title="Completitud (25%)">Comp.</th>
+        <th title="Criterios AC (25%)">AC</th>
+        <th title="Trazabilidad (15%)">Traz.</th>
+        <th title="Atomicidad (10%)">Atom.</th>
+        <th>Score</th>
+        <th></th>
+      </tr></thead>
+      <tbody>${masterRow}</tbody>
+      <tbody id="hu-detail-body" style="display:none">${detailRows}</tbody>
+    </table></div>`;
+  })() : '';
+
+  document.getElementById('test-content').innerHTML = `
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:start;margin-bottom:24px">
+        <div>
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.15em;margin-bottom:4px">Functional Readiness Score</div>
+          <div style="font-family:var(--sans);font-size:88px;font-weight:800;line-height:1;letter-spacing:-.05em;color:${frsCol}">${frs}%</div>
+          <div style="font-family:var(--sans);font-size:13px;font-weight:700;color:${frsCol};margin-top:5px">${frs>=75?'✓ READY':frs>=50?'⚠ CONDICIONAL':'✗ BLOQUEADO'}</div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px;padding:12px 14px;background:var(--bg3);border-radius:4px;border-left:3px solid ${frsCol}">
+            ${getF('Decisión de compuerta') !== '—' ? getF('Decisión de compuerta') : frsLbl}
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px">
+            <div class="frs-meta-item"><div class="frs-mk">Fecha</div><div class="frs-mv">${getF('Fecha')}</div></div>
+            <div class="frs-meta-item"><div class="frs-mk">Ambiente</div><div class="frs-mv">${getF('Ambiente')}</div></div>
+            <div class="frs-meta-item"><div class="frs-mk">Analista</div><div class="frs-mv" style="font-size:10px">${getF('Analista')}</div></div>
+            <div class="frs-meta-item"><div class="frs-mk">Run ID</div><div class="frs-mv" style="font-size:10px">${S.runId || getF('Run ID')}</div></div>
+          </div>
+        </div>
+      </div>
+      ${dimsHtml}
+      ${sumHtml}
+      ${huTableHtml}
+    </div>
+    ${findingsHtml ? `<div class="card" style="margin-bottom:14px"><div class="ch"><div class="ct">Hallazgos por Dimensión</div></div>${findingsHtml}</div>` : ''}
+    ${obsHtml}
+    ${preguntasHtml}
+    ${assumHtml}
+    ${renderMaterialReferences()}
+    ${renderDataNeeds()}`;
+}
+
+function renderMaterialReferences() {
+  const mr = pj('material_references.json');
+  if (!mr || !mr.references || !mr.references.length) return '';
+
+  const refs = mr.references;
+  const total = mr.summary?.total_references || refs.length;
+  const disponibles = refs.filter(r => r.status === 'disponible' || r.status === 'disponible_indirecto');
+  const pendientes = refs.filter(r => r.status === 'pendiente');
+  const coveragePct = total > 0 ? Math.round((disponibles.length / total) * 100) : 100;
+  const coverageCol = coveragePct >= 80 ? 'var(--go)' : coveragePct >= 50 ? 'var(--warn)' : 'var(--bad)';
+
+  const statsHtml = `<div class="g4" style="margin-bottom:14px">
+    ${stile(total, 'Total Referencias', '')}
+    ${stile(disponibles.length, 'Disponibles', '', disponibles.length ? 'var(--go)' : null)}
+    ${stile(pendientes.length, 'Pendientes', '', pendientes.length ? 'var(--bad)' : 'var(--go)')}
+    ${stile(coveragePct + '%', 'Cobertura', '', coverageCol)}
+  </div>`;
+
+  // Coverage bar
+  const barHtml = `<div style="margin-bottom:14px">
+    <div style="background:var(--bg4);border-radius:4px;height:8px;overflow:hidden">
+      <div style="background:${coverageCol};height:100%;width:${coveragePct}%;border-radius:4px;transition:width .3s"></div>
+    </div>
+    <div style="font-size:10px;color:var(--text3);margin-top:4px">${disponibles.length} de ${total} materiales disponibles</div>
+  </div>`;
+
+  // Pendientes table (expanded)
+  const pendientesHtml = pendientes.length ? `
+    <div style="margin-bottom:14px">
+      <div style="font-size:9px;color:var(--bad);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:8px">Pendientes de obtener (${pendientes.length})</div>
+      ${pendientes.map(r => {
+        const priCol = r.priority === 'alta' ? 'p-bad' : r.priority === 'media' ? 'p-warn' : 'p-dim';
+        const refBy = Array.isArray(r.referenced_by) ? r.referenced_by.join(', ') : (r.referenced_by || '—');
+        return `<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <span class="pill ${priCol}" style="font-size:8px;flex-shrink:0">${(r.priority || 'media').toUpperCase()}</span>
+          <span class="pill p-dim" style="font-size:8px;flex-shrink:0">${r.type}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text)">${r.id}</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px">${r.context || ''}</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px">Referenciado por: ${refBy}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+  // Disponibles table (collapsed)
+  const disponiblesHtml = disponibles.length ? `
+    <div>
+      ${(() => {
+        const directCount = disponibles.filter(r => r.status === 'disponible').length;
+        const indirectCount = disponibles.filter(r => r.status === 'disponible_indirecto').length;
+        const countLabel = indirectCount > 0 ? `${directCount} directos + ${indirectCount} indirectos` : `${disponibles.length}`;
+        return `<div style="font-size:9px;color:var(--go);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:8px;cursor:pointer" onclick="const el=this.nextElementSibling;el.style.display=el.style.display==='none'?'':'none'">Disponibles ✅ (${countLabel}) — clic para ver</div>`;
+      })()}
+      <div style="display:none">
+        ${disponibles.map(r => {
+          const indirectTag = r.status === 'disponible_indirecto'
+            ? '<span class="pill p-warn" style="font-size:7px;margin-left:4px">INDIRECTO</span>'
+            : '';
+          return `<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
+            <span class="pill p-dim" style="font-size:8px">${r.type}</span>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--text)">${r.id}${indirectTag}</span>
+            <span style="font-size:10px;color:var(--text3);flex:1">${r.context || ''}</span>
+            ${r.found_in ? `<span style="font-size:9px;color:var(--text3);font-family:var(--mono)">${r.found_in.split('/').pop()}</span>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>` : '';
+
+  return `
+    <div class="card" style="margin-bottom:14px">
+      <div class="ch">
+        <div class="ct">Material Referenciado</div>
+        <span class="pill ${coveragePct >= 80 ? 'p-go' : coveragePct >= 50 ? 'p-warn' : 'p-bad'}" style="font-size:8px">${coveragePct}% cobertura</span>
+      </div>
+      ${statsHtml}
+      ${barHtml}
+      ${pendientesHtml}
+      ${disponiblesHtml}
+    </div>`;
+}
+
+function renderDataNeeds() {
+  const dn = pj('data_needs_summary.json');
+  if (!dn || !dn.total_needs) return '';
+
+  const bp = dn.by_provisioning || {};
+  const preEx = bp.pre_existente || 0;
+  const crear = bp.crear_en_prueba || 0;
+  const solic = bp.solicitar_cliente || 0;
+  const autom = bp.automatizar || 0;
+  const depCp = bp.dependencia_cp || 0;
+  const total = dn.total_needs || 0;
+
+  const statsHtml = `<div class="g4" style="margin-bottom:14px">
+    ${stile(total, 'Total Necesidades', '')}
+    ${stile(preEx + crear, 'Resolubles', 'Pre-existente + Crear', 'var(--go)')}
+    ${stile(solic, 'Solicitar Cliente', '', solic ? 'var(--bad)' : 'var(--go)')}
+    ${stile(depCp, 'Dependencias CP', '', depCp ? 'var(--warn)' : null)}
+  </div>`;
+
+  // Client action items
+  const clientItems = dn.client_action_required || [];
+  const clientHtml = clientItems.length ? `
+    <div style="margin-bottom:14px">
+      <div style="font-size:9px;color:var(--bad);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:8px">Datos que el cliente debe proveer (${clientItems.length})</div>
+      ${clientItems.map(r => `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+        <span class="pill p-bad" style="font-size:8px">${(r.priority || 'alta').toUpperCase()}</span>
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">${r.entity}</div>
+          <div style="font-size:10px;color:var(--text3)">${r.detail || ''}</div>
+        </div>
+      </div>`).join('')}
+    </div>` : '';
+
+  // CP Dependencies
+  const deps = dn.cp_dependencies || [];
+  const depsHtml = deps.length ? `
+    <div>
+      <div style="font-size:9px;color:var(--warn);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:8px">Dependencias entre CPs (${deps.length})</div>
+      ${deps.map(d => `<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--text)">${d.cp_id}</span>
+        <span style="font-size:10px;color:var(--text3)">depende de</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--orange)">${d.depends_on}</span>
+        <span style="font-size:10px;color:var(--text3);flex:1">${d.entity || ''}</span>
+      </div>`).join('')}
+    </div>` : '';
+
+  return `
+    <div class="card" style="margin-bottom:14px">
+      <div class="ch">
+        <div class="ct">Necesidades de Datos de Prueba</div>
+        <span class="pill ${solic ? 'p-warn' : 'p-go'}" style="font-size:8px">${solic ? solic + ' requieren gestión' : 'Todo resoluble'}</span>
+      </div>
+      ${statsHtml}
+      ${clientHtml}
+      ${depsHtml}
+    </div>`;
+}
+
+// ── DISCOVERY ─────────────────────────────────────────────────────────────────
+function renderDiscovery() {
+  const fm = pj('flow_map.json');
+
+  // Sección 1: flujos E2E reales (cross-módulo)
+  // Origen: ep.e2e_flows[] vía synthesizeFlowMap. Si vacío, mostrar warning explícito.
+  const e2eEl = document.getElementById('disc-e2e-flows');
+  const e2ePill = document.getElementById('disc-e2e-pill');
+  const e2eFlows = (fm && Array.isArray(fm.critical_paths)) ? fm.critical_paths : [];
+  if (e2eEl) {
+    if (!e2eFlows.length) {
+      const moduleCount = fm && fm.flows ? fm.flows.length : 0;
+      const msg = moduleCount >= 2
+        ? `<div class="empty" style="border-left:3px solid var(--bad);padding-left:10px">
+             <div style="color:var(--bad);font-weight:600;margin-bottom:4px">⚠ Sin flujos E2E identificados</div>
+             <div style="color:var(--text2);font-size:11px">El run tiene ${moduleCount} módulo(s) pero <code>e2e_flows[]</code> está vacío. El strategist debe emitir flujos cross-módulo. Ver <code>docs/concepts/e2e-flows.md</code>.</div>
+           </div>`
+        : `<div class="empty">e2e_flows[] no aplicable (módulos < 2)</div>`;
+      e2eEl.innerHTML = msg;
+      if (e2ePill) e2ePill.textContent = '0 flujos';
+    } else {
+      // card colapsada: <details> raíz con summary que muestra título + chips
+      e2eEl.innerHTML = e2eFlows.map((f, idx) => {
+        const cat = f.category || 'functional';
+        const catColor = cat === 'functional' ? 'var(--bad)' : 'var(--p3c)';
+        const involved = (f.modules_involved || []).slice(0, 5).join(' → ');
+        const seqLen = (f.execution_sequence || []).length;
+        const objective = f.objective || '';
+        const businessValue = f.business_value || '';
+        const nfrs = (f.nfrs || []).slice(0, 3);
+        return `<details style="border-left:3px solid ${catColor};padding:8px 10px;margin-bottom:6px;cursor:pointer">
+          <summary style="outline:none;list-style:none">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="flex:1;font-weight:600;font-size:12px">${esc(f.e2e_id || ('E2E-'+(idx+1)))} · ${esc(f.name || '(sin nombre)')}</div>
+              <div class="ftags" style="display:flex;gap:4px;flex-wrap:wrap">
+                <span class="ftag ft-dim" style="font-size:9px;background:${catColor};color:white">${esc(cat)}</span>
+                <span class="ftag ft-dim" style="font-size:9px">${esc(f.type || '')}</span>
+                <span class="ftag ${f.risk_level === 'critical' ? 'ft-red' : 'ft-dim'}" style="font-size:9px">${esc(f.risk_level || 'medium')}</span>
+              </div>
+            </div>
+            <div style="font-size:10px;color:var(--text3);margin-top:4px;font-family:var(--mono)">
+              ${(f.modules_involved||[]).length} módulos · ${seqLen} steps · ${f.session_duration_min || '?'} min · actor: ${esc(f.actor || 'desconocido')}
+            </div>
+          </summary>
+          <div style="margin-top:8px;padding-left:6px">
+            ${involved ? `<div style="font-size:10px;color:var(--text2);margin-bottom:6px;font-family:var(--mono)">cruzando: ${esc(involved)}${(f.modules_involved||[]).length>5?'…':''}</div>` : ''}
+            ${objective ? `<div style="font-size:10px;color:var(--text2);margin-bottom:6px;line-height:1.5"><span style="color:var(--text3);font-weight:600">objetivo:</span> ${esc(objective)}</div>` : ''}
+            ${businessValue ? `<div style="font-size:10px;color:var(--text2);margin-bottom:6px;line-height:1.5"><span style="color:var(--text3);font-weight:600">valor de negocio:</span> ${esc(businessValue)}</div>` : ''}
+            ${seqLen ? `<details style="margin:6px 0;cursor:pointer;font-size:10px"><summary style="color:var(--text3)">secuencia de ejecución (${seqLen} steps)</summary><div style="padding:4px 0 0 12px;color:var(--text2);line-height:1.5">${(f.execution_sequence||[]).map((s,i)=>`<div style="margin-bottom:3px"><b>${i+1}.</b> [${esc(s.module||'?')}] ${esc(stripUrls(s.action||''))}</div>`).join('')}</div></details>` : ''}
+            ${nfrs.length ? `<div style="font-size:10px;color:var(--text3);margin-top:6px">NFRs: ${nfrs.map(n=>`<span class="ftag ft-dim" style="font-size:8px">${esc(n)}</span>`).join(' ')}</div>` : ''}
+          </div>
+        </details>`;
+      }).join('');
+      if (e2ePill) e2ePill.textContent = e2eFlows.length + ' flujos';
+    }
+  }
+
+  // Sección 2: módulos individuales (lo que antes era "Mapa de Flujos E2E")
+  if (!fm) {
+    document.getElementById('disc-flows').innerHTML = emptyOrPending('fase_1', 'flow_map.json no encontrado');
+    return;
+  }
+  if (fm?.flows?.length) {
+    document.getElementById('disc-fp').textContent=fm.flows.length+' módulos';
+    // render enriquecido: counters de riesgo, actor, priority,
+    // HUs/CPs estimados, dependencias, notas (expandible). Datos provienen del
+    // strategist (execution_plan.modules[]) propagados por synthesizeFlowMap()
+    // (P85a). Cero costo de pipeline — datos ya en disco, solo render.
+    document.getElementById('disc-flows').innerHTML=fm.flows.map((f, idx)=>{
+      const r=f.risk_level||(f.critical?'critical':'medium');
+      const rc={'critical':'fc','high':'fh','medium':'fm','low':'fl'}[r]||'fm';
+      const rs = f.risk_summary || {};
+      const hasRiskCounts = (rs.critical||0)+(rs.high||0)+(rs.medium||0)+(rs.low||0) > 0;
+
+      // Counters de riesgo (chips compactos color-coded)
+      const riskCounters = hasRiskCounts ? `
+        <span class="ftag ft-dim" style="font-family:var(--mono);font-size:9px" title="Distribución de riesgos del módulo">
+          ${rs.critical?`<span style="color:var(--bad)">●${rs.critical}</span>`:''}
+          ${rs.high?`<span style="color:var(--warn);margin-left:4px">●${rs.high}</span>`:''}
+          ${rs.medium?`<span style="color:var(--p3c);margin-left:4px">●${rs.medium}</span>`:''}
+          ${rs.low?`<span style="color:var(--text3);margin-left:4px">●${rs.low}</span>`:''}
+        </span>` : '';
+
+      // Línea secundaria (sub-info del flujo)
+      const huPart    = f.hus_count ? `${f.hus_count} HU${f.hus_count>1?'s':''}` : '';
+      const cpsPart   = f.estimated_cps ? `~${f.estimated_cps} CPs` : '';
+      const actorPart = f.primary_actor ? `actor: ${esc(f.primary_actor)}` : '';
+      const priorityPart = f.priority ? `<span class="ftag ft-dim" style="font-size:9px">${esc(f.priority)}</span>` : '';
+      const deps = [...(f.dependencies_inbound||[]), ...(f.dependencies_outbound||[])];
+      const depsPart = deps.length ? `deps: ${esc(deps.slice(0,3).join(', '))}${deps.length>3?'…':''}` : '';
+      const topRisks = (f.top_risks||[]).slice(0,3).join(', ');
+      const topRisksPart = topRisks ? `drivers: ${esc(topRisks)}` : '';
+
+      const subline = [huPart, cpsPart, actorPart, depsPart, topRisksPart].filter(Boolean).join('  ·  ');
+
+      // P85d — Secuencia funcional + flujos principales por HU
+      const seq = f.hus_sequence || [];
+      const sequenceLine = seq.length ? `
+        <div style="font-size:10px;color:var(--text2);margin-top:6px;margin-left:18px;font-family:var(--mono);line-height:1.6">
+          <span style="color:var(--text3)">secuencia:</span>
+          ${seq.map((h,i) => `<span>${esc(h.short_title)}</span>${i < seq.length-1 ? '<span style="color:var(--text3);margin:0 4px">→</span>' : ''}`).join('')}
+        </div>` : '';
+
+      const flowSummariesBlock = seq.filter(h => h.flow_summary).length ? `
+        <div style="margin-top:4px;font-size:10px;color:var(--text2)">
+          <details style="cursor:pointer">
+            <summary style="color:var(--text3);outline:none">descripción funcional por HU (${seq.filter(h => h.flow_summary).length})</summary>
+            <div style="padding:6px 0 0 12px;line-height:1.55">
+              ${seq.filter(h => h.flow_summary).map(h => `
+                <div style="margin-bottom:6px">
+                  <span style="color:var(--text2);font-weight:600">${esc(h.short_title)}:</span>
+                  <span style="color:var(--text2)">${esc(h.flow_summary)}</span>
+                </div>`).join('')}
+            </div>
+          </details>
+        </div>` : '';
+
+      // Notas expandibles si existen
+      const notesBlock = f.notes ? `
+        <div style="margin-top:4px;font-size:10px;color:var(--text2)">
+          <details style="cursor:pointer">
+            <summary style="color:var(--text3);outline:none">notas del strategist</summary>
+            <div style="padding:6px 0 0 12px;line-height:1.45">${esc(f.notes)}</div>
+          </details>
+        </div>` : '';
+
+      // card colapsada (módulo): <details> con summary visible
+      return `<details style="padding:8px 10px;margin-bottom:4px;cursor:pointer;border-bottom:1px solid var(--border)">
+        <summary style="outline:none;list-style:none">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="fdot ${rc}"></div>
+            <div class="fname" style="flex:1">${esc(f.name||f.flow_id)}</div>
+            <div class="ftags" style="display:flex;gap:4px;flex-wrap:wrap">
+              ${priorityPart}
+              ${riskCounters}
+              ${f.critical?'<span class="ftag ft-red">critical</span>':''}
+              ${f.requires_auth?'<span class="ftag ft-dim">auth</span>':''}
+              <span class="ftag ft-dim">${esc(r)}</span>
+            </div>
+          </div>
+          ${subline ? `<div style="font-size:10px;color:var(--text3);margin-top:4px;margin-left:18px;font-family:var(--mono)">${subline}</div>` : ''}
+        </summary>
+        <div style="margin-top:8px;padding-left:18px">
+          ${sequenceLine}
+          ${flowSummariesBlock || ''}
+          ${notesBlock || ''}
+        </div>
+      </details>`;
+    }).join('');
+  }
+}
+
+// ── PLANNING ──────────────────────────────────────────────────────────────────
+function renderPlanning() {
+  // Base de Pruebas — Detalle por HU — independiente de Fase 1
+  // Se renderiza siempre que exista base_pruebas.md, aunque risk_matrix/test_strategy
+  // no estén disponibles (caso /diagnose standalone sin /strategize).
+  const bpInit = gf('base_pruebas.md');
+  if (bpInit) {
+    const result = renderBasePruebasByHu(bpInit);
+    if (result.html) {
+      document.getElementById('plan-base-pruebas').innerHTML = result.html;
+      document.getElementById('plan-bp-pill').textContent = result.count + ' HU' + (result.count === 1 ? '' : 's');
+    }
+  } else {
+    document.getElementById('plan-base-pruebas').innerHTML = emptyOrPending('fase_0', 'base_pruebas.md no encontrado');
+  }
+
+  const rm=pj('risk_matrix.json'), st=gf('test_strategy.md');
+  if (!rm && !st) {
+    document.getElementById('plan-risks').innerHTML = emptyOrPending('fase_1', 'risk_matrix.json no encontrado');
+    document.getElementById('plan-strategy').innerHTML = emptyOrPending('fase_1', 'test_strategy.md no encontrado');
+    return;
+  }
+  const risks=rm?.risks||rm?.risk_items||[];
+  const nc=risks.filter(r=>(r.risk_score||r.score||0)>=12).length;
+  const nh=risks.filter(r=>{const s=r.risk_score||r.score||0;return s>=6&&s<12}).length;
+  const nm=risks.filter(r=>{const s=r.risk_score||r.score||0;return s>=3&&s<6}).length;
+  const nl=risks.filter(r=>(r.risk_score||r.score||0)<3).length;
+  document.getElementById('plan-stats').innerHTML=
+    stile(nc,'Riesgos Críticos','12–16 pts',nc?'var(--bad)':null)+
+    stile(nh,'Riesgos Altos','6–11 pts',nh?'var(--warn)':null)+
+    stile(nm,'Riesgos Medios','3–5 pts',nm?'var(--p3c)':null)+
+    stile(nl,'Riesgos Bajos','1–2 pts',null);
+
+  // ─── Banner de origen / trazabilidad de riesgos ─────────────────────────
+  const bySource = { hu_literal: 0, compliance_mandatory: 0, cross_cutting_inferred: 0 };
+  risks.forEach(r => {
+    const src = r.source || 'unspecified';
+    if (bySource[src] !== undefined) bySource[src]++;
+  });
+  const ccMode = (rm?.summary?.cross_cutting_mode_applied) || null;
+  const reqValidation = bySource.cross_cutting_inferred;
+  const tracedToHu = bySource.hu_literal;
+  const compliance = bySource.compliance_mandatory;
+  const sourceBannerEl = document.getElementById('plan-risks-source-banner');
+  if (sourceBannerEl) {
+    if (tracedToHu + compliance + reqValidation === 0) {
+      // Schema previo (sin source): mostrar nota corta
+      sourceBannerEl.innerHTML = `<div style="padding:8px 12px;font-size:10px;color:var(--text3);background:var(--bg2);border-radius:4px;margin-bottom:10px">⚠ risk_matrix legacy (sin clasificación de origen) — re-ejecutar /strategize para enriquecer con source/evidence/tags.</div>`;
+      sourceBannerEl.style.display = '';
+    } else {
+      const modePill = ccMode
+        ? `<span class="pill p-dim" style="font-size:9px">cross_cutting_mode: ${esc(ccMode)}</span>` : '';
+      sourceBannerEl.innerHTML = `
+        <div style="padding:10px 14px;border-radius:6px;background:var(--bg2);border-left:4px solid var(--orange,#F47920);font-size:11px;line-height:1.5;color:var(--text2);margin-bottom:10px">
+          <div style="font-weight:700;color:var(--text);margin-bottom:6px;font-size:12px">Trazabilidad de riesgos</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <span class="pill p-go" style="font-size:9px">Trazables al CA: ${tracedToHu}</span>
+            ${compliance ? `<span class="pill p-blue" style="font-size:9px">Compliance obligatorios: ${compliance}</span>` : ''}
+            ${reqValidation ? `<span class="pill p-warn" style="font-size:9px">Requieren validación PO: ${reqValidation}</span>` : ''}
+            ${modePill}
+          </div>
+        </div>`;
+      sourceBannerEl.style.display = '';
+    }
+  }
+
+  if (risks.length) {
+    document.getElementById('plan-rp').textContent=risks.length+' riesgos';
+    document.getElementById('plan-risks').innerHTML=risks.slice(0,12).map(r=>{
+      const s=r.risk_score||r.score||0;
+      const c=s>=12?'var(--bad)':s>=6?'var(--warn)':s>=3?'var(--p3c)':'var(--go)';
+      const lv=s>=12?'CRITICAL':s>=6?'HIGH':s>=3?'MEDIUM':'LOW';
+      const lvc=s>=12?'p-bad':s>=6?'p-warn':'p-dim';
+      // Pills de origen / trazabilidad (PASO 0bis del skill risk-scorer)
+      const tags = Array.isArray(r.tags) ? r.tags : [];
+      const isReqValidation = tags.includes('@requiere-validacion') || r.source === 'cross_cutting_inferred';
+      const isCompliance    = tags.includes('@compliance-mandatory') || r.source === 'compliance_mandatory';
+      const isLiteral       = !isReqValidation && !isCompliance && (r.source === 'hu_literal' || tags.length === 0);
+      const sourcePill = isReqValidation
+        ? `<span class="pill p-warn" style="font-size:8px;margin-right:4px" title="Riesgo inferido cross-cutting — el QA debe validarlo con el PO antes de incluirlo en el reporte oficial">⚠ requiere validación PO</span>`
+        : isCompliance
+          ? `<span class="pill p-blue" style="font-size:8px;margin-right:4px" title="Compliance mandatorio del dominio (no opcional)">⚖ compliance</span>`
+          : isLiteral
+            ? `<span class="pill p-go" style="font-size:8px;margin-right:4px" title="Trazable a un CA literal del HU">✓ trazable</span>`
+            : '';
+      const evidenceLine = r.evidence
+        ? `<div style="font-size:9px;color:var(--text3);margin-top:3px;font-style:italic">evidence: ${esc(r.evidence)}</div>`
+        : '';
+      return `<div class="risk-item">
+        <div class="risk-badge-wrap">
+          <div class="risk-num" style="color:${c}">${esc(s)}</div>
+          <div class="risk-unit">risk score</div>
+        </div>
+        <div class="risk-info">
+          <div class="risk-id-row">
+            <span style="font-size:9px;color:var(--text3)">${esc(r.risk_id||'')}${r.hu_id?' · '+esc(r.hu_id):''}</span>
+            ${r.risk_category ? `<span style="font-size:8px;color:var(--text3);margin-left:auto;margin-right:6px">${esc(r.risk_category)}</span>` : '<span style="margin-left:auto"></span>'}
+            ${sourcePill}
+            <span class="pill ${lvc}" style="font-size:8px">${esc(lv)}</span>
+          </div>
+          <div class="risk-desc">${esc(r.brief_description||r.description||r.name||r.pattern||'')}</div>
+          ${evidenceLine}
+          ${r.mitigation_strategy ? `<div style="font-size:10px;color:var(--text3);margin-top:5px;padding-top:5px;border-top:1px solid var(--border);line-height:1.5">▸ ${esc(r.mitigation_strategy)}</div>` : ''}
+          ${r.full_description ? `<details style="margin-top:6px"><summary style="font-size:10px;color:var(--text3);cursor:pointer;user-select:none">Ver detalle del riesgo</summary><div style="font-size:10px;color:var(--text2);padding:6px 0;line-height:1.6"><b>Dado que:</b> ${esc(r.full_description.dado_que||'')}<br><b>Puede pasar que:</b> ${esc(r.full_description.puede_pasar_que||'')}<br><b>Lo que provocaría:</b> ${esc(r.full_description.lo_que_provocaria_que||'')}</div></details>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+  if (st) {
+    document.getElementById('plan-strategy').innerHTML=renderMdSimple(st,50);
+  }
+}
+
+function parseFindingsMD(md) {
+  const sec = md.match(/## Hallazgos por Dimensi[oó]n([\s\S]*?)(?=\n---|\n## [ÍI]tems|\n## Sup|\n## Pr[oó]x|$)/i);
+  if (!sec) return '';
+  const body = sec[1];
+  const dimSections = body.split(/\n(?=### )/).filter(s => s.trim());
+  const dimColors = {
+    'Claridad':'var(--blue)','Completitud':'var(--warn)',
+    'Criterios de Aceptación':'var(--go)','Trazabilidad':'var(--p3c)','Atomicidad':'var(--bad)'
+  };
+  return dimSections.map(ds => {
+    const lines = ds.split('\n');
+    const dimTitle = lines[0].replace(/^###\s*/, '').trim();
+    const items = lines.slice(1).filter(l => /^\s*-\s/.test(l));
+    if (!items.length) return '';
+    const itemsHtml = items.map(l => {
+      let text = l.replace(/^\s*-\s*/, '').trim();
+      text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      text = text.replace(/`([^`]+)`/g, '<code style="background:var(--bg4);padding:1px 4px;border-radius:2px;font-size:10px;color:var(--blue)">$1</code>');
+      const isStrength = /Fortaleza|Mejor pr[aá]ctica/i.test(text);
+      const isBreach   = /Brecha|[Áa]rea de mejora/i.test(text);
+      const isObs      = /Observaci[oó]n/i.test(text);
+      let badge, bc;
+      if (isStrength)     { badge='<span class="pill p-go" style="font-family:var(--sans);font-size:8px;flex-shrink:0;margin-top:3px;white-space:nowrap">✓ Fortaleza</span>'; bc='var(--go-b)'; }
+      else if (isBreach)  { badge='<span class="pill p-warn" style="font-family:var(--sans);font-size:8px;flex-shrink:0;margin-top:3px;white-space:nowrap">△ Brecha</span>';   bc='var(--warn-b)'; }
+      else if (isObs)     { badge='<span class="pill p-blue" style="font-family:var(--sans);font-size:8px;flex-shrink:0;margin-top:3px;white-space:nowrap">· Observación</span>'; bc='var(--blue-b)'; }
+      else                { badge='<span class="pill p-dim" style="font-family:var(--sans);font-size:8px;flex-shrink:0;margin-top:3px">·</span>'; bc='var(--border)'; }
+      return `<div style="display:flex;gap:10px;border-left:2px solid ${bc};padding:6px 0 6px 10px;margin-bottom:2px">
+        ${badge}
+        <div style="font-size:11px;color:var(--text2);line-height:1.6;flex:1">${text}</div>
+      </div>`;
+    }).join('');
+    const col = dimColors[dimTitle] || 'var(--text2)';
+    return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+        <span style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;box-shadow:0 0 6px ${col}"></span>
+        <span style="font-family:var(--sans);font-size:12px;font-weight:700;color:var(--text)">${dimTitle}</span>
+      </div>
+      <div style="display:flex;flex-direction:column">${itemsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderMdSimple(md, max) {
+  return md.split('\n').slice(0,max||999).map(l=>{
+    if(l.startsWith('# '))  return `<div style="font-family:var(--sans);font-size:15px;font-weight:700;color:var(--text);margin:10px 0 4px">${l.slice(2)}</div>`;
+    if(l.startsWith('## ')) return `<div style="font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text2);margin:8px 0 3px;text-transform:uppercase;letter-spacing:.06em">${l.slice(3)}</div>`;
+    if(l.startsWith('- '))  return `<div style="font-size:11px;color:var(--text2);padding:2px 0 2px 10px;border-left:2px solid var(--border)">· ${l.slice(2).replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--text)">$1</strong>')}</div>`;
+    if(l.startsWith('|'))   return `<div style="font-size:9px;color:var(--text3);font-family:var(--body);padding:1px 0">${l}</div>`;
+    if(l.startsWith('---')) return `<hr style="border:none;border-top:1px solid var(--border);margin:8px 0">`;
+    if(!l.trim())           return `<div style="height:5px"></div>`;
+    return `<div style="font-size:11px;color:var(--text2);line-height:1.6">${l.replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--text)">$1</strong>')}</div>`;
+  }).join('');
+}
+
+// ── Renderer especializado para preguntas_cliente.md ────────
+// Detecta H2 con palabras Alta/Media/Baja (con o sin emoji previo) y agrega
+// círculo CSS coloreado + label, además de listar PQs en cards compactas.
+function renderPreguntasCliente(md) {
+  if (!md) return '';
+  const SEV_META = {
+    alta:  { color: 'var(--bad)',  bg: 'var(--bad-bg)',  border: 'var(--bad-b)',  label: 'ALTA',  pill: 'p-bad'  },
+    media: { color: 'var(--warn)', bg: 'var(--warn-bg)', border: 'var(--warn-b)', label: 'MEDIA', pill: 'p-warn' },
+    baja:  { color: 'var(--go)',   bg: 'var(--go-bg)',   border: 'var(--go-b)',   label: 'BAJA',  pill: 'p-go'   },
+  };
+
+  // Particionar el md por H2
+  const lines = md.split(/\r?\n/);
+  const blocks = [];
+  let current = null;
+  for (const line of lines) {
+    const h2 = line.match(/^##\s+(?:[🔴🟡🟢]\s*)?(.+?)\s*$/);
+    if (h2) {
+      const title = h2[1].trim();
+      const sevMatch = title.toLowerCase().match(/^(alta|media|baja)\b/);
+      if (sevMatch) {
+        if (current) blocks.push(current);
+        current = { sev: sevMatch[1], title, rows: [] };
+        continue;
+      }
+    }
+    // Capturar filas PQ-XXX dentro del bloque actual
+    if (current && /^\|\s*PQ-/.test(line)) {
+      current.rows.push(line);
+    }
+  }
+  if (current) blocks.push(current);
+
+  // Si no detectamos ningún bloque (md con formato inesperado) → fallback al renderer simple
+  if (blocks.length === 0) return renderMdSimple(md, 150);
+
+  return blocks.map(b => {
+    const meta = SEV_META[b.sev];
+    if (b.rows.length === 0) {
+      return `<div style="margin-bottom:12px;padding:10px 14px;background:${meta.bg};border:1px solid ${meta.border};border-left:3px solid ${meta.color};border-radius:5px">
+        <div style="display:flex;align-items:center;gap:9px">
+          <span style="width:9px;height:9px;border-radius:50%;background:${meta.color};box-shadow:0 0 6px ${meta.color};flex-shrink:0"></span>
+          <span class="pill ${meta.pill}" style="font-size:9px;font-weight:700">${meta.label}</span>
+          <span style="font-family:var(--sans);font-size:11px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:.05em">${esc(b.title)}</span>
+          <span style="font-size:10px;color:var(--text3);margin-left:auto">sin preguntas</span>
+        </div>
+      </div>`;
+    }
+
+    // Parsear filas (formato: | PQ-XXX | HU-Y | tipo | pregunta | impacto | status | respuesta |)
+    const rowsHtml = b.rows.map(r => {
+      const cells = r.split('|').map(c => c.trim()).filter((_, i, arr) => i > 0 && i < arr.length - 1);
+      // [PQ-id, HU, tipo, pregunta, impacto, status, respuesta]
+      const [pqId='', hu='', tipo='', pregunta='', impacto='', status='', respuesta=''] = cells;
+      const isResolved = /^(resuelta|parcial)$/i.test(status);
+      const statusPill = isResolved
+        ? `<span class="pill p-go" style="font-size:8px;flex-shrink:0">${esc(status)}</span>`
+        : `<span class="pill p-dim" style="font-size:8px;flex-shrink:0">pendiente</span>`;
+      return `<div style="display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-bottom:1px solid var(--border);font-size:11px;line-height:1.55">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-family:var(--sans);font-size:10px;font-weight:700;color:${meta.color}">${esc(pqId)}</span>
+          <span style="font-size:9px;color:var(--text3)">${esc(hu)}${tipo ? ' · ' + esc(tipo) : ''}</span>
+          ${statusPill}
+        </div>
+        <div style="color:var(--text2)">${esc(pregunta)}</div>
+        ${impacto ? `<div style="font-size:10px;color:var(--text3);font-style:italic">▸ ${esc(impacto)}</div>` : ''}
+        ${isResolved && respuesta && respuesta !== '—' ? `<div style="font-size:10px;color:var(--text2);background:var(--go-bg);padding:5px 8px;border-radius:3px;margin-top:3px"><strong>Resp:</strong> ${esc(respuesta)}</div>` : ''}
+      </div>`;
+    }).join('');
+
+    return `<div style="margin-bottom:14px;background:${meta.bg};border:1px solid ${meta.border};border-left:3px solid ${meta.color};border-radius:5px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:9px;padding:10px 14px;border-bottom:1px solid ${meta.border};background:var(--bg2)">
+        <span style="width:9px;height:9px;border-radius:50%;background:${meta.color};box-shadow:0 0 6px ${meta.color};flex-shrink:0"></span>
+        <span class="pill ${meta.pill}" style="font-size:9px;font-weight:700">${meta.label}</span>
+        <span style="font-family:var(--sans);font-size:11px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:.05em">${esc(b.title)}</span>
+        <span style="font-size:10px;color:var(--text3);margin-left:auto">${b.rows.length} pregunta${b.rows.length===1?'':'s'}</span>
+      </div>
+      <div>${rowsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── Renderer de Base de Pruebas por HU para tab Planificación // Parsea base_pruebas.md por bloques "## Módulo: ... ### HU-X: Título" y emite
+// cards colapsadas con counters + detalle expandible.
+function renderBasePruebasByHu(md) {
+  if (!md) return { html: '', count: 0 };
+  const lines = md.split(/\r?\n/);
+
+  // Particionar por H2 "## Módulo: X" y dentro por H3 (HUs)
+  let currentMod = null;
+  let currentHu  = null;
+  const modules = [];
+  const hus     = [];
+
+  function flushHu() {
+    if (currentHu) {
+      currentHu.module = currentMod ? currentMod.name : null;
+      hus.push(currentHu);
+      currentHu = null;
+    }
+  }
+
+  for (const line of lines) {
+    const h2 = line.match(/^##\s+(.+?)\s*$/);
+    if (h2) {
+      flushHu();
+      const txt = h2[1].trim();
+      if (/^Módulo:/i.test(txt)) {
+        currentMod = { name: txt.replace(/^Módulo:\s*/i, '').trim() };
+        modules.push(currentMod);
+      } else {
+        // H2 fuera de módulo (Material Referenciado, etc.) — cerrar contexto
+        currentMod = null;
+      }
+      continue;
+    }
+    if (!currentMod) continue;
+    const h3 = line.match(/^###\s+(?:HU-(\w+):\s*)?(.+?)\s*$/);
+    if (h3) {
+      flushHu();
+      currentHu = {
+        hu_id: h3[1] || null,
+        title: h3[2].trim(),
+        body:  [],
+      };
+      continue;
+    }
+    if (currentHu) currentHu.body.push(line);
+  }
+  flushHu();
+
+  if (hus.length === 0) return { html: '<div class="empty">Sin HUs detectadas en base_pruebas.md</div>', count: 0 };
+
+  // Para cada HU, extraer FRS individual, INVEST, counters de alt/NFR/SUP
+  const cards = hus.map(h => {
+    const bodyText = h.body.join('\n');
+    const frsMatch = bodyText.match(/\*\*FRS ítem:\*\*\s*([\d.]+)%/);
+    const frs = frsMatch ? parseFloat(frsMatch[1]) : null;
+    const investMatch = bodyText.match(/\*\*INVEST:\*\*\s*([^\n]+)/);
+    const invest = investMatch ? investMatch[1].trim() : '';
+    const actorMatch = bodyText.match(/\*\*Actor:\*\*\s*([^|\n]+)/);
+    const actor = actorMatch ? actorMatch[1].trim() : '';
+    const preMatch = bodyText.match(/\*\*Precondición:\*\*\s*([^\n]+)/);
+    const pre = preMatch ? preMatch[1].trim() : '';
+
+    // Extraer secciones por marcadores
+    const flowMatch = bodyText.match(/\*\*Flujo principal:\*\*\s*([\s\S]*?)(?=\n\*\*|\n###|\n##|$)/);
+    const flowMain = flowMatch ? flowMatch[1].trim() : '';
+
+    const altMatch = bodyText.match(/\*\*Flujos alternativos:\*\*\s*([\s\S]*?)(?=\n\*\*NFRs|\n\*\*Criterios|\n\*\*Supuestos|\n###|\n##|$)/);
+    const altText = altMatch ? altMatch[1].trim() : '';
+    const altLines = altText.split(/\n/).filter(l => /^\s*[-*]\s/.test(l) || /PROPUESTO/i.test(l));
+    const altCount = altLines.length;
+
+    const nfrMatch = bodyText.match(/\*\*NFRs identificados:\*\*\s*([\s\S]*?)(?=\n\*\*Criterios|\n\*\*Supuestos|\n###|\n##|$)/);
+    const nfrText = nfrMatch ? nfrMatch[1].trim() : '';
+    const nfrLines = nfrText.split(/\n/).filter(l => /^\s*[-*]\s/.test(l));
+    const nfrCount = nfrLines.length;
+
+    const caMatch = bodyText.match(/\*\*Criterios de aceptación:\*\*\s*([\s\S]*?)(?=\n\*\*Supuestos|\n###|\n##|$)/);
+    const caText = caMatch ? caMatch[1].trim() : '';
+    const caLines = caText.split(/\n/).filter(l => /^\s*[-*]\s/.test(l));
+    const caCount = caLines.length;
+
+    const supMatch = bodyText.match(/\*\*Supuestos adoptados:\*\*\s*([^\n]+)/);
+    const supText = supMatch ? supMatch[1].trim() : '';
+    const supIds = (supText.match(/SUP-\d+/g) || []);
+    const supCount = supIds.length;
+
+    const obsMatch = bodyText.match(/\*\*Observaciones INVEST:\*\*\s*([\s\S]*?)(?=\n###|\n##|$)/);
+    const obs = obsMatch ? obsMatch[1].trim() : '';
+
+    // Color según FRS
+    const frsCol = frs == null ? 'var(--text3)'
+      : frs >= 75 ? 'var(--go)'
+      : frs >= 50 ? 'var(--warn)' : 'var(--bad)';
+    const frsIcon = frs == null ? '·' : frs >= 75 ? '✓' : frs >= 50 ? '⚠' : '✗';
+    const frsLbl = frs == null ? '—' : `${frs}%`;
+
+    const huLabel = h.hu_id ? `HU-${esc(h.hu_id)}` : '';
+    const moduleLabel = h.module ? esc(h.module) : '';
+
+    return `<details style="margin-bottom:8px;background:var(--bg3);border:1px solid var(--border);border-left:3px solid ${frsCol};border-radius:5px;overflow:hidden">
+      <summary style="cursor:pointer;list-style:none;padding:10px 14px;display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;align-items:center;user-select:none">
+        <span style="font-family:var(--sans);font-size:10px;font-weight:700;color:var(--text2)">${huLabel}</span>
+        <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <span style="font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(h.title)}</span>
+          ${moduleLabel ? `<span style="font-size:9px;color:var(--text3)">${moduleLabel}</span>` : ''}
+        </div>
+        <div style="display:flex;gap:6px;font-size:9px;color:var(--text3)">
+          ${altCount ? `<span title="Flujos alternativos">${altCount} alt</span>` : ''}
+          ${nfrCount ? `<span title="NFRs identificados">${nfrCount} NFR</span>` : ''}
+          ${caCount ?  `<span title="Criterios de aceptación">${caCount} CA</span>` : ''}
+          ${supCount ? `<span title="Supuestos adoptados">${supCount} SUP</span>` : ''}
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-family:var(--sans);font-size:11px;font-weight:700;color:${frsCol}">${frsIcon} ${frsLbl}</span>
+        </div>
+      </summary>
+      <div style="padding:0 14px 14px;border-top:1px solid var(--border);background:var(--bg2)">
+        ${invest ? `<div style="margin-top:10px;padding:6px 10px;background:var(--bg3);border-radius:3px;font-size:10px;color:var(--text2)"><strong>INVEST:</strong> ${esc(invest)}</div>` : ''}
+        ${actor || pre ? `<div style="margin-top:8px;font-size:10px;color:var(--text2);line-height:1.6">${actor ? `<strong>Actor:</strong> ${esc(actor)}` : ''}${actor && pre ? ' · ' : ''}${pre ? `<strong>Precondición:</strong> ${esc(pre)}` : ''}</div>` : ''}
+        ${flowMain ? `<div style="margin-top:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Flujo principal</div><div style="font-size:11px;color:var(--text2);line-height:1.55">${esc(flowMain)}</div></div>` : ''}
+        ${altLines.length ? `<div style="margin-top:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Flujos alternativos · ${altCount}</div>${altLines.map(l => `<div style="font-size:10px;color:var(--text2);padding:2px 0 2px 10px;border-left:2px solid var(--border);line-height:1.55">${esc(l.replace(/^\s*[-*]\s*/, ''))}</div>`).join('')}</div>` : ''}
+        ${nfrLines.length ? `<div style="margin-top:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">NFRs identificados · ${nfrCount}</div>${nfrLines.map(l => `<div style="font-size:10px;color:var(--text2);padding:2px 0 2px 10px;border-left:2px solid var(--border);line-height:1.55">${esc(l.replace(/^\s*[-*]\s*/, ''))}</div>`).join('')}</div>` : ''}
+        ${caLines.length ? `<div style="margin-top:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Criterios de aceptación · ${caCount}</div>${caLines.map(l => `<div style="font-size:10px;color:var(--text2);padding:2px 0 2px 10px;border-left:2px solid var(--border);line-height:1.55">${esc(l.replace(/^\s*[-*]\s*/, ''))}</div>`).join('')}</div>` : ''}
+        ${supIds.length ? `<div style="margin-top:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Supuestos adoptados</div><div style="display:flex;gap:6px;flex-wrap:wrap">${supIds.map(s => `<span class="pill p-warn" style="font-size:9px">${esc(s)}</span>`).join('')}</div></div>` : ''}
+        ${obs ? `<div style="margin-top:10px;padding:8px 10px;background:var(--warn-bg);border-left:3px solid var(--warn);border-radius:3px;font-size:10px;color:var(--text2);line-height:1.55"><strong>Observaciones INVEST:</strong> ${esc(obs)}</div>` : ''}
+      </div>
+    </details>`;
+  }).join('');
+
+  return { html: cards, count: hus.length };
+}
+
+// ── DISEÑO + EJECUCIÓN (fusionado) ────────────────────────────────────────
+function renderDesignExecution() {
+  // Gather CP definitions from cp_modulo_*.json files
+  const cpFiles = Object.entries(S.files).filter(([n])=>n.startsWith('cp_modulo_')&&n.endsWith('.json'));
+  const allCPs = [];
+  const modules = new Set();
+  cpFiles.forEach(([n,f])=>{
+    try {
+      const d = JSON.parse(f.content);
+      const modName = d.module_name || d.module_id || n.replace('cp_modulo_','').replace('.json','');
+      (d.test_cases||[]).forEach(cp => {
+        cp._module_display = modName;
+        allCPs.push(cp);
+        modules.add(modName);
+      });
+    } catch {}
+  });
+
+  document.getElementById('tb-design').textContent = allCPs.length;
+  document.getElementById('de-pill').textContent = allCPs.length + ' CPs';
+
+  if (!allCPs.length) {
+    document.getElementById('de-table').innerHTML = emptyOrPending('fase_1c', 'Sin CPs diseñados — ejecutar Fase 1C');
+    return;
+  }
+
+  // Gather execution results from *_result.json
+  // Composite key: cp_id + source_id to avoid sub-scenarios overwriting each other
+  const cpKey = (cpId, sourceId) => sourceId ? `${cpId}||${sourceId}` : cpId;
+  const execMap = {};
+  const dateMap = {};
+  const evidenceMap = {};
+  const evidenceStepCount = {};
+  Object.entries(S.files).filter(([n])=>n.endsWith('_result.json')).forEach(([n,f])=>{
+    try {
+      const d = JSON.parse(f.content);
+      const modId = d.module_id || n.replace('_result.json','');
+      (d.results||d.test_cases||[]).forEach(tc => {
+        if(tc.cp_id) {
+          const key = cpKey(tc.cp_id, tc.source_id);
+          execMap[key] = tc.status || 'UNKNOWN';
+          if (tc.executed_at) dateMap[key] = tc.executed_at;
+          const folder = tc.source_id ? tc.source_id.replace(/,/g, '_') : tc.cp_id;
+          const thisSteps = tc.steps_total || tc.steps_passed || 0;
+          if (!evidenceMap[key] || thisSteps > (evidenceStepCount[key] || 0)) {
+            evidenceMap[key] = tc.evidence_dir || `execution/${modId}/${folder}/`;
+            evidenceStepCount[key] = thisSteps;
+          }
+        }
+      });
+    } catch {}
+  });
+
+  // Gather bugs from defects_classified.json
+  const bugMap = {};
+  const defs = pj('defects_classified.json');
+  (defs?.defects||defs?.bugs||[]).forEach(b => {
+    if (b.cp_reference) bugMap[b.cp_reference] = b;
+  });
+
+  // Populate module filter dropdown
+  const modSelect = document.getElementById('de-f-mod');
+  if (modSelect) {
+    modules.forEach(m => { const o=document.createElement('option'); o.value=m; o.textContent=m; modSelect.appendChild(o); });
+  }
+
+  // Populate tag filter dropdown (unique tags across all CPs)
+  const tagSelect = document.getElementById('de-f-tag');
+  if (tagSelect) {
+    const allTags = new Set();
+    allCPs.forEach(cp => (cp.tags || []).forEach(t => allTags.add(t)));
+    // Orden: @bd primero (destacado), luego alfabético
+    const sorted = [...allTags].sort((a, b) => {
+      if (a === '@bd') return -1;
+      if (b === '@bd') return 1;
+      return a.localeCompare(b);
+    });
+    sorted.forEach(t => {
+      const o = document.createElement('option');
+      o.value = t;
+      o.textContent = t === '@bd' ? '@bd (Validación BD)' : t;
+      tagSelect.appendChild(o);
+    });
+  }
+
+  // Stats
+  let nPass=0, nFail=0, nBlocked=0, nPending=0;
+  allCPs.forEach(cp => {
+    const st = execMap[cpKey(cp.cp_id, cp.source_id)];
+    if (!st) nPending++;
+    else if (st==='PASS') nPass++;
+    else if (st==='FAIL') nFail++;
+    else if (st==='BLOCKED') nBlocked++;
+    else nPending++;
+  });
+  document.getElementById('de-stats').innerHTML =
+    stile(allCPs.length,'CPs Diseñados','')+
+    stile(nPass,'PASS','',nPass?'var(--go)':null)+
+    stile(nFail,'FAIL','',nFail?'var(--bad)':null)+
+    stile(nBlocked||nPending, nBlocked?'Bloqueados':'Pendientes','',nBlocked?'var(--warn)':null);
+
+  // Botón de descarga Excel tabular
+  const xlsxPath = gf('cp_export_xlsx_path');
+  const xlsxBtn = document.getElementById('de-xlsx-btn');
+  if (xlsxPath && xlsxBtn) {
+    xlsxBtn.innerHTML = `<a href="${xlsxPath}" download style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:var(--go);color:#fff;border-radius:12px;font-size:9px;text-decoration:none;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">⬇ Matriz (Excel)</a>`;
+  }
+
+  // Helper: pill semántico para tag (alineado con .claude/skills/gherkin-writer/SKILL.md PASO 1).
+  // Extraído como función para evitar nesting de 3 niveles de template literals que rompe el browser parser.
+  function renderTagPill(t, esc) {
+    const lower = String(t).toLowerCase();
+    let style = '', title = '';
+    if (lower === '@bd') { style = 'background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)'; title = 'Validación BD (REGLA 7)'; }
+    else if (lower === '@requiere-validacion') { style = 'background:rgba(244,165,24,.10);color:#A06000;border:1px solid rgba(244,165,24,.40)'; title = 'Supuesto pendiente del PO'; }
+    else if (lower.indexOf('@supuesto-') === 0) { style = 'background:rgba(123,87,194,.10);color:#5E3CA3;border:1px solid rgba(123,87,194,.35)'; title = 'Asunción del agente'; }
+    else if (lower === '@cp-derivado') { style = 'background:rgba(96,125,139,.12);color:#37474F;border:1px solid rgba(96,125,139,.35)'; title = 'CP derivado (no literal del CA)'; }
+    else if (lower === '@charter-only') { style = 'background:transparent;color:#D2691E;border:1px solid #D2691E'; title = 'Charter exploratorio — no ejecutable'; }
+    else if (lower === '@known_bug') { style = 'background:rgba(220,53,69,.08);color:#A02830;border:1px solid rgba(220,53,69,.30)'; title = 'Bug conocido tolerado'; }
+    else if (lower === '@security') { style = 'background:rgba(190,40,40,.07);color:#7A1F1F;border:1px solid rgba(190,40,40,.25)'; }
+    else if (lower === '@validation' || lower === '@boundary') { style = 'background:rgba(40,140,180,.08);color:#0E5A78;border:1px solid rgba(40,140,180,.25)'; }
+    const cls = style ? 'pill' : 'pill p-dim';
+    const titleAttr = title ? ' title="' + esc(title) + '"' : '';
+    const styleAttr = 'font-size:8px' + (style ? ';' + style : '');
+    return '<span class="' + cls + '"' + titleAttr + ' style="' + styleAttr + '">' + esc(t) + '</span>';
+  }
+
+  // Build table rows
+  const rows = allCPs.map((cp, idx) => {
+    const key = cpKey(cp.cp_id, cp.source_id);
+    const st = execMap[key] || 'Pendiente';
+    const bug = bugMap[cp.cp_id];
+    const riskCol = {'critical':'var(--bad)','high':'var(--warn)','medium':'var(--p3c)','low':'var(--text3)'}[cp.risk_level]||'var(--text3)';
+    const stCol = st==='PASS'?'var(--go)':st==='FAIL'?'var(--bad)':st==='BLOCKED'?'var(--warn)':'var(--text3)';
+    const borderCol = st==='PASS'?'var(--go)':st==='FAIL'?'var(--bad)':st==='BLOCKED'?'var(--warn)':'var(--border)';
+    const stPill = st==='PASS'?'p-go':st==='FAIL'?'p-bad':st==='BLOCKED'?'p-warn':'p-dim';
+
+    // Fecha de ejecución (pill visible + data-date para filtrado)
+    const execDate = dateMap[key];
+    const execDateYMD = execDate ? String(execDate).slice(0,10) : '';
+    const execDateLabel = execDate
+      ? new Date(execDate).toLocaleDateString('es-CO', { day:'2-digit', month:'short' })
+      : '';
+
+    // Expandable detail
+    const precond = cp.preconditions || '';
+    const steps = Array.isArray(cp.steps_raw)
+      ? cp.steps_raw.join('\n')
+      : (cp.steps_raw || (Array.isArray(cp.steps) ? cp.steps.join('\n') : (cp.steps || '')));
+    const expected = cp.expected_result_text || cp.description_gnp || (cp.expected_result !== 'PASS' && cp.expected_result !== 'FAIL' ? cp.expected_result : '') || '';
+    const tags = Array.isArray(cp.tags) ? cp.tags : [];
+    const hasBd = tags.includes('@bd');
+    const tagsAttr = tags.join(' ').toLowerCase();
+    const hasDetail = precond || steps || expected;
+
+    // Chips de señales relevantes destacados en la fila (visibles sin expandir):
+    //   @bd                  → opt-in REGLA 7 (BD)
+    //   @requiere-validacion → CP descansa en supuesto del agente (PO debe confirmar)
+    //   @cp-derivado         → CP NO trazable a CA literal (cross-cutting / transversal)
+    //   @charter-only        → no ejecutable, pertenece a charter
+    const hasReqVal = tags.some(t => String(t).toLowerCase() === '@requiere-validacion');
+    const hasDerived = tags.some(t => String(t).toLowerCase() === '@cp-derivado');
+    const hasCharterOnly = tags.some(t => String(t).toLowerCase() === '@charter-only');
+    const bdChip = hasBd
+      ? `<span class="pill" style="font-size:8px;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)" title="Incluye validación contra Base de Datos">@bd</span>`
+      : '';
+    const reqValChip = hasReqVal
+      ? `<span class="pill" style="font-size:8px;background:rgba(244,165,24,.10);color:#A06000;border:1px solid rgba(244,165,24,.40)" title="Supuesto pendiente de validación con el PO">⚠ requiere-validación</span>`
+      : '';
+    const derivedChip = hasDerived
+      ? `<span class="pill" style="font-size:8px;background:rgba(96,125,139,.12);color:#37474F;border:1px solid rgba(96,125,139,.35)" title="CP NO trazable a CA literal — origen cross-cutting o transversal">cp-derivado</span>`
+      : '';
+    const charterChip = hasCharterOnly
+      ? `<span class="pill" style="font-size:8px;background:transparent;color:#D2691E;border:1px solid #D2691E" title="Pertenece al charter exploratorio — no se ejecuta automáticamente">charter-only</span>`
+      : '';
+
+    return `<div class="de-row" data-mod="${esc(cp._module_display)}" data-status="${esc(st)}" data-risk="${esc(cp.risk_level||'')}" data-date="${esc(execDateYMD)}" data-tags="${esc(tagsAttr)}" data-search="${esc((cp.cp_id+' '+cp.hu_id+' '+cp.title).toLowerCase())}" style="border-left:3px solid ${borderCol}" onclick="this.querySelector('.de-detail')&&this.querySelector('.de-detail').classList.toggle('open')">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--text3);min-width:90px">${esc(cp.cp_id||'')}</span>
+        <span class="pill p-dim" style="font-size:8px">${esc(cp._module_display)}</span>
+        <span style="font-size:10px;color:var(--text3)">${esc(cp.hu_id||'')}</span>
+        <span style="flex:1;font-size:12px;color:var(--text)">${esc(cp.title||'')}</span>
+        ${bdChip}
+        ${reqValChip}
+        ${derivedChip}
+        ${charterChip}
+        <span class="pill" style="font-size:8px;color:${riskCol};border-color:${riskCol}30;background:${riskCol}10">${esc(cp.risk_level||'—')}</span>
+        <span class="pill ${stPill}" style="font-size:8px">${esc(st)}</span>
+        ${execDateLabel?`<span class="pill p-dim" style="font-size:8px" title="Ejecutado: ${esc(execDate)}">📅 ${esc(execDateLabel)}</span>`:''}
+        ${bug?`<span class="pill p-bad" style="font-size:8px">${esc(bug.bug_id||bug.id)}</span>`:''}
+        ${st!=='Pendiente'&&evidenceMap[key]?`<a class="def-evidence-link" href="${esc(evidenceMap[key])}evidence.html" target="_blank" onclick="event.stopPropagation()">🔍 Evidencia</a>`:''}
+      </div>
+      ${hasDetail?`<div class="de-detail" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text2)">
+        ${precond?`<div style="margin-bottom:6px"><strong style="color:var(--text3);font-size:10px;text-transform:uppercase">Precondiciones:</strong><div style="white-space:pre-line;margin-top:2px">${esc(precond)}</div></div>`:''}
+        ${steps?`<div style="margin-bottom:6px"><strong style="color:var(--text3);font-size:10px;text-transform:uppercase">Pasos:</strong><div style="white-space:pre-line;margin-top:2px">${esc(steps)}</div></div>`:''}
+        ${expected?`<div style="margin-bottom:6px"><strong style="color:var(--text3);font-size:10px;text-transform:uppercase">Resultado esperado:</strong><div style="white-space:pre-line;margin-top:2px">${esc(expected)}</div></div>`:''}
+        ${tags.length?'<div><strong style="color:var(--text3);font-size:10px;text-transform:uppercase">Tags:</strong><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:3px">'+tags.map(t=>renderTagPill(t,esc)).join('')+'</div></div>':''}
+      </div>`:''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('de-table').innerHTML = rows;
+}
+
+window.applyDesignFilters = function() {
+  const mod = document.getElementById('de-f-mod')?.value||'';
+  const status = document.getElementById('de-f-status')?.value||'';
+  const risk = document.getElementById('de-f-risk')?.value||'';
+  const tag = (document.getElementById('de-f-tag')?.value||'').toLowerCase();
+  const search = (document.getElementById('de-f-search')?.value||'').toLowerCase();
+  const dateFrom = document.getElementById('de-f-date-from')?.value||'';
+  const dateTo   = document.getElementById('de-f-date-to')?.value||'';
+  const includePending = document.getElementById('de-f-include-pending')?.checked !== false;
+  const dateFilterActive = !!(dateFrom || dateTo);
+
+  document.querySelectorAll('#de-table .de-row').forEach(row => {
+    const rowDate = row.dataset.date || '';
+    let dateMatch;
+    if (!dateFilterActive) {
+      dateMatch = true;                                  // sin filtro de fecha
+    } else if (!rowDate) {
+      dateMatch = includePending;                        // pendiente / sin fecha
+    } else {
+      dateMatch = (!dateFrom || rowDate >= dateFrom) &&
+                  (!dateTo   || rowDate <= dateTo);
+    }
+    const rowTags = (row.dataset.tags || '').split(/\s+/).filter(Boolean);
+    const tagMatch = !tag || rowTags.includes(tag);
+    const show =
+      (!mod    || row.dataset.mod    === mod) &&
+      (!status || row.dataset.status === status) &&
+      (!risk   || row.dataset.risk   === risk) &&
+      tagMatch &&
+      (!search || row.dataset.search.includes(search)) &&
+      dateMatch;
+    row.style.display = show ? '' : 'none';
+  });
+};
+
+// ── UX (no-op — sección retirada del pipeline) ───────────────────────────────
+// ── VISUAL + UX + A11y (renderiza visual_ux_a11y_results.json producido por /visual-ux-a11y) ─
+function renderUX() {
+  const vua = pj('visual_ux_a11y_results.json');
+  const content = document.getElementById('vua-content');
+  const stats = document.getElementById('vua-stats');
+  const flowsPills = document.getElementById('vua-flows-pills');
+  const incidents = document.getElementById('vua-incidents');
+  const incidentsList = document.getElementById('vua-incidents-list');
+
+  if (!vua) {
+    if (content) content.innerHTML = emptyOrPending('fase_2c', 'visual_ux_a11y_results.json no encontrado — ejecutar /visual-ux-a11y');
+    if (stats) stats.innerHTML = '';
+    if (flowsPills) flowsPills.innerHTML = '';
+    if (incidents) incidents.style.display = 'none';
+    return;
+  }
+
+  const findings = Array.isArray(vua.findings) ? vua.findings : [];
+  const summary = vua.summary || {};
+  const scope = vua.scope || {};
+  const phaseStatus = vua.phase_status || 'unknown';
+  const phaseColor = phaseStatus === 'completed' ? 'var(--go)' : phaseStatus === 'partial' ? 'var(--warn)' : 'var(--bad)';
+
+  // ─── Resumen (4 stats cards) ───
+  stats.innerHTML =
+    stile(scope.pages_total || 0, 'Pantallas analizadas', '', null) +
+    stile(summary.total_findings || 0, 'Hallazgos + recom.', '', summary.total_findings ? 'var(--text)' : null) +
+    stile(((summary.by_severity && summary.by_severity.critical) || 0) + ((summary.by_severity && summary.by_severity.serious) || 0),
+          'Críticos + Serios',
+          ((summary.by_severity && summary.by_severity.critical) || 0) > 0 ? 'P1+P2' : '',
+          (((summary.by_severity && summary.by_severity.critical) || 0) > 0 ? 'var(--bad)' : ((summary.by_severity && summary.by_severity.serious) || 0) > 0 ? 'var(--warn)' : null)) +
+    stile(phaseStatus.toUpperCase(), 'Phase status', '', phaseColor);
+
+  // ─── Banner de cobertura (transparencia sobre qué cubre el escaneo) ───
+  const deepLlm = vua.deep_llm || null;
+  const deepActive = !!(deepLlm && deepLlm.executed);
+  const coverageBannerEl = document.getElementById('vua-coverage-banner');
+  if (coverageBannerEl) {
+    const deepPill = deepActive
+      ? `<span class="pill" style="background:#0A7A7A;color:#fff;font-size:9px">Fase C LLM activa · +${deepLlm.findings_added || 0} findings semánticos</span>`
+      : `<span class="pill p-dim" style="font-size:9px">Fase C LLM inactiva (correr con --deep-llm para review semántica de copy)</span>`;
+    coverageBannerEl.innerHTML = `
+      <div style="padding:10px 14px;border-radius:6px;background:var(--bg2);border-left:4px solid var(--blue,#0A7A7A);font-size:11px;line-height:1.5;color:var(--text2)">
+        <div style="font-weight:700;color:var(--text);margin-bottom:6px;font-size:12px">Cobertura del escaneo VUA</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px">
+          <span class="pill p-dim" style="font-size:9px">Accesibilidad: axe-core 4.11.4 (locale es)</span>
+          <span class="pill p-dim" style="font-size:9px">Usabilidad: 10 heurísticas Nielsen (determinísticas)</span>
+          <span class="pill p-dim" style="font-size:9px">Visual: lang + tipografía + ortografía/anglicismos ES + microcopy</span>
+          ${deepPill}
+        </div>
+        <div style="color:var(--text3);font-size:10px">
+          <strong>NO cubierto sin review humano:</strong> contraste de iconos (fuera de axe), layout pixel-perfect, animaciones / motion sickness, multi-viewport (mobile/tablet — actual: 1366×900).
+        </div>
+      </div>`;
+    coverageBannerEl.style.display = '';
+  }
+
+  // ─── Flow pills ───
+  flowsPills.innerHTML = (scope.flows_scanned || []).map(f =>
+    `<span class="pill p-dim" style="font-size:9px">${esc(f)}</span>`
+  ).join('');
+
+  // ─── Filtros: agrupador, severidad, flow ───
+  const allAgrupadores = ['visual', 'usabilidad', 'accesibilidad'];
+  const allSeverities = ['critical', 'serious', 'moderate', 'minor', 'info'];
+
+  // ─── Agrupar findings por agrupador → tipo ───
+  const byGroup = { visual: { hallazgo: [], recomendacion: [] }, usabilidad: { hallazgo: [], recomendacion: [] }, accesibilidad: { hallazgo: [], recomendacion: [] } };
+  findings.forEach(f => {
+    const ag = f.agrupador || 'visual';
+    const tp = f.tipo || 'hallazgo';
+    if (byGroup[ag] && byGroup[ag][tp]) byGroup[ag][tp].push(f);
+  });
+
+  // ─── Render por agrupador ───
+  function renderFinding(f) {
+    const sev = String(f.severity || 'info');
+    const sevColor = sev === 'critical' ? 'var(--bad)' : sev === 'serious' ? '#9747FF' : sev === 'moderate' ? 'var(--warn)' : sev === 'minor' ? 'var(--blue)' : 'var(--text3)';
+    const wcagOrNielsen = f.wcag ? `<span class="pill p-dim" style="font-size:9px">WCAG ${esc(f.wcag)}</span>`
+                       : (typeof f.nielsen === 'number') ? `<span class="pill p-dim" style="font-size:9px">N${esc(f.nielsen)}</span>` : '';
+    const ruleId = f.rule_id ? `<code style="font-family:var(--mono,monospace);font-size:10px;color:var(--text3)">${esc(f.rule_id)}</code>` : '';
+    const evIcon = f.evidence_status === 'capture_failed' ? ' <span title="Sin captura">📷❌</span>'
+                 : f.evidence_status === 'general_observation' ? ' <span title="Observación general (sin selector)">🌐</span>'
+                 : f.evidence_status === 'captured' ? ' <span title="Captura disponible">📷</span>' : '';
+    const seenIn = (f.seen_in_pages || []).map(p => {
+      const flows = Array.isArray(p.flow_refs) && p.flow_refs.length ? p.flow_refs.join(',') : (p.flow_id || '?');
+      return `${esc(flows)}·${esc(p.page_slug)}`;
+    }).join(', ');
+    const recBlock = f.recommendation ? `<div style="margin-top:4px;font-size:11px;color:var(--text2);line-height:1.4">💡 ${esc(f.recommendation)}</div>` : '';
+    const selBlock = f.selector ? `<code style="font-family:var(--mono,monospace);font-size:10px;color:var(--text3);background:var(--bg3);padding:1px 5px;border-radius:3px">${esc(f.selector)}</code>` : '';
+    return `<div style="padding:8px 10px;margin-bottom:6px;border-left:3px solid ${sevColor};background:var(--bg2);border-radius:4px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px">
+        <span style="color:${sevColor};font-weight:700;text-transform:uppercase;font-size:10px">${esc(sev)}</span>
+        ${wcagOrNielsen}
+        ${ruleId}
+        ${selBlock}
+        ${evIcon}
+      </div>
+      <div style="margin-top:4px;font-size:12px;color:var(--text)">${esc(f.message || '')}</div>
+      ${recBlock}
+      ${seenIn ? `<div style="margin-top:4px;font-size:9px;color:var(--text3)">visto en: ${esc(seenIn)}</div>` : ''}
+    </div>`;
+  }
+
+  function renderAgrupador(name, label, emoji, color) {
+    const data = byGroup[name];
+    const hCount = data.hallazgo.length;
+    const rCount = data.recomendacion.length;
+    const hallazgosHtml = hCount
+      ? `<div style="margin-top:8px"><div style="font-weight:700;color:var(--text);text-transform:uppercase;font-size:10px;letter-spacing:.5px;margin-bottom:6px">Hallazgos (${hCount})</div>${data.hallazgo.map(renderFinding).join('')}</div>`
+      : `<div style="margin-top:8px;color:var(--text3);font-size:11px;font-style:italic">Sin hallazgos en esta arista</div>`;
+    const recHtml = rCount
+      ? `<div style="margin-top:12px"><div style="font-weight:700;color:var(--text);text-transform:uppercase;font-size:10px;letter-spacing:.5px;margin-bottom:6px">Recomendaciones (${rCount})</div>${data.recomendacion.map(renderFinding).join('')}</div>`
+      : '';
+    return `<details class="card" style="margin-bottom:10px;padding:10px 14px;border-left:4px solid ${color}">
+      <summary style="font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;color:var(--text);outline:none;display:flex;align-items:center;gap:8px">
+        <span style="font-size:16px">${emoji}</span> ${esc(label)}
+        <span class="pill p-dim" style="font-size:9px;margin-left:auto">${hCount} hallazgos · ${rCount} recom.</span>
+      </summary>
+      ${hallazgosHtml}
+      ${recHtml}
+    </details>`;
+  }
+
+  content.innerHTML =
+    renderAgrupador('visual', 'Visual', '🎨', 'var(--orange,#F47920)') +
+    renderAgrupador('usabilidad', 'Usabilidad (Heurísticas Nielsen)', '🧭', 'var(--blue,#0A7A7A)') +
+    renderAgrupador('accesibilidad', 'Accesibilidad (WCAG 2.1 AA)', '♿', '#9747FF');
+
+  // ─── Incidencias de la fase (si phase_status != completed) ───
+  if (phaseStatus !== 'completed' && vua.phase_blocked) {
+    incidents.style.display = '';
+    const details = vua.phase_blocked.details || [];
+    incidentsList.innerHTML = details.length
+      ? details.map(d => `<div style="padding:8px 10px;border-left:3px solid var(--bad);background:var(--bad-bg,rgba(224,32,32,.06));margin-bottom:6px;border-radius:3px;font-size:11px"><strong>${esc(d.flow_id)}</strong> · ${esc(d.page_slug)} → <span style="color:var(--bad)">${esc(d.status)}</span>${d.reason ? ` · ${esc(d.reason)}` : ''}</div>`).join('')
+      : `<div class="empty" style="font-size:11px">Sin detalle disponible</div>`;
+  } else {
+    incidents.style.display = 'none';
+  }
+}
+
+// ── PERFORMANCE / Core Web Vitals (renderiza performance_results.json de /sofka-asdd:qa-web-perf) ─
+function renderPerf() {
+  const perf = pj('performance_results.json');
+  const content = document.getElementById('perf-content');
+  const stats = document.getElementById('perf-stats');
+  const banner = document.getElementById('perf-coverage-banner');
+  if (!perf) {
+    if (content) content.innerHTML = emptyOrPending('fase_2c', 'performance_results.json no encontrado — ejecutar /sofka-asdd:qa-web-perf');
+    if (stats) stats.innerHTML = '';
+    if (banner) banner.innerHTML = '';
+    return;
+  }
+  const flows = Array.isArray(perf.flows) ? perf.flows : [];
+  const summary = perf.summary || {};
+  const bv = summary.by_verdict || {};
+  const avg = summary.avg_score;
+  const avgColor = avg == null ? null : avg >= 80 ? 'var(--go)' : avg >= 60 ? 'var(--warn)' : 'var(--bad)';
+
+  stats.innerHTML =
+    stile(summary.total_flows || 0, 'Flujos medidos', '', null) +
+    stile(avg == null ? '—' : avg, 'Score promedio', '', avgColor) +
+    stile(bv.PASS || 0, 'PASS', '', (bv.PASS || 0) > 0 ? 'var(--go)' : null) +
+    stile((bv.FAIL || 0) + (bv.WARNING || 0), 'FAIL + WARNING',
+          (bv.FAIL || 0) > 0 ? `${bv.FAIL || 0} FAIL` : '',
+          (bv.FAIL || 0) > 0 ? 'var(--bad)' : (bv.WARNING || 0) > 0 ? 'var(--warn)' : null);
+
+  const reps = (flows[0] && flows[0].measurements && flows[0].measurements.repetitions) || 3;
+  banner.innerHTML = `
+    <div style="padding:10px 14px;border-radius:6px;background:var(--bg2);border-left:4px solid var(--blue,#0A7A7A);font-size:11px;line-height:1.5;color:var(--text2)">
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px;font-size:12px">Cobertura de la medición</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px">
+        <span class="pill p-dim" style="font-size:9px">PerformanceObserver (Playwright Node)</span>
+        <span class="pill p-dim" style="font-size:9px">${esc(String(reps))} mediciones/URL · promediadas</span>
+        <span class="pill p-dim" style="font-size:9px">Umbrales: Core Web Vitals (config.yaml)</span>
+      </div>
+      <div style="color:var(--text3);font-size:10px">
+        <strong>INP medido pasivamente</strong> (sin interacción simulada) → "no medido", excluido del score. Viewport 1366×900, sin throttling de red.
+      </div>
+    </div>`;
+
+  const RC = (r) => r === 'good' ? 'var(--go)' : r === 'needs_improvement' ? 'var(--warn)' : r === 'poor' ? 'var(--bad)' : 'var(--text3)';
+  const VC = (v) => v === 'PASS' ? 'var(--go)' : v === 'WARNING' ? 'var(--warn)' : v === 'FAIL' ? 'var(--bad)' : 'var(--text3)';
+
+  function metricChip(label, m, unit) {
+    const val = m && (m.avg_ms != null ? m.avg_ms : (m.avg != null ? m.avg : null));
+    const txt = val == null ? '—' : (val + (unit || ''));
+    const col = RC(m && m.rating);
+    return `<div style="flex:1;min-width:90px;padding:6px 8px;background:var(--bg2);border-radius:4px;border-bottom:2px solid ${col}">
+      <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">${esc(label)}</div>
+      <div style="font-size:14px;font-weight:700;color:${col}">${esc(String(txt))}</div>
+      <div style="font-size:8px;color:var(--text3)">${esc((m && m.rating) || 'no_data')}</div>
+    </div>`;
+  }
+
+  function renderFlow(f) {
+    const m = (f.measurements && f.measurements.metrics) || {};
+    const vc = VC(f.verdict);
+    const score = f.performance_score == null ? '—' : f.performance_score;
+    const okReps = (f.measurements && f.measurements.successful) || 0;
+    const totReps = (f.measurements && f.measurements.repetitions) || 0;
+    return `<div class="card" style="margin-bottom:10px;padding:10px 14px;border-left:4px solid ${vc}">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+        <span style="font-weight:700;color:var(--text);font-size:13px">${esc(f.flow_id)} · ${esc(f.flow_name || '')}</span>
+        <span class="pill" style="background:${vc};color:#fff;font-size:9px;font-weight:700">${esc(f.verdict)}</span>
+        <span class="pill p-dim" style="font-size:9px">score ${esc(String(score))}</span>
+        <span class="pill p-dim" style="font-size:9px;margin-left:auto">${esc(String(okReps))}/${esc(String(totReps))} reps OK</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${metricChip('LCP', m.lcp, 'ms')}${metricChip('CLS', m.cls, '')}${metricChip('FCP', m.fcp, 'ms')}${metricChip('INP', m.inp, 'ms')}${metricChip('TTFB', m.ttfb, 'ms')}
+      </div>
+      ${f.entry_url ? `<div style="margin-top:6px;font-size:9px;color:var(--text3)">${esc(f.entry_url)}</div>` : ''}
+    </div>`;
+  }
+
+  content.innerHTML = flows.length ? flows.map(renderFlow).join('') : '<div class="empty">Sin flujos medidos</div>';
+}
+
+// ── RESPONSIVE ────────────────────────────────────────────────────────────────
+function renderResponsive() {
+  const cfg       = pj('responsive_config.json');
+  const container = document.getElementById('resp-modules-container');
+  const emptyEl   = document.getElementById('resp-empty');
+  const badges    = document.getElementById('resp-config-badges');
+  const metaEl    = document.getElementById('resp-config-meta');
+  const cfgCard   = document.getElementById('resp-config-card');
+
+  if (!cfg || !cfg.enabled) {
+    if (cfgCard)   cfgCard.style.display   = 'none';
+    if (container) container.innerHTML     = '';
+    if (emptyEl)   emptyEl.style.display   = '';
+    return;
+  }
+
+  const viewports = cfg.viewports || [];
+  document.getElementById('tb-responsive').textContent = viewports.length;
+
+  badges.innerHTML = viewports.map(vp =>
+    `<span class="pill p-dim" style="font-size:9px">${esc(vp.name)}${vp.width ? ' · '+vp.width+'×'+vp.height : ''}</span>`
+  ).join('');
+  metaEl.innerHTML = [
+    `<span>Policy: <strong>${esc(cfg.result_policy || 'strict')}</strong></span>`,
+    `<span>Modo: <strong>${esc(cfg.execution_mode || '—')}</strong></span>`,
+    `<span>MCP: <strong>${esc(cfg.mcp_capability || '—')}</strong></span>`,
+  ].join('');
+
+  const SC = { PASS: 'var(--go)', FAIL: 'var(--bad)', BLOCKED: 'var(--warn)', MISSING: 'var(--text3)' };
+  const SBG = { PASS: 'var(--go-bg)', FAIL: 'var(--bad-bg)', BLOCKED: 'var(--warn-bg)', MISSING: 'transparent' };
+  const SE = { PASS: '✅', FAIL: '❌', BLOCKED: '⚠️', MISSING: '◌' };
+
+  // Collect responsive CPs from all *_result.json files
+  let moduleHtml = '';
+  Object.entries(S.files).filter(([n]) => n.endsWith('_result.json')).forEach(([n, f]) => {
+    let modData; try { modData = JSON.parse(f.content); } catch { return; }
+    const moduleId = (modData.module_id) || n.replace(/_result\.json$/, '');
+    const respCPs = (modData.results || modData.test_cases || []).filter(r => r.responsive === true && r.viewport_results);
+    if (!respCPs.length) return;
+
+    // Per-viewport counters
+    const vpCnt = {};
+    for (const vp of viewports) vpCnt[vp.name] = { PASS: 0, FAIL: 0, BLOCKED: 0, total: 0 };
+
+    const cpRows = respCPs.map(r => {
+      const overallColor = SC[r.status] || 'var(--text3)';
+      const evLink = r.evidence_dir
+        ? `<a href="../${esc(r.evidence_dir)}evidence.html" target="_blank" style="color:var(--orange);font-size:.7rem;text-decoration:none" title="Ver evidencia">↗</a>`
+        : '';
+      const vpCells = viewports.map(vp => {
+        const vpR = (r.viewport_results || []).find(v => v.viewport_name === vp.name);
+        const st  = (vpR ? vpR.status : 'MISSING').toUpperCase();
+        const col = SC[st] || 'var(--text3)';
+        const bg  = SBG[st] || 'transparent';
+        const em  = SE[st] || '◌';
+        if (vpCnt[vp.name]) { if (vpCnt[vp.name][st] !== undefined) vpCnt[vp.name][st]++; vpCnt[vp.name].total++; }
+        const dur = vpR?.duration_ms ? `<div style="font-size:.6rem;color:var(--text3)">${(vpR.duration_ms/1000).toFixed(1)}s</div>` : '';
+        const vpEvLink = r.evidence_dir
+          ? `<a href="../${esc(r.evidence_dir)}${esc(vp.name)}/evidence.html" target="_blank" style="display:block;font-size:.55rem;color:var(--orange);text-decoration:none;margin-top:2px">detalle</a>`
+          : '';
+        return `<td style="text-align:center;padding:.35rem .25rem;background:${bg}">
+          <span style="color:${col};font-weight:700;font-size:.8rem">${em}</span>${dur}${vpEvLink}</td>`;
+      }).join('');
+      return `<tr>
+        <td style="padding:.35rem .6rem;font-size:.75rem;white-space:nowrap">${esc(r.cp_id)} ${evLink}</td>
+        <td style="text-align:center;padding:.35rem .25rem"><span style="color:${overallColor};font-weight:700;font-size:.8rem">${esc(r.status)}</span></td>
+        ${vpCells}
+      </tr>`;
+    }).join('');
+
+    // Summary row
+    const sumRow = viewports.map(vp => {
+      const c = vpCnt[vp.name] || {};
+      const pct = c.total ? Math.round((c.PASS||0)/c.total*100) : 0;
+      return `<td style="text-align:center;padding:.3rem .25rem;background:var(--bg3);font-size:.7rem">
+        <strong style="color:var(--go)">${c.PASS||0}</strong>/<span style="color:var(--bad)">${c.FAIL||0}</span>/<span style="color:var(--warn)">${c.BLOCKED||0}</span>
+        <div style="font-size:.6rem;color:var(--text3)">${pct}% PASS</div></td>`;
+    }).join('');
+
+    const vpHeaders = viewports.map(vp =>
+      `<th style="text-align:center;padding:.35rem .25rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--orange)">${esc(vp.name)}</th>`
+    ).join('');
+
+    moduleHtml += `<div class="card" style="margin-bottom:14px;overflow-x:auto">
+      <div class="ch">
+        <div class="ct">Módulo: ${esc(moduleId)}</div>
+        <div class="pill p-dim" style="font-size:9px">${respCPs.length} CPs</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;min-width:380px">
+        <thead><tr>
+          <th style="text-align:left;padding:.35rem .6rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--orange)">CP</th>
+          <th style="text-align:center;padding:.35rem .25rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;color:var(--orange)">Global</th>
+          ${vpHeaders}
+        </tr></thead>
+        <tbody>
+          ${cpRows}
+          <tr style="border-top:2px solid var(--border)">
+            <td colspan="2" style="padding:.3rem .6rem;background:var(--bg3);font-size:.7rem;color:var(--text2);font-weight:700">Total por viewport</td>
+            ${sumRow}
+          </tr>
+        </tbody>
+      </table>
+    </div>`;
+  });
+
+  if (container) container.innerHTML = moduleHtml || '<div class="empty">No se encontraron CPs responsive ejecutados.</div>';
+  if (emptyEl) emptyEl.style.display = 'none';
+}
+
+// ── DEFECTS ───────────────────────────────────────────────────────────────────
+function renderDefects() {
+  const d=pj('defects_classified.json');
+  if(!d) { document.getElementById('def-list').innerHTML = emptyOrPending('fase_2c', 'defects_classified.json no encontrado'); return; }
+  const items=d.defects||d.bugs||[];
+  document.getElementById('def-pill').textContent=items.length;
+  document.getElementById('tb-defects').textContent=items.length;
+  if(items.length){document.getElementById('tb-defects').style.background='var(--bad)';}
+  const cn={P1:0,P2:0,P3:0,P4:0};
+  items.forEach(i=>{const p=(i.severity||i.priority||'P4').toUpperCase();cn[p]=(cn[p]||0)+1});
+  document.getElementById('def-stats').innerHTML=
+    stile(cn.P1,'P1 · Crítico','Bloquea release',cn.P1?'var(--bad)':null)+
+    stile(cn.P2,'P2 · Alto','Impacto alto',cn.P2?'var(--warn)':null)+
+    stile(cn.P3,'P3 · Medio','Degradación',cn.P3?'var(--p3c)':null)+
+    stile(cn.P4,'P4 · Bajo','Cosmético',null);
+  document.getElementById('def-list').innerHTML=items.map(item=>{
+    const p=(item.severity||item.priority||'P4').toLowerCase();
+    const pc=p==='p1'?'var(--bad)':p==='p2'?'var(--warn)':p==='p3'?'var(--p3c)':'var(--blue)';
+    const raise=item.raise_developer?`<span class="pill p-bad" style="font-size:8px">↑ DEV</span>`:'';
+    // Badges: módulo + CP + HU
+    const metaHtml=(item.module||item.cp_reference||item.hu_reference)
+      ?`<div class="def-meta">
+          ${item.module?`<span class="pill p-mod">${esc(item.module)}</span>`:''}
+          ${item.cp_reference?`<span class="pill p-cp">CP: ${esc(item.cp_reference)}</span>`:''}
+          ${item.hu_reference?`<span class="pill p-hu">HU: ${esc(item.hu_reference)}</span>`:''}
+        </div>` : '';
+    // Impacto de negocio
+    const impactHtml=item.impact?`<div class="def-impact">💼 ${esc(item.impact)}</div>`:'';
+    // M5: impacto en release
+    const releaseNote = item.release_note || '';
+    const releaseColor = releaseNote.includes('BLOQUEA') ? 'var(--bad)'
+      : releaseNote.includes('DEBE') ? 'var(--warn)'
+      : releaseNote.includes('No bloquea') ? 'var(--text3)'
+      : 'var(--text4)';
+    const releaseHtml = releaseNote
+      ? `<div class="def-release" style="color:${releaseColor}">${esc(releaseNote)}</div>` : '';
+    // Links: archivo .md + evidencia HTML
+    const linksHtml=`<div class="def-links">
+      ${item.detail_path?`<a class="def-file-link" href="${esc(item.detail_path_url||'#')}" target="_blank" title="Abrir archivo de detalle">📄 ${esc(item.detail_path)}</a>`:''}
+      ${item.evidence_html_url?`<a class="def-evidence-link" href="${esc(item.evidence_html_url)}" target="_blank">🔍 Ver evidencia</a>`:''}
+    </div>`;
+    return `<div class="def-item d${p}" data-severity="${esc(p.toUpperCase())}" data-module="${esc((item.module||'').toLowerCase())}" data-search="${esc(((item.bug_id||'')+(item.title||'')+(item.cp_reference||'')).toLowerCase())}">
+      <div class="def-sev" style="color:${pc}">${esc(p.toUpperCase())}</div>
+      <div class="def-content">
+        <div class="def-head"><span class="def-id">${esc(item.bug_id||item.id||'')}</span>
+          <span class="def-title">${esc(item.title||item.name||'')}</span>${raise}</div>
+        <div class="def-desc">${esc(item.description||item.steps||'')}</div>
+        ${metaHtml}
+        ${releaseHtml}
+        ${impactHtml}
+        ${linksHtml}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Populate module filter
+  const defModules = new Set();
+  items.forEach(i => { if(i.module) defModules.add(i.module); });
+  const defModSelect = document.getElementById('def-f-mod');
+  if (defModSelect) { defModules.forEach(m => { const o=document.createElement('option'); o.value=m.toLowerCase(); o.textContent=m; defModSelect.appendChild(o); }); }
+}
+
+window.applyDefectFilters = function() {
+  const sev = document.getElementById('def-f-sev')?.value||'';
+  const mod = document.getElementById('def-f-mod')?.value||'';
+  const search = (document.getElementById('def-f-search')?.value||'').toLowerCase();
+  document.querySelectorAll('#def-list .def-item').forEach(item => {
+    const show =
+      (!sev || item.dataset.severity === sev) &&
+      (!mod || item.dataset.module === mod) &&
+      (!search || item.dataset.search.includes(search));
+    item.style.display = show ? '' : 'none';
+  });
+};
+
+// ── AUTOMATIZACIÓN ────────────────────────────────────────────────────────────
+function renderAutomation() {
+  const raw = gf('automation_coverage.json');
+  if (!raw) return;
+  let ac; try { ac = JSON.parse(raw); } catch { return; }
+
+  const flows   = ac.flows || [];
+  const total   = ac.total_e2e_flows  || flows.length;
+  const autoCnt = ac.automated_flows  || flows.filter(f => f.status === 'automated').length;
+  const skipCnt = ac.skipped_flows    || 0;
+  const pct     = ac.coverage_pct     ?? (total > 0 ? Math.round(autoCnt / total * 100) : 0);
+  const cps     = ac.total_cps_in_scope || 0;
+  const scope   = ac.scope || 'smoke_and_critical';
+
+  // Badge del tab
+  document.getElementById('tb-auto').textContent = autoCnt;
+  document.getElementById('auto-scope-pill').textContent = 'scope: ' + scope;
+
+  // Color del % según nivel
+  const pctColor = pct >= 80 ? 'var(--go)' : pct >= 50 ? 'var(--warn)' : 'var(--bad)';
+
+  // ── Tarjetas de métricas ────────────────────────────────────────────────
+  const statsEl = document.getElementById('auto-stats');
+  const pctGauge = `
+    <div style="position:relative;display:inline-flex;align-items:center;justify-content:center">
+      <svg width="56" height="56" viewBox="0 0 56 56">
+        <circle cx="28" cy="28" r="22" fill="none" stroke="var(--border)" stroke-width="5"/>
+        <circle cx="28" cy="28" r="22" fill="none" stroke="${pctColor}" stroke-width="5"
+          stroke-dasharray="${2*Math.PI*22}" stroke-dashoffset="${2*Math.PI*22*(1-pct/100)}"
+          stroke-linecap="round" transform="rotate(-90 28 28)"/>
+      </svg>
+      <div style="position:absolute;font-family:var(--sans);font-size:13px;font-weight:800;color:${pctColor}">${pct}%</div>
+    </div>`;
+
+  statsEl.innerHTML = `
+    <div class="stat-card">
+      <div style="display:flex;align-items:center;gap:12px">
+        ${pctGauge}
+        <div>
+          <div class="sv" style="color:${pctColor}">${pct}%</div>
+          <div class="sl">Cobertura E2E</div>
+        </div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="sv">${autoCnt}</div>
+      <div class="sl">Flujos automatizados</div>
+    </div>
+    <div class="stat-card">
+      <div class="sv" style="color:var(--text3)">${skipCnt}</div>
+      <div class="sl">Sin CPs en scope</div>
+    </div>
+    <div class="stat-card">
+      <div class="sv">${cps}</div>
+      <div class="sl">CPs incluidos</div>
+    </div>`;
+
+  // ── Tipo → badge color ──────────────────────────────────────────────────
+  const typePill = { happy_path_e2e:'p-go', resilience_e2e:'p-blue', boundary_e2e:'p-warn',
+                     responsive_e2e:'p-dim', synthetic_from_excel:'p-dim', e2e:'p-dim' };
+  const typeLabel = { happy_path_e2e:'Happy Path', resilience_e2e:'Resilience',
+                      boundary_e2e:'Boundary', responsive_e2e:'Responsive',
+                      synthetic_from_excel:'Sintético (Excel)', e2e:'E2E' };
+
+  // ── Separar flujos por kind ──────────────────────────────────────────────
+  const e2eFlows    = flows.filter(f => f.kind === 'e2e'    || (!f.kind && f.e2e_id));
+  const moduleFlows = flows.filter(f => f.kind === 'module' || (!f.kind && !f.e2e_id));
+
+  if (!flows.length) {
+    document.getElementById('auto-flows').innerHTML = '<div class="empty">No se encontraron flujos E2E</div>';
+    return;
+  }
+
+  function e2eCard(f) {
+    const isAuto   = f.status === 'automated';
+    const isSkip   = f.status === 'skipped_empty_scope';
+    const statusIcon  = isAuto ? '✅' : isSkip ? '⚠️' : '❌';
+    const statusLabel = isAuto ? 'Automatizado' : isSkip ? 'Sin CPs en scope' : 'No automatizado';
+    const statusColor = isAuto ? 'var(--go)' : isSkip ? 'var(--warn)' : 'var(--bad)';
+    const mods = (f.modules_involved || []);
+    const modChain = mods.length ? mods.join(' → ') : '—';
+    const tpill = typePill[f.type] || 'p-dim';
+    const tlabel = typeLabel[f.type] || f.type || 'E2E';
+    const runnerText = f.runner ? f.runner.split('/').pop() : null;
+    return `
+    <div style="display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)">
+      <div style="font-size:20px;margin-top:1px;flex-shrink:0">${statusIcon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+          <span style="font-family:var(--sans);font-size:10px;font-weight:800;color:var(--text3)">${f.flow_id || f.e2e_id}</span>
+          <span class="pill ${tpill}" style="font-size:9px">${tlabel}</span>
+          <span style="font-family:var(--sans);font-size:10px;font-weight:700;color:${statusColor}">${statusLabel}</span>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px">${f.name}</div>
+        ${mods.length ? `<div style="font-size:10px;color:var(--text3);font-family:var(--mono,monospace);margin-bottom:4px">${modChain}</div>` : ''}
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          ${f.cps_in_scope ? `<span style="font-size:10px;color:var(--text3)">${f.cps_in_scope} CPs</span>` : ''}
+          ${f.screens ? `<span style="font-size:10px;color:var(--text3)">${f.screens} pantallas</span>` : ''}
+          ${f.page_objects?.length ? `<span style="font-size:10px;color:var(--text3)">${f.page_objects.length} Page Objects</span>` : ''}
+          ${runnerText && isAuto ? `<span style="font-size:10px;color:var(--orange);font-family:var(--mono,monospace)">${runnerText}</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function moduleCard(f) {
+    const isCovered   = f.status === 'covered_by_e2e';
+    const statusIcon  = isCovered ? '🔗' : '❌';
+    const statusLabel = isCovered ? 'Cubierto por flujo E2E' : 'No cubierto';
+    const statusColor = isCovered ? 'var(--go)' : 'var(--bad)';
+    const coverList   = (f.covered_by || []).join(', ');
+    const rlColor = f.risk_level === 'critical' ? 'var(--bad)' : f.risk_level === 'high' ? 'var(--warn)' : 'var(--text3)';
+    return `
+    <div style="display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="font-size:18px;margin-top:1px;flex-shrink:0">${statusIcon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+          <span style="font-family:var(--sans);font-size:10px;font-weight:800;color:var(--text3)">${f.flow_id}</span>
+          <span class="pill p-dim" style="font-size:9px">módulo</span>
+          <span style="font-family:var(--sans);font-size:10px;font-weight:700;color:${statusColor}">${statusLabel}</span>
+          ${f.risk_level ? `<span style="font-family:var(--sans);font-size:9px;color:${rlColor}">${f.risk_level}</span>` : ''}
+        </div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">${f.name}</div>
+        ${isCovered ? `<div style="font-size:10px;color:var(--text3)">runners: <span style="font-family:var(--mono,monospace);color:var(--orange)">${coverList}</span></div>` : ''}
+        ${f.cps_in_scope ? `<div style="font-size:10px;color:var(--text3);margin-top:2px">${f.cps_in_scope} CPs en módulo</div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  const e2eSection = e2eFlows.length ? `
+    <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:12px 0 4px">
+      Flujos E2E (${e2eFlows.length})
+    </div>
+    ${e2eFlows.map(e2eCard).join('')}` : '';
+
+  const modSection = moduleFlows.length ? `
+    <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:16px 0 4px">
+      Módulos funcionales (${moduleFlows.length})
+    </div>
+    ${moduleFlows.map(moduleCard).join('')}` : '';
+
+  document.getElementById('auto-flows').innerHTML =
+    `<div style="padding:0 4px">${e2eSection}${modSection}</div>`;
+
+  // ── Poblar modal de instrucciones ───────────────────────────────────────
+  const cmds = ac.run_commands || {};
+  const setup = ac.setup_instructions || '';
+  const errors = ac.syntax_errors || [];
+  const pendCreds = ac.pending_credentials || [];
+
+  function cmdBlock(label, cmd) {
+    if (!cmd) return '';
+    const esc = cmd.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return `
+    <div style="margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">${label}</div>
+      <div style="display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 12px">
+        <code style="flex:1;font-size:11px;color:var(--text);word-break:break-all">${esc}</code>
+        <button onclick="navigator.clipboard.writeText('${cmd.replace(/'/g,"\\'")}').then(()=>{this.textContent='✓';setTimeout(()=>this.textContent='📋',1500)})"
+          style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px;color:var(--text2)">📋</button>
+      </div>
+    </div>`;
+  }
+
+  const perFlowCmds = flows.filter(f => f.status === 'automated').map(f => `
+    <div style="margin-bottom:8px">
+      <div style="font-size:10px;color:var(--text3);margin-bottom:3px">${esc(f.e2e_id)} — ${esc(f.name)}</div>
+      <div style="display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:7px 12px">
+        <code style="flex:1;font-size:11px;color:var(--orange);word-break:break-all">node run_all.js --flow=${f.e2e_id} --headless</code>
+        <button onclick="navigator.clipboard.writeText('node run_all.js --flow=${f.e2e_id} --headless').then(()=>{this.textContent='✓';setTimeout(()=>this.textContent='📋',1500)})"
+          style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px;color:var(--text2)">📋</button>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('auto-modal-title').textContent =
+    `${autoCnt} flujo(s) E2E automatizados — ${pct}% cobertura`;
+
+  document.getElementById('auto-modal-body').innerHTML = `
+    ${setup ? cmdBlock('1. Setup (primera vez)', setup) : ''}
+    ${cmdBlock('2. Suite completa (paralelo, headless)', cmds.full_suite)}
+    ${cmdBlock('3. Con screenshots por paso', cmds.with_evidence)}
+    ${cmdBlock('4. Retomar tras interrupción', cmds.resume)}
+    ${perFlowCmds ? `<div style="margin-top:16px;margin-bottom:8px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Ejecutar flujo individual</div>${perFlowCmds}` : ''}
+    ${errors.length ? `<div style="margin-top:12px;padding:8px 12px;background:var(--bad-bg,#fff0f0);border:1px solid var(--bad,#dc2626);border-radius:4px;font-size:11px;color:var(--bad,#dc2626)">⚠️ Errores de sintaxis detectados en: ${errors.join(', ')} — revisar antes de ejecutar.</div>` : ''}
+    ${pendCreds.length ? `<div style="margin-top:8px;padding:8px 12px;background:var(--orange-bg);border:1px solid var(--orange-b);border-radius:4px;font-size:11px;color:var(--warn)">⚠️ Credenciales pendientes en: ${pendCreds.join(', ')} — completar credentials.json antes de ejecutar.</div>` : ''}
+    <div style="margin-top:16px;font-size:10px;color:var(--text3)">Los scripts se encuentran en: <code style="color:var(--text2)">.claude/output/${gf('__run_id') || ''}/automation/</code></div>`;
+}
+
+</script>
+</body>
+</html>

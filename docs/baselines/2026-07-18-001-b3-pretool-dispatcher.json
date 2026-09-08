@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "slice": "B3",
+  "status": "complete",
+  "captured_at": "2026-07-18",
+  "environment": {
+    "os": "Linux WSL2 x86_64",
+    "node": "v24.18.0",
+    "rss": "not measured; deferred cross-platform to B9"
+  },
+  "method": {
+    "warmup_samples": 5,
+    "measured_samples": 30,
+    "legacy_execution": "matching ASDD hooks parallel per event",
+    "dispatcher_execution": "one production Node process per event",
+    "cpu": "Bash builtin time user+sys over 35 invocations, divided by 35",
+    "collector": "excluded from performance and validated independently"
+  },
+  "results": {
+    "bash_fast_path": {
+      "legacy": {
+        "processes": 7,
+        "p50_ms": 37.23,
+        "p95_ms": 40.33,
+        "cpu_ms_per_event": 229.86,
+        "aggregate_handler_wall_p95_ms": 230.12
+      },
+      "dispatcher": {
+        "processes": 1,
+        "p50_ms": 29.78,
+        "p95_ms": 33.64,
+        "cpu_ms_per_event": 33.2,
+        "aggregate_handler_wall_p95_ms": 33.62
+      },
+      "change": {
+        "p95_percent": -16.59,
+        "cpu_percent": -85.56,
+        "processes_percent": -85.71
+      }
+    },
+    "edit_representative": {
+      "legacy": {
+        "processes": 8,
+        "p50_ms": 36.86,
+        "p95_ms": 41.39,
+        "cpu_ms_per_event": 262.2,
+        "aggregate_handler_wall_p95_ms": 257.63
+      },
+      "dispatcher": {
+        "processes": 1,
+        "p50_ms": 29.79,
+        "p95_ms": 33.17,
+        "cpu_ms_per_event": 33.31,
+        "aggregate_handler_wall_p95_ms": 33.15
+      },
+      "change": {
+        "p95_percent": -19.86,
+        "cpu_percent": -87.3,
+        "processes_percent": -87.5
+      }
+    }
+  },
+  "acceptance": {
+    "wall_p95_lte_105_percent": true,
+    "cpu_lte_50_percent": true,
+    "one_asdd_process": true,
+    "differential": "11/11 PASS",
+    "contract": "5/5 PASS",
+    "dfx_001": "2/2 PASS",
+    "collector_coexistence": "2/2 PASS",
+    "rollback": "PASS"
+  },
+  "conclusion": "B3 passes ADR-018 gates; production dispatcher replaces the registered legacy chain while collector and PostToolUse remain independent."
+}

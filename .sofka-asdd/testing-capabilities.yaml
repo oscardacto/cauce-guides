@@ -1,0 +1,52 @@
+# Testing Capabilities — ASDD Project Config
+#
+# Este archivo es la fuente de verdad del estado de testing para el proyecto.
+# Configurarlo al adoptar el template. El agente sofka-asdd-qa-engineer puede
+# actualizarlo automáticamente al ejecutar /sofka-asdd:specify o /sofka-asdd:analyze.
+#
+# Para activar Strict TDD Mode: cambiar strict_tdd a true y completar la sección testing.
+
+strict_tdd: false
+
+testing:
+  runner:
+    command: ""       # ej: "npm test", "go test ./...", "pytest", "mvn test", "./gradlew test"
+    framework: ""     # ej: "Jest", "Vitest", "Go testing", "pytest", "JUnit", "xUnit"
+    # scoped_command: opcional. Si está definido y no vacío, el skill pre-push lo usa en lugar
+    # de `command` cuando detecta que el diff afecta un módulo concreto. Usar el placeholder
+    # {module} donde deba ir el path/nombre del módulo. Si no está definido o está vacío,
+    # el skill cae al `command` completo (comportamiento actual sin cambios).
+    # Ejemplo agnóstico — descomentar y adaptar al stack del proyecto:
+    # scoped_command: "<runner> {module}"
+    scoped_command: ""
+
+  layers:
+    unit:
+      available: false
+      tool: ""        # ej: "Jest", "Vitest", "JUnit", "pytest", "go test", "xUnit"
+    integration:
+      available: false
+      tool: ""        # ej: "Supertest", "net/http/httptest", "Spring Test", "pytest", "WebApplicationFactory"
+    e2e:
+      available: false
+      tool: ""        # ej: "Playwright", "Cypress", "Detox", "Maestro", "Selenium"
+
+  coverage:
+    available: false
+    command: ""       # ej: "npm test -- --coverage", "go test -cover ./...", "pytest --cov", "mvn jacoco:report"
+    thresholds:
+      domain: 80      # % cobertura mínima — lógica de dominio
+      services: 75    # % cobertura mínima — servicios de aplicación
+      adapters: 60    # % cobertura mínima — adaptadores (repositorios, controllers)
+      ui: 70          # % cobertura mínima — componentes UI
+
+  quality:
+    linter:
+      available: false
+      command: ""     # ej: "npx eslint .", "golangci-lint run", "pylint src", "dotnet format --verify-no-changes"
+    type_checker:
+      available: false
+      command: ""     # ej: "npx tsc --noEmit", "go vet ./...", "mypy src", "dotnet build"
+    formatter:
+      available: false
+      command: ""     # ej: "npx prettier --check .", "gofmt -l .", "black --check .", "dotnet format --verify-no-changes"

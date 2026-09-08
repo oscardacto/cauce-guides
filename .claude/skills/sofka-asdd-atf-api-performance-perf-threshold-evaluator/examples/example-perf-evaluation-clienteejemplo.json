@@ -1,0 +1,147 @@
+{
+  "run_id": "PruebaAPIClienteEjemplo-v1.0-20260521-1030",
+  "evaluated_at": "2026-05-21T13:30:00-05:00",
+  "scenarios": [
+    {
+      "name": "smoke",
+      "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "duration_min": 1,
+      "vus_max": 1,
+      "iterations_total": 58,
+      "metrics": {
+        "http_req_duration_avg_ms": 145,
+        "http_req_duration_p50_ms": 134,
+        "http_req_duration_p95_ms": 187,
+        "http_req_duration_p99_ms": 234,
+        "http_req_failed_rate_pct": 0,
+        "throughput_rps": 0.97,
+        "custom_success_count": 58
+      },
+      "thresholds_evaluation": [
+        {"metric": "http_req_duration_p95", "threshold": "< 500ms", "observed": "187ms", "result": "pass"},
+        {"metric": "http_req_failed", "threshold": "< 1%", "observed": "0%", "result": "pass"}
+      ],
+      "verdict": "PASS",
+      "breaking_point_vus": null,
+      "baseline_comparison": {"has_baseline": false, "p95_change_pct": null, "error_rate_change_pct": null, "verdict": "n/a"},
+      "recommendations": []
+    },
+    {
+      "name": "load",
+      "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "duration_min": 10,
+      "vus_max": 50,
+      "iterations_total": 5247,
+      "metrics": {
+        "http_req_duration_avg_ms": 234,
+        "http_req_duration_p50_ms": 187,
+        "http_req_duration_p95_ms": 678,
+        "http_req_duration_p99_ms": 1234,
+        "http_req_failed_rate_pct": 0.3,
+        "throughput_rps": 8.7,
+        "custom_success_count": 5231
+      },
+      "thresholds_evaluation": [
+        {"metric": "http_req_duration_p95", "threshold": "< 1000ms", "observed": "678ms", "result": "pass"},
+        {"metric": "http_req_duration_p99", "threshold": "< 2000ms", "observed": "1234ms", "result": "pass"},
+        {"metric": "http_req_failed", "threshold": "< 1%", "observed": "0.3%", "result": "pass"}
+      ],
+      "verdict": "PASS",
+      "breaking_point_vus": null,
+      "baseline_comparison": {"has_baseline": false, "p95_change_pct": null, "error_rate_change_pct": null, "verdict": "n/a"},
+      "recommendations": []
+    },
+    {
+      "name": "stress",
+      "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "duration_min": 15,
+      "vus_max": 200,
+      "iterations_total": 8910,
+      "metrics": {
+        "http_req_duration_avg_ms": 1450,
+        "http_req_duration_p50_ms": 980,
+        "http_req_duration_p95_ms": 3450,
+        "http_req_duration_p99_ms": 5670,
+        "http_req_failed_rate_pct": 7.8,
+        "throughput_rps": 9.9,
+        "custom_success_count": 8215
+      },
+      "thresholds_evaluation": [
+        {"metric": "http_req_duration_p95", "threshold": "< 2000ms", "observed": "3450ms", "result": "fail"},
+        {"metric": "http_req_duration_p99", "threshold": "< 3000ms", "observed": "5670ms", "result": "fail"},
+        {"metric": "http_req_failed", "threshold": "< 5%", "observed": "7.8%", "result": "fail"}
+      ],
+      "verdict": "FAIL",
+      "breaking_point_vus": 150,
+      "baseline_comparison": {"has_baseline": false, "p95_change_pct": null, "error_rate_change_pct": null, "verdict": "n/a"},
+      "recommendations": [
+        "Degradación notable sobre 150 VUs concurrentes — el throughput se aplana a ~10 rps. Sospecha: pool de conexiones BD saturado (sugerencia inicial: revisar HikariCP maxPoolSize).",
+        "p95 = 3.4s en stress sugiere bloqueo en query — analizar plan de t_billing_request. Verificar índice compuesto en (cycle, distributorId, billingPeriod).",
+        "Error rate 7.8% — investigar status codes recibidos durante el fail. Si son 503/504, es timeout de BD; si son 500 con NPE, es el bug D-001 manifestándose bajo carga.",
+        "Considerar pruebas con caché Redis para validaciones repetidas de distributorId."
+      ]
+    },
+    {
+      "name": "spike",
+      "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "duration_min": 5,
+      "vus_max": 300,
+      "iterations_total": 2340,
+      "metrics": {
+        "http_req_duration_avg_ms": 2870,
+        "http_req_duration_p50_ms": 1980,
+        "http_req_duration_p95_ms": 4890,
+        "http_req_duration_p99_ms": 7230,
+        "http_req_failed_rate_pct": 12.4,
+        "throughput_rps": 7.8,
+        "custom_success_count": 2050
+      },
+      "thresholds_evaluation": [
+        {"metric": "http_req_duration_p95", "threshold": "< 5000ms", "observed": "4890ms", "result": "marginal"},
+        {"metric": "http_req_failed", "threshold": "< 10%", "observed": "12.4%", "result": "fail"}
+      ],
+      "verdict": "FAIL",
+      "breaking_point_vus": 250,
+      "baseline_comparison": {"has_baseline": false, "p95_change_pct": null, "error_rate_change_pct": null, "verdict": "n/a"},
+      "recommendations": [
+        "Sin auto-scaling visible — el servicio no responde al spike abrupto. Considerar implementar Horizontal Pod Autoscaler (HPA) en Kubernetes con métricas de CPU o request rate.",
+        "El servicio no se recupera rápido tras el spike — p95 sigue >2s en el 1min post-spike. Validar warmup de connections y JVM jitting.",
+        "Implementar circuit breaker (Resilience4j) para degradar gracefully cuando se detecta saturación."
+      ]
+    },
+    {
+      "name": "soak",
+      "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "duration_min": 60,
+      "vus_max": 30,
+      "iterations_total": 18540,
+      "metrics": {
+        "http_req_duration_avg_ms": 287,
+        "http_req_duration_p50_ms": 234,
+        "http_req_duration_p95_ms": 712,
+        "http_req_duration_p99_ms": 1340,
+        "http_req_failed_rate_pct": 0.5,
+        "throughput_rps": 5.15,
+        "custom_success_count": 18447
+      },
+      "thresholds_evaluation": [
+        {"metric": "http_req_duration_p95", "threshold": "< 1000ms", "observed": "712ms", "result": "pass"},
+        {"metric": "http_req_failed", "threshold": "< 1%", "observed": "0.5%", "result": "pass"}
+      ],
+      "verdict": "PASS",
+      "breaking_point_vus": null,
+      "baseline_comparison": {"has_baseline": false, "p95_change_pct": null, "error_rate_change_pct": null, "verdict": "n/a"},
+      "recommendations": [
+        "Soak completado sin signos de memory leak ni degradación gradual de p95 — el servicio es estable a 30 VUs sostenidos durante 1 hora.",
+        "Recomendado: revisar dashboards de heap memory y CPU durante el run para confirmar que no hubo trending al alza."
+      ]
+    }
+  ],
+  "summary": {
+    "scenarios_passed": 3,
+    "scenarios_failed": 2,
+    "scenarios_marginal": 0,
+    "regressions_vs_baseline": 0,
+    "recommendations_total": 9
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "contract_hash": "sha256:7a3b8c2f9d1e4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b",
+  "first_seen_in_run": "PruebaAPIClienteEjemplo-v1.0-20260427-0900",
+  "first_seen_at": "2026-04-27T09:15:00-05:00",
+  "openapi_version": "3.0.3",
+  "source_type": "openapi",
+  "source_path_history": [
+    "docs/output/PruebaAPIClienteEjemplo-v1.0-20260427-0900/api-context/wi-001-api-context.json",
+    "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/api-context/wi-001-api-context.json"
+  ],
+  "endpoints_summary": {
+    "total": 4,
+    "by_method": {
+      "GET": 1,
+      "POST": 2,
+      "PUT": 1
+    }
+  },
+  "schemas_count": 6,
+  "seen_in_runs": [
+    {
+      "run_id": "PruebaAPIClienteEjemplo-v1.0-20260427-0900",
+      "recorded_at": "2026-04-27T09:15:00-05:00",
+      "cycle_type": "baseline",
+      "delta_status": "baseline"
+    },
+    {
+      "run_id": "PruebaAPIClienteEjemplo-v1.0-20260521-1030",
+      "recorded_at": "2026-05-21T10:39:30-05:00",
+      "cycle_type": "fast-track",
+      "delta_status": "unchanged"
+    }
+  ],
+  "deltas_from_history": []
+}

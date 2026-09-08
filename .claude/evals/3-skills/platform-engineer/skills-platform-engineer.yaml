@@ -1,0 +1,64 @@
+description: "Skills: sofka-asdd-platform-engineer — proceso y output por skill"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # skill: pipeline
+  - description: "PROCESO pipeline: stages con gates, no deploy sin tests"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-platform-engineer-pipeline.txt"
+      input: "Diseña el pipeline CI/CD en GitHub Actions para: API Node.js, tests Jest, análisis con SonarQube, build Docker, deploy a ECS en 3 ambientes (dev/qa/prod)."
+    assert:
+      - type: llm-rubric
+        value: |
+          El pipeline debe incluir: stages separados (lint → test → sonar → build → deploy-dev → approval → deploy-qa → approval → deploy-prod),
+          gates: si tests fallan → no continuar, si SonarQube falla → no continuar,
+          aprobación manual para prod, y rollback automático si el healthcheck falla.
+
+  # skill: containers
+  - description: "OUTPUT containers: Dockerfile multi-stage seguro"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-platform-engineer-containers.txt"
+      input: "Genera Dockerfile para API Node.js 20 en producción. El app usa yarn y escucha en puerto 3000."
+    assert:
+      - type: icontains
+        value: "FROM node:"
+      - type: llm-rubric
+        value: |
+          El Dockerfile debe: usar multi-stage build (build stage + runtime stage),
+          imagen base con tag fijo (no :latest), usuario no-root,
+          COPY package.json antes del código (para cache de layers),
+          HEALTHCHECK definido, y EXPOSE del puerto 3000.
+
+  # skill: iac
+  - description: "PROCESO iac: módulos reutilizables, sin hardcode de secretos"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-platform-engineer-iac.txt"
+      input: "Define en Terraform los recursos para el servicio de pagos: ECS Fargate task, Application Load Balancer y RDS PostgreSQL en AWS. Ambientes: dev y prod con diferentes tamaños."
+    assert:
+      - type: llm-rubric
+        value: |
+          El IaC debe: usar variables para distinguir dev/prod (instance_class, desired_count),
+          no hardcodear credenciales de RDS — usar aws_secretsmanager_secret o SSM,
+          incluir security groups adecuados (RDS solo accesible desde ECS, no público),
+          y outputs relevantes (db_endpoint, alb_dns_name).
+
+  # skill: observability
+  - description: "OUTPUT observability: SLOs + alertas + dashboards"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-platform-engineer-observability.txt"
+      input: "Define la observabilidad para el servicio de notificaciones. SLA: 99.5% uptime, mensajes entregados en < 5s. Stack: AWS CloudWatch."
+    assert:
+      - type: llm-rubric
+        value: |
+          La estrategia de observabilidad debe incluir:
+          SLOs derivados (99.5% uptime → 3.65h downtime/mes, p95 delivery < 5s),
+          métricas a instrumentar (delivery rate, latencia, DLQ size, error rate),
+          alertas con umbrales (warning cuando error rate > 1%, page cuando > 5%),
+          y un dashboard mínimo con las 4 golden signals (latencia, tráfico, errores, saturación).
+

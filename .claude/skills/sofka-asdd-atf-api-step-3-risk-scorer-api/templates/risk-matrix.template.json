@@ -1,0 +1,31 @@
+{
+  "$schema": "Matriz de riesgo (probabilidad × impacto) por endpoint",
+  "wi_id": "wi-NNN",
+  "risk_matrix": [
+    {
+      "endpoint": "{METHOD} {path}",
+      "probability": 0,
+      "impact": 0,
+      "risk_score": 0,
+      "category": "critical | high | medium | low",
+      "probability_signals": ["{señal}"],
+      "impact_signals": ["{señal}"],
+      "recommended_cps": 0,
+      "recommended_effort_pct": 0
+    }
+  ],
+  "wi_summary": {
+    "highest_risk_endpoint": "{METHOD} {path}",
+    "category_distribution": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "estimated_total_effort_hours": 0
+  },
+  "priorization_for_step_6": [
+    "{ordenamiento sugerido por riesgo}"
+  ],
+  "generated_at": "{ISO 8601}"
+}

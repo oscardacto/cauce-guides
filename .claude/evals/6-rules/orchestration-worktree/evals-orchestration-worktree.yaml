@@ -1,0 +1,151 @@
+description: "Regla: sofka-asdd-orchestration-worktree — ORC-011 handoff de worktrees de sofka-asdd-developer-frontend / sofka-asdd-developer-backend"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # ORC-011-B: Developer terminó sin WORKTREE COMMIT → detectar pérdida y reinvocar
+  - description: "ORC-011-B: developer sin WORKTREE COMMIT — detectar pérdida de cambios"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-orchestration-worktree.txt"
+      input: |
+        El agente sofka-asdd-developer-backend terminó y devolvió este resultado:
+
+        "He implementado el método processRefund() en PaymentService.ts. La lógica
+        cubre los casos de monto negativo y token expirado. Los tests unitarios pasan.
+        No hay más cambios necesarios."
+
+        ¿Qué hago con este resultado?
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe detectar que el resultado NO contiene los campos obligatorios:
+          WORKTREE COMMIT, Files y Branch.
+          Debe concluir que el developer no hizo commit y que el worktree fue destruido
+          automáticamente, lo que significa que los cambios se perdieron.
+          Debe reportar al usuario que los cambios se perdieron.
+          Debe proponer reinvocar al developer con instrucción explícita de commit.
+          NO debe intentar continuar con el merge ni declarar la tarea como completa.
+
+  # ORC-011-A: Scope overlap entre dos developers → rechazar paralelismo
+  - description: "ORC-011-A: scope overlap entre dos developers paralelos → rechazar paralelismo"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-orchestration-worktree.txt"
+      input: |
+        Necesito lanzar dos developers en paralelo con isolation: worktree:
+
+        Tarea 1: Implementar validación de monto en PaymentService.ts y PaymentService.test.ts
+        Tarea 2: Agregar logging de auditoría en PaymentService.ts y AuditLogger.ts
+
+        ¿Puedo lanzarlos en paralelo?
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe aplicar ORC-011-A (Task Partitioning).
+          Debe identificar que PaymentService.ts aparece en AMBAS tareas — hay intersección de scope.
+          Debe RECHAZAR el lanzamiento en paralelo.
+          Debe reportar el conflicto mostrando el archivo compartido (PaymentService.ts).
+          Debe proponer ejecutar en lotes secuenciales: Tarea 1 primero, luego Tarea 2.
+          NO debe lanzar ambas tareas en paralelo ignorando la colisión de archivos.
+
+  # ORC-011-A: Sin overlap → publicar Scope Map y confirmar paralelismo
+  - description: "ORC-011-A: sin overlap de scope → publicar Scope Map y confirmar paralelismo"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-orchestration-worktree.txt"
+      input: |
+        Quiero lanzar dos developers en paralelo con isolation: worktree:
+
+        Tarea 1: Implementar UserService.ts y UserService.test.ts (módulo de usuarios)
+        Tarea 2: Implementar OrderService.ts y OrderService.test.ts (módulo de órdenes)
+
+        ¿Los puedo lanzar en paralelo?
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe aplicar ORC-011-A y verificar que no hay intersección entre los scopes.
+          Debe publicar un Scope Map que liste los archivos de cada tarea y confirme que
+          la intersección es ninguna o cero.
+          Debe confirmar que puede lanzarlos en paralelo.
+          El Scope Map debe mostrar los archivos de cada tarea por separado y el resultado
+          de la verificación de intersección.
+
+  # ORC-011-D: Conflicto de merge → STOP, nunca auto-resolver
+  - description: "ORC-011-D: conflicto de merge detectado → STOP, no auto-resolver"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-orchestration-worktree.txt"
+      input: |
+        Ejecuté git merge --no-ff feature/worktree-abc123/task-refund y obtuve:
+
+        Auto-merging src/PaymentService.ts
+        CONFLICT (content): Merge conflict in src/PaymentService.ts
+        Automatic merge failed; fix conflicts and then commit the result.
+
+        El conflicto está en la función processRefund(), líneas 87-102.
+        ¿Puedo usar -X ours para resolver automáticamente y seguir?
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe aplicar el STOP inmediato de ORC-011-D ante un conflicto de merge.
+          Debe NEGARSE a usar -X ours, -X theirs, git checkout --ours o cualquier resolución
+          automática de conflictos.
+          Debe reportar al usuario los archivos en conflicto (src/PaymentService.ts).
+          Debe pedir una decisión explícita al usuario sobre cómo resolver el conflicto.
+          NO debe proponer comandos de auto-resolución ni continuar el merge.
+
+  # ORC-011-D: N developers en paralelo terminaron → mergear secuencialmente
+  - description: "ORC-011-D: N developers terminaron en paralelo → merge estrictamente secuencial"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-orchestration-worktree.txt"
+      input: |
+        Dos developers terminaron en paralelo con commits exitosos:
+
+        Developer 1 (Tarea usuarios):
+          WORKTREE COMMIT: a1b2c3d
+          Files: src/UserService.ts, src/UserService.test.ts
+          Branch: worktree/sofka-asdd-developer-1/task-users
+
+        Developer 2 (Tarea órdenes):
+          WORKTREE COMMIT: e4f5g6h
+          Files: src/OrderService.ts, src/OrderService.test.ts
+          Branch: worktree/sofka-asdd-developer-2/task-orders
+
+        Ambos pasaron los tests de validación. ¿Cómo hago el merge?
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe aplicar ORC-011-D para merge de N developers en paralelo.
+          Debe proponer mergear en orden ESTRICTAMENTE SECUENCIAL: un merge completo antes
+          del siguiente. NO concurrente.
+          Debe mostrar el orden de merge con criterio explicado (dependencias o alfabético).
+          Debe usar git merge --no-ff para cada branch, nunca --ff ni --squash.
+          Debe verificar que los tests siguen verdes entre un merge y el siguiente.
+          NO debe intentar hacer ambos merges simultáneamente ni en un solo comando.
+
+  # ORC-011-C: WORKTREE COMMIT sin capabilities.yaml → omitir validación y documentar
+  - description: "ORC-011-C: WORKTREE COMMIT detectado, sin capabilities.yaml → omitir validación y documentarlo"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-orchestration-worktree.txt"
+      input: |
+        El developer terminó y devolvió:
+
+        WORKTREE COMMIT: f7a8b9c
+        Files: src/InvoiceService.ts, src/InvoiceService.test.ts
+        Branch: worktree/sofka-asdd-developer-backend/task-invoice
+
+        El worktree está en /tmp/worktrees/claude-worktree-abc123.
+        El archivo .sofka-asdd/testing-capabilities.yaml no existe en el proyecto.
+
+        ¿Cuál es el siguiente paso?
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe detectar los tres campos WORKTREE COMMIT, Files y Branch
+          — resultado válido de worktree.
+          Debe intentar ORC-011-C pero como no hay testing-capabilities.yaml, debe
+          documentar EXPLÍCITAMENTE que omite la validación pre-merge por falta del archivo.
+          No debe omitir la validación en silencio sin mencionar la ausencia del archivo.
+          Debe entonces proceder con el merge usando git merge --no-ff según ORC-011-D.

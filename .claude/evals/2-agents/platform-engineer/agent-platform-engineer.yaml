@@ -1,0 +1,88 @@
+description: "sofka-asdd-platform-engineer: CI/CD, containers e IaC"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../../prompts/system-agent-platform-engineer.txt
+
+tests:
+  - description: "PROCESO: skill pipeline — diseña CI/CD con gates de calidad"
+    vars:
+      input: |
+        Diseña el pipeline de CI/CD para el servicio de pagos en GitHub Actions.
+        Debe incluir: tests, análisis de seguridad, build y deploy a dev/qa/prod.
+    assert:
+      - type: llm-rubric
+        value: |
+          El platform engineer con skill pipeline debe:
+          1. Definir stages: test → security-scan → build → deploy-dev → approval-gate → deploy-prod
+          2. Incluir gates de calidad entre stages (no deploy si tests fallan)
+          3. Separar environments con aprobación manual para producción
+          4. Incluir rollback automático ante fallo en producción
+
+  - description: "PROCESO: skill containers — Dockerfile seguro y optimizado"
+    vars:
+      input: |
+        Genera el Dockerfile para el servicio de pagos en Node.js 18.
+        Debe ser seguro y optimizado para producción.
+    assert:
+      - type: llm-rubric
+        value: |
+          El platform engineer con skill containers debe generar:
+          1. Imagen base específica con tag fijo (no :latest)
+          2. Multi-stage build (separar build de runtime)
+          3. Usuario no-root para ejecutar la app
+          4. .dockerignore para excluir node_modules, .env, .git
+          5. HEALTHCHECK definido
+
+  - description: "PROCESO: skill iac — infraestructura como código reproducible"
+    vars:
+      input: |
+        Define la infraestructura en Terraform para: ECS Fargate, RDS PostgreSQL,
+        ElastiCache Redis y Application Load Balancer en AWS.
+    assert:
+      - type: llm-rubric
+        value: |
+          El platform engineer con skill iac debe:
+          1. Definir módulos separados por componente (ECS, RDS, Redis, ALB)
+          2. Usar variables para configuración por ambiente
+          3. Incluir outputs relevantes (endpoints, ARNs)
+          4. No hardcodear credenciales — usar AWS Secrets Manager o SSM Parameter Store
+          5. Incluir tags de ambiente, proyecto y owner
+
+  - description: "PROCESO: skill observability — SLOs y alertas"
+    vars:
+      input: |
+        Define los SLOs para el servicio de pagos y las alertas correspondientes.
+        SLA contractual: 99.9% uptime, p95 < 2s para transacciones.
+    assert:
+      - type: llm-rubric
+        value: |
+          El platform engineer con skill observability debe:
+          1. Definir SLOs derivados del SLA (99.9% uptime → error budget 43.8 min/mes)
+          2. Métricas a medir: disponibilidad, latencia p50/p95/p99, error rate
+          3. Alertas con umbrales: cuándo page (urgente) vs cuándo notificar (warning)
+          4. Burnrate alerts para el error budget
+          5. Dashboard mínimo requerido
+
+  - description: "OUTPUT: Plan de despliegue con rollback definido"
+    vars:
+      input: |
+        Planifica el despliegue de la versión 2.0 del servicio de pagos en producción.
+        Hay cambios en el esquema de base de datos y en 3 endpoints críticos.
+    assert:
+      - type: llm-rubric
+        value: |
+          El plan de despliegue debe incluir:
+          1. Estrategia de deploy (blue/green, canary, rolling) — justificada para este caso
+          2. Orden de operaciones: ¿migración de DB antes o después del deploy de app?
+          3. Criterios de rollback: ¿qué métricas disparan el rollback automático?
+          4. Plan de rollback de la migración de DB (si es destructiva, es irreversible)
+          5. Ventana de mantenimiento y comunicación a usuarios si aplica
+

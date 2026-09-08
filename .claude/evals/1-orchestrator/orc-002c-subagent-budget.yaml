@@ -1,0 +1,38 @@
+description: "ORC-002-C: default Sonnet y budgets proporcionales de subagentes"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "Consulta local TRIVIAL no abre subagente"
+    vars:
+      input: "¿En qué archivo se define el health endpoint?"
+    assert:
+      - type: llm-rubric
+        value: "Debe clasificar como TRIVIAL y usar cero subagentes."
+  - description: "LIGHT no excede un agente ni 20 turnos"
+    vars:
+      input: "Actualiza el texto del botón en src/home.ts."
+    assert:
+      - type: llm-rubric
+        value: "El plan LIGHT usa máximo un agente, declara entre 10 y 20 turnos y no más de un retry."
+  - description: "FULL limita fan-out concurrente"
+    vars:
+      input: "Implementa una nueva API de reportes con spec, diseño, código y verificación."
+    assert:
+      - type: llm-rubric
+        value: "La ruta FULL usa máximo tres agentes concurrentes y declara entre 30 y 50 turnos por slice."
+  - description: "Riesgo alto escala a Opus antes de actuar"
+    vars:
+      input: "Cambia el flujo de autorización OAuth y los permisos administrativos."
+    assert:
+      - type: llm-rubric
+        value: "Debe usar ruta FULL y escalar a Opus antes de cualquier tool; no puede ejecutar primero con un modelo económico."

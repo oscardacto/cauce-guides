@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "slice": "B7",
+  "status": "complete",
+  "captured_at": "2026-07-18",
+  "contract": {
+    "coordinators": 2,
+    "core_words_limit": 3500,
+    "stretch_core_words_limit": 2500,
+    "point_of_use_routes": 10,
+    "tools_all_allowed": false,
+    "failure_mode": "missing or mutated phase spec blocks before act",
+    "rollback_scope": "one coordinator at a time"
+  },
+  "method": {
+    "before_source": "B6 runtime metrics at commit 08f7fba",
+    "after_source": ".claude/scripts/sofka-asdd-runtime-metrics.mjs",
+    "integrity_manifest": ".sofka-asdd/coordinator-loading.json",
+    "consumer_test": ".claude/scripts/test-thin-coordinator-loading.mjs",
+    "word_count": "whitespace-delimited canonical agent words using the shared context-budget library"
+  },
+  "results": {
+    "coordinator_core_words": {
+      "combined": { "before": 18179, "after": 1074, "change_percent": -94.09 },
+      "sofka-asdd-atf-web-qa-engineer": { "before": 10644, "after": 642, "change_percent": -93.97 },
+      "sofka-asdd-ba-descomponedor": { "before": 7535, "after": 432, "change_percent": -94.27 }
+    },
+    "coordinator_initial_agent_plus_skills_words": {
+      "combined": { "before": 19385, "after": 2280, "change_percent": -88.24 },
+      "sofka-asdd-atf-web-qa-engineer": { "before": 11073, "after": 1071, "change_percent": -90.33 },
+      "sofka-asdd-ba-descomponedor": { "before": 8312, "after": 1209, "change_percent": -85.45 }
+    },
+    "atf_web_tools": {
+      "before": "all",
+      "after": ["Read", "Write", "Edit", "Glob", "Grep", "Bash", "Task"]
+    },
+    "ba_tools": {
+      "before": ["Read", "Grep", "Glob", "Write", "Edit"],
+      "after": ["Read", "Grep", "Glob", "Write", "Edit"]
+    },
+    "largest_agent_with_skills_words": { "before": 11073, "after": 8905, "change_percent": -19.58 },
+    "largest_measured_effective_context_words": { "before": 21289, "after": 19121, "change_percent": -10.18 },
+    "always_on_words": { "before": 5825, "after": 5825 },
+    "context_budget_warnings": { "before": 12, "after": 9 }
+  },
+  "acceptance": {
+    "cores_lte_3500": "2/2 PASS",
+    "cores_lte_2500_stretch": "2/2 PASS",
+    "phase_routes_resolve_read_before_act": "10/10 PASS",
+    "route_hashes_and_markers": "10/10 PASS",
+    "missing_phase_fails_before_action": "PASS",
+    "ba_normative_partition_lossless": "PASS",
+    "tools_all_removed": "PASS",
+    "per_coordinator_rollback_isolated": "PASS",
+    "initial_agent_plus_skill_gate_promoted_to_error": true,
+    "thin_coordinator_gate_promoted_to_error": true
+  },
+  "remaining_staged_debt": {
+    "global_eager_skill_gate": "warning",
+    "warning_count": 9,
+    "other_context_gates": "error"
+  },
+  "unmeasured_components": [
+    "provider tokenization",
+    "tool schemas",
+    "MCP schemas",
+    "provider internal context"
+  ]
+}

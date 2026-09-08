@@ -1,0 +1,80 @@
+description: "Carga on-demand de capacidades (sofka-asdd-load-capability.mjs): los 5 agentes migrados sin cobertura previa (data-architect, data-governance, ba-scope-manager, ba-functional-architect, ba-functional-sme) declaran exactamente 1 capability primaria y usan el comando exacto del loader — no precargan el catálogo ni asumen una segunda capability sin que el plan la declare."
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  - description: "data-architect: elige data-eng-discovery como primary, no precarga el catálogo"
+    vars:
+      system_prompt: file://../../prompts/system-agent-data-architect.txt
+      input: |
+        Arranca un engagement de datos nuevo: necesito inventariar las fuentes técnicas y
+        stakeholders del cliente antes de proponer arquitectura.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe identificar `sofka-asdd-data-eng-discovery` como la capability primaria a cargar.
+          Debe nombrar el comando exacto `node .claude/scripts/sofka-asdd-load-capability.mjs sofka-asdd-data-eng-discovery`.
+          NO debe decir que precarga o lee todas las capabilities del catálogo de una vez.
+          NO debe asumir una segunda capability sin que el plan la haya declarado como dependency.
+
+  - description: "data-governance: elige data-eng-governance-assessment como primary"
+    vars:
+      system_prompt: file://../../prompts/system-agent-data-governance.txt
+      input: |
+        Evalúa el estado de gobernanza de datos del dominio de ventas: necesito el semáforo
+        por dimensión (lineage, calidad, PII, retención, acceso, compliance).
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe identificar `sofka-asdd-data-eng-governance-assessment` como la capability primaria.
+          Debe nombrar el comando exacto del loader con esa capability.
+          NO debe precargar el catálogo completo ni mezclar `sofka-asdd-data-eng-contract` sin que el plan la apruebe como dependency.
+
+  - description: "ba-scope-manager: elige ba-uat-classifier como primary para hallazgos UAT"
+    vars:
+      system_prompt: file://../../prompts/system-agent-ba-scope-manager.txt
+      input: |
+        Terminó la sesión de pruebas de aceptación. Tengo una lista de defectos y observaciones
+        sin clasificar — necesito la taxonomía por tipo, severidad y origen funcional.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe identificar `sofka-asdd-ba-uat-classifier` como la capability primaria.
+          Debe nombrar el comando exacto del loader con esa capability.
+          NO debe precargar el catálogo de 6 capabilities de este agente de una sola vez.
+          Si menciona una segunda capability (ej. `ba-log-lessons-learned` al cerrar el ciclo), debe
+          aclarar que solo se carga si el plan la declaró explícitamente como dependency — nunca una tercera.
+
+  - description: "ba-functional-architect: elige ba-brief como primary al iniciar un proyecto standalone"
+    vars:
+      system_prompt: file://../../prompts/system-agent-ba-functional-architect.txt
+      input: |
+        Arranco el flujo standalone del Analista Funcional para un proyecto nuevo — todavía no
+        tengo el brief que insume la descomposición en EDT.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe identificar `sofka-asdd-ba-brief` como la capability primaria a cargar.
+          Debe nombrar el comando exacto del loader con esa capability.
+          NO debe precargar `sofka-asdd-ba-change-log` ni `sofka-asdd-ba-log-lessons-learned` sin que
+          el plan las declare como dependency.
+
+  - description: "ba-functional-sme: elige ba-functional-sme-sector cuando la pregunta es sectorial"
+    vars:
+      system_prompt: file://../../prompts/system-agent-ba-functional-sme.txt
+      input: |
+        El proyecto es de un banco. ¿Qué requisitos regulatorios típicos aplican a un flujo de
+        onboarding de cuentas en el sector fintech?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe identificar `sofka-asdd-ba-functional-sme-sector` como la capability primaria
+          (la pregunta es de naturaleza sectorial, no del dominio específico del proyecto).
+          Debe nombrar el comando exacto del loader con esa capability.
+          NO debe cargar `sofka-asdd-ba-functional-sme-dominio` ni `sofka-asdd-ba-spec-index` sin que
+          el plan las declare como dependency.

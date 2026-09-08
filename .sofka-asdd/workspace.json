@@ -1,0 +1,13 @@
+{
+  "$comment": "WS-001 — donde vive el codigo que ASDD implementa. Ver .sofka-asdd/workspace.schema.json y .claude/docs/adoption/worktree.md. El default 'root': '.' es el modo mono-repo legado (el codigo vive en este mismo repo). Para el flujo recomendado, poner el proyecto en 'proyectos/<nombre>' (carpeta gitignored) y cambiar 'root' a esa ruta. Si ya tenes tu proyecto clonado en otro lado, poné la ruta absoluta — preferentemente en .sofka-asdd/workspace.local.json, que no se versiona.",
+  "schema": "1.0",
+  "default_project": "principal",
+  "projects": {
+    "principal": {
+      "root": ".",
+      "base_branch": null,
+      "branch_pattern": "feature/{slug}-{area}",
+      "description": "Modo mono-repo legado. Cambiar 'root' a 'proyectos/<nombre-del-proyecto>' o a la ruta absoluta del repo de desarrollo."
+    }
+  }
+}

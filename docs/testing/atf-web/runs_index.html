@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<!-- ATF_TEMPLATE_VERSION: 3.0.0 | runs_index -->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">ATF · Historial de Runs</title>
+<style>
+/**
+ * ATF — Sofka Design Tokens
+ * Fuente única de verdad para colores, tipografía y radios.
+ * Se inlinea en cada template en tiempo de build por generate-report.js.
+ * NO modificar colores hardcodeados en templates individuales — usar estas variables.
+ *
+ * Identidad visual: sofka_style_manual.md (Sofka Technologies 2026)
+ * Template version: 3.1.0
+ */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  /* ── Sofka Brand Palette 2026 (sofka_style_manual.md §2) ── */
+  --orange:      #F47920;                      /* Naranja Sofka — CTAs, acentos, guión bajo del logo */
+  --orange-bg:   rgba(244,121,32,.09);
+  --orange-b:    rgba(244,121,32,.28);
+  --sofka-light: #F0EDE8;                      /* Crema / Beige — fondos de apertura */
+  --sofka-dark:  #B8A894;
+
+  /* ── Backgrounds ── */
+  --bg:    #F7F5F2;
+  --bg2:   #FFFFFF;
+  --bg3:   #F0EDE8;
+  --bg4:   #E8E4DE;
+  --border:#DDD8D0;
+  --bord2: #C8C0B4;
+
+  /* ── Semánticos (estados de QA) ── */
+  --go:    #18A34A; --go-bg:  rgba(24,163,74,.08);  --go-b:  rgba(24,163,74,.25);
+  --warn:  #D46800; --warn-bg:rgba(212,104,0,.08);  --warn-b:rgba(212,104,0,.25);
+  --bad:   #E02020; --bad-bg: rgba(224,32,32,.08);  --bad-b: rgba(224,32,32,.25);
+  --blue:  #06A4A4; --blue-bg:rgba(6,164,164,.08);  --blue-b:rgba(6,164,164,.25);
+  --skip:  #8A8478; --skip-bg:rgba(138,132,120,.10);--skip-b:rgba(138,132,120,.25);
+  --p3c:   #0A7A7A;   /* P3 bugs = teal */
+
+  /* ── Sofka Semáforo de Criticidades (§5.1) ── */
+  --sev-critical: #E53E3E;  /* Rojo — bloqueos, fallos graves */
+  --sev-high:     #F47920;  /* Naranja Sofka — alertas importantes */
+  --sev-medium:   #F6C343;  /* Amarillo — puntos de atención */
+  --sev-low:      #38A169;  /* Verde — estado saludable */
+
+  /* ── Texto (§2 + §3) ── */
+  --text:  #1A1A1A; --text2: #555555; --text3: #888888; --text4: #B0A898;
+
+  /* ── Tipografía Sofka 2026 (§3) ── */
+  --font-head: 'Barlow Condensed', 'Montserrat', Arial Narrow, sans-serif;  /* Titulares */
+  --font-body: 'Montserrat', 'Roboto', Arial, sans-serif;                   /* Cuerpo */
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Aliases de retrocompatibilidad (templates usan --sans, --body, --mono) */
+  --sans: var(--font-head);
+  --body: var(--font-body);
+  --mono: var(--font-mono);
+
+  /* ── Forma ── */
+  --r:    8px;
+  --r-lg: 12px;
+
+  /* ── Sombras ── */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.10);
+
+  /* ── Transición ── */
+  --transition: 150ms ease;
+}
+
+/* ── SISTEMA DE BADGES ATF (compartido entre todos los templates) ── */
+.atf-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; font-family: var(--font-head);
+  letter-spacing: .04em; text-transform: uppercase;
+  white-space: nowrap; border: 1.5px solid transparent;
+}
+.atf-badge-pass    { background:var(--go-bg);   color:var(--go);   border-color:var(--go-b);   }
+.atf-badge-fail    { background:var(--bad-bg);  color:var(--bad);  border-color:var(--bad-b);  }
+.atf-badge-warn    { background:var(--warn-bg); color:var(--warn); border-color:var(--warn-b); }
+.atf-badge-skip    { background:var(--skip-bg); color:var(--skip); border-color:var(--skip-b); }
+.atf-badge-running { background:var(--blue-bg); color:var(--blue); border-color:var(--blue-b); }
+
+/* ── BREADCRUMB NAV (evidence_cp) ── */
+.atf-breadcrumb {
+  background: var(--bg4); border-bottom: 1px solid var(--border);
+  padding: 7px 24px; display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-family: var(--font-body);
+  position: sticky; top: 0; z-index: 100;
+}
+.bc-link { color: var(--orange); text-decoration: none; font-weight: 600; transition: opacity var(--transition); }
+.bc-link:hover { opacity: .7; }
+.bc-sep::after { content: '/'; color: var(--text3); font-size: 10px; }
+.bc-current { color: var(--text2); font-weight: 500; }
+
+/* ── ANIMACIÓN DE ENTRADA (compartida) ── */
+@keyframes atf-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SOFKA FOOTER (§4.7 — compartido entre todos los templates) ── */
+.sofka-footer {
+  text-align: center;
+  font-size: .75rem;
+  color: var(--text3, #888888);
+  margin: 2.5rem 0 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--orange, #F47920);
+  line-height: 1.7;
+  font-family: var(--font-body);
+}
+.sofka-footer a {
+  color: var(--orange, #F47920);
+  text-decoration: none;
+  font-weight: 600;
+}
+.sofka-footer a:hover { opacity: .7; }
+.sofka-brand {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--text, #1A1A1A);
+  letter-spacing: -.01em;
+}
+.sofka-brand .underscore {
+  color: var(--orange, #F47920);
+  font-weight: 800;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg,#f7f5f2);color:var(--text,#1a1a18);font-family:var(--body,system-ui,sans-serif);font-size:13px;line-height:1.55;min-height:100vh}
+
+/* ── SOFKA PATTERN ── */
+.sofka-bg{position:relative;overflow:hidden}
+.sofka-bg::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent,transparent 14px,rgba(244,121,32,.018) 14px,rgba(244,121,32,.018) 15px);pointer-events:none;z-index:0}
+.sofka-bg>*{position:relative;z-index:1}
+
+/* Header */
+.page-header{position:sticky;top:0;z-index:50;background:var(--text,#1a1a18);color:var(--sofka-light,#F0EDE8);padding:0 28px;height:56px;display:flex;align-items:center;gap:20px;border-bottom:3px solid var(--orange,#F47920)}
+.h-logo{font-family:var(--sans,sans-serif);font-size:13px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.h-dot{width:7px;height:7px;border-radius:50%;background:var(--orange,#F47920);box-shadow:0 0 8px var(--orange,#F47920);animation:blink 3s ease-in-out infinite}
+@keyframes blink{0%,88%,100%{opacity:1}94%{opacity:.15}}
+.h-sep{width:1px;height:20px;background:rgba(239,234,228,.15)}
+.h-run{font-size:11px;color:rgba(239,234,228,.5)}
+.h-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.h-gendate{font-size:9px;color:rgba(239,234,228,.4);text-transform:uppercase;letter-spacing:.1em}
+
+/* Main */
+main{max-width:1500px;margin:0 auto;padding:24px 22px}
+
+/* Summary KPI bar */
+.kpi-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.kpi-tile{background:var(--bg2,#fff);border:1px solid var(--border,#ddd8d0);border-radius:var(--r,8px);padding:14px 20px;min-width:120px;flex:1;border-left:3px solid var(--orange,#F47920);transition:box-shadow var(--transition,150ms ease),transform var(--transition,150ms ease)}
+.kpi-tile:hover{box-shadow:var(--shadow-md,0 4px 12px rgba(0,0,0,.10));transform:translateY(-2px)}
+.kpi-bar .kpi-tile:nth-child(1){animation:atf-fade-up .35s ease both}
+.kpi-bar .kpi-tile:nth-child(2){animation:atf-fade-up .35s ease both .06s}
+.kpi-bar .kpi-tile:nth-child(3){animation:atf-fade-up .35s ease both .12s}
+.kpi-bar .kpi-tile:nth-child(4){animation:atf-fade-up .35s ease both .18s}
+.kpi-bar .kpi-tile:nth-child(5){animation:atf-fade-up .35s ease both .24s}
+.kpi-val{font-family:var(--sans,sans-serif);font-size:2.2rem;font-weight:900;line-height:1;letter-spacing:-.04em;color:var(--text,#1a1a18)}
+.kpi-lbl{font-size:8px;color:var(--text3,#8a8478);text-transform:uppercase;letter-spacing:.16em;margin-top:4px;font-family:var(--sans,sans-serif);font-weight:700}
+.kpi-sub{font-size:8px;color:var(--text4,#b0a898);margin-top:2px;font-style:italic}
+
+/* Filter bar */
+.filter-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 16px;background:var(--bg2,#fff);border:1px solid var(--border,#ddd8d0);border-radius:var(--r,8px);margin-bottom:16px}
+.filter-label{font-size:9px;color:var(--text3,#8a8478);text-transform:uppercase;letter-spacing:.14em;font-family:var(--sans,sans-serif);font-weight:700;white-space:nowrap}
+.filter-group{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.filter-pill{font-size:9px;padding:4px 10px;border-radius:12px;border:1px solid var(--border,#ddd8d0);background:var(--bg3,#f0ede8);color:var(--text2,#4a4640);cursor:pointer;transition:all .15s;font-family:var(--sans,sans-serif);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.filter-pill:hover{border-color:var(--orange-b,rgba(244,121,32,.28));background:var(--orange-bg,rgba(244,121,32,.09));color:var(--orange,#F47920)}
+.filter-pill.active{border-color:var(--orange,#F47920);background:var(--orange,#F47920);color:#fff}
+.search-input{flex:1;min-width:140px;padding:5px 10px;border:1px solid var(--border,#ddd8d0);border-radius:6px;font-size:11px;background:var(--bg3,#f0ede8);color:var(--text,#1a1a18);font-family:var(--body,sans-serif)}
+.search-input:focus{outline:none;border-color:var(--orange-b,rgba(244,121,32,.28));background:var(--bg2,#fff)}
+.toggle-outdated{font-size:9px;padding:4px 10px;border-radius:12px;border:1px solid var(--border,#ddd8d0);background:var(--bg3,#f0ede8);color:var(--text2,#4a4640);cursor:pointer;transition:all .15s;font-family:var(--sans,sans-serif);font-weight:700;white-space:nowrap}
+.toggle-outdated.active{border-color:var(--warn,#d46800);background:var(--warn-bg,rgba(212,104,0,.08));color:var(--warn,#d46800)}
+
+/* Runs table */
+.card{background:var(--bg2,#fff);border:1px solid var(--border,#ddd8d0);border-radius:var(--r,8px);overflow:hidden;margin-bottom:16px}
+.tbl-wrap{overflow-x:auto}
+.runs-tbl{width:100%;border-collapse:collapse;min-width:900px}
+.runs-tbl th{text-align:left;padding:9px 12px;font-size:8px;color:var(--orange,#F47920);text-transform:uppercase;letter-spacing:.14em;border-bottom:2px solid var(--border,#ddd8d0);font-weight:800;white-space:nowrap;background:var(--bg3,#f0ede8);font-family:var(--sans,sans-serif);cursor:pointer;user-select:none}
+.runs-tbl th:hover{color:var(--text2,#4a4640)}
+.runs-tbl th .sort-icon{margin-left:4px;opacity:.4;font-size:9px}
+.runs-tbl th.sorted .sort-icon{opacity:1}
+.runs-tbl td{padding:9px 12px;border-bottom:1px solid var(--border,#ddd8d0);color:var(--text2,#4a4640);vertical-align:middle;font-family:var(--body,sans-serif)}
+.runs-tbl tr:hover td{background:var(--bg3,#f0ede8)}
+.runs-tbl tr.hidden{display:none}
+.run-id-cell{font-family:var(--mono,monospace);font-size:10px;color:var(--text,#1a1a18)}
+
+/* QGS value */
+.qgs-val{font-family:var(--font-head,sans-serif);font-size:1.1rem;font-weight:900;letter-spacing:-.02em}
+.qgs-go   {color:var(--go,#18a34a)}
+.qgs-cond {color:var(--warn,#d46800)}
+.qgs-nogo {color:var(--bad,#e02020)}
+
+/* Pills in table */
+.pill{font-size:8px;padding:2px 7px;border-radius:10px;font-family:var(--sans,sans-serif);font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:inline-block;white-space:nowrap}
+.p-go  {background:var(--go-bg,rgba(24,163,74,.08));color:var(--go,#18a34a);border:1px solid var(--go-b,rgba(24,163,74,.25))}
+.p-warn{background:var(--orange-bg,rgba(244,121,32,.09));color:var(--orange,#F47920);border:1px solid var(--orange-b,rgba(244,121,32,.28))}
+.p-bad {background:var(--bad-bg,rgba(224,32,32,.08));color:var(--bad,#e02020);border:1px solid var(--bad-b,rgba(224,32,32,.25))}
+.p-blue{background:var(--blue-bg,rgba(6,164,164,.08));color:var(--blue,#06a4a4);border:1px solid var(--blue-b,rgba(6,164,164,.25))}
+.p-dim {background:var(--bg4,#e8e4de);color:var(--text2,#4a4640);border:1px solid var(--border,#ddd8d0)}
+
+/* Links */
+.rep-link{color:var(--orange,#F47920);text-decoration:none;font-size:10px;font-weight:700;white-space:nowrap}
+.rep-link:hover{text-decoration:underline}
+
+/* Report status */
+.rep-status-ok{color:var(--go,#18a34a);font-size:10px;display:flex;align-items:center;gap:4px}
+.rep-status-warn{color:var(--warn,#d46800);font-size:10px;display:flex;align-items:center;gap:4px}
+.rep-status-missing{color:var(--text3,#8a8478);font-size:10px}
+.rep-status-ok .cmd,.rep-status-warn .cmd{display:none;font-size:9px;font-family:var(--mono,monospace);background:var(--bg4,#e8e4de);padding:1px 5px;border-radius:3px;cursor:pointer}
+.runs-tbl tr:hover .rep-status-ok .cmd,.runs-tbl tr:hover .rep-status-warn .cmd{display:inline}
+
+/* Trend chart */
+.trend-card{background:var(--bg2,#fff);border:1px solid var(--border,#ddd8d0);border-radius:var(--r,8px);padding:18px;margin-bottom:16px}
+.trend-title{font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text2,#4a4640);margin-bottom:14px;font-family:var(--sans,sans-serif)}
+.trend-svg{width:100%;height:80px;overflow:visible}
+
+/* Outdated row highlight */
+.runs-tbl tr.is-outdated td{background:var(--warn-bg,rgba(212,104,0,.04))}
+
+/* No results */
+.no-results{padding:32px;text-align:center;color:var(--text3,#8a8478);font-size:12px;font-style:italic}
+
+/* Footer */
+footer{text-align:center;font-size:10px;color:var(--text3,#8a8478);margin:32px 0 16px;padding-top:16px;border-top:1px solid var(--border,#ddd8d0)}
+footer span{color:var(--orange,#F47920)}
+
+/* Reprocess banner */
+.reprocess-banner{background:var(--warn-bg,rgba(212,104,0,.08));border:1px solid var(--warn-b,rgba(212,104,0,.25));border-radius:var(--r,8px);padding:12px 16px;margin-bottom:16px;display:none;align-items:center;gap:12px;font-size:11px}
+.reprocess-banner.visible{display:flex}
+.reprocess-banner code{background:var(--bg4,#e8e4de);padding:2px 7px;border-radius:4px;font-family:var(--mono,monospace);font-size:10px;cursor:pointer}
+.reprocess-banner code:hover{background:var(--bord2,#c8c0b4)}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="page-header sofka-bg">
+  <div class="h-logo">
+    <span class="h-dot"></span>
+    <span>sofka_ · ATF</span>
+  </div>
+  <span class="h-sep"></span>
+  <span class="h-run" id="h-app-name">Historial de Runs</span>
+  <div class="h-right">
+    <span class="h-gendate" id="h-gendate"></span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── KPI BAR ── -->
+  <div class="kpi-bar" id="kpi-bar">
+    <div class="kpi-tile">
+      <div class="kpi-val" id="kpi-total">—</div>
+      <div class="kpi-lbl">Total Runs</div>
+      <div class="kpi-sub">ciclos registrados</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-val" id="kpi-pass-rate">—</div>
+      <div class="kpi-lbl">Avg Pass Rate — FPY</div>
+      <div class="kpi-sub" id="kpi-pass-rate-sub">objetivo: ≥ 80%</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-val" id="kpi-last-verdict">—</div>
+      <div class="kpi-lbl">Último Veredicto</div>
+      <div class="kpi-sub">GO ≥ 80 · COND 60–79 · NO-GO &lt; 60</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-val" id="kpi-p1p2">—</div>
+      <div class="kpi-lbl">Bugs P1+P2 totales</div>
+      <div class="kpi-sub">umbral: 0 P1 · máx 3 P2 por ciclo</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-val" id="kpi-outdated">—</div>
+      <div class="kpi-lbl">Reportes desactualizados</div>
+      <div class="kpi-sub">usar npm run reprocess:all</div>
+    </div>
+  </div>
+
+  <!-- ── REPROCESS BANNER ── -->
+  <div class="reprocess-banner" id="reprocess-banner">
+    <span style="color:var(--warn)">!</span>
+    <span><strong id="reprocess-count">N</strong> reportes desactualizados.</span>
+    <span>Regenerar todos: <code onclick="copyCmd(this)" title="Click para copiar">npm run reprocess:all</code></span>
+  </div>
+
+  <!-- ── TREND CHART ── -->
+  <div class="trend-card">
+    <div class="trend-title">QGS — Calidad del Ciclo (Quality Gate Score) · Tendencia histórica</div>
+    <svg class="trend-svg" id="trend-svg" viewBox="0 0 800 80" preserveAspectRatio="none"></svg>
+    <div id="trend-narrative" style="margin-top:10px;font-size:11px;color:var(--text2,#4a4640);padding:6px 10px;background:var(--bg3,#f0ede8);border-radius:5px;display:none"></div>
+  </div>
+
+  <!-- ── FILTER BAR ── -->
+  <div class="filter-bar">
+    <span class="filter-label">Veredicto:</span>
+    <div class="filter-group" id="verdict-filters">
+      <button class="filter-pill active" data-verdict="">Todos</button>
+      <button class="filter-pill" data-verdict="GO">GO</button>
+      <button class="filter-pill" data-verdict="CONDICIONAL">Condicional</button>
+      <button class="filter-pill" data-verdict="NO-GO">NO-GO</button>
+      <button class="filter-pill" data-verdict="EN PROGRESO">En Progreso</button>
+    </div>
+    <button class="toggle-outdated" id="btn-outdated" onclick="toggleOutdated()">! Solo desactualizados</button>
+    <input class="search-input" id="search-input" type="text" placeholder="Buscar run_id..." oninput="applyFilters()">
+  </div>
+
+  <!-- ── RUNS TABLE ── -->
+  <div class="card">
+    <div class="tbl-wrap">
+      <table class="runs-tbl" id="runs-tbl">
+        <thead>
+          <tr>
+            <th onclick="sortBy('run_id')">Run ID <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('date')">Fecha <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('qgs')">QGS <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('qgs_delta')" title="Variación vs ciclo anterior">Δ vs Anterior <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('verdict')">Veredicto <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('pass_rate_pct')">Pass Rate <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('total_cps')">CPs <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('bugs')">Bugs P1+P2 <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('duration_ms')">Duración <span class="sort-icon">↕</span></th>
+            <th>Estado reporte</th>
+            <th>Links</th>
+          </tr>
+        </thead>
+        <tbody id="runs-tbody">
+          <tr><td colspan="11" class="no-results">Cargando datos...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span class="sofka-brand" style="font-family:var(--sans,sans-serif);font-weight:700;font-size:13px;color:var(--text,#1a1a18)">sofka<span style="color:var(--orange,#F47920);font-weight:800">_</span></span>
+  <span> · </span>Generado por <span>ATF</span> · template v3.1.0 · <span id="footer-date"></span>
+  <span> · </span><a href="https://sofka.com.co" style="color:var(--orange,#F47920);text-decoration:none;font-weight:600">sofka.com.co</a>
+</footer>
+
+<!-- ── DATA PLACEHOLDER (replaced by generator) ── -->
+<script id="atf-index-data-placeholder">window.ATF_INDEX = {"app":{"name":"config","version":""},"runs":[{"run_id":"config","app_name":"config","app_version":"—","started_at":null,"completed_at":"2026-08-05T18:20:02.796Z","date_str":"05/08/2026, 01:20 p. m.","duration_str":"—","pass_rate":null,"fpy_pct":null,"frs_pct":null,"total_cps":0,"passed":0,"failed":0,"blocked":0,"p1_bugs":0,"p2_bugs":0,"p3_bugs":0,"p4_bugs":0,"p12_bugs":0,"report_path":"config/report.html","report_regenerated_at":"2026-08-05T18:20:02.796Z","report_template_version":"3.0.0","is_outdated":false}],"stats":{"total":1,"avgRate":null,"totalP12":0,"outdated":0},"generated_at":"2026-08-05T18:20:18.262Z","template_version":"3.0.0"};</script>
+
+<script>
+/* ── UTILITIES ── */
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function durH(ms){ if (!ms) return '—'; var m=Math.round(ms/60000); return m>=60?Math.floor(m/60)+'h '+(m%60)+'m':m+'m'; }
+function dateStr(iso){ try{ return new Date(iso).toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){return iso||'—';} }
+function verdictCls(v){ return v==='GO'?'p-go':v==='CONDICIONAL'?'p-warn':v==='NO-GO'?'p-bad':v==='EN PROGRESO'?'p-blue':'p-dim'; }
+function copyCmd(el){ navigator.clipboard&&navigator.clipboard.writeText(el.textContent); el.textContent='Copiado'; setTimeout(function(){el.textContent=el.dataset.orig||el.textContent;},1200); }
+
+var _sortCol = 'date', _sortDir = -1;
+var _verdictFilter = '', _showOutdated = false;
+var _templateVersion = '';
+
+/* ── SORT ── */
+function sortBy(col){
+  if (_sortCol===col) _sortDir*=-1; else { _sortCol=col; _sortDir=-1; }
+  document.querySelectorAll('.runs-tbl th').forEach(function(th){ th.classList.remove('sorted'); });
+  var idx = ['run_id','date','qgs','qgs_delta','verdict','pass_rate_pct','total_cps','bugs','duration_ms','',''].indexOf(col);
+  if (idx>=0) { var ths=document.querySelectorAll('.runs-tbl th'); if(ths[idx]) ths[idx].classList.add('sorted'); }
+  renderTable();
+}
+
+/* ── FILTERS ── */
+document.getElementById('verdict-filters').addEventListener('click',function(e){
+  if (e.target.dataset.verdict===undefined) return;
+  document.querySelectorAll('#verdict-filters .filter-pill').forEach(function(p){p.classList.remove('active');});
+  e.target.classList.add('active');
+  _verdictFilter = e.target.dataset.verdict;
+  applyFilters();
+});
+function toggleOutdated(){
+  _showOutdated = !_showOutdated;
+  document.getElementById('btn-outdated').classList.toggle('active', _showOutdated);
+  applyFilters();
+}
+function applyFilters(){
+  var q = (document.getElementById('search-input').value||'').toLowerCase();
+  document.querySelectorAll('#runs-tbody tr[data-run-id]').forEach(function(tr){
+    var runId    = (tr.dataset.runId||'').toLowerCase();
+    var verdict  = tr.dataset.verdict || '';
+    var outdated = tr.dataset.outdated === 'true';
+    var show = true;
+    if (_verdictFilter && verdict !== _verdictFilter)  show = false;
+    if (_showOutdated  && !outdated)                   show = false;
+    if (q && runId.indexOf(q) < 0)                     show = false;
+    tr.classList.toggle('hidden', !show);
+  });
+}
+
+/* ── TREND CHART ── */
+function renderTrend(runs){
+  var svg = document.getElementById('trend-svg');
+  var pts = runs.filter(function(r){ return r.qgs!=null; })
+    .slice().reverse().slice(-20);
+  if (pts.length < 2) { svg.innerHTML='<text x="50%" y="50%" text-anchor="middle" fill="#8a8478" font-size="11">Sin suficientes datos de tendencia</text>'; return; }
+  var W=800,H=80,pad=24;
+  var maxQ=100, minQ=0;
+  var xStep = (W-2*pad)/(pts.length-1);
+  function px(i){ return pad + i*xStep; }
+  function py(q){ return H-pad - ((q-minQ)/(maxQ-minQ))*(H-2*pad); }
+  var poly = pts.map(function(r,i){ return px(i)+','+py(r.qgs); }).join(' ');
+  var filled = 'M'+px(0)+','+py(pts[0].qgs)+' '+pts.map(function(r,i){ return 'L'+px(i)+','+py(r.qgs); }).join(' ')+'L'+px(pts.length-1)+','+(H-pad)+'L'+px(0)+','+(H-pad)+'Z';
+  var dots = pts.map(function(r,i){
+    var cls = r.qgs>=80?'#18A34A':r.qgs>=60?'#D46800':'#E02020';
+    return '<circle cx="'+px(i)+'" cy="'+py(r.qgs)+'" r="3" fill="'+cls+'" stroke="#fff" stroke-width="1.5">'
+      +'<title>'+r.run_id+'\nQGS: '+r.qgs+'</title></circle>';
+  }).join('');
+  var thresholds = [80,60].map(function(t){
+    return '<line x1="'+pad+'" y1="'+py(t)+'" x2="'+(W-pad)+'" y2="'+py(t)+'" stroke="'+(t===80?'#18A34A':'#D46800')+'" stroke-width="1" stroke-dasharray="4,4" opacity=".5">'
+      +'<title>Umbral '+(t===80?'GO (≥80)':'CONDICIONAL (≥60)')+'</title></line>';
+  }).join('');
+  svg.innerHTML = thresholds
+    +'<path d="'+filled+'" fill="#FF7E08" opacity=".06"/>'
+    +'<polyline points="'+poly+'" fill="none" stroke="#FF7E08" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'
+    +dots;
+}
+
+/* ── TABLE RENDER ── */
+function renderTable(){
+  var d = window.ATF_INDEX;
+  if (!d) return;
+  var runs = (d.runs||[]).slice();
+
+  // Sort
+  runs.sort(function(a,b){
+    var va, vb;
+    switch(_sortCol){
+      case 'run_id':        va=a.run_id||'';     vb=b.run_id||'';     break;
+      case 'date':          va=a.completed_at||a.started_at||''; vb=b.completed_at||b.started_at||''; break;
+      case 'qgs':           va=a.qgs??-1;        vb=b.qgs??-1;        break;
+      case 'qgs_delta':     va=a.qgs_delta??-999; vb=b.qgs_delta??-999; break;
+      case 'verdict':       va=a.verdict||'';    vb=b.verdict||'';    break;
+      case 'pass_rate_pct': va=a.pass_rate_pct??-1; vb=b.pass_rate_pct??-1; break;
+      case 'total_cps':     va=a.total_cps??-1;  vb=b.total_cps??-1;  break;
+      case 'bugs':          va=(a.p1_bugs||0)+(a.p2_bugs||0); vb=(b.p1_bugs||0)+(b.p2_bugs||0); break;
+      case 'duration_ms':   va=a.duration_ms??-1; vb=b.duration_ms??-1; break;
+      default:              va=''; vb='';
+    }
+    if (va < vb) return _sortDir;
+    if (va > vb) return -_sortDir;
+    return 0;
+  });
+
+  var tbody = document.getElementById('runs-tbody');
+  tbody.innerHTML = runs.map(function(r){
+    var bugs = (r.p1_bugs||0)+(r.p2_bugs||0);
+    // Δ QGS — SVG arrows
+    var deltaCell = '—';
+    if (r.qgs_delta !== null && r.qgs_delta !== undefined) {
+      var dSign = r.qgs_delta > 0 ? '+' : '';
+      var dColor = r.qgs_delta > 0 ? 'var(--go)' : r.qgs_delta < 0 ? 'var(--bad)' : 'var(--text3)';
+      var dArrow = r.qgs_delta > 0
+        ? '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M5 8V2M2 5l3-3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : r.qgs_delta < 0
+        ? '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M5 2v6M2 5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 5h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      deltaCell = '<span style="display:inline-flex;align-items:center;gap:3px;font-family:var(--sans);font-weight:700;font-size:12px;color:'+dColor+'">'+dArrow+' '+dSign+r.qgs_delta+'</span>';
+    }
+    var isOutdated = r.report_template_version && _templateVersion && r.report_template_version !== _templateVersion;
+    var repStatus;
+    if (!r.report_path) {
+      repStatus = '<span class="rep-status-missing">—</span>';
+    } else if (isOutdated) {
+      repStatus = '<span class="rep-status-warn"><span style="color:var(--warn)">Desactualizado</span><span class="cmd" data-orig="copiar" onclick="copyCmd(this)">npm run reprocess -- --run_id '+esc(r.run_id)+'</span></span>';
+    } else {
+      repStatus = '<span class="rep-status-ok"><span style="color:var(--go)">Actualizado</span></span>';
+    }
+
+    var links = r.report_path
+      ? '<a href="'+esc(r.report_path)+'" class="rep-link">Reporte ↗</a>'
+      : '<span style="color:var(--text3)">—</span>';
+
+    var qgsClass = r.qgs != null ? (r.qgs >= 80 ? 'qgs-go' : r.qgs >= 60 ? 'qgs-cond' : 'qgs-nogo') : '';
+
+    return '<tr data-run-id="'+esc(r.run_id)+'" data-verdict="'+(r.verdict||'')+'" data-outdated="'+(isOutdated?'true':'false')+'" class="'+(isOutdated?'is-outdated':'')+'">'
+      +'<td class="run-id-cell">'+esc(r.run_id)+'</td>'
+      +'<td>'+dateStr(r.completed_at||r.started_at)+'</td>'
+      +'<td><span class="qgs-val '+qgsClass+'">'+(r.qgs??'—')+'</span></td>'
+      +'<td>'+deltaCell+'</td>'
+      +'<td>'+(r.verdict?'<span class="pill '+verdictCls(r.verdict)+'">'+esc(r.verdict)+'</span>':'—')+'</td>'
+      +'<td>'+(r.pass_rate_pct!=null?r.pass_rate_pct+'%':'—')+'</td>'
+      +'<td>'+(r.total_cps??'—')+'</td>'
+      +'<td style="'+(bugs>0?'color:var(--bad);font-weight:700':'color:var(--go)')+'">'+bugs+'</td>'
+      +'<td>'+durH(r.duration_ms)+'</td>'
+      +'<td>'+repStatus+'</td>'
+      +'<td>'+links+'</td>'
+      +'</tr>';
+  }).join('') || '<tr><td colspan="11" class="no-results">No se encontraron runs con los filtros aplicados.</td></tr>';
+}
+
+/* ── INIT ── */
+(function(){
+  var d = window.ATF_INDEX;
+  if (!d) { document.getElementById('runs-tbody').innerHTML='<tr><td colspan="11" class="no-results">No hay datos disponibles.</td></tr>'; return; }
+
+  _templateVersion = d.template_version || '';
+  var runs = d.runs || [];
+
+  // Page title
+  var appName = d.app&&d.app.name ? d.app.name : 'ATF';
+  document.title = 'ATF · '+appName+' · Historial de Runs';
+  document.getElementById('page-title').textContent = 'ATF · '+appName+' · Historial de Runs';
+  document.getElementById('h-app-name').textContent = appName+' · '+runs.length+' run'+(runs.length!==1?'s':'');
+  document.getElementById('h-gendate').textContent = 'Generado: '+dateStr(d.generated_at);
+  document.getElementById('footer-date').textContent = dateStr(d.generated_at)||'';
+
+  // KPIs
+  var totalRuns = runs.length;
+  var avgPassRate = (function(){
+    var valid=runs.filter(function(r){return r.pass_rate_pct!=null;});
+    if (!valid.length) return null;
+    return Math.round(valid.reduce(function(s,r){return s+(r.pass_rate_pct||0);},0)/valid.length);
+  })();
+  var lastVerdict = runs.length ? (runs[0].verdict||'—') : '—';
+  var totalBugs = runs.reduce(function(s,r){return s+(r.p1_bugs||0)+(r.p2_bugs||0);},0);
+  var outdatedCount = runs.filter(function(r){
+    return _templateVersion && r.report_template_version && r.report_template_version !== _templateVersion;
+  }).length;
+
+  document.getElementById('kpi-total').textContent      = totalRuns;
+  document.getElementById('kpi-pass-rate').textContent  = avgPassRate!=null ? avgPassRate+'%' : '—';
+  if (avgPassRate != null) {
+    var prEl = document.getElementById('kpi-pass-rate');
+    prEl.style.color = avgPassRate >= 80 ? 'var(--go)' : avgPassRate >= 60 ? 'var(--warn)' : 'var(--bad)';
+    var prSub = document.getElementById('kpi-pass-rate-sub');
+    if (prSub) prSub.textContent = avgPassRate >= 80 ? 'Objetivo cumplido (≥80%)' : 'Objetivo: ≥ 80%';
+  }
+  var lvEl = document.getElementById('kpi-last-verdict');
+  lvEl.textContent = lastVerdict;
+  lvEl.style.color = lastVerdict==='GO' ? 'var(--go)' : lastVerdict==='CONDICIONAL' ? 'var(--warn)' : lastVerdict==='NO-GO' ? 'var(--bad)' : '';
+  document.getElementById('kpi-p1p2').textContent       = totalBugs;
+  document.getElementById('kpi-p1p2').style.color       = totalBugs > 0 ? 'var(--bad)' : 'var(--go)';
+  document.getElementById('kpi-outdated').textContent   = outdatedCount;
+  document.getElementById('kpi-outdated').style.color   = outdatedCount > 0 ? 'var(--warn)' : '';
+
+  // Reprocess banner
+  if (outdatedCount > 0) {
+    var banner = document.getElementById('reprocess-banner');
+    document.getElementById('reprocess-count').textContent = outdatedCount;
+    banner.classList.add('visible');
+  }
+
+  // Trend chart
+  renderTrend(runs);
+  var trendNarEl = document.getElementById('trend-narrative');
+  var narrative = d.stats && d.stats.trend_narrative;
+  if (narrative && trendNarEl) {
+    trendNarEl.textContent = narrative;
+    trendNarEl.style.display = '';
+  }
+
+  // Table
+  renderTable();
+
+  // Footer
+  document.getElementById('footer-date').textContent = dateStr(d.generated_at);
+})();
+</script>
+</body>
+</html>

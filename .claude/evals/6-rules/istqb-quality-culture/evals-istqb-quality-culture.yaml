@@ -1,0 +1,54 @@
+description: "Regla: sofka-asdd-istqb-quality-culture — principios ISTQB v4.0 y gestión de defectos"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # Principio 1: tests pasan ≠ sin bugs
+  - description: "Principio 1: corrige afirmación incorrecta de 'no hay bugs' basada en tests verdes"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-istqb-quality-culture.txt"
+      input: |
+        Los 248 tests del módulo de pagos pasan en verde. ¿Podemos decir que el módulo no tiene bugs y está listo para producción?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe CORREGIR la afirmación.
+          Debe indicar que tests en verde significa "los 248 tests definidos pasan", NO que "no hay bugs".
+          Debe mencionar el principio ISTQB de presencia, no ausencia: los tests solo verifican los escenarios cubiertos.
+          Puede mencionar que quedan escenarios no cubiertos, edge cases no anticipados, etc.
+          La declaración correcta es "los tests definidos pasan" — nunca "no hay bugs".
+
+  # Clasificación correcta de severidad/prioridad de un defecto
+  - description: "Gestión de defectos: clasifica correctamente severidad y prioridad de un bug de seguridad"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-istqb-quality-culture.txt"
+      input: |
+        Encontramos que el endpoint GET /api/users/{id} devuelve datos de cualquier usuario sin verificar
+        que el solicitante tenga permiso de acceso. ¿Cómo clasificamos este defecto?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe clasificar el defecto con severidad CRITICAL (compromete seguridad de datos).
+          Debe asignar prioridad P0 (bloquea — no puede salir a producción con esta vulnerabilidad).
+          Debe incluir en el reporte mínimo: dónde (endpoint GET /api/users/{id}), qué (acceso sin autorización), por qué (afecta privacidad/seguridad de todos los usuarios), severidad/prioridad y sugerencia de fix.
+          NO debe clasificarlo como HIGH o MEDIUM — la exposición de datos sin autorización es CRITICAL.
+
+  # Shift-Left: testing empieza en Analizar, no en Construir
+  - description: "Shift-Left: identifica en qué fase del ciclo ASDD iniciar la prueba"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-istqb-quality-culture.txt"
+      input: |
+        ¿En qué fase del workflow ASDD deberíamos empezar a pensar en las pruebas para un nuevo feature?
+        ¿En Construir cuando ya tenemos código, o podemos hacerlo antes?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe indicar que las pruebas se inician ANTES de Construir — desde la fase Analizar (Shift-Left).
+          Debe explicar que en Analizar se definen los acceptance criteria y criterios de prueba, y que en Diseñar se puede producir el plan de pruebas.
+          Debe mencionar que detectar defectos antes (en análisis o diseño) cuesta menos que hacerlo después del código.
+          NO debe decir que las pruebas empiezan en Construir ni que es suficiente probar al final.

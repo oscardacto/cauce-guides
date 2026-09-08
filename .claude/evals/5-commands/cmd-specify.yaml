@@ -1,0 +1,28 @@
+description: "CMD /sofka-asdd:specify — fase Especificar"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "CMD specify: invoca agentes correctos y genera brief"
+    vars:
+      input: "/sofka-asdd:specify Sistema de préstamos entre personas (P2P lending) en Colombia"
+    assert:
+      - type: icontains
+        value: "sofka-asdd-producto"
+      - type: llm-rubric
+        value: |
+          El comando specify debe: identificar la fase Especificar,
+          invocar sofka-asdd-producto (skill pm) como primario,
+          invocar sofka-asdd-domain-expert como primario (contexto fintech/regulación),
+          anunciar cada agente con formato ORC-008 antes de invocarlo,
+          y el artefacto esperado es docs/specs/brief-{proyecto}.md.
+

@@ -1,0 +1,33 @@
+description: "ORC-003 PROCESO: Modo de invocación — secuencial vs paralelo"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "PROCESO: Outputs interdependientes → elige modo secuencial"
+    vars:
+      input: "Necesito la spec funcional del módulo de pagos Y que el arquitecto diseñe la arquitectura basándose en esa spec"
+    assert:
+      - type: llm-rubric
+        value: |
+          La respuesta debe elegir modo SECUENCIAL porque los outputs son interdependientes:
+          primero producto genera la spec, LUEGO architect diseña basándose en ella.
+          No puede invocarlos en paralelo porque architect necesita la spec de producto.
+
+  - description: "PROCESO: Outputs independientes → puede elegir modo paralelo"
+    vars:
+      input: "Para el nuevo sistema de pagos necesito en paralelo: investigar las opciones de message broker Y revisar si hay algún módulo existente en el codebase que podamos reutilizar"
+    assert:
+      - type: llm-rubric
+        value: |
+          La respuesta puede sugerir modo PARALELO porque las tareas son independientes:
+          researcher investiga message brokers al mismo tiempo que explorer mapea el codebase.
+          No hay dependencia entre estos dos outputs.

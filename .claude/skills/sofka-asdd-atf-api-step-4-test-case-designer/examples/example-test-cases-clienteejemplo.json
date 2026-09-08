@@ -1,0 +1,172 @@
+{
+  "wi_id": "wi-001",
+  "test_cases": [
+    {
+      "id": "CP-001",
+      "title": "Crear solicitud válida con fecha actual",
+      "priority": "high",
+      "technique": "Decision Table",
+      "rules_covered": ["RN-001", "RN-008"],
+      "acs_covered": ["AC-001", "AC-002"],
+      "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "preconditions": [
+        "Existe distributorId DIST-001 en catálogo",
+        "No existe solicitud previa con misma llave"
+      ],
+      "request": {
+        "method": "POST",
+        "url": "/osf/api/v1/pending-billing-quotas",
+        "headers": {"Content-Type": "application/json"},
+        "body": {
+          "cycle": "{data.fixtures.valid-cycle}",
+          "distributorId": "{data.fixtures.valid-distributor}",
+          "billingPeriod": "{data.fixtures.valid-period}",
+          "periodProcessDate": "{data.fixtures.today}"
+        }
+      },
+      "expected_response": {
+        "status": 201,
+        "headers_assertions": [{"name": "Content-Type", "matches": "application/json.*"}],
+        "body_assertions": [
+          {"path": "$.requestId", "operator": "matches", "value": "uuid"},
+          {"path": "$.status", "operator": "equals", "value": "PENDING"},
+          {"path": "$.createdAt", "operator": "matches", "value": "iso8601-datetime"}
+        ],
+        "schema_ref": "BillingRequestCreated"
+      },
+      "post_conditions": [
+        "Existe registro en t_billing_request con status=PENDING (validable via GET subsiguiente)"
+      ],
+      "tags": ["@happy-path", "@critical-flow", "@regression"]
+    },
+    {
+      "id": "CP-002",
+      "title": "Rechazar solicitud con periodProcessDate futura",
+      "priority": "high",
+      "technique": "BVA",
+      "rules_covered": ["RN-010"],
+      "acs_covered": ["AC-003"],
+      "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "preconditions": [],
+      "request": {
+        "method": "POST",
+        "url": "/osf/api/v1/pending-billing-quotas",
+        "headers": {"Content-Type": "application/json"},
+        "body": {
+          "cycle": "{data.fixtures.valid-cycle}",
+          "distributorId": "{data.fixtures.valid-distributor}",
+          "billingPeriod": "{data.fixtures.valid-period}",
+          "periodProcessDate": "{data.fixtures.tomorrow}"
+        }
+      },
+      "expected_response": {
+        "status": 400,
+        "headers_assertions": [],
+        "body_assertions": [
+          {"path": "$.error", "operator": "equals", "value": "INVALID_CYCLE_DATE"}
+        ],
+        "schema_ref": null
+      },
+      "post_conditions": ["No se crea registro en t_billing_request"],
+      "tags": ["@error-path", "@boundary", "@regression"]
+    },
+    {
+      "id": "CP-003",
+      "title": "Aceptar solicitud con periodProcessDate exactamente hoy (límite inferior)",
+      "priority": "high",
+      "technique": "BVA",
+      "rules_covered": ["RN-010"],
+      "acs_covered": ["AC-001"],
+      "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "preconditions": [],
+      "request": {
+        "method": "POST",
+        "url": "/osf/api/v1/pending-billing-quotas",
+        "headers": {"Content-Type": "application/json"},
+        "body": {
+          "cycle": "{data.fixtures.valid-cycle}",
+          "distributorId": "{data.fixtures.valid-distributor}",
+          "billingPeriod": "{data.fixtures.valid-period}",
+          "periodProcessDate": "{data.fixtures.today}"
+        }
+      },
+      "expected_response": {
+        "status": 201,
+        "headers_assertions": [],
+        "body_assertions": [{"path": "$.status", "operator": "equals", "value": "PENDING"}],
+        "schema_ref": "BillingRequestCreated"
+      },
+      "post_conditions": [],
+      "tags": ["@boundary", "@regression"]
+    },
+    {
+      "id": "CP-004",
+      "title": "Rechazar solicitud sin campo cycle (missing required)",
+      "priority": "high",
+      "technique": "Error Guessing",
+      "rules_covered": ["RN-001"],
+      "acs_covered": [],
+      "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "preconditions": [],
+      "request": {
+        "method": "POST",
+        "url": "/osf/api/v1/pending-billing-quotas",
+        "headers": {"Content-Type": "application/json"},
+        "body": {
+          "distributorId": "{data.fixtures.valid-distributor}",
+          "billingPeriod": "{data.fixtures.valid-period}",
+          "periodProcessDate": "{data.fixtures.today}"
+        }
+      },
+      "expected_response": {
+        "status": 400,
+        "headers_assertions": [],
+        "body_assertions": [
+          {"path": "$.error", "operator": "equals", "value": "MISSING_REQUIRED_FIELD"}
+        ],
+        "schema_ref": null
+      },
+      "post_conditions": [],
+      "tags": ["@error-path", "@regression"]
+    },
+    {
+      "id": "CP-005",
+      "title": "Validar response 201 cumple schema BillingRequestCreated",
+      "priority": "high",
+      "technique": "Contract Testing",
+      "rules_covered": ["RN-008"],
+      "acs_covered": ["AC-001"],
+      "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+      "preconditions": [],
+      "request": {
+        "method": "POST",
+        "url": "/osf/api/v1/pending-billing-quotas",
+        "headers": {"Content-Type": "application/json"},
+        "body": {
+          "cycle": "{data.fixtures.valid-cycle}",
+          "distributorId": "{data.fixtures.valid-distributor}",
+          "billingPeriod": "{data.fixtures.valid-period}",
+          "periodProcessDate": "{data.fixtures.today}"
+        }
+      },
+      "expected_response": {
+        "status": 201,
+        "headers_assertions": [],
+        "body_assertions": [],
+        "schema_ref": "BillingRequestCreated"
+      },
+      "post_conditions": [],
+      "tags": ["@contract", "@smoke"]
+    }
+  ],
+  "wi_summary": {
+    "total_cps": 5,
+    "by_priority": {"critical": 0, "high": 5, "medium": 0, "low": 0},
+    "by_technique": {"BVA": 2, "Decision Table": 1, "Error Guessing": 1, "Contract Testing": 1},
+    "rules_coverage": {
+      "covered": ["RN-001", "RN-008", "RN-010"],
+      "uncovered": ["RN-002", "RN-003"]
+    }
+  },
+  "generated_at": "2026-05-21T10:55:00-05:00"
+}

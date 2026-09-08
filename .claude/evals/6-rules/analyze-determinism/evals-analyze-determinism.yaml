@@ -1,0 +1,161 @@
+description: "Regla: WF-002 Analizar — generación determinística de brief/gap/spec (umbral de gaps + guard de prerrequisitos)"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # AC1: umbral de gaps — brief existe, ≥2 preguntas abiertas → crear gaps file
+  - description: "AC1: ≥2 preguntas sin respuesta → crear gaps-{feature}.md"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-analyze-prereq.txt"
+      input: |
+        Analicé el brief de la feature "onboarding-digital" (Estado: aprobado).
+        Encontré las siguientes situaciones durante el análisis:
+
+        1. El brief dice "verificar identidad del usuario" pero no especifica si
+           la verificación es sincrónica o asíncrona — no podemos implementar el
+           flujo de espera sin saberlo.
+        2. No queda claro si el límite de reintentos de OTP aplica por sesión o
+           por dispositivo — el criterio de aceptación CA-04 no es implementable
+           sin esta definición.
+        3. La historia HU-07 asume que el usuario ya tiene cuenta bancaria, pero
+           el brief no excluye usuarios nuevos sin cuenta — hay un gap de alcance.
+
+        ¿Qué artefactos debo generar?
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe identificar que hay 3 preguntas abiertas (≥ 2 umbral).
+          Debe indicar que corresponde crear `docs/specs/gaps-onboarding-digital.md`
+          con las preguntas numeradas.
+          NO debe omitir el gaps file ni sugerir "incluirlo en el spec principal".
+          NO debe preguntar al usuario si quiere crear el archivo — la decisión
+          es automática por el criterio binario del umbral.
+          Debe además indicar que el spec (docs/specs/onboarding-digital.md o nombre
+          equivalente sin prefijo "spec-") se genera normalmente con la información disponible.
+          NO debe terminar con preguntas de confirmación como "¿Procedo?",
+          "¿Confirmas?", "¿Inicio?", "¿Continuamos?" — la decisión es automática.
+
+  # AC1: umbral de gaps — brief existe, <2 preguntas abiertas → NO crear gaps file
+  - description: "AC1: < 2 preguntas sin respuesta → NO crear gaps file, agregar Observaciones"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-analyze-prereq.txt"
+      input: |
+        Analicé el brief de la feature "notificaciones-push" (Estado: aprobado).
+        El brief está muy completo. Solo encontré una ambigüedad menor:
+
+        1. No queda claro si las notificaciones se deben enviar cuando el usuario
+           tiene la app abierta o solo en background. Este detalle afecta la
+           implementación del listener.
+
+        Todo lo demás está perfectamente definido. ¿Qué artefactos genero?
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe identificar que solo hay 1 pregunta abierta (< 2 umbral).
+          Debe indicar que NO se crea `gaps-notificaciones-push.md`.
+          Debe indicar que la ambigüedad detectada se documenta en una sección
+          `## Observaciones de análisis` dentro del spec principal, con el conteo
+          explícito (ej. "1 pregunta abierta detectada").
+          NO debe crear el gaps file "por si acaso" ni sugerir crearlo.
+          La decisión es automática por el criterio binario.
+
+  # AC2: guard de prerrequisito — no existe brief → STOP, dirigir a specify
+  - description: "AC2: no existe brief aprobado → STOP y dirigir a /sofka-asdd:specify"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-analyze-prereq.txt"
+      input: |
+        El equipo quiere analizar los requisitos del módulo de "pagos-recurrentes".
+        Tenemos algunas ideas del PO y conversaciones informales en Slack, pero
+        todavía no hemos corrido `/sofka-asdd:specify`. ¿Podemos comenzar con
+        el análisis y el spec directamente?
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe BLOQUEARSE. No debe generar ningún spec ni comenzar
+          el análisis de requisitos.
+          Debe informar al usuario que no existe brief aprobado para "pagos-recurrentes".
+          Debe dirigir explícitamente al usuario a ejecutar primero `/sofka-asdd:specify`.
+          NO debe "analizar lo que hay disponible" ni generar un spec parcial con
+          la información de las conversaciones informales.
+          NO debe preguntar si quiere continuar de todas formas.
+
+  # AC5: granularidad — brief cubre 2 bounded contexts → 2 specs separados, sin preguntar al usuario
+  - description: "AC5-a: brief con 2 bounded contexts → 2 specs separados, sistema anuncia decisión con justificación"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-analyze-prereq.txt"
+      input: |
+        El brief de "portal-cliente" (Estado: aprobado) cubre dos funcionalidades:
+
+        **Funcionalidad A — Gestión de perfil:**
+        - Reglas: RN-001 (editar nombre), RN-002 (cambiar email con verificación),
+          RN-003 (cambiar contraseña con 2FA)
+        - Flujos: solo afectan al perfil del usuario autenticado
+
+        **Funcionalidad B — Historial de transacciones:**
+        - Reglas: RN-010 (filtrar por fecha), RN-011 (exportar CSV), RN-012 (paginación)
+        - Flujos: consulta de datos financieros, completamente independiente de perfil
+
+        Las dos funcionalidades no comparten reglas de negocio ni flujos principales.
+        ¿Cómo procedo con el análisis?
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe aplicar el criterio de granularidad.
+          Debe ANUNCIAR su decisión con justificación antes de generar: indicar que
+          generará DOS specs separados y explicar explícitamente POR QUÉ cada uno es un
+          bounded context independiente. La justificación DEBE mencionar la ausencia de
+          reglas de negocio o flujos compartidos entre las dos funcionalidades — por
+          ejemplo: "Gestión de perfil usa RN-001/002/003 y solo afecta el perfil del usuario
+          autenticado; Historial de transacciones usa RN-010/011/012 y es consulta financiera
+          independiente — no comparten reglas de negocio ni flujos principales."
+          No alcanza con listar los nombres de los archivos en una tabla.
+          Debe nombrar los specs que generará (nombres equivalentes a gestion-perfil y
+          historial-transacciones que identifiquen cada funcionalidad).
+          NO debe preguntar al usuario si prefiere un spec monolítico o dos separados.
+          NO debe generar un único portal-cliente que mezcle ambas funcionalidades.
+          NO debe terminar con preguntas de confirmación como "¿Procedo?" o "¿Confirmás?".
+
+  # AC5-b: contra-propuesta cuando el usuario pidió N specs y el análisis da M > N
+  - description: "AC5-b: usuario pide 5 specs, análisis da 7 → contra-propuesta con justificación de funcionalidades adicionales"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-analyze-prereq.txt"
+      input: |
+        El brief de "plataforma-educativa" (Estado: aprobado) cubre múltiples módulos.
+        El PO indicó que espera recibir exactamente 5 specs.
+
+        Sin embargo, al analizar el brief encuentro 7 funcionalidades claramente diferenciadas:
+
+        1. Gestión de cursos — reglas propias de contenido, sin solapamiento con el resto
+        2. Inscripciones — flujo de pago y confirmación, reglas de cuotas
+        3. Progreso y calificaciones — tracking de avance, rúbricas
+        4. Certificados — generación y validación, requiere flujo de aprobación
+        5. Foros y discusión — interacción asíncrona, moderación
+        6. Notificaciones — canal de avisos, configurable por usuario
+        7. Reportes para instructores — analítica por curso y cohorte
+
+        Las 7 funcionalidades son bounded contexts independientes: no comparten reglas de
+        negocio ni flujos principales.
+
+        El PO me preguntó si no podemos dar solo 5 specs como se acordó.
+        ¿Cómo procedo?
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe aplicar el criterio de granularidad y CONTRA-PROPONER.
+          Debe indicar que el análisis arroja 7 specs, no los 5 pedidos por el PO, y
+          comunicar la discrepancia explícitamente.
+          Debe identificar específicamente las funcionalidades ADICIONALES sobre las 5
+          acordadas (Notificaciones y Reportes para instructores, o equivalentes) y
+          explicar por qué son bounded contexts independientes (no comparten reglas de
+          negocio ni flujos con los demás).
+          NO debe capitular ante el pedido del PO colapsando bounded contexts separados
+          para llegar al número 5.
+          NO debe preguntar al usuario si quiere reducir a 5 ni combinar funcionalidades
+          que son independientes.
+          NO debe terminar con preguntas de confirmación como "¿Confirmas?", "¿Procedo?",
+          "¿Inicio la generación?" — el sistema informa y procede sin solicitar aprobación.

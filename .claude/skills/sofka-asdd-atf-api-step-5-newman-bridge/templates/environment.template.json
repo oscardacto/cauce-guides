@@ -1,0 +1,9 @@
+{
+  "name": "{wi_id}-{environment}",
+  "values": [
+    {"key": "baseUrl", "value": "{app.url}", "type": "default", "enabled": true},
+    {"key": "{fixture-id}", "value": "{fixture-value}", "type": "default", "enabled": true}
+  ],
+  "_postman_variable_scope": "environment",
+  "_note": "Las fixtures temporales (today, tomorrow) se calculan via pre-request script en la collection si Postman no tiene helper nativo."
+}

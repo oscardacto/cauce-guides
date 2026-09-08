@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "slice": "SPIKE-1R-B",
+  "status": "complete",
+  "captured_at": "2026-07-18",
+  "source": {
+    "branch": "feature/asdd-runtime-efficiency-v2",
+    "base_commit": "a941930",
+    "prototype": ".claude/scripts/sofka-asdd-pre-tool-dispatcher-prototype.mjs",
+    "benchmark": ".claude/scripts/benchmark-pretool-hooks.mjs",
+    "differential_test": ".claude/scripts/test-pretool-dispatcher-prototype.mjs",
+    "collector_test": ".claude/scripts/test-dispatcher-collector-coexistence.mjs"
+  },
+  "environment": {
+    "os": "Linux WSL2 x86_64",
+    "node": "v24.18.0",
+    "memory_measurement": "unavailable: GNU time not installed"
+  },
+  "method": {
+    "warmup_samples": 5,
+    "measured_samples": 30,
+    "benchmark_jobs": "serial; matching current hooks remain parallel within each event",
+    "cpu_measurement": "Bash builtin time over 35 invocations; user+sys divided by 35",
+    "collector_scope": "fake side-effect collector validates lifecycle/coexistence without writing real telemetry"
+  },
+  "results": {
+    "bash_fast_path": {
+      "current": {"processes": 7, "p50_ms": 37.99, "p95_ms": 40.34, "cpu_ms_per_event": 235.97},
+      "prototype": {"processes": 1, "p50_ms": 34.58, "p95_ms": 38.89, "cpu_ms_per_event": 40.31},
+      "change": {"p95_percent": -3.59, "cpu_percent": -82.92, "processes_percent": -85.71}
+    },
+    "edit_representative": {
+      "current": {"processes": 8, "p50_ms": 38.91, "p95_ms": 42.08, "cpu_ms_per_event": 274.46},
+      "prototype": {"processes": 1, "p50_ms": 35.57, "p95_ms": 40.54, "cpu_ms_per_event": 41.17},
+      "change": {"p95_percent": -3.66, "cpu_percent": -85.00, "processes_percent": -87.50}
+    },
+    "bash_deny": {
+      "current": {"processes": 7, "p50_ms": 35.14, "p95_ms": 40.90},
+      "prototype": {"processes": 1, "p50_ms": 33.15, "p95_ms": 36.44},
+      "change": {"p95_percent": -10.90}
+    },
+    "differential": {
+      "fixtures": 7,
+      "passed": 7,
+      "failed": 0,
+      "coverage": ["allow", "dangerous deny", "authorization-control deny", "orchestrator deny", "coauthorship deny", "multi-guard spec deny", "malformed JSON"]
+    },
+    "collector_coexistence": {
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0,
+      "allowed": "one correlated Pre/Post pair",
+      "denied": "one unmatched Pre; Post absent"
+    }
+  },
+  "conclusion": {
+    "wall_clock": "non-regression proven; improvement is modest on fast paths",
+    "resource_use": "large CPU/process reduction proven",
+    "architecture": "single ASDD process is viable if all applicable guards run and decisions/reasons are merged",
+    "production_constraint": "replace prototype source rewriting with explicit module exports; prototype must never be registered"
+  }
+}

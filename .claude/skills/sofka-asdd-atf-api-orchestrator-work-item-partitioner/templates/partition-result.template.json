@@ -1,0 +1,32 @@
+{
+  "$schema": "Resultado de particionamiento devuelto por work-item-partitioner",
+  "partition_criterion": "H1-funcional-layer | H2-resource | H3-capability | H4-endpoint",
+  "criterion_justification": "{1-2 frases explicando por qué se eligió esta heurística}",
+  "total_work_items": 0,
+  "work_items": [
+    {
+      "wi_id": "wi-NNN",
+      "title": "{título corto ≤ 80 chars}",
+      "description": "{2-3 frases con el alcance}",
+      "folder_name": "wi-NNN-{slug-titulo}",
+      "endpoints_in_scope": [
+        "{METHOD} {path}"
+      ],
+      "rules_referenced": ["RN-NNN"],
+      "inputs_assigned": ["SRC-NNN"],
+      "estimated_test_cases": 0,
+      "complexity_signal": "low | medium | high",
+      "complexity_reasons": [
+        "decision-table con > 4 condiciones",
+        "transición de estado con > 3 estados"
+      ]
+    }
+  ],
+  "regression_inheritance": null,
+  "validation": {
+    "min_max_check": "pass | fail",
+    "non_overlapping_check": "pass | fail",
+    "evidence_backed_check": "pass | fail"
+  },
+  "generated_at": "{ISO 8601}"
+}

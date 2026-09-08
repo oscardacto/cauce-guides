@@ -1,0 +1,84 @@
+description: "Regla: sofka-asdd-memory-hygiene — sistema 2 capas, promoción y session handoff"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # Dos capas: clasificar correctamente dónde va cada tipo de memoria
+  - description: "Dos capas: clasifica feedback validado en capa equipo y estado de sesión en capa personal"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-memory-hygiene.txt"
+      input: |
+        Tengo dos cosas para guardar en memoria:
+        1. Aprendimos que en este proyecto NUNCA se debe usar `git rebase` sobre ramas compartidas — confirmado en 3 sesiones distintas y causó pérdida de código una vez.
+        2. Estoy en la rama `feat/3540-memory-hygiene`, el próximo paso es ejecutar los evals antes del commit.
+
+        ¿En qué capa va cada una?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe clasificar correctamente:
+          - El aprendizaje sobre git rebase → capa EQUIPO (.claude/memory/ en git), porque es feedback validado en múltiples sesiones, no contiene datos sensibles y aplica a futuras sesiones.
+          - El estado de la rama y próximo paso → capa PERSONAL (~/.claude/projects/.../memory/), porque es estado efímero de la sesión actual.
+          El agente NO debe mezclar ambas en la misma capa.
+
+  # Promoción: saber cuándo promover de personal a equipo
+  - description: "Promoción: identifica cuándo una lección personal califica para promoverse al equipo"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-memory-hygiene.txt"
+      input: |
+        En la sesión de hoy corregí al agente porque estaba leyendo el archivo completo de OpenAPI (5000 líneas) en vez de hacer grep primero. El agente lo aceptó y cambió su approach.
+
+        Esta es la primera vez que pasa este error. ¿Debo promover esto al equipo ya?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe indicar que NO es momento de promover al equipo todavía.
+          El criterio de promoción requiere confirmación en ≥2 sesiones distintas.
+          Debe sugerir guardarlo en la capa PERSONAL por ahora y promoverlo si el error se repite en otra sesión.
+          Puede mencionar que es un candidato a promoción (feedback tipo correction) pero que falta la segunda confirmación.
+
+  # Session handoff: produce el formato correcto al terminar con trabajo incompleto
+  # Los campos Bloqueadores y Worktrees viven en la referencia, no en el nucleo:
+  # este caso corre con el estado POST-carga, que es cuando el agente los tiene.
+  - description: "Session handoff: produce la memoria de handoff con todos los campos obligatorios"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-memory-hygiene-loaded.txt"
+      input: |
+        Voy a cerrar esta sesión pero el trabajo no está completo. Estoy en la rama `feat/3535-reglas-memory-hygiene-privacy`.
+        Completé: crear los archivos de regla. Pendiente: ejecutar los evals y hacer el commit.
+        No hay bloqueadores, no hay worktrees activos.
+
+        Genera la memoria de session handoff.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe producir una memoria project con el formato de session handoff que incluya TODOS estos campos:
+          - Estado (en progreso)
+          - Rama (feat/3535-reglas-memory-hygiene-privacy exacto)
+          - Último paso (crear los archivos de regla)
+          - Próximo paso (ejecutar evals y hacer commit — concreto y sin ambigüedad)
+          - Archivos clave (debe listar al menos los archivos de regla creados)
+          - Bloqueadores (ninguno)
+          - Worktrees (ninguno)
+          El formato debe ser el del session handoff, no texto libre.
+
+  # Carga condicional: el nucleo manda resolver la referencia antes de actuar
+  - description: "Carga condicional: antes de escribir en memory/ resuelve la referencia, no la adivina"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-memory-hygiene.txt"
+      input: |
+        Voy a guardar en `.claude/memory/` la convención de nombres de branches que acordamos hoy.
+        ¿Procedo a escribir el archivo?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe ejecutar el paso de carga condicional ANTES de escribir en `memory/`.
+          Debe nombrar el comando exacto `node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-memory-hygiene`
+          y decir que lee COMPLETO `.claude/references/rules/sofka-asdd-memory-hygiene.md`.
+          Debe indicar que si el resolver o la lectura fallan, se detiene sin escribir memoria.
+          NO debe escribir el archivo apoyándose solo en el núcleo, ni inventar o suponer el contenido de la referencia.

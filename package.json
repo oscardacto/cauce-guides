@@ -1,0 +1,27 @@
+{
+  "name": "asdd-project-structure",
+  "version": "3.7.0",
+  "description": "ASDD template — dependencias runtime del framework ATF Web (Playwright E2E)",
+  "scripts": {
+    "setup": "npm install && npx playwright install chromium",
+    "test": "node .claude/scripts/sofka-asdd-run-test-suites.mjs",
+    "validate": "node .claude/scripts/validate-template.mjs",
+    "hash:regen": "node .claude/scripts/sofka-asdd-regen-hashes.mjs",
+    "provenance:regen": "node .claude/scripts/sofka-asdd-gen-provenance.mjs",
+    "provenance:check": "node .claude/scripts/sofka-asdd-gen-provenance.mjs --check"
+  },
+  "dependencies": {
+    "@playwright/mcp": "^0.0.68",
+    "glob": "^13.0.6",
+    "mssql": "^11.0.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "axe-core": "^4.11.4",
+    "mammoth": "^1.8.0",
+    "pdf-parse": "^2.4.5",
+    "pptx2json": "^0.0.10",
+    "xlsx": "^0.18.5"
+  },
+  "private": true
+}

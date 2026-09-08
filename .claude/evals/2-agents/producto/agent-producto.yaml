@@ -1,0 +1,107 @@
+description: "sofka-asdd-producto: proceso y output de specs"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../../prompts/system-agent-producto.txt
+
+tests:
+  - description: "PROCESO: skill pm — captura visión estratégica y OKRs"
+    vars:
+      input: |
+        Nuevo proyecto: app de delivery de comida saludable para Colombia.
+        Target: personas 25-40 años en ciudades principales.
+        Define la visión estratégica y OKRs para el Q1.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente con skill pm debe:
+          1. Capturar la visión estratégica del producto
+          2. Definir OKRs medibles y con plazo
+          3. Identificar stakeholders y usuarios objetivo
+          4. Establecer restricciones de negocio relevantes
+          NO debe pasar directamente a historias de usuario — eso es po.
+
+  - description: "PROCESO: skill ba — levanta reglas de negocio con identificadores RN-XXX"
+    vars:
+      input: |
+        Sistema de créditos para PYMES. Levanta las reglas de negocio del proceso de
+        evaluación crediticia: score mínimo, documentación requerida, plazos, tasas.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente con skill ba debe:
+          1. Identificar reglas de negocio con formato RN-001, RN-002...
+          2. Describir procesos AS-IS del negocio
+          3. Identificar gaps entre AS-IS y TO-BE
+          NO debe escribir historias de usuario — eso es po.
+
+  - description: "PROCESO: skill funcional — detalla casos de uso con flujos"
+    vars:
+      input: |
+        Casos de uso para el módulo de transferencias bancarias.
+        Incluir flujo principal, alternativo y de excepción.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente con skill funcional debe:
+          1. Identificar casos de uso con formato CU-001, CU-002...
+          2. Detallar flujo principal paso a paso
+          3. Incluir flujos alternativos y de excepción
+          4. Mencionar actores y precondiciones
+          NO debe generar historias con Given/When/Then — eso es po.
+
+  - description: "PROCESO: skill po — genera historias testables con Given/When/Then"
+    vars:
+      input: |
+        Historia de usuario para transferencias internacionales.
+        Quiero criterios de aceptación claros y verificables.
+    assert:
+      - type: contains
+        value: "Given"
+      - type: contains
+        value: "When"
+      - type: contains
+        value: "Then"
+      - type: llm-rubric
+        value: |
+          El agente con skill po debe:
+          1. Escribir historias en formato: Como [rol], quiero [acción], para [beneficio]
+          2. Incluir criterios de aceptación en formato Given/When/Then
+          3. Los criterios deben ser testables y sin ambigüedades
+          4. Cada historia debe tener al menos 2 criterios de aceptación
+
+  - description: "OUTPUT: Spec completa contiene RN, CU e historias trazables"
+    vars:
+      input: |
+        Genera la especificación completa del módulo de login con autenticación multifactor.
+        Sigue el proceso ba → funcional → po.
+    assert:
+      - type: llm-rubric
+        value: |
+          La especificación completa debe contener:
+          - Al menos 3 reglas de negocio (RN-001...)
+          - Al menos 2 casos de uso (CU-001...) con flujos
+          - Al menos 3 historias de usuario con criterios Given/When/Then
+          - Trazabilidad: cada historia debe referenciar su CU y cada CU sus RN
+          - El artefacto debe poder vivir en docs/specs/{feature}.md
+
+  - description: "CAPACIDAD: escribe spec directamente en docs/specs/ sin bypass del orquestador"
+    vars:
+      input: |
+        Genera la especificación del módulo de notificaciones por email.
+        Escribe el artefacto directamente en docs/specs/notificaciones-email.md.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente producto debe:
+          1. Indicar que escribirá o creará el archivo docs/specs/notificaciones-email.md
+          2. Usar herramientas de escritura (Write o Edit) directamente — no delegar la escritura al orquestador
+          3. El artefacto resultante debe seguir el template de spec (RN-NNN, CU-NNN, HU-NNN con Given/When/Then)
+          4. NO mencionar bypass, SOFKA_ASDD_ORCHESTRATOR_GUARD_DISABLE ni pedir que el orquestador persista por él

@@ -1,0 +1,94 @@
+{
+  "info": {
+    "name": "wi-001 — Solicitud de ejecución de facturación",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección generada por ATF API v3 (Newman bridge).\nFuente: docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/test-cases/wi-001-test-cases.json\nCorrer: newman run wi-001.postman_collection.json -e wi-001.postman_environment.json",
+    "_postman_id": "atf-api-v3-wi-001-clienteejemplo",
+    "version": {"major": 1, "minor": 0, "patch": 0}
+  },
+  "item": [
+    {
+      "name": "[CP-001] Crear solicitud válida con fecha actual",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": "{{baseUrl}}/osf/api/v1/pending-billing-quotas",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cycle\": \"{{validCycle}}\",\n  \"distributorId\": \"{{validDistributor}}\",\n  \"billingPeriod\": \"{{validPeriod}}\",\n  \"periodProcessDate\": \"{{today}}\"\n}",
+          "options": {"raw": {"language": "json"}}
+        },
+        "description": "Tags: @happy-path @critical-flow @CP-001\nRN cubiertas: RN-001, RN-008\nAC cubiertos: AC-001, AC-002\nTécnica: Decision Table"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Calcular fecha de hoy (fallback si environment no la tiene)",
+              "if (!pm.environment.get('today')) {",
+              "  const d = new Date();",
+              "  const iso = d.toISOString().slice(0, 10);",
+              "  pm.environment.set('today', iso);",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 201 per RN-008', () => pm.response.to.have.status(201));",
+              "pm.test('Body has requestId', () => pm.expect(pm.response.json()).to.have.property('requestId'));",
+              "pm.test('requestId is UUID', () => pm.expect(pm.response.json().requestId).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i));",
+              "pm.test('status is PENDING per RN-008', () => pm.expect(pm.response.json().status).to.equal('PENDING'));",
+              "pm.test('Has createdAt', () => pm.expect(pm.response.json()).to.have.property('createdAt'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "[CP-002] Rechazar solicitud con periodProcessDate futura",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": "{{baseUrl}}/osf/api/v1/pending-billing-quotas",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cycle\": \"{{validCycle}}\",\n  \"distributorId\": \"{{validDistributor}}\",\n  \"billingPeriod\": \"{{validPeriod}}\",\n  \"periodProcessDate\": \"{{tomorrow}}\"\n}",
+          "options": {"raw": {"language": "json"}}
+        },
+        "description": "Tags: @error-path @boundary @CP-002\nRN cubiertas: RN-010\nAC cubiertos: AC-003\nTécnica: BVA"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.environment.get('tomorrow')) {",
+              "  const d = new Date(); d.setDate(d.getDate() + 1);",
+              "  pm.environment.set('tomorrow', d.toISOString().slice(0, 10));",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 400 per RN-010', () => pm.response.to.have.status(400));",
+              "pm.test('Error is INVALID_CYCLE_DATE', () => pm.expect(pm.response.json().error).to.equal('INVALID_CYCLE_DATE'));"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "auth": null,
+  "variable": []
+}

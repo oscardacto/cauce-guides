@@ -1,0 +1,76 @@
+description: "Skills: sofka-asdd-security — proceso y output por skill"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # skill: code-scan
+  - description: "PROCESO code-scan: identifica OWASP Top 10 con vector concreto"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-security-code-scan.txt"
+      input: |
+        Escanea este código Node.js:
+        ```js
+        app.get('/user/:id', (req, res) => {
+          const query = `SELECT * FROM users WHERE id = ${req.params.id}`;
+          db.query(query, (err, result) => res.json(result));
+        });
+        ```
+    assert:
+      - type: llm-rubric
+        value: |
+          Debe identificar SQL Injection (OWASP A03), mostrar el vector de ataque
+          (ej: GET /user/1 OR 1=1), y proporcionar el fix con queries parametrizadas.
+          No debe solo nombrar el problema — debe incluir el código corregido.
+
+  # skill: secrets-scan
+  - description: "PROCESO secrets-scan: detecta y clasifica secretos expuestos"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-security-secrets-scan.txt"
+      input: |
+        Revisa este archivo .env.example commiteado en el repo:
+        ```
+        DB_HOST=production-db.internal.company.com
+        DB_PASSWORD=Pr0d$ecur3P@ss!
+        STRIPE_SECRET_KEY=sk_live_51Hxxx...
+        JWT_SECRET=mysupersecretjwtkey123
+        ```
+    assert:
+      - type: llm-rubric
+        value: |
+          El scan debe clasificar: DB_PASSWORD (crítico - parece prod real), STRIPE_SECRET_KEY
+          (crítico - key de live), JWT_SECRET (alto - débil y expuesta).
+          DB_HOST (informativo - hostname interno).
+          Para los críticos: indicar que deben rotarse INMEDIATAMENTE si ya fueron commiteados.
+
+  # skill: compliance
+  - description: "PROCESO compliance: gap analysis contra regulación específica"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-security-compliance.txt"
+      input: "El sistema de pagos almacena: número de tarjeta completo, CVV, nombre del titular y fecha de expiración en PostgreSQL cifrados con AES-256. ¿Cumple PCI-DSS?"
+    assert:
+      - type: llm-rubric
+        value: |
+          El análisis de compliance PCI-DSS debe identificar: almacenar CVV viola PCI-DSS req 3.2
+          (nunca almacenar CVV post-autorización), número completo requiere tokenización (req 3.4),
+          y recomendar la remediación: usar tokenización + vault (ej: Stripe Vault).
+          Debe ser específico sobre qué req PCI-DSS se viola.
+
+  # skill: dependency-audit
+  - description: "OUTPUT dependency-audit: CVEs clasificados con versiones parcheadas"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-security-dependency-audit.txt"
+      input: "Audita estas dependencias: express 4.17.1, jsonwebtoken 8.5.1, axios 0.21.0, lodash 4.17.20, node-fetch 2.6.1"
+    assert:
+      - type: llm-rubric
+        value: |
+          El audit debe identificar CVEs conocidos en estas versiones:
+          - axios 0.21.0: CVE-2021-3749 (SSRF)
+          - jsonwebtoken 8.5.1: vulnerabilidades conocidas de verificación
+          Para cada CVE: severidad CVSS, descripción breve, versión parcheada recomendada.
+          No inventar CVEs que no existen.
+

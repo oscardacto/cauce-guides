@@ -1,0 +1,26 @@
+{
+  "$schema": "Criterios de aceptación normalizados a Given/When/Then atómicos",
+  "wi_id": "wi-NNN",
+  "normalized_criteria": [
+    {
+      "ac_id": "AC-NNN",
+      "given": "{precondición testeable, en pasado o estado}",
+      "when": "{acción única en presente, con datos concretos cuando aplique}",
+      "then": "{resultado verificable único — status, body, estado del sistema}",
+      "rules_covered": ["RN-NNN"],
+      "source_format": "given-when-then | bullet-list | narrative | table",
+      "source_text": "{texto literal del fuente}",
+      "source_location": {"section": "{string}", "line_approx": 0},
+      "confidence": "high | medium | low",
+      "transformation_notes": "{nota si hubo split, merge o reescritura}"
+    }
+  ],
+  "transformation_stats": {
+    "total_source_criteria": 0,
+    "total_normalized": 0,
+    "split_count": 0,
+    "merged_count": 0,
+    "low_confidence_count": 0
+  },
+  "normalized_at": "{ISO 8601}"
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "Resultado canónico ATF de un scan OWASP ZAP",
+  "run_id": "{run_id}",
+  "scan_mode": "baseline | full",
+  "started_at": "{ISO 8601}",
+  "completed_at": "{ISO 8601}",
+  "duration_seconds": 0,
+  "zap_version": "{string}",
+  "scope": {
+    "target_url": "{base url}",
+    "openapi_imported": true,
+    "endpoints_scanned": 0,
+    "urls_visited": 0,
+    "requests_sent": 0
+  },
+  "findings_summary": {
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "informational": 0
+  },
+  "findings": [
+    {
+      "id": "ZAP-NNN",
+      "zap_alert_id": "{ZAP plugin ID}",
+      "name": "{nombre del alert}",
+      "severity": "high | medium | low | informational",
+      "confidence": "high | medium | low",
+      "cwe": "CWE-NNN",
+      "owasp_mapping": "API1 | API2 | ... (best-effort)",
+      "affected_url": "{full URL}",
+      "description": "{string}",
+      "evidence": "{cita textual de lo observado}",
+      "remediation": "{pasos numerados}",
+      "evidence_path": "docs/testing/atf/{run_id}/security/evidence/{ZAP-ID}/"
+    }
+  ],
+  "consolidated_with_owasp_checks": true,
+  "duplicates_with_owasp_checks": [
+    {"zap_id": "ZAP-NNN", "owasp_check_id": "SEC-NNN", "merged_under": "SEC-NNN"}
+  ],
+  "next_step": "{string}"
+}

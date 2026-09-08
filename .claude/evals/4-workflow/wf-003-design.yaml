@@ -1,0 +1,56 @@
+description: "WF-003 PROCESO+OUTPUT: Fase Diseñar — arquitecto primario, artefactos técnicos"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "PROCESO WF-003: Diseño de arquitectura → arquitecto como primario"
+    vars:
+      input: |
+        Spec aprobada para el módulo de pagos. Necesito diseñar la arquitectura:
+        decidir entre microservicio vs librería compartida, definir los diagramas C4 y
+        documentar la decisión en un ADR.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-solution-architect"
+      - type: llm-rubric
+        value: |
+          sofka-asdd-solution-architect es el primario en WF-003. El orquestador debe delegarle
+          con los skills: tradeoff-analysis (microservicio vs librería), component-diagram (C4),
+          sofka-docs (ADR). Researcher puede incluirse para el análisis comparativo.
+
+  - description: "PROCESO WF-003: Feature con UI → ux-ui también es primario"
+    vars:
+      input: |
+        Diseñar el módulo de checkout del e-commerce: wireframes, componentes,
+        arquitectura del servicio de carrito y contrato API.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-ux-ui"
+      - type: icontains
+        value: "sofka-asdd-solution-architect"
+      - type: llm-rubric
+        value: |
+          Para features con UI, tanto sofka-asdd-ux-ui como sofka-asdd-solution-architect son primarios.
+          ux-ui produce wireframes y component specs; architect produce ADRs y diagramas C4.
+
+  - description: "OUTPUT WF-003: Toda decisión técnica significativa tiene ADR"
+    vars:
+      input: |
+        Diseñar la estrategia de caching para el servicio de productos del catálogo.
+        Alta lectura, baja escritura, ~1M productos.
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe asegurar que sofka-asdd-solution-architect genere:
+          - ADR con al menos 2 alternativas evaluadas (ej: Redis cache-aside vs CDN vs in-memory)
+          - Decisión justificada con criterios explícitos (costo, latencia, ops)
+          - ADR ubicado en docs/architecture/decisions/ADR-{NNN}-{titulo}.md

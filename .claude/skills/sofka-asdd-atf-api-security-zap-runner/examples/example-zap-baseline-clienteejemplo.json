@@ -1,0 +1,54 @@
+{
+  "run_id": "PruebaAPIClienteEjemplo-v1.0-20260521-1030",
+  "scan_mode": "baseline",
+  "started_at": "2026-05-21T11:10:00-05:00",
+  "completed_at": "2026-05-21T11:14:30-05:00",
+  "duration_seconds": 270,
+  "zap_version": "2.15.0",
+  "scope": {
+    "target_url": "https://api-qa.clienteejemplo.example.com/v1",
+    "openapi_imported": true,
+    "endpoints_scanned": 2,
+    "urls_visited": 8,
+    "requests_sent": 42
+  },
+  "findings_summary": {
+    "high": 0,
+    "medium": 3,
+    "low": 4,
+    "informational": 6
+  },
+  "findings": [
+    {
+      "id": "ZAP-001",
+      "zap_alert_id": "10038",
+      "name": "Content Security Policy (CSP) Header Not Set",
+      "severity": "medium",
+      "confidence": "high",
+      "cwe": "CWE-693",
+      "owasp_mapping": "API8",
+      "affected_url": "https://api-qa.clienteejemplo.example.com/v1/osf/api/v1/pending-billing-quotas",
+      "description": "El response no incluye header Content-Security-Policy. Aunque es una API JSON, definir CSP minimiza riesgos si el contenido se renderiza en algún cliente web.",
+      "evidence": "Response headers carecen de 'Content-Security-Policy'",
+      "remediation": "Agregar header `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'` para APIs que solo devuelven JSON.",
+      "evidence_path": "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/security/evidence/ZAP-001/"
+    },
+    {
+      "id": "ZAP-002",
+      "zap_alert_id": "10037",
+      "name": "Server Leaks Information via X-Powered-By HTTP Response Header",
+      "severity": "low",
+      "confidence": "high",
+      "cwe": "CWE-200",
+      "owasp_mapping": "API8",
+      "affected_url": "https://api-qa.clienteejemplo.example.com/v1/osf/api/v1/pending-billing-quotas",
+      "description": "Header X-Powered-By: Spring Boot 2.7 expone tecnología y versión del stack. Permite a atacantes apuntar vulnerabilidades conocidas de esa versión.",
+      "evidence": "X-Powered-By: Spring Boot/2.7.18",
+      "remediation": "Configurar el servidor para eliminar X-Powered-By y Server headers.",
+      "evidence_path": "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/security/evidence/ZAP-002/"
+    }
+  ],
+  "consolidated_with_owasp_checks": true,
+  "duplicates_with_owasp_checks": [],
+  "next_step": "Findings de ZAP (3 medium + 4 low) son complementarios a los de owasp-api-checks. Consolidar en security-report.md. Considerar full active scan tras corregir SEC-001 (auth) para descubrir vulnerabilidades en estado autenticado."
+}

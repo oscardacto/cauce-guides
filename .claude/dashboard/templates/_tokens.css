@@ -1,0 +1,126 @@
+/**
+ * ATF — Sofka Design Tokens
+ * Fuente única de verdad para colores, tipografía y radios.
+ * Se inlinea en cada template en tiempo de build por generate-report.js.
+ * NO modificar colores hardcodeados en templates individuales — usar estas variables.
+ *
+ * Identidad visual: sofka_style_manual.md (Sofka Technologies 2026)
+ * Template version: 3.1.0
+ */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  /* ── Sofka Brand Palette 2026 (sofka_style_manual.md §2) ── */
+  --orange:      #F47920;                      /* Naranja Sofka — CTAs, acentos, guión bajo del logo */
+  --orange-bg:   rgba(244,121,32,.09);
+  --orange-b:    rgba(244,121,32,.28);
+  --sofka-light: #F0EDE8;                      /* Crema / Beige — fondos de apertura */
+  --sofka-dark:  #B8A894;
+
+  /* ── Backgrounds ── */
+  --bg:    #F7F5F2;
+  --bg2:   #FFFFFF;
+  --bg3:   #F0EDE8;
+  --bg4:   #E8E4DE;
+  --border:#DDD8D0;
+  --bord2: #C8C0B4;
+
+  /* ── Semánticos (estados de QA) ── */
+  --go:    #18A34A; --go-bg:  rgba(24,163,74,.08);  --go-b:  rgba(24,163,74,.25);
+  --warn:  #D46800; --warn-bg:rgba(212,104,0,.08);  --warn-b:rgba(212,104,0,.25);
+  --bad:   #E02020; --bad-bg: rgba(224,32,32,.08);  --bad-b: rgba(224,32,32,.25);
+  --blue:  #06A4A4; --blue-bg:rgba(6,164,164,.08);  --blue-b:rgba(6,164,164,.25);
+  --skip:  #8A8478; --skip-bg:rgba(138,132,120,.10);--skip-b:rgba(138,132,120,.25);
+  --p3c:   #0A7A7A;   /* P3 bugs = teal */
+
+  /* ── Sofka Semáforo de Criticidades (§5.1) ── */
+  --sev-critical: #E53E3E;  /* Rojo — bloqueos, fallos graves */
+  --sev-high:     #F47920;  /* Naranja Sofka — alertas importantes */
+  --sev-medium:   #F6C343;  /* Amarillo — puntos de atención */
+  --sev-low:      #38A169;  /* Verde — estado saludable */
+
+  /* ── Texto (§2 + §3) ── */
+  --text:  #1A1A1A; --text2: #555555; --text3: #888888; --text4: #B0A898;
+
+  /* ── Tipografía Sofka 2026 (§3) ── */
+  --font-head: 'Barlow Condensed', 'Montserrat', Arial Narrow, sans-serif;  /* Titulares */
+  --font-body: 'Montserrat', 'Roboto', Arial, sans-serif;                   /* Cuerpo */
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Aliases de retrocompatibilidad (templates usan --sans, --body, --mono) */
+  --sans: var(--font-head);
+  --body: var(--font-body);
+  --mono: var(--font-mono);
+
+  /* ── Forma ── */
+  --r:    8px;
+  --r-lg: 12px;
+
+  /* ── Sombras ── */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.10);
+
+  /* ── Transición ── */
+  --transition: 150ms ease;
+}
+
+/* ── SISTEMA DE BADGES ATF (compartido entre todos los templates) ── */
+.atf-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; font-family: var(--font-head);
+  letter-spacing: .04em; text-transform: uppercase;
+  white-space: nowrap; border: 1.5px solid transparent;
+}
+.atf-badge-pass    { background:var(--go-bg);   color:var(--go);   border-color:var(--go-b);   }
+.atf-badge-fail    { background:var(--bad-bg);  color:var(--bad);  border-color:var(--bad-b);  }
+.atf-badge-warn    { background:var(--warn-bg); color:var(--warn); border-color:var(--warn-b); }
+.atf-badge-skip    { background:var(--skip-bg); color:var(--skip); border-color:var(--skip-b); }
+.atf-badge-running { background:var(--blue-bg); color:var(--blue); border-color:var(--blue-b); }
+
+/* ── BREADCRUMB NAV (evidence_cp) ── */
+.atf-breadcrumb {
+  background: var(--bg4); border-bottom: 1px solid var(--border);
+  padding: 7px 24px; display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-family: var(--font-body);
+  position: sticky; top: 0; z-index: 100;
+}
+.bc-link { color: var(--orange); text-decoration: none; font-weight: 600; transition: opacity var(--transition); }
+.bc-link:hover { opacity: .7; }
+.bc-sep::after { content: '/'; color: var(--text3); font-size: 10px; }
+.bc-current { color: var(--text2); font-weight: 500; }
+
+/* ── ANIMACIÓN DE ENTRADA (compartida) ── */
+@keyframes atf-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SOFKA FOOTER (§4.7 — compartido entre todos los templates) ── */
+.sofka-footer {
+  text-align: center;
+  font-size: .75rem;
+  color: var(--text3, #888888);
+  margin: 2.5rem 0 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--orange, #F47920);
+  line-height: 1.7;
+  font-family: var(--font-body);
+}
+.sofka-footer a {
+  color: var(--orange, #F47920);
+  text-decoration: none;
+  font-weight: 600;
+}
+.sofka-footer a:hover { opacity: .7; }
+.sofka-brand {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--text, #1A1A1A);
+  letter-spacing: -.01em;
+}
+.sofka-brand .underscore {
+  color: var(--orange, #F47920);
+  font-weight: 800;
+}

@@ -1,0 +1,26 @@
+Eres un agente ASDD que aplica la regla: sofka-asdd-clean-code
+
+Esta regla define los estándares SOLID + Clean Code obligatorios para todo agente que escriba o modifique código de producción.
+
+---
+
+## Obligaciones antes de escribir código
+
+- Revisar documentación de calidad del proyecto en `.claude/docs/` si existe.
+- Código en inglés, mensajes al usuario en español, logs en inglés.
+- Coverage mínimo declarado en el CLAUDE.md del proyecto consumidor (referencia: global ≥ 80%, dominio ≥ 90%).
+
+## SOLID — aplicar siempre
+
+- SRP: 1 clase/componente/hook = 1 responsabilidad.
+- OCP: extensible via composición sin modificar código existente.
+- LSP: implementaciones de la misma interfaz son intercambiables.
+- ISP: interfaces pequeñas y enfocadas.
+- DIP: dominio define puertos; capas externas los implementan.
+
+## Clean Code — aplicar siempre
+
+- Nombres descriptivos (mínimo 3 chars). Funciones cortas. CC ≤ 10.
+- DRY (3+ repeticiones → abstraer). KISS. YAGNI. Guard clauses. Nesting ≤ 2.
+- Sin magic numbers/strings. Sin dead code. Sin código comentado.
+- Boy Scout Rule: dejar el código más limpio — escalar mejoras que excedan el scope a sofka-asdd-tech-lead.

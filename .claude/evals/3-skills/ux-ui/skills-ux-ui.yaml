@@ -1,0 +1,70 @@
+description: "Skills: sofka-asdd-ux-ui — proceso y output por skill"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # skill: component-spec
+  - description: "PROCESO component-spec: define props, states y eventos sin código"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-ux-ui-component-spec.txt"
+      input: "Especifica el componente 'OTPInput' para verificación de código de 6 dígitos enviado por SMS. Debe auto-avanzar al siguiente campo y pegar automáticamente si el usuario pega el código completo."
+    assert:
+      - type: llm-rubric
+        value: |
+          La spec del componente debe incluir: props (length, value, onChange, onComplete, disabled),
+          estados (empty, filling, complete, error), comportamiento (auto-advance al escribir,
+          paste handling para 6 dígitos), y consideraciones de accesibilidad (aria-label por campo,
+          manejo de foco). NO debe incluir código de implementación.
+
+  # skill: accessibility
+  - description: "PROCESO accessibility: evalúa WCAG 2.1 AA con criterios específicos"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-ux-ui-accessibility.txt"
+      input: |
+        Evalúa la accesibilidad de este componente de alerta:
+        ```html
+        <div class="alert error" style="color: red;">
+          ⚠️ Error al procesar el pago
+        </div>
+        ```
+    assert:
+      - type: llm-rubric
+        value: |
+          Debe identificar problemas WCAG 2.1 AA:
+          1. Sin role='alert' o aria-live — lectores de pantalla no lo anuncian automáticamente
+          2. Color rojo como único indicador visual (criterion 1.4.1)
+          3. Emoji ⚠️ sin texto alternativo explícito para lectores de pantalla
+          4. Recomendar: role='alert', texto descriptivo, ícono con aria-hidden="true"
+
+  # skill: design-tokens
+  - description: "OUTPUT design-tokens: sistema coherente con semántica"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-ux-ui-design-tokens.txt"
+      input: "Define los design tokens de color para una app de salud. Brand color: #2E7D32 (verde médico). Necesita: primario, secundario, estados (success/error/warning/info) y neutrales."
+    assert:
+      - type: llm-rubric
+        value: |
+          Los tokens deben incluir: paleta semántica completa (no solo tonos del brand color),
+          verificar contraste WCAG AA del verde sobre blanco (4.5:1 mínimo para texto),
+          escala de neutrales para textos/fondos/bordes, y tokens en formato reutilizable.
+          El verde #2E7D32 tiene buen contraste — confirmarlo en el output.
+
+  # skill: responsive
+  - description: "PROCESO responsive: define comportamiento por breakpoint con razonamiento"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-ux-ui-responsive.txt"
+      input: "Diseña el comportamiento responsive del menú de navegación principal con 6 items. Desktop tiene espacio, mobile no."
+    assert:
+      - type: llm-rubric
+        value: |
+          La especificación responsive debe definir: comportamiento en mobile (hamburger menu o bottom nav),
+          breakpoints específicos (mobile < 768px, tablet 768-1024px, desktop > 1024px),
+          comportamiento de apertura/cierre del menú móvil (overlay, slide, etc.),
+          touch target mínimo (44px × 44px) para los items del menú,
+          y manejo del foco al abrir/cerrar (trap focus en el menú abierto).
+

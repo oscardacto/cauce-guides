@@ -1,0 +1,54 @@
+{
+  "schema": "1.0",
+  "spec": "agentic-spec-driven-development",
+  "variant": "atf-web-qa",
+  "version": "1.0.0",
+  "created_at": "2026-06-10",
+  "updated_at": "2026-06-10",
+  "locked": false,
+  "description": "Configuración específica del framework ATF Web QA (E2E guiado por browser). Complementa sofka-asdd.lock — no duplica routing.hard_exclusions, routing.mode ni model_strategy de las fases ASDD principales. Reportería vía dashboard propio (no usa sofka-asdd-atf-reporting-qa-engineer).",
+  "model_strategy": {
+    "phase_default": {
+      "diagnose": "sonnet",
+      "strategize": "opus",
+      "design": "opus",
+      "enrich": "sonnet",
+      "execute": "sonnet",
+      "knowledge": "haiku"
+    },
+    "agent_pinning": {
+      "sofka-asdd-atf-web-qa-engineer": "opus"
+    },
+    "skill_override": {}
+  },
+  "checkpoint": {
+    "auto_save_after_steps": ["diagnose", "design", "execute"],
+    "context_summary_after_steps": ["design", "execute"],
+    "rate_limit_partial_status": "partial",
+    "resume_prompt_filename": "resume-prompt.md"
+  },
+  "defect_classification": {
+    "categories": ["bug", "precondition", "env_issue", "script_issue"],
+    "default_when_unclassified": "bug",
+    "require_classification_before_backlog": true
+  },
+  "routing": {
+    "light_max_agent_count": 1,
+    "full_min_phases": 3
+  },
+  "project": {
+    "domain": "qa-web-e2e-testing",
+    "stack": ["node/typescript", "playwright", "axe-core", "notebooklm"]
+  },
+  "reporting": {
+    "engine": "dashboard",
+    "generator": "dashboard/generate-report.js",
+    "output": "docs/testing/atf-web/{run_id}/report.html"
+  },
+  "repository": {
+    "agents": 1,
+    "skills": 28,
+    "commands": 12,
+    "rules": 5
+  }
+}

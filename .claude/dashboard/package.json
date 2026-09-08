@@ -1,0 +1,19 @@
+{
+  "name": "atf-dashboard",
+  "version": "2.1.0",
+  "description": "ATF Report Generator & Index Tools",
+  "scripts": {
+    "report":               "node generate-report.js",
+    "report:latest":        "node generate-report.js --latest",
+    "index":                "node generate-index.js",
+    "reprocess":            "node reprocess.js",
+    "reprocess:all":        "node reprocess.js --all",
+    "reprocess:last":       "node reprocess.js --last",
+    "reprocess:index-only": "node reprocess.js --index-only",
+    "build":                "node reprocess.js --all && node generate-index.js",
+    "build:index":          "node reprocess.js --index-only"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

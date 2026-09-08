@@ -1,0 +1,30 @@
+{
+  "_schema": "atf-runs-index-v2",
+  "app": {
+    "name": "config"
+  },
+  "runs": [
+    {
+      "run_id": "config",
+      "app_name": "config",
+      "app_version": "",
+      "started_at": null,
+      "completed_at": "2026-08-05T18:20:02.796Z",
+      "duration_ms": 0,
+      "frs_pct": null,
+      "total_cps": 0,
+      "passed": 0,
+      "failed": 0,
+      "blocked": 0,
+      "pass_rate_pct": null,
+      "fpy_pct": null,
+      "p1_bugs": 0,
+      "p2_bugs": 0,
+      "p3_bugs": 0,
+      "p4_bugs": 0,
+      "report_path": "config/report.html",
+      "report_regenerated_at": "2026-08-05T18:20:02.796Z",
+      "report_template_version": "3.0.0"
+    }
+  ]
+}

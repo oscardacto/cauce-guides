@@ -1,0 +1,16 @@
+{
+  "$schema": "Item de Jira generado por backlog-sync",
+  "defect_ref": "D-NNN",
+  "issue_type": "Bug",
+  "project": "{project_key}",
+  "summary": "[ATF-API] {título del defecto}",
+  "description": "## Descripción\n\n{description del defecto}\n\n## Evidencia\n\n- Request: {METHOD} {url}\n- Response observado: {status} con {error}\n- Response esperado: {expected_status} con {expected_body}\n- Path completo: docs/testing/atf/{run_id}/execution/evidence/{CP-ID}/\n\n## Reproducibilidad\n\n{always | intermittent | flaky}\n\n## Detalle técnico\n\n{evidence_summary}\n\n## Trazabilidad\n\n- ATF Run ID: {run_id}\n- CP: {CP-ID}\n- WI: {wi-id}\n- RN violada: {RN-NNN}",
+  "priority": "Highest | High | Medium | Low",
+  "labels": ["atf-api", "run:{run_id}", "cp:{CP-ID}", "wi:{wi-id}"],
+  "components": ["{component derivado del WI}"],
+  "customfields": {
+    "Rule-Violated": "{RN-NNN}"
+  },
+  "reporter": "atf-api-bot",
+  "source_artifact": "docs/testing/atf/{run_id}/execution/defects/{D-ID}.json"
+}

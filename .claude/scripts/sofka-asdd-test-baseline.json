@@ -1,0 +1,82 @@
+{
+  "schema_version": 3,
+  "description": "Fallos conocidos y documentados de las suites .claude/scripts/test-*.mjs. Declaracion explicita, NO supresion: el runner los imprime completos con su cola de salida y solo devuelve exit 0 cuando el conjunto observado coincide exactamente con esta lista Y cada suite falla en el modo declarado. Un fallo no declarado, un modo de falla distinto al declarado o una entrada obsoleta (suite que ahora pasa) devuelven exit 1.",
+  "schema": {
+    "expected_status": "Modo de falla esperado para la entrada: 'FAIL' (exit distinto de 0) o 'TIMEOUT' (abortada por SUITE_TIMEOUT_MS). Si el campo falta, el runner asume 'FAIL' (retrocompatible con schema_version 1). Si la suite falla en otro modo, el runner NO lo absorbe: lo reporta como desvio de modo y sale con exit 1, porque el baseline declara una causa raiz concreta y otro modo de falla puede ser una causa nueva.",
+    "typical_duration_ms": "NUEVO EN v3 — semantica precisada. Duracion tipica de la suite EN LA PLATAFORMA DE REFERENCIA declarada en la raiz (`reference_platform`), nunca un promedio entre plataformas. Sigue siendo un numero en ms para que el runner lo interpole tal cual; el par plataforma-valor se lee junto con `typical_duration_platform`. La plataforma de referencia es deliberadamente la MAS LENTA de las medidas, porque este numero existe para dimensionar SUITE_TIMEOUT_MS y un timeout debe cubrir el peor caso, no el mejor.",
+    "typical_duration_platform": "NUEVO EN v3 — obligatorio en toda entrada que tenga `typical_duration_ms`. `platform_id` (de `measurements[]`) al que corresponde ese numero. Ningun numero de duracion queda sin plataforma asociada: si se agrega `typical_duration_ms` sin este campo, la entrada esta incompleta.",
+    "typical_duration_ms_by_platform": "NUEVO EN v3 — mapa `platform_id` -> ms con TODAS las mediciones reales disponibles de esa suite. Es la fuente de verdad legible por maquina; `typical_duration_ms` es solo la proyeccion de este mapa sobre la plataforma de referencia. NO es obligatorio tener una medicion por cada plataforma de `measurements[]`: se registran las que existen y no se re-mide en cada plataforma futura solo para completar el mapa. Un `platform_id` ausente significa 'no medido', nunca 'igual al de referencia'.",
+    "cross_platform_confirmation": "NUEVO EN v3 — opcional. Registra que el resultado interno de la suite (conteo de asserts, no la duracion) se reprodujo identico en >=2 plataformas. Sirve para separar un defecto de script real de un problema de portabilidad: mismo conteo en dos SO distintos descarta la portabilidad como causa.",
+    "measurements": "NUEVO EN v3 — reemplaza los campos raiz `measured_on` / `measured_platform` / `measured_branch` de v2, que solo podian describir UNA plataforma y dejaban las duraciones por entrada sin contexto legible. Es una lista de corridas completas del set, una por plataforma, cada una con `platform_id` (clave estable usada por `typical_duration_platform` y por las claves de `typical_duration_ms_by_platform`), `platform`, `node`, `measured_on`, `measured_branch`, `suite_count`, veredicto observado y duracion total. Agregar una plataforma nueva = agregar un elemento aca y una clave en los mapas por entrada; no requiere tocar el runner.",
+    "reference_platform": "NUEVO EN v3 — `platform_id` cuyas duraciones alimentan `typical_duration_ms` y el dimensionamiento de SUITE_TIMEOUT_MS. Debe ser la plataforma mas lenta medida."
+  },
+  "reference_platform": "windows-11",
+  "reference_platform_rationale": "Windows 11 es la plataforma de referencia porque es la mas lenta medida: hasta 23x mas lenta que WSL Fedora en la suite peor afectada. El costo de spawn de procesos en Windows domina cualquier suite que cree procesos hijo en serie (test-git-guards-cwd crea ~62 repos git fixture). Un SUITE_TIMEOUT_MS calibrado con numeros de Linux abortaria corridas sanas en Windows; calibrado con Windows cubre ambas.",
+  "runner": ".claude/scripts/sofka-asdd-run-test-suites.mjs",
+  "measurements": [
+    {
+      "platform_id": "windows-11",
+      "platform": "Windows 11 Pro 10.0.26200",
+      "node": "v24.18.0",
+      "measured_on": "2026-08-03",
+      "measured_branch": "fix/os-compatibility",
+      "suite_count": 45,
+      "observed_verdict": "42 PASS, 3 fallos conocidos, 0 fallos nuevos, 0 desvios de modo, 0 baseline obsoleto, exit 0",
+      "total_duration_ms_range": [187000, 458000],
+      "total_duration_note": "No se registro un total unico: varias corridas dieron entre ~187 s y ~458 s segun la contencion de I/O del equipo. Se guarda el rango observado en lugar de un valor puntual para no inventar precision que no se midio. La corrida de verificacion de v3 (2026-08-04, rama dev) dio 286915 ms, dentro del rango."
+    },
+    {
+      "platform_id": "wsl-fedora",
+      "platform": "WSL Fedora",
+      "node": "no registrado",
+      "measured_on": "2026-08-03",
+      "measured_branch": "no registrado",
+      "suite_count": 45,
+      "observed_verdict": "42 PASS, los mismos 3 fallos conocidos, 0 fallos nuevos, 0 desvios de modo, 0 baseline obsoleto, exit 0",
+      "total_duration_ms": 65201,
+      "total_duration_note": "Corrida de paridad cross-OS: veredicto IDENTICO al de Windows con ~2.9x a ~7x menos tiempo total. El runner y este baseline se comportan igual en las dos plataformas; lo unico que cambia es la duracion, y por eso desde v3 toda duracion declara su plataforma."
+    }
+  ],
+  "known_failures": [
+    {
+      "suite": "test-git-guards-cwd",
+      "expected_status": "FAIL",
+      "typical_duration_ms": 106000,
+      "typical_duration_platform": "windows-11",
+      "typical_duration_ms_by_platform": {
+        "windows-11": 106000,
+        "wsl-fedora": 7820
+      },
+      "duration_note": "Cada numero de abajo declara su plataforma; no son comparables entre si. En Windows 11 es la suite mas lenta del set: rango medido 78600 ms, 80500 ms, 80900 ms, 101000 ms, 106000 ms y 112212 ms (corrida de verificacion de v3, 2026-08-04) con disco libre, y una corrida bajo carga de I/O que supero los 180000 ms y fue abortada por timeout (contencion del entorno, NO el modo de falla esperado). Esa varianza intra-plataforma de ~2.2x entre el mejor y el peor caso con disco libre es la razon por la que SUITE_TIMEOUT_MS quedo en 300000 ms: el techo tiene que cubrir el peor caso de la plataforma mas lenta, no el caso medio. En WSL Fedora la misma suite tarda 7820 ms, ~13x menos que el valor de referencia de Windows: leer 106000 ms como esperado en Linux haria concluir, incorrectamente, que la suite esta degradada. La causa de la brecha es el costo de spawn de procesos en Windows — la suite crea ~62 repos fixture con operaciones git reales.",
+      "reason": "11 casos que esperan 'commit permitido' nunca emiten la autorizacion explicita GS-003, asi que sofka-asdd-guard-branch.mjs bloquea con exit 2 antes de que la resolucion del repo efectivo (cd / pushd / git -C / repos anidados) llegue a influir en el exit code. La suite no invoca issueCommitChallenge ni approveActiveCommitChallenge en ningun caso. Resultado observado: 54 pasaron, 11 fallaron. script_issue, MEDIUM, P1. El fix correcto es emitir la autorizacion en el setup de esos 11 casos con la rama del repo efectivo y el comando exacto; NO cambiar el assert a 'esperar deny', que produciria un falso verde.",
+      "cross_platform_confirmation": "Conteo interno IDENTICO en las dos plataformas medidas: 54 pasaron / 11 fallaron tanto en windows-11 como en wsl-fedora. Los 11 fallos son el defecto de script descrito en `reason` (falta la autorizacion GS-003 en el setup) y NO un problema de portabilidad del guard ni de la resolucion de rutas por SO. Quien vaya a arreglarlos puede trabajar sobre cualquiera de las dos plataformas — conviene WSL, donde el ciclo de feedback es ~13x mas corto — y validar contra el mismo conteo esperado.",
+      "reference": "docs/testing/2026-08-03-001-VERIFY-001-preexisting-test-suite-defects.md"
+    },
+    {
+      "suite": "test-orc-tier-c-hooks",
+      "expected_status": "FAIL",
+      "typical_duration_ms": 22900,
+      "typical_duration_platform": "windows-11",
+      "typical_duration_ms_by_platform": {
+        "windows-11": 22900,
+        "wsl-fedora": 1107
+      },
+      "duration_note": "22900 ms en windows-11 contra 1107 ms en wsl-fedora: brecha de ~21x, la segunda mas grande del set y por la misma causa (spawnSync sobre 4 rutas de hook por assert; el costo es el spawn, no el trabajo). El valor de referencia es el de Windows.",
+      "reason": "La suite resuelve hooksDir a .claude/hooks/ y apunta a 4 hooks (sofka-asdd-codebase-size, -model-strategy, -tdd-state, -state-freshness) que fueron MOVIDOS a .claude/scripts/legacy-hooks/ y consolidados en .claude/hooks/sofka-asdd-session-start-dispatcher.mjs por el commit 59975b2 (2026-07-17). spawnSync sobre rutas inexistentes deja stdout vacio y los 15 asserts T11-T25 fallan en bloque. Resultado observado: 0 PASS / 15 FAIL. script_issue, MEDIUM, P1. El fix correcto es reescribir la suite contra el dispatcher vivo; NO reapuntar hooksDir a legacy-hooks/, que testearia codigo muerto y reintroduciria dependencias POSIX.",
+      "reference": "docs/testing/2026-08-03-001-VERIFY-001-preexisting-test-suite-defects.md"
+    },
+    {
+      "suite": "test-pretool-dispatcher-prototype",
+      "expected_status": "FAIL",
+      "typical_duration_ms": 10400,
+      "typical_duration_platform": "windows-11",
+      "typical_duration_ms_by_platform": {
+        "windows-11": 10400,
+        "wsl-fedora": 5317
+      },
+      "duration_note": "10400 ms en windows-11 contra 5317 ms en wsl-fedora: brecha de ~2x, la mas chica de las tres. Consistente con la causa: esta suite carga los hooks en proceso (import dinamico) en lugar de spawnearlos, asi que el costo de spawn de Windows la afecta mucho menos. El valor de referencia es el de Windows.",
+      "reason": "El adaptador loadLegacyGuard() del spike .claude/scripts/sofka-asdd-pre-tool-dispatcher-prototype.mjs exige que cada hook legacy termine en una llamada incondicional a main();, pero los 10 hooks que carga dinamicamente ya migraron al patron guardado 'if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();'. El adaptador lanza una excepcion no capturada en el primer hook del Promise.all y el proceso crashea con exit 1 antes de evaluar ningun guard. decisionOf() en el test solo interpreta exit 2 como deny y cualquier otro exit distinto de 0 como 'allow' sin razones, por lo que el crash se confunde con una decision legitima. Resultado observado: 9 de 11 fixtures FAIL. script_issue, LOW, P3. Spike congelado por diseno (su medicion sustenta ADR-018): la recomendacion es documentar, no arreglar ni retirar.",
+      "reference": "docs/testing/2026-08-03-001-VERIFY-001-preexisting-test-suite-defects.md"
+    }
+  ]
+}

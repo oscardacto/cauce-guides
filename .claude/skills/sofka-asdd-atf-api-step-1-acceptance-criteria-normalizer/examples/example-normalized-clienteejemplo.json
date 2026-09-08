@@ -1,0 +1,49 @@
+{
+  "wi_id": "wi-001",
+  "normalized_criteria": [
+    {
+      "ac_id": "AC-001",
+      "given": "El sistema está en estado nominal y existe un distributorId válido en el catálogo",
+      "when": "se envía POST /osf/api/v1/pending-billing-quotas con body {cycle:'2026-05', distributorId:'DIST-001', billingPeriod:'2026-05', periodProcessDate: hoy}",
+      "then": "el servicio responde 201 con campo requestId en el body",
+      "rules_covered": ["RN-001", "RN-008"],
+      "source_format": "given-when-then",
+      "source_text": "Dado que el usuario envía una solicitud con cycle=2026-05, distributorId válido y periodProcessDate=hoy, cuando se invoca POST /osf/api/v1/pending-billing-quotas, entonces el servicio responde 201 con requestId y crea el registro en estado PENDING",
+      "source_location": {"section": "5.1", "line_approx": 88},
+      "confidence": "high",
+      "transformation_notes": "Split del Then compuesto: AC-001 cubre status+body; AC-002 cubre la creación del registro"
+    },
+    {
+      "ac_id": "AC-002",
+      "given": "El sistema está en estado nominal y existe un distributorId válido en el catálogo",
+      "when": "se envía POST /osf/api/v1/pending-billing-quotas con body válido",
+      "then": "se crea un registro en t_billing_request con status=PENDING",
+      "rules_covered": ["RN-008"],
+      "source_format": "given-when-then",
+      "source_text": "(ver AC-001 — comparte texto fuente)",
+      "source_location": {"section": "5.1", "line_approx": 88},
+      "confidence": "high",
+      "transformation_notes": "Split desde AC-001. Validación requiere consulta a BD o GET subsiguiente."
+    },
+    {
+      "ac_id": "AC-003",
+      "given": "El sistema está en estado nominal",
+      "when": "se envía POST con periodProcessDate=2027-01-15 (fecha futura)",
+      "then": "el servicio responde 400 con error INVALID_CYCLE_DATE",
+      "rules_covered": ["RN-010"],
+      "source_format": "given-when-then",
+      "source_text": "Dado que el usuario envía una solicitud con periodProcessDate futura, cuando se invoca POST, entonces el servicio responde 400 con error INVALID_CYCLE_DATE",
+      "source_location": {"section": "5.2", "line_approx": 95},
+      "confidence": "high",
+      "transformation_notes": "Sin transformación — ya estaba atómico"
+    }
+  ],
+  "transformation_stats": {
+    "total_source_criteria": 2,
+    "total_normalized": 3,
+    "split_count": 1,
+    "merged_count": 0,
+    "low_confidence_count": 0
+  },
+  "normalized_at": "2026-05-21T10:36:00-05:00"
+}

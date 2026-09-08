@@ -1,0 +1,24 @@
+description: "Skills: sofka-asdd-meta — proceso y output por skill"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # skill: platform
+  - description: "PROCESO platform: responde [ACCION] concisa y no toma decisiones de producto"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-meta-platform.txt"
+      input: "Contexto al 67%. Quiero invocar sofka-asdd-developer-backend (necesita ~70k) y sofka-asdd-qa-engineer (necesita ~60k) en paralelo."
+    assert:
+      - type: icontains
+        value: "[COMPACT-PRIMERO]"
+      - type: llm-rubric
+        value: |
+          Con 67% de contexto (naranja) y dos agentes pesados en paralelo (~130k total),
+          la respuesta debe ser [COMPACT-PRIMERO] con el cálculo: 67% (~109k) + 130k > 163k disponibles.
+          Una sola línea. No párrafos. No tomar decisiones de producto.
+

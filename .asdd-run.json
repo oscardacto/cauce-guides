@@ -1,0 +1,84 @@
+{
+  "run_id": "2026-07-28-001",
+  "feature": "functional-agents-producto-integration",
+  "started_at": "2026-07-28T14:51:33.409Z",
+  "last_checkpoint": "2026-07-28T14:56:02.417Z",
+  "status": "in_progress",
+  "current_phase": "analyze",
+  "phases": {
+    "specify": {
+      "status": "complete",
+      "started_at": "2026-07-28T14:51:33.409Z",
+      "agents_used": [],
+      "models_used": {},
+      "completed_steps": [
+        "Brief completo de integración funcional y evolución de Producto materializado con alcance, resultado objetivo, restricciones, criterios de éxito y blast radius."
+      ],
+      "pending_steps": [],
+      "artifacts": [
+        "docs/specs/2026-07-28-001-SPECIFY-001-brief-functional-agents-producto-integration.md"
+      ],
+      "completed_at": "2026-07-28T14:56:02.417Z"
+    },
+    "analyze": {
+      "status": "in_progress",
+      "agents_used": [],
+      "models_used": {},
+      "completed_steps": [],
+      "pending_steps": [
+        "Regenerar inventario reproducible y clasificar referencias activas a Producto",
+        "Cerrar contrato de iniciativa y SPEC-001",
+        "Definir compatibilidad, aliases, runs activos, migración y release",
+        "Producir specs funcionales, técnicas, seguridad, QA e INDEX gobernado"
+      ],
+      "artifacts": [],
+      "started_at": "2026-07-28T14:56:02.417Z"
+    },
+    "design": {
+      "status": "pending",
+      "agents_used": [],
+      "models_used": {},
+      "completed_steps": [],
+      "pending_steps": [],
+      "artifacts": []
+    },
+    "build": {
+      "status": "pending",
+      "agents_used": [],
+      "models_used": {},
+      "completed_steps": [],
+      "pending_steps": [],
+      "artifacts": []
+    },
+    "verify": {
+      "status": "pending",
+      "agents_used": [],
+      "models_used": {},
+      "completed_steps": [],
+      "pending_steps": [],
+      "artifacts": []
+    },
+    "document": {
+      "status": "pending",
+      "agents_used": [],
+      "models_used": {},
+      "completed_steps": [],
+      "pending_steps": [],
+      "artifacts": []
+    }
+  },
+  "context_summary": "El análisis previo ANALYZE-012 a ANALYZE-016 quedó congelado en bf80191. Este run independiente encuadra la integración urgente de agentes funcionales, Product Strategy, redistribución de Producto y unificación de specs sobre template 3.1.0.",
+  "resume_hint": "El equipo receptor inicia Analyze desde el brief reservado; debe regenerar el baseline sobre su HEAD, cerrar decisiones abiertas y no implementar antes de Design aprobado.",
+  "artifact_seq": 2,
+  "manifest_path": "docs/runs/2026-07-28-001-SPECIFY-000-run-manifest.md",
+  "artifact_naming": {
+    "policy_version": 2,
+    "pattern": "{run_id}-{PHASE}-{SEQ}-{slug}.{ext}",
+    "scope": "all-agent-generated-files-under-docs",
+    "code_excluded": true,
+    "helper": ".claude/scripts/sofka-asdd-artifact-name.mjs"
+  },
+  "blocking_issue": null,
+  "escalations": [],
+  "auto_detected": null
+}

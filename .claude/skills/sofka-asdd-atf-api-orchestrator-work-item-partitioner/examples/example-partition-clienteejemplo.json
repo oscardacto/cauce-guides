@@ -1,0 +1,56 @@
+{
+  "partition_criterion": "H1-funcional-layer",
+  "criterion_justification": "La HU describe un flujo end-to-end con 3 capas claramente separables: (1) registro de solicitud via POST, (2) proceso batch con ciclo de vida PENDING→EXECUTION→END, (3) consulta de cuotas y consolidación con envío externo. Cada capa es testeable independientemente.",
+  "total_work_items": 3,
+  "work_items": [
+    {
+      "wi_id": "wi-001",
+      "title": "Solicitud de ejecución",
+      "description": "Registro y actualización de solicitud de facturación via POST /osf/api/v1/pending-billing-quotas. Incluye validación de campos obligatorios, lógica de creación vs. actualización y respuestas de éxito.",
+      "folder_name": "wi-001-solicitud-ejecucion",
+      "endpoints_in_scope": ["POST /osf/api/v1/pending-billing-quotas"],
+      "rules_referenced": ["RN-001", "RN-002", "RN-003", "RN-008", "RN-010"],
+      "inputs_assigned": ["SRC-001"],
+      "estimated_test_cases": 8,
+      "complexity_signal": "medium",
+      "complexity_reasons": ["decision-table para crear vs actualizar (4 condiciones)"]
+    },
+    {
+      "wi_id": "wi-002",
+      "title": "Proceso batch y ciclo de vida",
+      "description": "Transición de estados PENDING → EXECUTION → END, disparo por scheduler (fecha = hoy) y trigger manual GET /osf/api/v1/pending-billing-quotas. Incluye pre-validación de fechas de ciclo y lógica de selección de contratos.",
+      "folder_name": "wi-002-proceso-batch-ciclo-de-vida",
+      "endpoints_in_scope": ["GET /osf/api/v1/pending-billing-quotas"],
+      "rules_referenced": ["RN-004", "RN-005", "RN-006", "RN-011", "RN-012", "RN-013"],
+      "inputs_assigned": ["SRC-001"],
+      "estimated_test_cases": 12,
+      "complexity_signal": "high",
+      "complexity_reasons": [
+        "transición de 3 estados (state-transition testing)",
+        "trigger dual (scheduler + manual)"
+      ]
+    },
+    {
+      "wi_id": "wi-003",
+      "title": "Consulta de cuotas y consolidación",
+      "description": "Obtención de créditos facturables, cálculo de conceptos (capital, interés, seguro deudor, mora), consolidación del resumen por periodo y envío a OSF. Incluye manejo de fallos del envío externo y filtrado de conceptos con valor cero.",
+      "folder_name": "wi-003-consulta-cuotas-consolidacion",
+      "endpoints_in_scope": [],
+      "rules_referenced": ["RN-014", "RN-015", "RN-016", "RN-017", "RN-018"],
+      "inputs_assigned": ["SRC-001"],
+      "estimated_test_cases": 10,
+      "complexity_signal": "high",
+      "complexity_reasons": [
+        "cálculos numéricos con 4 conceptos",
+        "integración con sistema externo OSF (falla parcial posible)"
+      ]
+    }
+  ],
+  "regression_inheritance": null,
+  "validation": {
+    "min_max_check": "pass",
+    "non_overlapping_check": "pass",
+    "evidence_backed_check": "pass"
+  },
+  "generated_at": "2026-05-21T10:31:00-05:00"
+}

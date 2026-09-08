@@ -1,0 +1,45 @@
+description: "WF-006 PROCESO+OUTPUT: Fase Documentar — consolidar documentación final del ciclo"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "PROCESO WF-006: Documentación final → tech-lead + architect como primarios"
+    vars:
+      input: |
+        El módulo de pagos completó verificación con todos los sign-offs.
+        Necesitamos documentar el ciclo: arquitectura final, ADRs, API docs y changelog.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-tech-lead"
+      - type: icontains
+        value: "sofka-asdd-solution-architect"
+      - type: llm-rubric
+        value: |
+          WF-006 tiene tech-lead y architect como primarios:
+          - tech-lead consolida estándares y decisiones de código
+          - architect actualiza arquitectura final, ADR index y C4
+          Developer puede ser soporte para docs técnica de APIs.
+
+  - description: "OUTPUT WF-006: docs/ refleja estado real del sistema"
+    vars:
+      input: |
+        Cerrando el ciclo del sistema de inventario. ¿Qué documentación debe quedar en docs/?
+    assert:
+      - type: llm-rubric
+        value: |
+          El orquestador debe garantizar que al final de WF-006, docs/ contenga:
+          - docs/architecture/decisions/ — ADRs actualizados
+          - docs/architecture/diagrams/ — C4 actualizado en Mermaid
+          - docs/architecture/contracts/ — OpenAPI/AsyncAPI si aplica
+          - API docs, guías de uso
+          - Changelog técnico del ciclo
+          El estado de docs/ debe reflejar el sistema real, no el plan original.

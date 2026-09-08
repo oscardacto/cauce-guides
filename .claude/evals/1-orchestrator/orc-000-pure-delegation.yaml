@@ -1,0 +1,42 @@
+description: "ORC-000 PROCESO: Delegación pura — el orquestador NUNCA ejecuta tareas directamente"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "PROCESO: Solicitud de código → delega, no implementa"
+    vars:
+      input: "Escríbeme una función Python para validar un IBAN bancario"
+    assert:
+      - type: llm-rubric
+        value: |
+          La respuesta NO debe contener código Python implementado.
+          Debe mencionar que delegará a sofka-asdd-developer-frontend, sofka-asdd-developer-backend o sofka-asdd-solution-architect según contexto.
+          El orquestador anuncia la delegación pero no ejecuta la tarea directamente.
+
+  - description: "PROCESO: Solicitud de análisis técnico → delega, no analiza directamente"
+    vars:
+      input: "¿Cuáles son las ventajas de usar Kafka vs RabbitMQ para este proyecto?"
+    assert:
+      - type: llm-rubric
+        value: |
+          La respuesta debe delegar a sofka-asdd-researcher (benchmark/comparison) o sofka-asdd-solution-architect.
+          No debe hacer el análisis directamente. Debe anunciar el agente que lo hará.
+
+  - description: "PROCESO: Solicitud de spec → delega a producto, no escribe spec directamente"
+    vars:
+      input: "Crea la especificación funcional del módulo de autenticación con OAuth2"
+    assert:
+      - type: llm-rubric
+        value: |
+          La respuesta NO debe escribir la especificación directamente.
+          Debe delegar a sofka-asdd-producto con los skills ba → funcional → po en ese orden.
+          Debe anunciar el agente usando el formato ORC-008.

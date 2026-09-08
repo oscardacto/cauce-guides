@@ -1,0 +1,87 @@
+{
+  "schema_version": 2,
+  "run_id": "2026-07-18-001",
+  "captured_at": "2026-07-17T00:00:00Z",
+  "source": {
+    "branch": "feature/asdd-runtime-hardening",
+    "commit": "8e7e0471973892f9d9c0d3cb9318f97356caf84a",
+    "template_version": "2.27.4"
+  },
+  "method": {
+    "unit": "words",
+    "hook_latency_kind": "single-local-diagnostic-sample",
+    "notes": [
+      "agent_with_skills_corrected parses inline and block YAML skill lists",
+      "effective context excludes tool schemas because the current runtime does not expose their token count",
+      "hook latency is diagnostic and must not be treated as p50 or p95"
+    ]
+  },
+  "observed": {
+    "always_on_words": 16973,
+    "claude_md_words": 2108,
+    "global_rules_words": 14865,
+    "global_rules_files": 16,
+    "session_start_injected_words": 85,
+    "normal_prompt_injected_words": 145,
+    "bash_pre_tool_processes": 7,
+    "write_edit_pre_tool_processes": 8,
+    "bash_safe_fast_path_process_startup_ms": 142,
+    "largest_agent_with_skills_reported_words": 11108,
+    "largest_agent_with_skills_corrected": {
+      "agent": "sofka-asdd-tech-lead",
+      "agent_words": 597,
+      "skills_words": 19754,
+      "total_words": 20351
+    },
+    "selected_agent_payloads": [
+      {
+        "agent": "sofka-asdd-ui",
+        "agent_words": 2762,
+        "skills_words": 15710,
+        "total_words": 18472
+      },
+      {
+        "agent": "sofka-asdd-solution-architect",
+        "agent_words": 1437,
+        "skills_words": 12674,
+        "total_words": 14111
+      },
+      {
+        "agent": "sofka-asdd-atf-web-qa-engineer",
+        "agent_words": 10679,
+        "skills_words": 0,
+        "total_words": 10679
+      },
+      {
+        "agent": "sofka-asdd-ba-constructor",
+        "agent_words": 1870,
+        "skills_words": 7037,
+        "total_words": 8907
+      },
+      {
+        "agent": "sofka-asdd-producto",
+        "agent_words": 736,
+        "skills_words": 8104,
+        "total_words": 8840
+      }
+    ],
+    "validation": {
+      "ok": 26,
+      "warnings": 2,
+      "errors": 0
+    }
+  },
+  "provisional_targets": {
+    "always_on_words_max": 6000,
+    "normal_prompt_injected_words_max": 40,
+    "pre_tool_processes_max": 1,
+    "bash_safe_fast_path_ms_max": 50,
+    "eager_skills_per_agent_max": 1,
+    "tech_lead_initial_agent_with_skills_words_max": 8000,
+    "atf_web_coordinator_words_max": 2500,
+    "trivial_subagents_max": 0,
+    "routing_security_regressions_max": 0
+  },
+  "target_status": "provisional_pending_spike"
+}
+

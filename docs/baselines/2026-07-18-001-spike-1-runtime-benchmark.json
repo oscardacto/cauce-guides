@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "slice": "SPIKE-1",
+  "captured_at": "2026-07-18",
+  "source": {
+    "branch": "feature/asdd-runtime-efficiency-v2",
+    "commit": "39c82933ccde9a0007b351eaace3eef1fe467b2e",
+    "template_version": "2.27.4"
+  },
+  "environment": {
+    "os": "Linux 6.18.33.2-microsoft-standard-WSL2 x86_64",
+    "node": "v24.18.0",
+    "logical_processors": 20,
+    "memory_kib": 12057260
+  },
+  "method": {
+    "warmup_samples": 5,
+    "measured_samples": 30,
+    "latency_unit": "ms",
+    "context_unit": "words",
+    "percentile_method": "nearest-rank",
+    "notes": [
+      "Bash and Edit measurements execute the complete registered ASDD hook chain sequentially without executing the target tool",
+      "Edit is a representative unauthorized event; the full registered chain is measured synthetically for structural comparison",
+      "Provider LLM latency and tool/MCP schema tokens are not measured",
+      "Absolute latency is local-environment evidence; cross-platform gates use relative improvement plus structural process count"
+    ]
+  },
+  "observed": {
+    "always_on_words": 16973,
+    "claude_md_words": 2108,
+    "global_rules_words": 14865,
+    "bash_registered_processes": 7,
+    "bash_full_chain": {
+      "min_ms": 124,
+      "p50_ms": 128,
+      "p95_ms": 132,
+      "max_ms": 134,
+      "mean_ms": 128.6
+    },
+    "edit_registered_processes": 8,
+    "edit_full_chain": {
+      "min_ms": 132,
+      "p50_ms": 139,
+      "p95_ms": 143,
+      "max_ms": 155,
+      "mean_ms": 139.2
+    },
+    "user_prompt_submit": {
+      "output_words": 145,
+      "output_bytes": 1189,
+      "p50_ms": 20,
+      "p95_ms": 21
+    },
+    "session_start": {
+      "output_words": 93,
+      "output_bytes": 729,
+      "p50_ms": 25,
+      "p95_ms": 27
+    },
+    "runtime_metrics": {
+      "p50_ms": 31,
+      "p95_ms": 32
+    },
+    "validate_template": {
+      "p50_ms": 118,
+      "p95_ms": 126
+    },
+    "largest_corrected_agent_payloads": [
+      {
+        "agent": "sofka-asdd-tech-lead",
+        "agent_words": 597,
+        "eager_skills": 13,
+        "eager_skill_words": 19754,
+        "total_words": 20351,
+        "largest_single_skill_words": 2416
+      },
+      {
+        "agent": "sofka-asdd-ui",
+        "agent_words": 2762,
+        "eager_skills": 8,
+        "eager_skill_words": 15710,
+        "total_words": 18472,
+        "largest_single_skill_words": 6897
+      },
+      {
+        "agent": "sofka-asdd-solution-architect",
+        "agent_words": 1437,
+        "eager_skills": 13,
+        "eager_skill_words": 12674,
+        "total_words": 14111,
+        "largest_single_skill_words": 1844
+      },
+      {
+        "agent": "sofka-asdd-atf-web-qa-engineer",
+        "agent_words": 10679,
+        "eager_skills": 0,
+        "eager_skill_words": 0,
+        "total_words": 10679,
+        "largest_single_skill_words": 0
+      }
+    ]
+  },
+  "confirmed_design_targets": {
+    "always_on_words": {
+      "blocking_max": 8000,
+      "stretch_target": 6000
+    },
+    "normal_prompt_injected_words": {
+      "blocking_max": 40,
+      "target_without_signal": 0
+    },
+    "pre_tool_framework_processes": {
+      "blocking_max": 1
+    },
+    "local_hook_latency": {
+      "bash_p95_ms_max": 65,
+      "edit_p95_ms_max": 72,
+      "cross_platform_relative_p95_max_ratio": 0.6
+    },
+    "eager_skills_per_agent": {
+      "blocking_max": 1
+    },
+    "initial_agent_plus_skill_words": {
+      "blocking_max": 10000
+    },
+    "thin_coordinator_words": {
+      "blocking_max": 3500,
+      "stretch_target": 2500
+    },
+    "trivial_subagents": {
+      "blocking_max": 0
+    },
+    "routing_security_regressions": {
+      "blocking_max": 0
+    },
+    "status": {
+      "context_and_fanout": "confirmed",
+      "local_hook_latency": "retracted_pending_parallel_dispatcher_prototype"
+    }
+  },
+  "status": "partially_invalidated",
+  "validity": {
+    "context_measurements": "valid",
+    "registered_process_counts": "valid",
+    "hook_wall_clock_latency": "invalid_for_claude_runtime",
+    "reason": "The hook chain was executed sequentially, but Claude Code runs all matching hooks concurrently.",
+    "superseding_baseline": "docs/baselines/2026-07-18-001-spike-1r-parallel-hooks.json"
+  }
+}

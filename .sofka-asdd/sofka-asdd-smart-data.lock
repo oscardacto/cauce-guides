@@ -1,0 +1,33 @@
+{
+  "schema": "1.0",
+  "spec": "smart-data-agentic-spec-driven-development",
+  "addon": "smart-data-asdd",
+  "version": "1.2.0",
+  "locked": false,
+  "description": "Configuración del addon Smart Data ASDD. Empaquetado en el template base — se activa cuando data_platform != none. Complementa sofka-asdd.lock sin duplicar routing ni model_strategy de las fases ASDD principales. Skeleton portado desde feat/smart-data a v2.24.0 (PR1). Registrado en cli-contract.json + sub_locks del sofka-asdd.lock base. El equivalente-brief de la rama Data (smart-data-eng-{cliente}.xlsx, enforzado por el analyze guard) está documentado en docs/adoption/ADR-003-domain-aware-analyze-guard.md.",
+  "model_strategy": {
+    "phase_default": {
+      "discover": "sonnet",
+      "design":   "opus",
+      "build":    "sonnet",
+      "validate": "opus",
+      "publish":  "haiku"
+    },
+    "agent_pinning": {
+      "sofka-asdd-data-architect":      "opus",
+      "sofka-asdd-data-governance":     "opus",
+      "sofka-asdd-data-eng-databricks": "sonnet"
+    },
+    "skill_override": {}
+  },
+  "data_platform": "none",
+  "repository": {
+    "agents": 3,
+    "skills": 4,
+    "commands": 5,
+    "rules": 6
+  },
+  "created_at": "2026-05-25",
+  "updated_at": "2026-08-11",
+  "checksum": null
+}

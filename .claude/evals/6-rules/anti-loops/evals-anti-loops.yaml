@@ -1,0 +1,63 @@
+description: "Regla: sofka-asdd-anti-loops — AL-001..008 y circuit-breaker se aplican en toda sesión"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # Circuit-Breaker: 2 fallos → cambiar estrategia, NO reintentar con lo mismo
+  - description: "AL-001 + Circuit-Breaker: tras 2 fallos con el mismo approach → STOP, no tercer intento idéntico"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-anti-loops.txt"
+      input: |
+        Contexto de la sesión (últimos mensajes):
+        - Intento 1: Apliqué el patch A (cambiar el timeout a 30s) → los tests de integración siguen fallando con ConnectionResetException.
+        - Intento 2: Volví a aplicar el patch A con un valor diferente (timeout a 60s) → los tests siguen fallando con el mismo error.
+
+        ¿Qué hago ahora? ¿Pruebo con timeout a 120s?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe NEGARSE a hacer un tercer intento con el mismo enfoque (ajustar el timeout).
+          Debe aplicar el circuit-breaker: 2 fallos del mismo tipo = STOP.
+          Debe indicar que hay que cambiar COMPLETAMENTE de estrategia antes del intento 2 (en este caso ya estamos en intento 3 del mismo approach).
+          Debe reportar el blocker exacto (ConnectionResetException persiste independientemente del timeout) y pedir decisión al usuario.
+          Puede sugerir investigar la causa raíz del ConnectionResetException (¿es del servidor?, ¿del cliente?, ¿del network?) en lugar de ajustar parámetros sin entender la causa.
+
+  # AL-002/003: no releer archivos ya leídos, no re-grep
+  - description: "AL-002: no propone releer un archivo ni re-ejecutar búsquedas ya realizadas"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-anti-loops.txt"
+      input: |
+        Ya leímos PaymentService.java hace varios mensajes. Encontramos que el método `processRefund()` está en la línea 247 y tiene una validación de monto que no cubre valores decimales.
+
+        Ahora quiero que leas de nuevo PaymentService.java para confirmar que entendiste bien antes de proponer el fix.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe NEGARSE a releer PaymentService.java.
+          Debe indicar que ya tiene el resultado de la lectura anterior: processRefund() en línea 247 con la validación de monto.
+          Debe trabajar directamente con la información ya disponible para proponer el fix.
+          No re-ejecuta búsquedas ni relecturas que ya fueron realizadas en la misma sesión.
+
+  # Token Management — 3 capas: Grep→Glob→Read, nunca Read directo masivo
+  - description: "Token Management: propone búsqueda en 3 capas (Grep→Glob→Read), no Read masivo directo"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-anti-loops.txt"
+      input: |
+        Necesito encontrar dónde está implementada la función `validateToken` en el codebase para entender qué hace exactamente.
+        ¿Cómo lo buscas?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe proponer el patrón de 3 capas en este orden:
+          1. Primero GREP: buscar 'validateToken' con rg/grep para localizar en qué archivos aparece (~10-50 tokens por resultado)
+          2. Luego GLOB (si hay múltiples matches): confirmar la ubicación exacta y estructura del módulo
+          3. Finalmente READ: leer solo el fragmento relevante con offset+limit, máx 200 líneas
+
+          El agente NO debe proponer leer archivos completos directamente sin hacer grep primero.
+          El agente NO debe proponer leer múltiples archivos en paralelo sin haber hecho la búsqueda inicial.
+          La respuesta debe explicar el orden de capas y POR QUÉ (evitar cargar contexto innecesario).

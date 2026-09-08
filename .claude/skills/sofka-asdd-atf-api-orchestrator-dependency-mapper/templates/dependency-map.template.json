@@ -1,0 +1,37 @@
+{
+  "$schema": "Mapa de dependencias entre Work Items devuelto por dependency-mapper",
+  "edges": [
+    {
+      "from": "wi-NNN",
+      "to": "wi-MMM",
+      "type": "state-prerequisite | data-prerequisite | sequential-flow",
+      "reason": "{1 frase}",
+      "evidence": "{cita textual del paquete fuente o RN-NNN}",
+      "strength": "hard | soft"
+    }
+  ],
+  "topological_levels": [
+    {"level": 0, "wis": ["wi-NNN"]}
+  ],
+  "parallel_groups": [
+    {
+      "group_id": "G0",
+      "wis": ["wi-NNN"],
+      "can_run_concurrently": true,
+      "max_concurrent_recommended": 4
+    }
+  ],
+  "step_activation_plan": {
+    "step_1_plus_step_2": "Descripción del paralelismo aplicable",
+    "step_3": "Descripción",
+    "step_4": "Descripción",
+    "step_5": "Descripción",
+    "step_6_execution": "Descripción del orden requerido"
+  },
+  "cycle_detected": false,
+  "cycle_details": null,
+  "warnings": [
+    {"severity": "info | warning", "message": "..."}
+  ],
+  "generated_at": "{ISO 8601}"
+}

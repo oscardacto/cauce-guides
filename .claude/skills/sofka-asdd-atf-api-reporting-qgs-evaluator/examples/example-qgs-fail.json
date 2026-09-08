@@ -1,0 +1,28 @@
+{
+  "run_id": "PruebaAPIClienteEjemplo-v1.0-20260521-1030",
+  "cycle_type": "baseline",
+  "verdict": "FAIL",
+  "evaluated_at": "2026-05-21T11:45:00-05:00",
+  "metrics": [
+    {"metric": "pass_rate_global", "observed": 70.4, "unit": "pct", "threshold": 70.0, "threshold_operator": ">=", "result": "pass", "blocking": true},
+    {"metric": "pass_rate_critical", "observed": 100.0, "unit": "pct", "threshold": 100.0, "threshold_operator": ">=", "result": "pass", "blocking": true, "_note": "0 CPs critical — pasa por defecto"},
+    {"metric": "pass_rate_high", "observed": 77.8, "unit": "pct", "threshold": 80.0, "threshold_operator": ">=", "result": "fail", "blocking": true},
+    {"metric": "flaky_rate", "observed": 7.4, "unit": "pct", "threshold": 10.0, "threshold_operator": "<=", "result": "pass", "blocking": true},
+    {"metric": "defects_unclassified", "observed": 0, "unit": "count", "threshold": 0, "threshold_operator": "==", "result": "pass", "blocking": true},
+    {"metric": "bugs_critical_not_promoted", "observed": 0, "unit": "count", "threshold": 0, "threshold_operator": "==", "result": "pass", "blocking": true},
+    {"metric": "bugs_high_not_promoted", "observed": 4, "unit": "count", "threshold": 0, "threshold_operator": "==", "result": "fail", "blocking": true, "_note": "4 bugs high clasificados pero aún no promovidos al backlog — backlog-sync los procesará en este mismo Step 7"}
+  ],
+  "blocking_failures": [
+    "pass_rate_high observado 77.8% (4 de 18 fallaron) — bajo threshold 80%",
+    "bugs_high_not_promoted observado 4 > threshold 0 — backlog-sync debe promoverlos antes del PASS"
+  ],
+  "non_blocking_observations": [
+    "Flaky rate 7.4% — dentro de tolerancia pero cerca del 10%. 2 flakies vienen de wi-002 (proceso batch) sugiriendo timing issues en QA.",
+    "wi-003 sin tests críticos por diseño (solo consolidación interna sin endpoints expuestos)."
+  ],
+  "thresholds_applied": {
+    "source": "baseline",
+    "table_version": "1.0"
+  },
+  "next_action": "Antes de marcar la corrida como completada: (1) backlog-sync debe promover los 4 bugs high al backlog Jira/ADO. (2) El pass_rate_high de 77.8% indica problemas reales en RN-001 y RN-010 — coordinar con desarrollo antes de release. (3) Recomendación: re-correr la suite tras fixes confirmados antes de declarar PASS."
+}

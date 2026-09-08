@@ -1,0 +1,15 @@
+{
+  "$schema": "Work Item de Azure DevOps generado por backlog-sync",
+  "defect_ref": "D-NNN",
+  "workItemType": "Bug",
+  "fields": {
+    "System.Title": "[ATF-API] {título del defecto}",
+    "System.Description": "<h2>Descripción</h2><p>{description}</p><h2>Evidencia</h2><ul><li>Request: {METHOD} {url}</li><li>Response observado: {status}</li><li>Response esperado: {expected_status}</li><li>Path: docs/testing/atf/{run_id}/execution/evidence/{CP-ID}/</li></ul><h2>Trazabilidad</h2><p>ATF Run: {run_id} | CP: {CP-ID} | WI: {wi-id} | RN: {RN-NNN}</p>",
+    "System.AreaPath": "{project}\\{area derivada del WI}",
+    "System.IterationPath": "{project}\\{iteration por defecto}",
+    "Microsoft.VSTS.Common.Severity": "1 - Critical | 2 - High | 3 - Medium | 4 - Low",
+    "System.Tags": "atf-api; run:{run_id}; cp:{CP-ID}; wi:{wi-id}; rn:{RN-NNN}",
+    "Microsoft.VSTS.TCM.ReproSteps": "{pasos para reproducir condensados}"
+  },
+  "source_artifact": "docs/testing/atf/{run_id}/execution/defects/{D-ID}.json"
+}

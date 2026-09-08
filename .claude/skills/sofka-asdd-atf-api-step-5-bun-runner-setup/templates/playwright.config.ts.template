@@ -1,0 +1,33 @@
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './specs',
+  timeout: 30_000,
+  expect: { timeout: 5_000 },
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  reporter: [
+    ['list'],
+    ['html', { outputFolder: '../reports/playwright-html', open: 'never' }],
+    ['json', { outputFile: '../reports/playwright-results.json' }],
+    ['junit', { outputFile: '../reports/playwright-junit.xml' }],
+  ],
+  use: {
+    baseURL: process.env.ATF_API_BASE_URL ?? '{app-url-snapshot}',
+    extraHTTPHeaders: {
+      'X-Client-Id': 'atf-api-v3',
+      'Accept': 'application/json',
+    },
+    trace: 'on-first-retry',
+    screenshot: 'off',
+    video: 'off',
+  },
+  retries: process.env.CI ? 1 : 0,
+  workers: process.env.CI ? 2 : 4,
+  projects: [
+    {
+      name: 'api-tests',
+      testMatch: /.*\.spec\.ts/,
+    },
+  ],
+});

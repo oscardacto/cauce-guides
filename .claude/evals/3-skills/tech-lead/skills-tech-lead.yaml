@@ -1,0 +1,66 @@
+description: "Skills: sofka-asdd-tech-lead — proceso y output por skill"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # skill: code-review
+  - description: "PROCESO code-review: evalúa SOLID, clean code y seguridad"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-tech-lead-code-review.txt"
+      input: |
+        Revisa este PR — servicio de autenticación:
+        ```python
+        class AuthService:
+            def login(self, username, password):
+                user = User.objects.get(username=username)
+                if user.password == password:  # comparación directa
+                    token = jwt.encode({"user_id": user.id, "exp": datetime.now() + timedelta(days=365)}, "secret123")
+                    return token
+                return None
+        ```
+    assert:
+      - type: llm-rubric
+        value: |
+          El code review debe identificar TODOS estos issues:
+          1. Crítico: comparación directa de contraseñas (no hashed) — use bcrypt/argon2
+          2. Crítico: JWT secret hardcodeado 'secret123' — usar variable de entorno
+          3. Crítico: expiración de 365 días es excesiva para auth tokens
+          4. Mayor: User.objects.get puede lanzar DoesNotExist — no maneja la excepción
+          5. Informativo: timing attack posible en comparación directa
+
+  # skill: quality-gate
+  - description: "PROCESO quality-gate: define umbrales con justificación por dominio"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-tech-lead-quality-gate.txt"
+      input: "Define el quality gate para un módulo de procesamiento de pagos en producción. El equipo usa SonarQube y Jest."
+    assert:
+      - type: llm-rubric
+        value: |
+          El quality gate debe tener umbrales concretos justificados para pagos (dominio crítico):
+          - Coverage: >= 85% (más alto por criticidad)
+          - Code smells críticos: 0
+          - Duplicación: < 3%
+          - Vulnerabilidades: 0 críticas/altas
+          - Complejidad ciclomática: <= 10 por función
+          Los umbrales deben ser más estrictos que para un módulo menos crítico.
+
+  # skill: refactoring-plan
+  - description: "OUTPUT refactoring-plan: plan seguro con tests primero"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-tech-lead-refactoring-plan.txt"
+      input: "Planifica el refactoring de una clase PaymentProcessor con 600 líneas que mezcla: parseo de requests, lógica de validación, llamada al banco, notificaciones y logging."
+    assert:
+      - type: llm-rubric
+        value: |
+          El plan debe incluir: 1) tests de caracterización antes de tocar nada,
+          2) identificación de responsabilidades (5 responsabilidades en la clase),
+          3) orden seguro de extracción (qué mover primero para menor riesgo),
+          4) qué tests deben existir por paso,
+          5) estimación de esfuerzo por paso.
+          El plan NO debe ejecutar el refactoring — solo planificarlo.
+

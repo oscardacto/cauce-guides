@@ -1,0 +1,124 @@
+description: "Skills: sofka-asdd-solution-architect — proceso y output por skill"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # skill: api-contract
+  - description: "PROCESO api-contract: genera OpenAPI 3.0 con schemas y ejemplos"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-solution-architect-api-contract.txt"
+      input: "Define el contrato OpenAPI 3.0 para el endpoint POST /payments/transfer con campos amount, currency, sourceAccount, targetAccount. Incluye respuestas 200, 400 y 500."
+    assert:
+      - type: icontains
+        value: "openapi"
+      - type: llm-rubric
+        value: |
+          El contrato API debe incluir: versión OpenAPI 3.0+, path /payments/transfer,
+          request body con schema y ejemplos, responses para 200/400/500 con schemas,
+          y tipos de datos correctos (number para amount, string para currency).
+
+  # skill: bounded-context
+  - description: "PROCESO bounded-context: define límites de dominio con lenguaje ubicuo"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-solution-architect-bounded-context.txt"
+      input: "Modela los bounded contexts para un sistema bancario con: Clientes, Cuentas, Transacciones, Créditos y Notificaciones. Define el context map."
+    assert:
+      - type: llm-rubric
+        value: |
+          El modelo debe: identificar cada bounded context con su lenguaje ubicuo propio,
+          definir las relaciones entre contextos (upstream/downstream, ACL, shared kernel),
+          y producir un context map. Cada contexto debe tener su propia definición de 'Cuenta' o 'Cliente' si difieren.
+
+  # skill: component-diagram
+  - description: "OUTPUT component-diagram: C4 válido en Mermaid"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-solution-architect-component-diagram.txt"
+      input: "Genera el diagrama C4 nivel Container para un sistema de e-commerce con: app web React, API Node.js, PostgreSQL, Redis cache y servicio de pagos Stripe."
+    assert:
+      - type: icontains
+        value: "C4Container"
+      - type: llm-rubric
+        value: |
+          El diagrama debe usar sintaxis Mermaid C4Container válida, incluir todos los contenedores
+          mencionados con sus tecnologías, mostrar relaciones con etiquetas descriptivas,
+          y ser renderizable sin errores de sintaxis.
+
+  # skill: discovery
+  - description: "PROCESO discovery: captura contexto completo de stakeholders y restricciones"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-solution-architect-discovery.txt"
+      input: "Onboarding técnico para el proyecto de digitalización de una empresa de seguros con 20 años usando sistemas legacy COBOL. El equipo tiene 5 developers y 18 meses de plazo."
+    assert:
+      - type: llm-rubric
+        value: |
+          El discovery debe capturar: stakeholders y sus intereses, restricciones técnicas (COBOL legacy),
+          restricciones de tiempo (18 meses), restricciones de equipo (5 devs), riesgos principales,
+          y preguntas sin responder que bloquean el diseño. No debe proponer soluciones todavía.
+
+  # skill: patterns
+  - description: "PROCESO patterns: recomienda patrón con justificación para el contexto"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-solution-architect-patterns.txt"
+      input: "¿Qué patrón de integración usar para sincronizar datos entre el sistema de inventario (updates cada 30 min) y el e-commerce (necesita stock en tiempo real)?"
+    assert:
+      - type: llm-rubric
+        value: |
+          El skill debe recomendar un patrón de integración específico (event-driven, polling, webhooks, CDC)
+          justificado para el caso de uso (30min vs real-time), con trade-offs concretos y
+          las consecuencias de cada opción. No listar patrones sin recomendar.
+
+  # skill: quality
+  - description: "PROCESO quality: define SLOs medibles a partir de NFRs vagos"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-solution-architect-quality.txt"
+      input: "El sistema de pagos debe ser 'rápido y confiable'. Traduce esto a SLOs medibles."
+    assert:
+      - type: llm-rubric
+        value: |
+          El skill debe convertir NFRs vagos a SLOs con métricas concretas:
+          - 'Rápido': p50 < Xms, p95 < Yms, p99 < Zms (con valores razonables para pagos)
+          - 'Confiable': disponibilidad >= X% (ej: 99.9%), error rate < Y%, MTTR < Z min
+          Cada SLO debe tener: métrica, umbral, ventana de medición y consecuencia si falla.
+
+  # skill: review
+  - description: "PROCESO review: checklist de revisión arquitectónica con hallazgos"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-solution-architect-review.txt"
+      input: "Revisa si el diseño actual del módulo de pagos (microservicio independiente con DB propia, event-driven con Kafka, Redis para cache) es sólido para un equipo de 3 developers."
+    assert:
+      - type: llm-rubric
+        value: |
+          El review debe evaluar: complejidad operativa vs tamaño del equipo,
+          justificación del microservicio (es necesario realmente?), coupling con Kafka,
+          evolución esperada, y riesgos técnicos. Debe incluir hallazgos concretos, no solo validar.
+
+  # skill: sofka-docs
+  - description: "OUTPUT sofka-docs: ADR con estructura completa y 2+ alternativas"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-solution-architect-sofka-docs.txt"
+      input: "Genera el ADR para la decisión de usar PostgreSQL vs MongoDB para almacenar el catálogo de productos (2M items, consultas complejas con filtros, relaciones con categorías)."
+    assert:
+      - type: llm-rubric
+        value: |
+          El ADR debe contener: contexto del problema, al menos 2 alternativas con trade-offs reales,
+          decisión final justificada con criterio explícito, consecuencias (buenas y malas),
+          y seguir el naming ADR-{NNN}-{titulo-kebab}.md. No puede ser genérico.
+
+  # skill: tradeoff-analysis
+  - description: "PROCESO tradeoff-analysis: matriz de decisión con pesos antes del ADR"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-solution-architect-tradeoff-analysis.txt"
+      input: "Analiza los trade-offs de 3 opciones para el message broker: Kafka (alta throughput), RabbitMQ (fácil de operar) y AWS SQS (managed). El equipo es pequeño y el volumen es 1000 msg/hora."
+    assert:
+      - type: llm-rubric
+        value: |
+          El análisis debe incluir: criterios de evaluación ponderados según el contexto
+          (equipo pequeño → simplicidad operativa pesa más), puntuación de cada opción,
+          recomendación final con justificación. AWS SQS o RabbitMQ probablemente gana
+          para un equipo pequeño con bajo volumen — validar que el análisis refleje el contexto.
+

@@ -1,0 +1,50 @@
+description: "Skills: sofka-asdd-researcher — proceso y output por skill"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # skill: spike
+  - description: "PROCESO spike: pregunta acotada, experimento mínimo y timebox"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-researcher-spike.txt"
+      input: "No sabemos si podemos usar WebSockets en el ambiente cloud de producción del cliente (AWS ECS con ALB). El arquitecto necesita saberlo antes de diseñar el módulo de notificaciones en tiempo real."
+    assert:
+      - type: llm-rubric
+        value: |
+          El spike debe definir: pregunta concreta (¿ALB soporta WebSockets con ECS Fargate?),
+          experimento mínimo para responderla (no teorizar — probar con un hello world),
+          timebox máximo (1-2 días), y qué decisión de arquitectura desbloquea el resultado.
+          Si la respuesta es sí → event-driven con WS. Si no → polling o SSE.
+
+  # skill: benchmark
+  - description: "PROCESO benchmark: compara con datos reales, no solo teoría"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-researcher-benchmark.txt"
+      input: "Benchmark: ¿cuántas transacciones por segundo puede manejar PostgreSQL vs MongoDB para nuestro caso de uso de pagos (writes intensivos, alta concurrencia, transacciones ACID)?"
+    assert:
+      - type: llm-rubric
+        value: |
+          El benchmark debe: definir el escenario de prueba específico (schema, queries, hardware),
+          mencionar benchmarks de referencia con fuentes (TPC-C, pgbench, o estudios citables),
+          no inventar números precisos sin fuente, y recomendar cómo hacer el benchmark propio
+          si los datos disponibles no son concluyentes para el caso específico.
+
+  # skill: comparison
+  - description: "OUTPUT comparison: matriz con pesos, scores y recomendación"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-researcher-comparison.txt"
+      input: "Compara 3 opciones de autenticación para una API pública: API Keys simples vs JWT vs OAuth2. El API tendrá developers externos como usuarios principales."
+    assert:
+      - type: llm-rubric
+        value: |
+          La matriz de comparación debe incluir: criterios ponderados relevantes para una API pública
+          con developers externos (DX, granularidad de permisos, revocación, complejidad de impl.),
+          score de cada opción por criterio, total ponderado, y recomendación.
+          Para developers externos, OAuth2 o API Keys probablemente gana — validar que el análisis
+          considera la audiencia correctamente.
+

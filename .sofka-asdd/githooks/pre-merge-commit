@@ -1,0 +1,4 @@
+#!/bin/sh
+# ASDD native git hook — la lógica vive en impl/pre-merge-commit.mjs
+# Instalado por: node .claude/scripts/sofka-asdd-install-githooks.mjs
+exec node "$(dirname "$0")/impl/pre-merge-commit.mjs" "$@"

@@ -1,0 +1,130 @@
+openapi: 3.1.0
+info:
+  title: Checkout API
+  version: 1.2.0
+  description: API de checkout para el portal de e-commerce. Crea órdenes y procesa intentos de pago.
+  contact:
+    name: Equipo Checkout
+    email: checkout@retail.example
+servers:
+  - url: https://api.retail.example/v1
+    description: Producción
+
+tags:
+  - name: orders
+    description: Gestión de órdenes
+  - name: payments
+    description: Intentos de pago
+
+paths:
+  /orders:
+    post:
+      operationId: createOrder
+      summary: Crear orden desde el carrito
+      tags: [orders]
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateOrderRequest' }
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location: { schema: { type: string, format: uri } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+        '422':
+          description: Inventario insuficiente o cupón inválido
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+
+  /orders/{orderId}/payments:
+    post:
+      operationId: createPayment
+      summary: Iniciar intento de pago para una orden
+      tags: [payments]
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreatePaymentRequest' }
+      responses:
+        '202':
+          description: Accepted, pago en proceso
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaymentIntent' }
+
+components:
+  schemas:
+    CreateOrderRequest:
+      type: object
+      required: [items, shippingAddress]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [sku, qty]
+            properties:
+              sku: { type: string }
+              qty: { type: integer, minimum: 1 }
+        couponCode: { type: string, nullable: true }
+        shippingAddress: { $ref: '#/components/schemas/Address' }
+    Order:
+      type: object
+      required: [id, status, total, currency]
+      properties:
+        id:       { type: string, format: uuid, readOnly: true }
+        status:   { type: string, enum: [pending, paid, fulfilled, cancelled] }
+        total:    { type: number, minimum: 0 }
+        currency: { type: string, pattern: '^[A-Z]{3}$' }
+    CreatePaymentRequest:
+      type: object
+      required: [method]
+      properties:
+        method: { type: string, enum: [card, pse, nequi] }
+        token:  { type: string, description: Token tokenizado del proveedor }
+    PaymentIntent:
+      type: object
+      properties:
+        id:     { type: string, format: uuid }
+        status: { type: string, enum: [authorized, captured, failed] }
+    Address:
+      type: object
+      required: [street, city, country]
+      properties:
+        street:  { type: string }
+        city:    { type: string }
+        country: { type: string, pattern: '^[A-Z]{2}$' }
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type:   { type: string, format: uri }
+        title:  { type: string }
+        status: { type: integer }
+        detail: { type: string }
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

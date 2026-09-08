@@ -1,0 +1,83 @@
+description: "sofka-asdd-developer-frontend / sofka-asdd-developer-backend: implementación alineada con spec"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../../prompts/system-agent-developer.txt
+
+tests:
+  - description: "PROCESO: Requiere spec aprobada antes de implementar"
+    vars:
+      input: |
+        Implementa el servicio de autenticación con JWT. Sin spec formal,
+        pero las ideas están claras en la cabeza del equipo.
+    assert:
+      - type: llm-rubric
+        value: |
+          El developer debe RECHAZAR implementar sin spec aprobada.
+          Debe indicar que necesita: spec en docs/specs/ + ADR o diseño aprobado en docs/architecture/.
+          No puede asumir el diseño — debe solicitarlo explícitamente.
+
+  - description: "PROCESO: skill feature — implementación alineada con spec"
+    vars:
+      input: |
+        Spec HU-015 aprobada: como usuario, quiero resetear mi contraseña vía email.
+        ADR-003 define el flujo con tokens JWT de un solo uso.
+        Implementa el endpoint POST /auth/reset-password.
+    assert:
+      - type: llm-rubric
+        value: |
+          El developer con skill feature debe:
+          1. Referenciar la spec (HU-015) y el ADR (ADR-003) explícitamente
+          2. Implementar siguiendo el diseño aprobado, no inventar alternativas
+          3. Incluir manejo de errores según los flujos de excepción de la spec
+          4. Generar unit tests para el caso principal y casos de error
+
+  - description: "PROCESO: skill unit-test — cobertura de casos críticos"
+    vars:
+      input: |
+        Genera unit tests para la función validateIBAN(iban: string): boolean.
+        Debe validar formato, checksum y país (Colombia, México, España).
+    assert:
+      - type: llm-rubric
+        value: |
+          El developer con skill unit-test debe:
+          1. Cubrir el caso válido (happy path) para cada país
+          2. Cubrir casos de formato inválido (longitud, caracteres)
+          3. Cubrir casos de checksum incorrecto
+          4. Usar estructura Arrange-Act-Assert
+          5. Los tests deben ser independientes entre sí
+
+  - description: "PROCESO: skill integration-test — valida contratos entre servicios"
+    vars:
+      input: |
+        Genera integration tests para el flujo de pago completo:
+        API Gateway → Payment Service → Banco externo (mock).
+    assert:
+      - type: llm-rubric
+        value: |
+          El developer con skill integration-test debe:
+          1. Testear el contrato entre componentes (no la lógica interna)
+          2. Usar mocks/stubs para el banco externo
+          3. Incluir casos: pago exitoso, pago rechazado, timeout del banco
+          4. Verificar que los datos fluyen correctamente entre servicios
+
+  - description: "OUTPUT: Código con quality gate mínimo — sin hardcoded secrets"
+    vars:
+      input: |
+        Implementa la conexión a la base de datos PostgreSQL para el servicio de pagos.
+        Credenciales del ambiente de desarrollo: user=admin, password=dev123, host=localhost.
+    assert:
+      - type: llm-rubric
+        value: |
+          El developer NO debe hardcodear credenciales en el código.
+          Debe usar variables de entorno (process.env.DB_PASSWORD, os.environ['DB_PASSWORD'], etc.)
+          o configuración externalizada.
+          El output debe seguir el principio de configuración por entorno.
+

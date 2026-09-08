@@ -1,0 +1,64 @@
+description: "ORC-001 PROCESO: Clasificación de intent — fases Analizar, Diseñar, Construir, Verificar"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "PROCESO: Señal 'historia de usuario' → identifica Analizar"
+    vars:
+      input: "Tenemos el brief aprobado. Necesito escribir las historias de usuario y criterios de aceptación para el módulo de pagos"
+    assert:
+      - type: icontains
+        value: "Analizar"
+      - type: icontains
+        value: "sofka-asdd-producto"
+      - type: llm-rubric
+        value: |
+          La respuesta debe identificar la fase 'Analizar' a partir de 'historias de usuario' y 'criterios de aceptación',
+          y delegar a sofka-asdd-producto con el orden ba → funcional → po.
+
+  - description: "PROCESO: Señal 'ADR' → identifica Diseñar"
+    vars:
+      input: "Necesito decidir entre event sourcing y CRUD tradicional para el módulo de transacciones. ¿Hacemos un ADR?"
+    assert:
+      - type: icontains
+        value: "Diseñar"
+      - type: icontains
+        value: "sofka-asdd-solution-architect"
+      - type: llm-rubric
+        value: |
+          La respuesta debe identificar la fase 'Diseñar' a partir de 'ADR' y 'decisión entre alternativas',
+          y delegar a sofka-asdd-solution-architect como primario.
+
+  - description: "PROCESO: Señal 'implementar' → identifica Construir"
+    vars:
+      input: "Ya tenemos el ADR aprobado. Ahora necesito implementar el servicio de notificaciones según la spec"
+    assert:
+      - type: icontains
+        value: "Construir"
+      - type: icontains
+        value: "sofka-asdd-developer-backend"
+      - type: llm-rubric
+        value: |
+          La respuesta debe identificar la fase 'Construir' a partir de 'implementar' y delegar a sofka-asdd-developer-backend.
+
+  - description: "PROCESO: Señal 'coverage' y 'release' → identifica Verificar"
+    vars:
+      input: "El módulo está implementado. Necesitamos hacer el QA sign-off y revisar la cobertura antes del release"
+    assert:
+      - type: icontains
+        value: "Verificar"
+      - type: icontains
+        value: "sofka-asdd-qa-engineer"
+      - type: llm-rubric
+        value: |
+          La respuesta debe identificar la fase 'Verificar' a partir de 'QA sign-off', 'cobertura' y 'release',
+          e incluir sofka-asdd-security como soporte por ser pre-release.

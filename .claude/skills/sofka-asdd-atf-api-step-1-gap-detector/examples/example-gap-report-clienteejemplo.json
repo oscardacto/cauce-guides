@@ -1,0 +1,75 @@
+{
+  "wi_id": "wi-001",
+  "open_questions": [
+    {
+      "id": "Q-001",
+      "type": "G6",
+      "criticality": "alta",
+      "blocks_step": "step_2",
+      "question": "URL en appapi.yaml (/credit-risk-service/v1/quotas/save) no coincide con endpoints de la HU (/osf/api/v1/pending-billing-quotas). ¿Cuál es la URL base correcta del servicio?",
+      "evidence": "appapi.yaml línea 16 vs HU sección 3.1",
+      "suggested_resolution": "Confirmar con arquitecto de ClienteEjemplo. La URL base afecta a todos los WIs.",
+      "wi_affected": ["wi-001", "wi-002", "wi-003"]
+    },
+    {
+      "id": "Q-002",
+      "type": "G6",
+      "criticality": "alta",
+      "blocks_step": "step_3",
+      "question": "¿Qué combinación exacta de campos determina unicidad de solicitud? La HU menciona cycle + distributorId + billingPeriod + periodProcessDate pero no es explícita sobre si contractId forma parte de la llave.",
+      "evidence": "RN-008 sección 4.2 — texto literal: 'unicidad por ciclo y distribuidor en el periodo'. No enumera los 4 campos.",
+      "suggested_resolution": "Confirmar con stakeholder de ClienteEjemplo o inspeccionar índice único de t_billing_request en BD.",
+      "wi_affected": ["wi-001", "wi-002"]
+    },
+    {
+      "id": "Q-003",
+      "type": "G5",
+      "criticality": "media",
+      "blocks_step": "step_4",
+      "question": "La HU referencia imágenes de esquemas de las 2 tablas de BD (t_billing_request, t_billing_totals) que no están disponibles. ¿Existe documentación adicional sobre campos, tipos y restricciones?",
+      "evidence": "HU sección 6 — texto: 'Ver imagen del esquema de la tabla t_billing_request' (línea 142). Imagen no incluida.",
+      "suggested_resolution": "Solicitar al DBA de ClienteEjemplo el DDL o documentación de las tablas.",
+      "wi_affected": ["wi-001", "wi-002"]
+    },
+    {
+      "id": "Q-004",
+      "type": "G7",
+      "criticality": "media",
+      "blocks_step": "step_4",
+      "question": "¿Qué sucede si existen múltiples solicitudes en estado PENDING para el mismo ciclo/distribuidora en la fecha actual del scheduler? ¿Se procesan todas en secuencia, en paralelo, o solo la más reciente/prioritaria?",
+      "evidence": "RN-011 menciona el batch toma solicitudes PENDING pero no aclara comportamiento con múltiples activas.",
+      "suggested_resolution": "Confirmar con arquitecto o revisar log de comportamiento histórico.",
+      "wi_affected": ["wi-002"]
+    },
+    {
+      "id": "Q-005",
+      "type": "G7",
+      "criticality": "baja",
+      "blocks_step": null,
+      "question": "RN-016 indica que el seguro deudor se actualiza para todas las cuotas sin afectar el tiempo del proceso de facturación. ¿Hay mecanismo asíncrono para esta actualización o se hace en el mismo hilo del batch?",
+      "evidence": "RN-016 sección 4.4 — texto: 'sin afectar el tiempo del proceso de facturación'",
+      "suggested_resolution": "Detalle técnico — confirmar con desarrollo. Puede afectar test de carga pero no la cobertura funcional.",
+      "wi_affected": ["wi-003"]
+    }
+  ],
+  "coverage_report": {
+    "endpoints_with_ac": 1,
+    "endpoints_without_ac": 0,
+    "endpoints_uncovered": [],
+    "rules_with_ac": 3,
+    "rules_without_ac": 2,
+    "rules_uncovered": ["RN-002", "RN-003"],
+    "ac_without_rules": 0,
+    "broken_references": 2
+  },
+  "summary": {
+    "total_questions": 5,
+    "high_criticality": 2,
+    "medium_criticality": 2,
+    "low_criticality": 1,
+    "blockers_step_2": 1,
+    "blockers_step_3": 1,
+    "blockers_step_4": 2
+  },
+  "generated_at": "2026-05-21T10:37:30-05:00"
+}

@@ -1,0 +1,100 @@
+description: "ORC-010 #3577 (bugs #12/#13): plan-gate — el orquestador presenta un PLAN y PIDE APROBACIÓN antes de ejecutar"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  # Javier bug #12 — ORC-010 / CORE-009: ante trabajo sustantivo el orquestador arranca a ejecutar
+  # (delega o produce artefactos) SIN presentar antes un plan ni pedir aprobación explícita.
+  # ORC-010: "nunca ejecutar sin aprobación previa del plan"; el plan se presenta ANTES de invocar
+  # cualquier agente o ejecutar cualquier comando, y para trabajo FULL/Tipo 4 requiere confirmación.
+  - description: "ORC-010 #3577 bug#12: feature nueva (trabajo sustantivo) → DEBE presentar plan y PEDIR aprobación ANTES de ejecutar"
+    vars:
+      input: |
+        Construyamos el módulo de autenticación con OAuth2 para el portal: login, refresh de tokens,
+        revocación de sesiones y persistencia de usuarios. Arranquemos.
+    assert:
+      - type: llm-rubric
+        value: |
+          El prompt pide construir un módulo completo — trabajo sustantivo (FULL). La regla ORC-010
+          (plan-gate) obliga al orquestador a presentar un PLAN de ejecución y PEDIR APROBACIÓN EXPLÍCITA
+          del usuario ANTES de ejecutar o delegar cualquier acción.
+          La respuesta correcta DEBE cumplir TODO lo siguiente:
+          1. Presentar un PLAN de ejecución (tarea, agentes responsables con formato @sofka-asdd-{nombre},
+             artefactos esperados) ANTES de cualquier ejecución.
+          2. PEDIR CONFIRMACIÓN EXPLÍCITA del usuario para proceder (cualquier formulación
+             equivalente a "confirmá para continuar o corregí el plan"; NO tiene que exigir la
+             palabra "ok" en particular), y DETENERSE ahí esperando la respuesta.
+          La respuesta FALLA si el orquestador arranca a trabajar sin plan ni aprobación:
+          si ya invoca/ejecuta agentes, produce artefactos, escribe specs/código, o da por iniciada
+          la ejecución sin haber pedido aprobación, el caso FALLA — aunque diga "Arranquemos" el usuario.
+      - type: llm-rubric
+        value: |
+          Verificá que el orquestador NO haya empezado a ejecutar. La respuesta NO debe contener
+          trabajo ya realizado: ni código del módulo OAuth2, ni la spec escrita, ni resultados de
+          agentes ya invocados. Debe quedarse en la fase de plan + solicitud de aprobación.
+          Si presenta resultados de ejecución (no solo el plan), FALLA.
+
+  # Javier bug #13 — ORC-010 / CORE-009: aun cuando el usuario suena imperativo ("hazlo ya"),
+  # el orquestador NO puede saltarse el gate; debe presentar plan y pedir aprobación antes de ejecutar.
+  - description: "ORC-010 #3577 bug#13: usuario imperativo ('sin rodeos, hazlo') → el gate NO se omite; plan + aprobación ANTES de ejecutar"
+    vars:
+      input: |
+        Sin rodeos: implementa ya el servicio de pagos con su integración a la pasarela,
+        el manejo de webhooks y la persistencia de transacciones. No me preguntes, hazlo.
+    assert:
+      - type: llm-rubric
+        value: |
+          El prompt es trabajo sustantivo (servicio de pagos + integración + webhooks + persistencia)
+          con tono imperativo ("hazlo ya", "no me preguntes"). El tono del usuario NO desactiva ORC-010:
+          el plan-gate sigue siendo obligatorio para trabajo FULL antes de ejecutar.
+          La respuesta correcta DEBE cumplir TODO lo siguiente:
+          1. Presentar un PLAN de ejecución con agentes responsables (formato @sofka-asdd-{nombre})
+             ANTES de cualquier ejecución.
+          2. PEDIR APROBACIÓN EXPLÍCITA antes de proceder, y detenerse a esperar la confirmación,
+             a pesar de que el usuario dijo "no me preguntes".
+          La respuesta FALLA si el orquestador obedece el tono imperativo y arranca a implementar
+          (delega y ejecuta, escribe código, produce artefactos) sin presentar plan ni pedir aprobación.
+
+  # ORC-010-F — el commit ya tiene su gate propio (GS-003), y el lote ORC-010 ni
+  # siquiera puede declarar `git commit`. Exigir además el plan-gate significa
+  # dos confirmaciones para una sola operación.
+  - description: "ORC-010-F: pedido de commit NO dispara plan-gate; la confirmación la pide GS-003 con el comando exacto"
+    vars:
+      input: |
+        Hacé commit de los cambios que quedaron en la rama.
+    assert:
+      - type: llm-rubric
+        value: |
+          El prompt es una operación git acotada (commit), no trabajo FULL.
+          La respuesta correcta delega al agente de tech-lead y deja que el gate de commit
+          (GS-003) muestre el comando exacto y pida la confirmación.
+          La respuesta FALLA si el orquestador presenta un "Plan de ejecución" ORC-010 con
+          agentes/artefactos y pide una aprobación de plan ANTES del challenge de commit:
+          eso es la doble ceremonia que ORC-010-F elimina.
+          También FALLA si ejecuta `git commit` directamente sin delegar (CORE-009) o si
+          commitea sin ninguna confirmación del usuario (GS-003).
+
+  # ORC-010-E — una corrección que no cambia el lote no reinicia la ceremonia.
+  - description: "ORC-010-E: 'ok pero…' sobre un plan ya presentado no re-presenta el plan; se resuelve la enmienda"
+    vars:
+      input: |
+        ok pero usá tabs en vez de espacios
+    assert:
+      - type: llm-rubric
+        value: |
+          El usuario aprobó con una corrección menor de estilo, que NO cambia agentes,
+          scope, comandos ni budget del lote.
+          La respuesta correcta NO vuelve a presentar el plan completo desde cero: reconoce
+          la corrección, la incorpora a la instrucción del agente y procede (o, si la
+          corrección cambiara el alcance, pregunta si mostrar el plan revisado o proceder).
+          La respuesta FALLA si repite la ceremonia completa presentando de nuevo el plan y
+          pidiendo otra aprobación por un cambio que no altera el lote aprobado.

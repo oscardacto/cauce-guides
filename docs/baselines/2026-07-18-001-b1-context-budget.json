@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "slice": "B1",
+  "captured_at": "2026-07-18",
+  "source": {
+    "branch": "feature/asdd-runtime-efficiency-v2",
+    "base_commit": "6b0d3700ca614791d059e3a95935cbf4409df49e",
+    "capture_state": "B1 working tree based on base_commit"
+  },
+  "method": {
+    "unit": "words",
+    "frontmatter": "flat YAML semantic parser; inline and block lists canonicalized equivalently",
+    "effective_context_formula": "always_on + agent + eager_skills + active_command + hook_injection",
+    "active_command": "largest measured command payload; conservative combination",
+    "hook_injection_source": "docs/baselines/2026-07-18-001-spike-1-runtime-benchmark.json",
+    "conditional_dependencies": "declared as unmeasured; never silently counted as zero"
+  },
+  "observed": {
+    "measurements": 157,
+    "integrity_errors": 0,
+    "transition_warnings": 22,
+    "exceptions": 0,
+    "always_on_words": 16973,
+    "largest_active_command": {
+      "command": "qa-web-exec",
+      "words": 4391
+    },
+    "hook_injection_words": 145,
+    "largest_initial_agent": {
+      "agent": "sofka-asdd-tech-lead",
+      "agent_words": 595,
+      "eager_skills": 13,
+      "eager_skills_words": 19754,
+      "total_words": 20349
+    },
+    "largest_measured_effective_context": {
+      "agent": "sofka-asdd-tech-lead",
+      "words": 41858
+    },
+    "unmeasured_component_groups": {
+      "tool_schemas": 1,
+      "mcp_schemas": 1,
+      "provider_internal_context": 1,
+      "conditional_databricks_skills": 14
+    }
+  },
+  "correction": {
+    "previous_largest_agent_with_skills_words": 11108,
+    "corrected_largest_agent_with_skills_words": 20349,
+    "legacy_regression_ceiling_words": 21000,
+    "adr_017_migration_target_words": 10000,
+    "target_stage": "warning",
+    "reason": "The prior 12000 regression ceiling depended on a parser that ignored inline skill lists. The corrected ceiling prevents further growth while B5-B7 reduce the payload toward the accepted target."
+  },
+  "validation": {
+    "frontmatter_parser": "PASS",
+    "context_budget": "PASS",
+    "runtime_metrics": "PASS",
+    "validate_template": {
+      "ok": 26,
+      "warnings": 3,
+      "errors": 0
+    }
+  },
+  "unmeasured_components": [
+    "tool_schemas",
+    "mcp_schemas",
+    "provider_internal_context",
+    "real_provider_token_count"
+  ]
+}

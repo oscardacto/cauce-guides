@@ -1,0 +1,54 @@
+{
+  "$schema": "Reporte de delta entre contrato actual y baseline",
+  "wi_id": "wi-NNN",
+  "delta_status": "baseline | unchanged | minor | major",
+  "current_hash": "sha256:{...}",
+  "baseline_hash": "sha256:{...}",
+  "baseline_run_id": "{run_id}",
+  "baseline_api_context_path": "docs/testing/atf/{run_id}/api-context/wi-NNN-api-context.json",
+  "changes": {
+    "endpoints_added": [
+      {"endpoint": "{METHOD} {path}", "operation_id": "{string}"}
+    ],
+    "endpoints_removed": [
+      {"endpoint": "{METHOD} {path}", "operation_id": "{string}", "breaking": true}
+    ],
+    "endpoints_modified": [
+      {
+        "endpoint": "{METHOD} {path}",
+        "changes": [
+          {
+            "type": "field_added_required | field_added_optional | field_removed | field_type_changed | enum_value_removed | pattern_changed | format_changed | header_added_required | header_removed",
+            "path": "request.body.fieldName",
+            "before": "...",
+            "after": "...",
+            "breaking": true
+          }
+        ]
+      }
+    ],
+    "schemas_added": ["{schema_name}"],
+    "schemas_removed": ["{schema_name}"],
+    "schemas_modified": [
+      {
+        "schema": "{schema_name}",
+        "changes": [
+          {"path": ".required", "before": [], "after": [], "breaking": false}
+        ]
+      }
+    ],
+    "responses_modified": [
+      {
+        "endpoint": "{METHOD} {path}",
+        "status_code": 201,
+        "changes": [{"path": ".body.fieldX", "before": "...", "after": "...", "breaking": false}]
+      }
+    ],
+    "auth_changes": [
+      {"endpoint": "{METHOD} {path}", "before": "none", "after": "bearer", "breaking": true}
+    ]
+  },
+  "classification_reasons": ["{string}"],
+  "recommended_action": "{string — qué debe hacer el orquestador}",
+  "generated_at": "{ISO 8601}"
+}

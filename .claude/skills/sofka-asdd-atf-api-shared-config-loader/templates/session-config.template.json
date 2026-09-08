@@ -1,0 +1,75 @@
+{
+  "$schema": "Schema del session_config devuelto por shared-config-loader",
+  "run_id": "{string — run_id derivado o leído}",
+  "project_root": "{absolute path}",
+  "output_folder": "{project_root}/docs/output/{run_id}",
+  "knowledge_base_path": "{project_root}/docs/output/knowledge",
+  "app": {
+    "name": "{string}",
+    "url": "{string — URL base validada}",
+    "version": "{semver o string}",
+    "environment": "{qa|staging|production|custom}",
+    "description": "{opcional}"
+  },
+  "cycle": {
+    "type": "baseline|regression|fast-track|retest",
+    "baseline_run_id": "{string|null}",
+    "defect_id": "{string|null}"
+  },
+  "auth": {
+    "requires_auth": "{boolean}",
+    "default_role": "{string|null}",
+    "additional_roles": ["{role-name}"]
+  },
+  "functional_docs": {
+    "folder": "{absolute path}",
+    "primary_files": ["{filename}"]
+  },
+  "optional_pipelines": {
+    "security": "{boolean}",
+    "performance": "{boolean}"
+  },
+  "test_run": {
+    "mode": "smoke|regression|critical|full|custom",
+    "custom_tags": ["{tag}"],
+    "custom_flow_scope": "critical|high|all"
+  },
+  "credentials": {
+    "_redacted": "{boolean}",
+    "_note": "string explicativo",
+    "available_roles": ["{role-name}"],
+    "base_url": "{URL del environment activo}"
+  },
+  "model_strategy": {
+    "resolved_model": "opus|sonnet|haiku",
+    "resolution_source": "skill_override|agent_pinning|phase_default|frontmatter",
+    "skill_override": {},
+    "agent_pinning": {},
+    "phase_default": {
+      "bootstrap": "sonnet",
+      "analyze": "sonnet",
+      "design": "opus",
+      "automate": "sonnet",
+      "execute": "sonnet",
+      "report": "haiku"
+    }
+  },
+  "routing": {
+    "mode": "adaptive|always_full",
+    "always_full": "{boolean}",
+    "hard_exclusions": ["{topic}"]
+  },
+  "testing_capabilities": {
+    "runner": {"command": "{string}", "framework": "{string}"},
+    "api_specific": {
+      "runner": "Bun",
+      "test_framework": "Playwright Test",
+      "contract_validation": "ajv + openapi schema",
+      "manual_collection": "Newman",
+      "performance": "k6",
+      "security": "OWASP API Top 10 + ZAP"
+    }
+  },
+  "loaded_at": "{ISO 8601}",
+  "loaded_by": "{agent name}"
+}

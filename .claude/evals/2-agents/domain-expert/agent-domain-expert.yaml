@@ -1,0 +1,84 @@
+description: "sofka-asdd-domain-expert: validación de reglas de dominio"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../../prompts/system-agent-domain-expert.txt
+
+tests:
+  - description: "PROCESO: skill fintech — valida reglas de negocio financieras"
+    vars:
+      input: |
+        En el sistema de créditos, el analista propone: aprobar créditos automáticamente
+        si el score crediticio es mayor a 700. ¿Esto es correcto para Colombia?
+    assert:
+      - type: llm-rubric
+        value: |
+          El domain expert con skill fintech debe:
+          1. Evaluar la regla contra la regulación colombiana (Superfinanciera)
+          2. Identificar si el score 700 es suficiente o si hay otros criterios requeridos
+          3. Mencionar requisitos regulatorios relevantes (política de crédito, capacidad de pago)
+          4. NO inventar regulaciones — indicar si no conoce el detalle específico
+
+  - description: "PROCESO: skill insurance — valida reglas de pólizas"
+    vars:
+      input: |
+        Para el sistema de seguros de vida, ¿cuándo se invalida una póliza por
+        no pago de prima? ¿Hay un período de gracia obligatorio en Colombia?
+    assert:
+      - type: llm-rubric
+        value: |
+          El domain expert con skill insurance debe:
+          1. Describir las reglas de período de gracia según regulación colombiana
+          2. Indicar las consecuencias legales de invalidar una póliza prematuramente
+          3. Mencionar las obligaciones de notificación al asegurado
+          Si no tiene certeza sobre la regulación específica, debe indicarlo explícitamente.
+
+  - description: "PROCESO: skill health — valida flujos médicos y HIPAA si aplica"
+    vars:
+      input: |
+        El sistema de historia clínica digital debe compartir datos de pacientes
+        entre hospitales de la red. ¿Qué restricciones hay?
+    assert:
+      - type: llm-rubric
+        value: |
+          El domain expert con skill health debe:
+          1. Mencionar las restricciones de privacidad de datos médicos (Habeas Data en Colombia, HIPAA si hay alcance internacional)
+          2. Identificar qué datos pueden compartirse y bajo qué consentimiento
+          3. Mencionar los requisitos de auditoría y trazabilidad de acceso a historias clínicas
+          4. Considerar la Resolución 2654 de 2019 del MinSalud si aplica
+
+  - description: "PROCESO: domain expert invalida decisión técnica por regla de negocio"
+    vars:
+      input: |
+        El arquitecto propone cachear las consultas de saldo de cuenta por 5 minutos
+        para reducir carga en la base de datos. ¿Esto es viable en el contexto bancario?
+    assert:
+      - type: llm-rubric
+        value: |
+          El domain expert debe CUESTIONAR la decisión técnica del arquitecto:
+          El saldo bancario es un dato regulado que requiere consistencia en tiempo real.
+          Cachearlo 5 minutos puede violar regulaciones (Superfinanciera) y generar
+          estados inconsistentes que afecten operaciones del cliente.
+          Debe proponer alternativas (cache de datos de perfil no sensibles, read replicas).
+
+  - description: "OUTPUT: Restricciones de dominio claramente documentadas para el equipo"
+    vars:
+      input: |
+        Resume las restricciones regulatorias para un sistema de pagos P2P en Colombia.
+        El equipo técnico no conoce la regulación financiera.
+    assert:
+      - type: llm-rubric
+        value: |
+          El output del domain expert debe:
+          1. Listar restricciones regulatorias relevantes (Decreto 1357/2018, Circular Externa Superfinanciera)
+          2. Traducir regulaciones a restricciones técnicas comprensibles para el equipo
+          3. Indicar umbrales específicos (montos máximos por transacción, KYC requerido)
+          4. Señalar qué decisiones de diseño deben revisarse con un abogado / compliance officer
+

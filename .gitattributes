@@ -1,0 +1,83 @@
+# .gitattributes — normalización de fin de línea (EOL) scoped
+#
+# Contexto: el repo tiene core.autocrlf=true y, hasta ahora, no tenía
+# .gitattributes. Sin esta política explícita, el checkout materializa
+# CRLF en Windows para TODO archivo de texto, lo que rompe scripts POSIX
+# (.sh/.bash), diverge del hash SHA-256 calculado sobre contenido LF en
+# .sofka-asdd/rule-loading.json y .sofka-asdd/coordinator-loading.json, y
+# arriesga corrupción de binarios que Git intenta diffear como texto.
+#
+# Decisión explícita del proyecto: NO usar `* text=auto eol=lf` como única
+# línea (default global). Se usa un enfoque scoped por extensión para dejar
+# fuera del alcance cualquier extensión no inventariada y evitar sorpresas
+# en archivos binarios o específicos de Windows que aún no se contemplaron.
+
+# --- LF forzado ---
+# Código, configuración, documentación y datos versionados por el equipo.
+# Estos archivos son consumidos por herramientas cross-OS (Node scripts,
+# parsers JSON/YAML, hashing determinístico) y por shells POSIX en CI/Linux.
+# Forzar LF asegura que el contenido en disco sea siempre el mismo,
+# independientemente de si el checkout ocurre en Windows, macOS o Linux.
+*.md          text eol=lf
+*.mjs         text eol=lf
+*.cjs         text eol=lf
+*.js          text eol=lf
+*.jsx         text eol=lf
+*.ts          text eol=lf
+*.tsx         text eol=lf
+*.mts         text eol=lf
+*.json        text eol=lf
+*.jsonc       text eol=lf
+*.txt         text eol=lf
+*.yaml        text eol=lf
+*.yml         text eol=lf
+*.html        text eol=lf
+*.css         text eol=lf
+*.feature     text eol=lf
+*.template    text eol=lf
+*.lock        text eol=lf
+*.py          text eol=lf
+*.sh          text eol=lf
+*.bash        text eol=lf
+*.example     text eol=lf
+.gitignore    text eol=lf
+.gitkeep      text eol=lf
+.editorconfig text eol=lf
+# Este archivo también entra en su propia política: sin esta línea era el único
+# archivo de texto versionado con `text: unspecified`, es decir el único fuera de
+# la regla que él mismo define.
+.gitattributes text eol=lf
+
+# Nota: *.sh y *.bash se declaran de forma preventiva aunque hoy el
+# inventario no registre ninguno versionado. Si en el futuro se agrega un
+# script shell con CRLF, falla en Linux/macOS con
+# "bad interpreter: /bin/bash^M: no such file or directory". Declarar la
+# regla ahora evita ese incidente sin requerir memoria futura del porqué.
+
+# --- CRLF forzado ---
+# PowerShell y batch son nativos del ecosistema Windows; forzar CRLF respeta
+# la convención esperada por esas herramientas y por editores que asumen
+# line endings de Windows para estos tipos de archivo.
+*.ps1  text eol=crlf
+*.psm1 text eol=crlf
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+
+# --- Binario explícito ---
+# Previene que Git intente normalizar EOL o generar diffs de texto sobre
+# contenido binario, lo que corrompería el archivo. Relevante desde ya para
+# *.xlsx (Smart Data ya versiona un .xlsx) y preventivo para cuando el árbol
+# ATF empiece a versionar evidencia de pruebas (capturas, reportes, fuentes).
+*.xlsx  binary
+*.docx  binary
+*.pptx  binary
+*.pdf   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.zip   binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary

@@ -1,0 +1,114 @@
+{
+  "wi_id": "wi-001",
+  "fixtures": [
+    {
+      "id": "valid-cycle",
+      "type": "string",
+      "value": "2026-05",
+      "category": "valid",
+      "field_target": "cycle",
+      "schema_compliance": {"pattern": "^[0-9]{4}-[0-9]{2}$", "type": "string"},
+      "rule_compliance": ["RN-001"],
+      "expected_to_fail": false,
+      "resolution_strategy": "static"
+    },
+    {
+      "id": "valid-distributor",
+      "type": "string",
+      "value": "DIST-TEST-001",
+      "category": "valid",
+      "field_target": "distributorId",
+      "schema_compliance": {"type": "string"},
+      "rule_compliance": ["RN-001"],
+      "expected_to_fail": false,
+      "resolution_strategy": "static"
+    },
+    {
+      "id": "valid-period",
+      "type": "string",
+      "value": "2026-05",
+      "category": "valid",
+      "field_target": "billingPeriod",
+      "schema_compliance": {"pattern": "^[0-9]{4}-[0-9]{2}$"},
+      "rule_compliance": ["RN-001"],
+      "expected_to_fail": false,
+      "resolution_strategy": "static"
+    },
+    {
+      "id": "today",
+      "type": "string",
+      "value": "{runtime:date:today:YYYY-MM-DD}",
+      "category": "temporal",
+      "field_target": "periodProcessDate",
+      "schema_compliance": {"format": "date"},
+      "rule_compliance": ["RN-001", "RN-010"],
+      "expected_to_fail": false,
+      "resolution_strategy": "runtime"
+    },
+    {
+      "id": "tomorrow",
+      "type": "string",
+      "value": "{runtime:date:today+1:YYYY-MM-DD}",
+      "category": "boundary-above",
+      "field_target": "periodProcessDate",
+      "rule_compliance": ["RN-010"],
+      "expected_to_fail": true,
+      "expected_error_code": "INVALID_CYCLE_DATE",
+      "resolution_strategy": "runtime"
+    },
+    {
+      "id": "yesterday",
+      "type": "string",
+      "value": "{runtime:date:today-1:YYYY-MM-DD}",
+      "category": "boundary-below",
+      "field_target": "periodProcessDate",
+      "rule_compliance": ["RN-010"],
+      "expected_to_fail": false,
+      "_note": "Fecha pasada — aceptable según RN-010 (actual o pasada)",
+      "resolution_strategy": "runtime"
+    },
+    {
+      "id": "invalid-cycle-format",
+      "type": "string",
+      "value": "May-2026",
+      "category": "wrong-pattern",
+      "field_target": "cycle",
+      "rule_compliance": ["RN-001"],
+      "expected_to_fail": true,
+      "expected_error_code": "INVALID_FORMAT",
+      "resolution_strategy": "static"
+    },
+    {
+      "id": "empty-distributor",
+      "type": "string",
+      "value": "",
+      "category": "empty",
+      "field_target": "distributorId",
+      "rule_compliance": ["RN-001"],
+      "expected_to_fail": true,
+      "expected_error_code": "MISSING_REQUIRED_FIELD",
+      "resolution_strategy": "static"
+    }
+  ],
+  "coverage": {
+    "fields_covered": ["cycle", "distributorId", "billingPeriod", "periodProcessDate"],
+    "fixtures_count": {
+      "valid": 4,
+      "missing": 0,
+      "wrong-type": 0,
+      "wrong-pattern": 1,
+      "out-of-enum": 0,
+      "boundary-below": 1,
+      "boundary-above": 1,
+      "empty": 1,
+      "null": 0,
+      "oversized": 0,
+      "injection": 0,
+      "temporal": 2,
+      "credential": 0
+    }
+  },
+  "unresolved_references": [],
+  "warnings": [],
+  "generated_at": "2026-05-21T10:56:00-05:00"
+}

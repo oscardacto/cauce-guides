@@ -1,0 +1,81 @@
+{
+  "wi_id": "wi-001",
+  "parsed_from": ["docs/testing/atf/requirements/Microservicio_consulta_cuotas_pendientes.md"],
+  "metadata": {
+    "title": "Microservicio de consulta de cuotas pendientes de facturar",
+    "version": "1.0",
+    "author": "Equipo Producto ClienteEjemplo",
+    "last_modified": "2026-04-20"
+  },
+  "sections": {
+    "description": {
+      "raw_text": "El microservicio permite gestionar el ciclo de vida de las solicitudes de facturación: registro, ejecución batch y consolidación de cuotas pendientes...",
+      "summary": "Gestión completa del ciclo de facturación de cuotas pendientes para ClienteEjemplo"
+    },
+    "business_definitions": [
+      {"term": "Ciclo", "definition": "Periodo mensual de facturación identificado por YYYY-MM"},
+      {"term": "Solicitud PENDING", "definition": "Registro creado por el endpoint POST que aún no ha sido procesado por el batch"},
+      {"term": "OSF", "definition": "Sistema externo Order Settlement Framework — destino final de la consolidación"}
+    ],
+    "business_rules": [
+      {
+        "id_in_source": "RN-001",
+        "id_normalized": "RN-001",
+        "text": "Toda solicitud debe incluir cycle, distributorId, billingPeriod y periodProcessDate como campos obligatorios",
+        "category": "validation",
+        "location_in_doc": {"section": "4. Reglas de negocio", "line_approx": 60},
+        "relevance_to_wi": "high"
+      },
+      {
+        "id_in_source": "RN-008",
+        "id_normalized": "RN-008",
+        "text": "Una solicitud válida para un ciclo válido crea el registro en estado PENDING y responde con requestId",
+        "category": "flow",
+        "location_in_doc": {"section": "4. Reglas de negocio", "line_approx": 67},
+        "relevance_to_wi": "high"
+      },
+      {
+        "id_in_source": "RN-010",
+        "id_normalized": "RN-010",
+        "text": "El campo periodProcessDate debe ser fecha actual o pasada; fechas futuras se rechazan con 400 INVALID_CYCLE_DATE",
+        "category": "validation",
+        "location_in_doc": {"section": "4. Reglas de negocio", "line_approx": 71},
+        "relevance_to_wi": "high"
+      }
+    ],
+    "acceptance_criteria": [
+      {
+        "raw_text": "Dado que el usuario envía una solicitud con cycle=2026-05, distributorId válido y periodProcessDate=hoy, cuando se invoca POST /osf/api/v1/pending-billing-quotas, entonces el servicio responde 201 con requestId y crea el registro en estado PENDING",
+        "format_detected": "given-when-then",
+        "associated_rules": ["RN-001", "RN-008"]
+      },
+      {
+        "raw_text": "Dado que el usuario envía una solicitud con periodProcessDate futura, cuando se invoca POST, entonces el servicio responde 400 con error INVALID_CYCLE_DATE",
+        "format_detected": "given-when-then",
+        "associated_rules": ["RN-010"]
+      }
+    ],
+    "examples": [
+      {
+        "title": "Request exitoso",
+        "raw_block": "POST /osf/api/v1/pending-billing-quotas\n{\n  \"cycle\": \"2026-05\",\n  \"distributorId\": \"DIST-001\",\n  \"billingPeriod\": \"2026-05\",\n  \"periodProcessDate\": \"2026-05-21\"\n}",
+        "type": "request-example"
+      }
+    ],
+    "open_references": [
+      {"text": "Ver imagen del esquema de la tabla t_billing_request", "status": "broken"},
+      {"text": "Ver imagen del esquema de la tabla t_billing_totals", "status": "broken"}
+    ]
+  },
+  "endpoints_mentioned": [
+    {"method": "POST", "path": "/osf/api/v1/pending-billing-quotas", "appears_in_sections": ["3.1", "4.2", "5.1"]}
+  ],
+  "warnings": [
+    {"severity": "warning", "message": "Sección 'Esquema de tablas' referencia 2 imágenes no incluidas — gap material"}
+  ],
+  "parse_metadata": {
+    "parser_version": "1.0.0",
+    "parsed_at": "2026-05-21T10:35:00-05:00",
+    "elapsed_ms": 320
+  }
+}

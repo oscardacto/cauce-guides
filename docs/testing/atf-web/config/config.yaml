@@ -1,0 +1,230 @@
+# ============================================================
+# ATF — Agentic Testing Framework
+# Configuración del Framework (agnóstica a la aplicación)
+# ============================================================
+# Este archivo define las reglas, umbrales y preferencias
+# permanentes del framework. No cambia entre aplicaciones.
+#
+# Para configurar la sesión de prueba → appweb.yaml
+# Para registrar credenciales       → credentials.yaml (gitignored)
+# ============================================================
+
+# --- Carpetas base del framework ---
+folders:
+  # Carpeta donde el usuario deposita la documentación funcional de la app
+  requirements: "{project-root}/requirements/hu-bajo-prueba"
+
+  # Carpeta raíz de todos los outputs generados
+  output: "{project-root}/output"
+
+  # Sub-carpeta de la fase de ejecución (relativa a docs/testing/atf-web/{run_id}/)
+  execution: "execution"
+
+# --- Configuración de ejecución del browser ---
+execution:
+  browser: chromium               # chromium | firefox | webkit
+  parallel_executors: 3           # Instancias paralelas del Ejecutor Funcional
+  timeout_ms: 30000
+
+  # --- Aprendizaje de Navegación (Navigation Learning) ---
+  # El executor registra selectores exitosos durante ejecución y los
+  # reutiliza en runs posteriores. Útil cuando selectors/ está vacío
+  # (flujo Fábrica sin Fase 1E) o apps con UI dinámica.
+  navigation_learning:
+    enabled: true
+    min_confidence: 0.5       # Confianza mínima para usar selector del Nav Map
+    stale_purge_after_runs: 3 # Runs con stale=true antes de purgar entrada
+    max_alternatives: 3       # Máximo de selector_alternatives por elemento
+
+  # --- Modos de ejecución (tag-based execution) ---
+  # Cada modo define qué escenarios Gherkin ejecuta el Ejecutor Funcional.
+  # Para seleccionar el modo activo → appweb.yaml → test_run.mode
+  #
+  # tag_filter  : lista de tags Gherkin que deben estar presentes en el escenario
+  #               (vacía = sin filtro, se ejecutan todos los escenarios)
+  # flow_scope  : qué flujos del flow_map.json se incluyen en la ejecución
+  #               critical          → solo flujos con risk_level: critical
+  #               critical_and_high → flujos critical + high
+  #               all               → todos los flujos (sin filtro)
+  #
+  # Solo 2 modos: `smoke` y `custom`. Quien necesite filtros distintos a
+  # `@smoke` (`@regression`, `@critical`, `@cp:CP-X`, etc.) usa `mode: custom`
+  # + `custom_tags` en appweb.yaml.
+  run_modes:
+    smoke:
+      description: "Sanity check rápido — solo escenarios @smoke en flujos critical"
+      tag_filter: ["@smoke"]
+      flow_scope: critical
+    custom:
+      description: "Filtros definidos manualmente en appweb.yaml → test_run.custom_tags"
+      tag_filter: []              # sobreescrito desde appweb.yaml
+      flow_scope: all             # scope por defecto en modo custom
+
+# --- Coordinación de Instancias Paralelas ---
+execution_coordination:
+  instance_timeout_min: 45          # Minutos máximos por instancia antes de declararla fallida
+  max_design_instances: 4           # Máximo de instancias paralelas del Design Team
+  max_executor_instances: 3         # Máximo de instancias paralelas del Executor Team
+  max_hus_per_design_instance: 20   # HUs máximas por instancia de Design Team (bin-packing por volumen)
+                                    # Si un módulo supera este límite se parte en sub-módulos (auth_a, auth_b…)
+                                    # Subir a 30 si los CPs resultantes son simples (pocos pasos Gherkin)
+  # --- Atomicidad (previene degradación de calidad en módulos grandes) ---
+  max_cps_per_design_batch: 50      # CPs máximos por pasada del Design Team antes de escribir parcial
+  max_cps_per_executor_round: 30    # CPs máximos por ronda de ejecución MCP antes de descargar contexto
+  checkpoint_frequency_cps: 10      # Cada N CPs ejecutados → refresh de checkpoint (protege contra interrupciones)
+
+# --- Fast-path (/sofka-asdd:qa-web-exec) ---
+# Controla cómo `/sofka-asdd:qa-web-exec` divide los CPs en batches para el executor.
+#
+# Patrón de browser lifecycle: cada CP abre browser → ejecuta steps → cierra browser.
+# El executor (IA) infiere si el CP requiere login (lee appweb.yaml + credentials.yaml +
+# precondiciones del CP) y lo registra en setup_steps[] del result.json. Sin reglas
+# explícitas, sin reuso de sesión entre CPs.
+#
+# batch_size: número máximo de CPs por invocación del executor. Más grande = menos
+# overhead de setup del sub-agente (1 sola invocación), pero mayor probabilidad de
+# agotamiento del contexto (screenshots + snapshots acumulados). Recomendación por app:
+#   - SauceDemo y apps ligeras: 15
+#   - apps enterprise con page loads lentos: 5
+#   - genérico: 10
+#
+# Override por app → appweb.yaml → fast_path.batch_size.
+fast_path:
+  batch_size: 10                    # Default genérico
+
+# --- Clasificación de Defectos ---
+defect_classification:
+  severity:
+    P1:
+      name: Crítico
+      description: >
+        Bloquea completamente un flujo crítico de negocio. La aplicación es
+        inutilizable en ese flujo o existe riesgo de pérdida/corrupción de datos.
+        No existe workaround viable.
+      sla_hours: 4
+      raise_developer: true
+      blocks_release: true
+
+    P2:
+      name: Alto
+      description: >
+        Impacta significativamente una funcionalidad principal. El workaround
+        es muy difícil, costoso o inaceptable para el usuario final. Puede
+        impactar la conversión o la reputación del producto.
+      sla_hours: 24
+      raise_developer: true
+      blocks_release: false       # Bloquea solo si supera max_p2_bugs
+
+    P3:
+      name: Medio
+      description: >
+        Funcionalidad degradada con workaround razonable disponible. El usuario
+        puede completar la tarea con esfuerzo adicional. Impacto en experiencia
+        de usuario pero no en funcionalidad crítica.
+      sla_hours: 72
+      raise_developer: false
+      blocks_release: false
+
+    P4:
+      name: Bajo
+      description: >
+        Defecto cosmético, texto incorrecto no crítico, mejora de UX menor.
+        No impacta funcionalidad ni flujos de negocio.
+      sla_hours: 168
+      raise_developer: false
+      blocks_release: false
+
+# --- Modo de captura de evidencia en Fase 2C ---
+# Controla si se capturan screenshots por paso para TODOS los CPs o solo los FALLIDOS.
+#
+# failures_only → screenshots solo en CPs con status FAIL (más eficiente, reduce tokens y tiempo)
+# all           → screenshot por cada paso de todos los CPs (evidencia completa)
+#
+# Cuando appweb.yaml no especifica evidence_mode, el orquestador usa "failures_only".
+evidence:
+  # --- Resiliencia de captura de screenshots ---
+  pre_capture_wait_ms: 300        # Espera post-highlight + scrollIntoView antes de capturar (ms)
+                                   # Convierte a segundos para browser_wait_for: 300ms → 0.3s
+  screenshot_retry_count: 1        # Reintentos por screenshot fallido. 0 = sin retry. Máx: 2.
+  screenshot_min_size_bytes: 100   # Tamaño mínimo del PNG para considerar captura válida (bytes)
+
+# --- Enrichment / generación de CPs (anti-alucinación cross-cutting) ---
+# Controla la agresividad de PASO 3.bis / 5.bis / 6.bis del skill gherkin-writer
+# y el PASO 3.6 (Seguridad funcional) del agente design-team.
+#
+# literal     → default. Solo dispara cross-cutting cuando el CA lo enuncia
+#               explícitamente o el flow tiene `@public-facing`. Apto para
+#               apps internas/admin (OrangeHRM Admin, Fogafin SIO).
+# expanded    → dispara sobre flujos cara al usuario. Apto para portales
+#               públicos, e-commerce, formularios de contacto.
+# shift_left  → dispara TODAS las dimensiones aplicables, incluyendo combinaciones
+#               poco probables. Apto para apps críticas (banking, salud, regulatorio).
+#
+# La regla anti-BVA inventado (sin documented_limits) sigue vigente en TODOS los modos.
+# Override por app → appweb.yaml → enrichment.cross_cutting_mode.
+enrichment:
+  cross_cutting_mode: literal       # literal | expanded | shift_left
+
+# --- Performance (Core Web Vitals) ---
+# Controla /sofka-asdd:qa-web-perf (skill lighthouse-validator). Mide Core Web
+# Vitals reales con Playwright Node + PerformanceObserver sobre los flujos
+# críticos del execution_plan. 3 mediciones por URL → promedio → clasificación.
+# Activación POR APP → appweb.yaml → performance.enabled.
+performance:
+  repetitions: 3                  # Mediciones por URL antes de promediar (1-5; recomendado 3)
+  stabilization_wait_ms: 2000     # Espera tras navegar para estabilizar LCP/CLS
+  # Umbrales Core Web Vitals (Google 2024). rating: good=≤good · needs_improvement=≤needs · poor=>needs
+  thresholds:
+    lcp:
+      good: 2500                  # ms
+      needs: 4000
+    cls:
+      good: 0.10                  # score (unitless)
+      needs: 0.25
+    fcp:
+      good: 1800                  # ms
+      needs: 3000
+    inp:
+      good: 200                   # ms
+      needs: 500
+    ttfb:
+      good: 800                   # ms
+      needs: 1800
+  # Score por flujo: good=100 · needs_improvement=60 · poor=0 → promedio(LCP,CLS,FCP,INP)
+  # Verdict: PASS ≥80 · WARNING 60-79 · FAIL <60 · NO_DATA si no hubo medición.
+  # INP medido pasivamente (sin interacción simulada) → null/no_data, excluido del score.
+
+# --- Pruebas Responsive (multi-viewport) ---
+# Controla el comportamiento de la ejecución multi-viewport en FASE 2C cuando
+# appweb.yaml → responsive.enabled = true.
+# La habilitación por app y los viewports concretos se definen en appweb.yaml.
+#
+# result_policy:
+#   strict → FAIL global si al menos un viewport falla; BLOCKED si ninguno falla
+#            pero al menos uno quedó bloqueado. Es el único modo soportado en v1.
+#
+# execution_mode:
+#   all_cps_all_viewports → todos los CPs del run se ejecutan en todos los
+#                           viewports habilitados. Único modo en v1.
+#
+# mcp_viewport_capability:
+#   resize_only → @playwright/mcp aplica viewport via browser_resize (width + height).
+#                 device_scale_factor, is_mobile y has_touch son declarativos
+#                 (se registran en result.json → viewport.requested pero no simulados).
+#                 Cambiar a full_context cuando el MCP exponga newContext con viewport.
+responsive:
+  result_policy: "strict"
+  execution_mode: "all_cps_all_viewports"
+  mcp_viewport_capability: "resize_only"
+
+# --- Reporte HTML ---
+report:
+  theme: dark                       # dark | light
+  include_screenshots: true
+  include_video_links: false
+  language: Español
+  sections:                         # Orden de secciones en el reporte generado
+    - executive_panel               # Summary por módulo + veredicto por CP
+    - defect_intelligence           # Top bugs + discovery by test type + root cause
+    - coverage_intelligence         # Cobertura por módulo y CP
+    - action_panel                  # Lista priorizada de acciones con fundamento

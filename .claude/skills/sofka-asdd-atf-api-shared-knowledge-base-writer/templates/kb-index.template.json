@@ -1,0 +1,43 @@
+{
+  "$schema": "Índice maestro de la knowledge base — actualizado en cada escritura",
+  "version": 1,
+  "last_updated_at": "{ISO 8601}",
+  "last_updated_by_run": "{run_id}",
+  "totals": {
+    "contracts_known": 3,
+    "endpoints_indexed": 12,
+    "defect_patterns_recurring": 2,
+    "defects_resolved": 7,
+    "lessons_recorded": 5
+  },
+  "contracts": [
+    {
+      "hash": "sha256:abc...",
+      "first_seen_in_run": "{run_id-1}",
+      "endpoints_count": 8
+    }
+  ],
+  "endpoints": [
+    {
+      "endpoint_id": "POST-osf-api-v1-pending-billing-quotas",
+      "stability_score": 0.92,
+      "associated_defects_count": 1
+    }
+  ],
+  "recurring_patterns": [
+    {
+      "pattern_id": "rec-001",
+      "fingerprint": "POST-osf-api-pending-billing-quotas:RN-008:bug:NPE",
+      "occurrences": 3,
+      "first_run": "{run_id-1}",
+      "latest_run": "{run_id-3}"
+    }
+  ],
+  "lessons_index": [
+    {
+      "lesson_id": "lesson-001",
+      "title": "El endpoint X devuelve 200 con body de error",
+      "tags": ["error-handling", "POST-osf-api-pending-billing-quotas"]
+    }
+  ]
+}

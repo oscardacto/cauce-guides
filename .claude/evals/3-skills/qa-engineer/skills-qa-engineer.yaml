@@ -1,0 +1,62 @@
+description: "Skills: sofka-asdd-qa-engineer — proceso y output por skill"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # skill: test-strategy
+  - description: "PROCESO test-strategy: pirámide de testing con herramientas y umbrales"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-qa-engineer-test-strategy.txt"
+      input: "Define la estrategia de testing para: API REST en Node.js + React frontend + PostgreSQL. El equipo tiene 2 QAs y 5 developers."
+    assert:
+      - type: llm-rubric
+        value: |
+          La estrategia debe incluir: pirámide de testing con % por capa (unit/integration/e2e),
+          herramientas por capa (Jest, Supertest/Testcontainers, Playwright),
+          coverage targets con justificación, responsables por tipo de test,
+          y criterios de entrada/salida para cada fase. No debe ser genérica.
+
+  # skill: e2e-test
+  - description: "PROCESO e2e-test: escenarios con datos estables y assertions de estado"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-qa-engineer-e2e-test.txt"
+      input: "Genera tests e2e con Playwright para el flujo de login: ir a /login, ingresar usuario y contraseña, hacer click en 'Ingresar', verificar redirección al dashboard."
+    assert:
+      - type: llm-rubric
+        value: |
+          Los tests e2e deben: usar selectores estables (data-testid o roles ARIA, no XPath frágil),
+          incluir setup/teardown adecuado (login state, cleanup),
+          tener assertions sobre el estado final (URL cambió, elemento visible),
+          y cubrir el caso de credenciales incorrectas.
+
+  # skill: coverage
+  - description: "PROCESO coverage: prioriza rutas críticas de negocio, no solo líneas"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-qa-engineer-coverage.txt"
+      input: "Coverage actual: 72%. Las líneas no cubiertas incluyen: el manejador de timeout de pagos (línea 145-167) y el logger de auditoría (líneas 23-45). ¿Dónde enfocamos?"
+    assert:
+      - type: llm-rubric
+        value: |
+          El análisis de coverage debe priorizar: el manejador de timeout de pagos es crítico
+          (pérdida de dinero si falla) sobre el logger de auditoría.
+          Debe proponer tests específicos para el timeout (¿qué pasa si el banco no responde?),
+          no solo aumentar el número de líneas cubiertas.
+
+  # skill: regression
+  - description: "OUTPUT regression: baseline y suite de no-regresión"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-qa-engineer-regression.txt"
+      input: "Crea la suite de regresión para el módulo de autenticación. Hay 3 bugs históricos: login fallaba con emails con '+', el logout no limpiaba todas las cookies, el 2FA se saltaba con URLs directas."
+    assert:
+      - type: llm-rubric
+        value: |
+          La suite de regresión debe incluir: un test específico por cada bug histórico
+          (email con '+', limpieza de cookies, bypass de 2FA), tests del happy path,
+          y coverage de las rutas más críticas del módulo.
+          Cada test debe tener un nombre descriptivo que identifique el bug que previene.
+

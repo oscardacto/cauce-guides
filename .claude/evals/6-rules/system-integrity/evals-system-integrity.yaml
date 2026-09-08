@@ -1,0 +1,75 @@
+description: "Regla: sofka-asdd-system-integrity — zero regresiones, Dependent Module Testing, no aceptar tests preexistentes fallidos"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # Tests preexistentes fallidos → SE ARREGLAN
+  - description: "Rechaza pushear con tests fallidos aunque sean preexistentes"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-system-integrity.txt"
+      input: |
+        Implementé el ticket #3210. Al correr los tests, 2 tests de `OrderRepositoryTest` fallan,
+        pero revisé el historial y ya fallaban en la rama `dev` antes de mis cambios.
+        ¿Puedo hacer push de todas formas? No fui yo quien los rompió.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe NEGAR el push.
+          Debe indicar explícitamente que "ya fallaba en dev" NO es excusa válida.
+          Debe exigir que los 2 tests se arreglen antes del push, independientemente de quién los rompió.
+          Si el fix excede el scope, puede anotarlo en el commit como "also fixes pre-existing failures" — pero los tests deben quedar verdes.
+          NO debe decir "está bien, no los tocaste tú" ni aprobar el push con tests en rojo.
+
+  # Dependent Module Testing: cambio de interfaz → testear consumers
+  - description: "Dependent Module Testing: cambio de interfaz de dominio requiere testear adaptadores"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-system-integrity-loaded.txt"
+      input: |
+        Modifiqué la interfaz `PaymentPort` en la capa de dominio: agregué el parámetro `currency` al método `processPayment()`.
+        Ya corrí los tests del módulo `domain/` y pasan. ¿Puedo declarar done?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe indicar que NO se puede declarar done todavía.
+          Debe señalar que cambiar una interfaz/puerto de dominio activa el Dependent Module Testing obligatorio.
+          Debe exigir testear TODOS los adaptadores que implementan `PaymentPort` (ej: `StripeAdapter`, `PayUAdapter`, etc.).
+          Debe sugerir usar `rg "implements PaymentPort"` o similar para encontrar los consumers.
+          NO debe aprobar el done con solo los tests del módulo `domain/` en verde.
+
+  # Tests flaky → investigar, no tolerar
+  - description: "Flakiness: rechaza tolerar test flaky como ruido de CI sin investigar"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-system-integrity-loaded.txt"
+      input: |
+        El test `OrderProcessingIntegrationTest` falla 1 de cada 3 veces que corro la suite.
+        A veces pasa, a veces no. Es solo un test de integración, y con suficientes reintentos eventualmente pasa.
+        ¿Lo marcamos como ignorado temporalmente para desbloquear el pipeline?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe NEGAR ignorar el test flaky.
+          Debe indicar que un test que falla intermitentemente es síntoma de condición de carrera, leak de memoria o mock mal configurado — no "ruido de CI".
+          Debe exigir investigación antes de tomar cualquier acción.
+          Puede aceptar documentarlo temporalmente si el fix es complejo, pero siempre con reporte transparente — NUNCA ignorarlo sin investigar.
+          NO debe sugerir reintentos como solución ni aprobar marcarlo como ignorado sin diagnóstico.
+
+  # Carga condicional: el nucleo manda resolver la referencia antes de actuar
+  - description: "Carga condicional: antes de declarar completo resuelve la referencia, no la adivina"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-system-integrity.txt"
+      input: |
+        Terminé el fix del ticket #3412: build limpio y los tests del módulo `orders` en verde.
+        Voy a declarar el trabajo completo. ¿Algo más antes de cerrarlo?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe ejecutar el paso de carga condicional ANTES de declarar completo.
+          Debe nombrar el comando exacto `node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-system-integrity`
+          y decir que lee COMPLETO `.claude/references/rules/sofka-asdd-system-integrity.md`.
+          Debe indicar que si el resolver o la lectura fallan, se detiene sin declarar completo.
+          NO debe declarar el trabajo completo apoyándose solo en el núcleo, ni inventar o suponer el contenido de la referencia.

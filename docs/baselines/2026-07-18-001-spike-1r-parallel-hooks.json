@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "slice": "SPIKE-1R-A",
+  "status": "corrected_isolated_baseline",
+  "captured_at": "2026-07-18",
+  "source": {
+    "branch": "feature/asdd-runtime-efficiency-v2",
+    "base_commit": "66d9280",
+    "harness": ".claude/scripts/benchmark-pretool-hooks.mjs"
+  },
+  "environment": {
+    "os": "Linux WSL2 x86_64",
+    "node": "v24.18.0"
+  },
+  "method": {
+    "execution_model": "parallel_all_matching_hooks",
+    "warmup_samples": 5,
+    "measured_samples": 30,
+    "percentile_method": "nearest-rank",
+    "scope": "ASDD project hooks only; collector and foreign/global hooks excluded",
+    "notes": [
+      "Every matching ASDD handler is launched concurrently and allowed to finish.",
+      "Commands use shell execution to match Claude Code command-hook behavior.",
+      "The target tool is not executed.",
+      "Aggregate handler wall time is a concurrency/fan-out proxy, not CPU time.",
+      "Benchmark jobs for Bash and Edit were run serially to avoid cross-job CPU contention; an earlier 63.14/60.89 capture was discarded."
+    ]
+  },
+  "observed": {
+    "bash": {
+      "asdd_processes": 7,
+      "wall_clock_ms": {
+        "min": 34.83,
+        "p50": 37.99,
+        "p95": 40.34,
+        "max": 40.95,
+        "mean": 37.77
+      },
+      "aggregate_handler_wall_ms": {
+        "p50": 217.12,
+        "p95": 236.14
+      }
+    },
+    "edit": {
+      "asdd_processes": 8,
+      "wall_clock_ms": {
+        "min": 35.66,
+        "p50": 38.91,
+        "p95": 42.08,
+        "max": 43.96,
+        "mean": 38.91
+      },
+      "aggregate_handler_wall_ms": {
+        "p50": 253.11,
+        "p95": 280.11
+      }
+    }
+  },
+  "design_status": {
+    "one_asdd_process": "validated_by_SPIKE-1R-B",
+    "absolute_latency_gate": "replaced_by_relative_non_regression_gate",
+    "relative_latency_gate": "p95 <= 1.05 * isolated parallel baseline",
+    "collector_compatibility": "validated_with_coexistence_harness",
+    "next_experiment": "none; ADR-018 ready for approval"
+  }
+}

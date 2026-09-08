@@ -1,0 +1,107 @@
+{
+  "wi_id": "wi-001",
+  "source_paths": ["docs/testing/atf/requirements/clienteejemplo-billing-api.yaml"],
+  "source_format": "openapi-3.0",
+  "metadata": {
+    "title": "ClienteEjemplo Pending Billing Quotas API",
+    "version": "1.0.0",
+    "base_url_from_doc": "https://api.clienteejemplo.example.com/v1",
+    "base_url_effective": "https://api-qa.clienteejemplo.example.com/v1",
+    "base_url_mismatch": false
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/osf/api/v1/pending-billing-quotas",
+      "operation_id": "createBillingRequest",
+      "summary": "Registra una solicitud de facturación",
+      "description": "Crea una nueva solicitud o actualiza una existente según unicidad de cycle+distributorId+billingPeriod+periodProcessDate",
+      "in_wi_scope": true,
+      "request": {
+        "content_type": "application/json",
+        "body_schema_ref": "#/components/schemas/BillingRequest",
+        "body_schema_resolved": {
+          "type": "object",
+          "required": ["cycle", "distributorId", "billingPeriod", "periodProcessDate"],
+          "properties": {
+            "cycle": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$", "example": "2026-05"},
+            "distributorId": {"type": "string", "example": "DIST-001"},
+            "billingPeriod": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$", "example": "2026-05"},
+            "periodProcessDate": {"type": "string", "format": "date", "example": "2026-05-21"},
+            "contractId": {"type": "string", "nullable": true, "example": "CTR-12345"}
+          }
+        },
+        "required_fields": ["cycle", "distributorId", "billingPeriod", "periodProcessDate"],
+        "examples": [
+          {
+            "name": "valid-request",
+            "value": {"cycle": "2026-05", "distributorId": "DIST-001", "billingPeriod": "2026-05", "periodProcessDate": "2026-05-21"}
+          }
+        ]
+      },
+      "parameters": {"path": [], "query": [], "header": []},
+      "responses": [
+        {
+          "status": 201,
+          "description": "Solicitud creada en estado PENDING",
+          "schema_ref": "#/components/schemas/BillingRequestCreated",
+          "schema_resolved": {
+            "type": "object",
+            "required": ["requestId", "status", "createdAt"],
+            "properties": {
+              "requestId": {"type": "string", "format": "uuid"},
+              "status": {"type": "string", "enum": ["PENDING"]},
+              "createdAt": {"type": "string", "format": "date-time"}
+            }
+          },
+          "examples": [],
+          "error_codes": []
+        },
+        {
+          "status": 400,
+          "description": "Solicitud inválida",
+          "schema_ref": "#/components/responses/BadRequest",
+          "schema_resolved": {"type": "object", "properties": {"error": {"type": "string"}, "message": {"type": "string"}}},
+          "error_codes": ["INVALID_CYCLE_DATE", "MISSING_REQUIRED_FIELD", "INVALID_FORMAT"]
+        }
+      ],
+      "auth_required": false,
+      "auth_type": "none"
+    }
+  ],
+  "schemas": [
+    {
+      "name": "BillingRequest",
+      "type": "object",
+      "properties": {
+        "cycle": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$"},
+        "distributorId": {"type": "string"},
+        "billingPeriod": {"type": "string"},
+        "periodProcessDate": {"type": "string", "format": "date"},
+        "contractId": {"type": "string", "nullable": true}
+      },
+      "required": ["cycle", "distributorId", "billingPeriod", "periodProcessDate"]
+    },
+    {
+      "name": "BillingRequestCreated",
+      "type": "object",
+      "properties": {
+        "requestId": {"type": "string", "format": "uuid"},
+        "status": {"type": "string"},
+        "createdAt": {"type": "string", "format": "date-time"}
+      },
+      "required": ["requestId", "status", "createdAt"]
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "OPENAPI-W-001",
+      "message": "Endpoint POST sin documentar 422 ni 409 — se asume implícito",
+      "location": "paths./osf/api/v1/pending-billing-quotas.post.responses"
+    }
+  ],
+  "endpoints_in_wi_not_in_contract": [],
+  "endpoints_in_contract_not_in_wi": ["GET /health", "GET /version"],
+  "parsed_at": "2026-05-21T10:40:00-05:00"
+}

@@ -1,0 +1,41 @@
+{
+  "run_id": "PruebaAPIClienteEjemplo-v1.0-20260521-1030",
+  "generated_at": "2026-05-21T11:55:00-05:00",
+  "backlog_target": "jira",
+  "total_defects_to_promote": 4,
+  "items_for_jira": [
+    {
+      "defect_ref": "D-001",
+      "issue_type": "Bug",
+      "project": "CLIENTEEJEMPLO",
+      "summary": "[ATF-API] POST /pending-billing-quotas devuelve 500 cuando falta cycle",
+      "description": "## Descripción\n\nEl servicio responde 500 con NullPointerException cuando se omite el campo `cycle`. La RN-001 y el contrato OpenAPI exigen `400 BadRequest` con error `MISSING_REQUIRED_FIELD`.\n\n## Evidencia\n\n- Request: `POST /osf/api/v1/pending-billing-quotas` (body sin `cycle`)\n- Response observado: `500 INTERNAL_SERVER_ERROR` con NPE en `BillingRequestValidator.checkCycle`\n- Response esperado: `400 BadRequest` con `{error: \"MISSING_REQUIRED_FIELD\"}`\n- Path completo: `docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/execution/evidence/CP-004/`\n\n## Reproducibilidad\n\nAlways (reproducido en 2 ejecuciones consecutivas).\n\n## Detalle técnico\n\nNPE en `BillingRequestValidator.checkCycle`. Adicionalmente, expone stack trace al cliente — hallazgo de seguridad menor que también debería corregirse.\n\n## Trazabilidad\n\n- ATF Run ID: PruebaAPIClienteEjemplo-v1.0-20260521-1030\n- CP: CP-004\n- WI: wi-001 (Solicitud de ejecución)\n- RN violada: RN-001",
+      "priority": "High",
+      "labels": ["atf-api", "run:PruebaAPIClienteEjemplo-v1.0-20260521-1030", "cp:CP-004", "wi:wi-001"],
+      "components": ["Solicitud de ejecución"],
+      "customfields": {"Rule-Violated": "RN-001"},
+      "reporter": "atf-api-bot",
+      "source_artifact": "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/execution/defects/D-001.json"
+    },
+    {
+      "defect_ref": "D-002",
+      "issue_type": "Bug",
+      "project": "CLIENTEEJEMPLO",
+      "summary": "[ATF-API] periodProcessDate futura aceptada en POST (RN-010 no aplicada)",
+      "description": "## Descripción\n\nRN-010 establece que `periodProcessDate` debe ser fecha actual o pasada. El servicio acepta fecha futura (mañana) creando la solicitud en `PENDING`. No se devuelve el error `INVALID_CYCLE_DATE` documentado en el contrato.\n\n## Evidencia\n\n- Request: `POST /osf/api/v1/pending-billing-quotas` con `periodProcessDate: 2026-05-22` (mañana)\n- Response observado: `201 Created` con `requestId: 7a3...` y `status: PENDING`\n- Response esperado: `400 BadRequest` con `{error: \"INVALID_CYCLE_DATE\"}`\n- Path completo: `docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/execution/evidence/CP-002/`\n\n## Reproducibilidad\n\nAlways.\n\n## Trazabilidad\n\n- ATF Run ID: PruebaAPIClienteEjemplo-v1.0-20260521-1030\n- CP: CP-002\n- WI: wi-001 (Solicitud de ejecución)\n- RN violada: RN-010",
+      "priority": "High",
+      "labels": ["atf-api", "run:PruebaAPIClienteEjemplo-v1.0-20260521-1030", "cp:CP-002", "wi:wi-001"],
+      "components": ["Solicitud de ejecución"],
+      "customfields": {"Rule-Violated": "RN-010"},
+      "reporter": "atf-api-bot",
+      "source_artifact": "docs/output/PruebaAPIClienteEjemplo-v1.0-20260521-1030/execution/defects/D-002.json"
+    }
+  ],
+  "items_for_ado": [],
+  "skipped_defects": [
+    {"defect_ref": "D-005", "reason": "category: env_issue — no promueve al backlog del producto"},
+    {"defect_ref": "D-014", "reason": "category: flaky — se reporta en final-report.md pero no va al backlog"},
+    {"defect_ref": "D-016", "reason": "category: script_issue — corrige la Fase 4 (Automate) en próxima generación, no es bug del servicio"}
+  ],
+  "next_step": "Cliente debe revisar `defects-ready-for-jira-ado.json` y ejecutar herramienta de upload (jira CLI o az boards CLI). Tras confirmar el upload exitoso, marcar manualmente los D-NNN como promoted_to_backlog: true con el item-ID real (ej: ATF-1234)."
+}

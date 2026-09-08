@@ -1,0 +1,24 @@
+# ASDD Framework — Promptfoo Eval Suite
+#
+# ⚠️ Este archivo NO ejecuta la suite. La key `testFiles` que usaba la versión
+# anterior NO existe en promptfoo (se ignoraba silenciosamente y corría 0 tests).
+# Cada YAML bajo 1-orchestrator/ .. 5-commands/ es un config promptfoo
+# standalone (45 archivos, 153 tests).
+#
+# Ejecutar la suite completa:
+#   cd .claude/evals && node run-suite.mjs
+#
+# Ejecutar un solo archivo:
+#   cd .claude/evals && npx promptfoo eval -c 1-orchestrator/orc-000-pure-delegation.yaml
+#
+# Variables de entorno requeridas:
+#   ANTHROPIC_API_KEY   (provider principal: anthropic:messages:claude-sonnet-4-6)
+#
+# Multi-provider (GPT-4o / Gemini): agregar el provider por CLI, ej:
+#   npx promptfoo eval -c <archivo>.yaml --providers openai:gpt-4o
+#   (requiere OPENAI_API_KEY / GOOGLE_API_KEY según el provider)
+#
+# Ver README.md para el procedimiento completo y BASELINE-2.11.0.md para el
+# baseline de referencia.
+
+description: "ASDD Framework — suite de evaluaciones (45 configs / 153 tests). Ver run-suite.mjs"

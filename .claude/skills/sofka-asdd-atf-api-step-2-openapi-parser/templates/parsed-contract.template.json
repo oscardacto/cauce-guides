@@ -1,0 +1,67 @@
+{
+  "$schema": "Contrato API parseado a estructura canónica unificada",
+  "wi_id": "wi-NNN",
+  "source_paths": ["{path}"],
+  "source_format": "openapi-3.0 | openapi-3.1 | swagger-2 | postman-2.1",
+  "metadata": {
+    "title": "{string}",
+    "version": "{semver|string}",
+    "base_url_from_doc": "{string}",
+    "base_url_effective": "{string — desde session_config.app.url}",
+    "base_url_mismatch": "{boolean}"
+  },
+  "endpoints": [
+    {
+      "method": "GET | POST | PUT | DELETE | PATCH | HEAD | OPTIONS",
+      "path": "{path}",
+      "operation_id": "{string}",
+      "summary": "{string}",
+      "description": "{string}",
+      "in_wi_scope": "{boolean}",
+      "request": {
+        "content_type": "application/json | application/xml | multipart/form-data | application/x-www-form-urlencoded",
+        "body_schema_ref": "{string|null}",
+        "body_schema_resolved": {},
+        "required_fields": ["{string}"],
+        "examples": [{}]
+      },
+      "parameters": {
+        "path": [{"name": "{string}", "required": true, "type": "string", "example": "string"}],
+        "query": [],
+        "header": []
+      },
+      "responses": [
+        {
+          "status": 200,
+          "description": "{string}",
+          "schema_ref": "{string|null}",
+          "schema_resolved": {},
+          "examples": [],
+          "error_codes": ["{string}"],
+          "headers": []
+        }
+      ],
+      "auth_required": "{boolean}",
+      "auth_type": "bearer | basic | api-key | oauth2 | none"
+    }
+  ],
+  "schemas": [
+    {
+      "name": "{string}",
+      "type": "object | array | string | ...",
+      "properties": {},
+      "required": ["{string}"]
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning | error",
+      "code": "{OPENAPI-X-NNN}",
+      "message": "{string}",
+      "location": "{path o ruta JSON}"
+    }
+  ],
+  "endpoints_in_wi_not_in_contract": ["{METHOD} {path}"],
+  "endpoints_in_contract_not_in_wi": ["{METHOD} {path}"],
+  "parsed_at": "{ISO 8601}"
+}

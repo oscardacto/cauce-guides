@@ -1,0 +1,47 @@
+{
+  "$schema": "context_summary.json — versión comprimida del estado para retomar en chat nuevo",
+  "run_id": "{run_id}",
+  "summary_at_step": "step_2 | step_4 | step_6",
+  "generated_at": "{ISO 8601}",
+  "key_decisions": [
+    "Particionamos en 3 WI por capa funcional (solicitud / batch / consolidación)",
+    "Q-001 resuelta: URL base correcta es /osf/api/v1/pending-billing-quotas",
+    "Q-003 abierta: combinación de campos para unicidad — bloquea Step 3"
+  ],
+  "open_questions": [
+    {
+      "id": "Q-003",
+      "criticality": "alta",
+      "status": "open | answered | dismissed",
+      "blocks_step": "step_3",
+      "summary": "Combinación de campos que define unicidad de solicitud"
+    }
+  ],
+  "contract_hash": "sha256:abc123...",
+  "delta_status": "baseline | unchanged | minor | major",
+  "work_items_status": {
+    "wi-001": "step_2_complete",
+    "wi-002": "step_2_complete",
+    "wi-003": "step_2_complete"
+  },
+  "test_cases_total": null,
+  "test_cases_priority_breakdown": {
+    "critical": null,
+    "high": null,
+    "medium": null,
+    "low": null
+  },
+  "execution_summary": {
+    "total_executed": null,
+    "passed": null,
+    "failed": null,
+    "flaky": null,
+    "flaky_rate_pct": null,
+    "defects_by_category": {
+      "bug": 0,
+      "precondition": 0,
+      "env_issue": 0,
+      "script_issue": 0
+    }
+  }
+}

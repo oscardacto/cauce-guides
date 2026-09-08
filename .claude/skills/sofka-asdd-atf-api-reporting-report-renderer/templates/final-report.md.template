@@ -1,0 +1,90 @@
+# ATF API — Reporte Final de Corrida
+
+**Run ID:** {run_id}
+**API:** {app.name} v{app.version}
+**Entorno:** {app.environment}
+**Tipo de ciclo:** {cycle.type}
+**Fecha:** {YYYY-MM-DD}
+
+---
+
+## Veredicto
+
+{🟢 PASS | 🔴 FAIL}
+
+{1 frase resumiendo el por qué}
+
+---
+
+## Cifras clave
+
+| Métrica | Valor |
+|---|---|
+| Casos de prueba ejecutados | {total} |
+| Pass rate global | {pct}% |
+| Pass rate críticos | {pct}% |
+| Pass rate alta prioridad | {pct}% |
+| Flaky rate | {pct}% |
+| Defectos `bug` clasificados | {count} |
+| Defectos promovidos al backlog | {count} |
+| Duración total de la suite | {minutes} min |
+
+---
+
+## Distribución de defectos
+
+| Categoría | Cantidad | Severidad alta |
+|---|---|---|
+| bug | {n} | {n} |
+| precondition | {n} | {n} |
+| env_issue | {n} | {n} |
+| script_issue | {n} | {n} |
+| flaky (alerta) | {n} | — |
+
+---
+
+## Defectos críticos (top 5)
+
+| ID | WI | Título | Severidad | Backlog |
+|---|---|---|---|---|
+| D-NNN | wi-NNN | {título} | {severidad} | {Jira o ADO ID} |
+
+---
+
+## QGS — métricas bloqueantes
+
+(Solo si verdict: FAIL)
+
+| Métrica | Observado | Threshold | Acción sugerida |
+|---|---|---|---|
+| {metric} | {val} | {threshold} | {acción} |
+
+---
+
+## Comparación vs baseline
+
+(Solo si cycle.type: regression / fast-track)
+
+- Regresiones nuevas: {count}
+- Fixes confirmados vs baseline: {count}
+- Aún fallando (no fixed): {count}
+
+---
+
+## Preguntas abiertas (al cierre)
+
+| Q-ID | WI | Pregunta | Estado |
+|---|---|---|---|
+| Q-NNN | wi-NNN | {pregunta} | resuelta / no-resuelta / parcial |
+
+---
+
+## Próximos pasos sugeridos
+
+1. {acción concreta con responsable sugerido}
+2. {acción concreta}
+
+---
+
+*Reporte generado por ATF API v3 — {ISO 8601}*
+*Artefactos completos en: `docs/testing/atf/{run_id}/`*

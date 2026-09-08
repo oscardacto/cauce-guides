@@ -1,0 +1,35 @@
+description: "CMD /sofka-asdd:analyze — fase Analizar con orden correcto"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "CMD analyze: orden ba→funcional→po explícito"
+    vars:
+      input: "/sofka-asdd:analyze El brief está aprobado. Necesito la spec completa del módulo de transferencias bancarias."
+    assert:
+      - type: icontains
+        value: "sofka-asdd-producto"
+      - type: llm-rubric
+        value: |
+          El comando analyze debe: forzar el orden ba → funcional → po,
+          no saltar directamente a historias de usuario,
+          y el artefacto esperado es docs/specs/{feature}.md con RN, CU e historias.
+
+  - description: "CMD analyze: bloquea ejecución sin brief aprobado"
+    vars:
+      input: "/sofka-asdd:analyze Quiero la spec de autenticación biométrica. No tenemos brief todavía."
+    assert:
+      - type: llm-rubric
+        value: |
+          El comando analyze debe BLOQUEAR la ejecución si no existe brief aprobado en docs/specs/.
+          Debe indicar que primero hay que ejecutar /sofka-asdd:specify y redirigir al usuario.
+

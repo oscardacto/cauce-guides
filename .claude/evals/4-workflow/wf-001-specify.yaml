@@ -1,0 +1,107 @@
+description: "WF-001 PROCESO+OUTPUT: Fase Especificar — agentes, orden y artefactos"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "PROCESO WF-001: Brief sin señales técnicas → solo producto(pm) + domain-expert"
+    vars:
+      input: |
+        Nuevo proyecto: sistema de gestión de membresías para un gimnasio.
+        Necesito arrancar la fase de especificación.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-producto"
+      - type: icontains
+        value: "sofka-asdd-domain-expert"
+      - type: llm-rubric
+        value: |
+          El orquestador debe invocar sofka-asdd-producto (skill pm) como primario
+          y sofka-asdd-domain-expert como primario.
+          NO debe invocar arquitecto, seguridad ni tech-lead porque no hay señales de integración,
+          datos sensibles ni estimación compleja en el brief.
+          Ambos agentes deben anunciarse con formato → **@sofka-asdd-{nombre}**.
+
+  - description: "PROCESO WF-001: Brief con señal de integración → incluye arquitecto como soporte"
+    vars:
+      input: |
+        Nuevo sistema de pagos que debe integrarse con Visa, Mastercard y el core bancario legacy.
+        También necesitamos definir el contrato API con el equipo de mobile.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-solution-architect"
+      - type: llm-rubric
+        value: |
+          El brief contiene señales de integración ('integrarse con', 'core bancario legacy', 'contrato API'),
+          por tanto el orquestador debe incluir sofka-asdd-solution-architect como soporte condicional.
+          Debe anunciarlo con el formato correcto.
+
+  - description: "PROCESO WF-001: Brief con señal de datos sensibles → incluye security como soporte"
+    vars:
+      input: |
+        Sistema de KYC (Know Your Customer) para onboarding digital. Maneja datos biométricos,
+        documentos de identidad y debe cumplir con regulaciones PCI-DSS y GDPR.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-security"
+      - type: llm-rubric
+        value: |
+          El brief tiene señales de seguridad (KYC, datos biométricos, PCI-DSS, GDPR),
+          por tanto sofka-asdd-security debe incluirse como soporte condicional.
+          sofka-asdd-domain-expert también debe invocarse por el dominio fintech/KYC.
+
+  - description: "PROCESO WF-001 (#3598): Brief con nueva API → arquitecto como soporte"
+    vars:
+      input: |
+        Queremos construir un portal de proveedores para nuestra empresa.
+        Va a exponer nuevas APIs REST para que los proveedores consulten facturas
+        y órdenes de compra. Necesitamos definir el stack tecnológico también.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-solution-architect"
+      - type: llm-rubric
+        value: |
+          El brief menciona 'nuevas APIs REST' y 'definir el stack tecnológico',
+          ambas son señales de activación del arquitecto en WF-001 (señales expandidas en #3598).
+          El orquestador debe incluir sofka-asdd-solution-architect como soporte condicional
+          y anunciarlo con el formato → **@sofka-asdd-solution-architect**.
+          No debe omitir al arquitecto solo porque no dice 'integración' o 'migración' explícitamente.
+
+  - description: "PROCESO WF-001 (#3598): Brief multi-plataforma → arquitecto como soporte"
+    vars:
+      input: |
+        Plataforma de delivery para restaurantes. Debe funcionar en iOS, Android
+        y web. Los restaurantes también tendrán una app de administración.
+        Queremos saber si usar microservicios o un monolito.
+    assert:
+      - type: icontains
+        value: "sofka-asdd-solution-architect"
+      - type: llm-rubric
+        value: |
+          El brief menciona multi-plataforma (iOS + Android + web), microservicios y
+          decisión de arquitectura. Todas son señales expandidas en WF-001 (#3598).
+          El orquestador debe incluir sofka-asdd-solution-architect como soporte condicional.
+          El arquitecto aporta la restricción de diseño antes de cerrar el brief.
+
+  - description: "OUTPUT WF-001: Brief resultante responde 4 preguntas clave"
+    vars:
+      input: |
+        Ejecuta la fase de especificación para: plataforma de e-learning para estudiantes universitarios
+        en Colombia, con módulos de video, evaluaciones y certificados digitales.
+    assert:
+      - type: llm-rubric
+        value: |
+          El brief generado (o el plan para generarlo) debe garantizar que el artefacto final responda:
+          1. ¿Qué construimos? (scope del sistema)
+          2. ¿Para quién? (usuarios y stakeholders)
+          3. ¿Con qué restricciones? (técnicas, presupuesto, regulación)
+          4. ¿Dominio? (e-learning, educación)
+          El orquestador debe delegar a producto(pm) y domain-expert para cubrir estos 4 puntos.

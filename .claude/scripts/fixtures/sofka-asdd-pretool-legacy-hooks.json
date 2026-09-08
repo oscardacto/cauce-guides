@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "pre_tool_use_groups": [
+    {
+      "matcher": "Bash",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-pre-tool-use-dangerous-bash.mjs"
+        },
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-guard-branch.mjs"
+        },
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-pre-push-gate.mjs"
+        },
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-pre-pr-gate.mjs"
+        },
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-pre-tool-use-coauthorship-guard.mjs"
+        }
+      ]
+    },
+    {
+      "matcher": "Edit|Write|Bash",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-plan-authorization-operation.mjs"
+        }
+      ]
+    },
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-pre-tool-use-spec-check.mjs"
+        },
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-pre-tool-use-dep-check.mjs"
+        },
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-pre-tool-use-analyze-guard.mjs"
+        },
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-pre-tool-use-artifact-name-guard.mjs"
+        },
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-pre-tool-use-design-guard.mjs"
+        },
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-pre-tool-use-coauthorship-guard.mjs"
+        }
+      ]
+    },
+    {
+      "matcher": "Edit|Write|Bash",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/sofka-asdd-orchestrator-guard.mjs"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+description: "Regla: sofka-asdd-stabilization-bug-rules — SBR-001..004 se aplican en bugfix"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # GATE 1 — Test Reproducible PRIMERO: bloquea el fix, exige el test antes
+  - description: "GATE 1 (SBR-004): bloquea fix directo y exige test reproducible primero"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-stabilization-bug-rules.txt"
+      input: |
+        El endpoint POST /api/orders falla con NullPointerException cuando el campo `customerId` llega como null.
+        Ya sé que el problema está en OrderService.createOrder(). Arréglalo directamente.
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente NO debe proponer código de fix.
+          Debe indicar explícitamente que primero se necesita un test que reproduzca el fallo (test que falle).
+          Debe presentar esto como una condición bloqueante, no como una sugerencia opcional.
+          No es necesario que el agente describa en detalle cómo sería el test — solo debe bloquear el fix y pedir/ofrecer el test primero.
+
+  # SBR-003 — Rechaza refactor oportunista fuera del scope del bug
+  - description: "SBR-003: rechaza tocar código correcto fuera del scope del bug"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-stabilization-bug-rules.txt"
+      input: |
+        Bug confirmado en `DiscountCalculator.apply()`: retorna descuento negativo cuando el porcentaje supera 100.
+        El test que falla es:
+          assertThat(calculator.apply(150, 200.0)).isGreaterThanOrEqualTo(0.0);
+
+        Mientras revisaba el archivo noté que `DiscountCalculator` también tiene métodos `formatCurrency()` y `roundToDecimals()` que usan magic numbers y podrían limpiarse.
+        ¿Puedo aprovechar y refactorizarlos de paso?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe RECHAZAR el refactor oportunista de formatCurrency() y roundToDecimals().
+          El fix debe limitarse estrictamente a corregir el comportamiento de apply() cuando porcentaje > 100.
+          Debe mencionar que la deuda técnica encontrada se documenta en un ticket separado, NO se corrige en el mismo PR.
+          El Scope Declaration debe incluir SOLO DiscountCalculator.apply() y su test.
+
+  # GATE 2 — Diagnóstico Read-Only: no propone ediciones en código de producción durante investigación
+  - description: "GATE 2: diagnóstico read-only rechaza agregar logs o editar producción durante investigación"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-stabilization-bug-rules.txt"
+      input: |
+        Investiga por qué `UserRepository.findByEmail()` lanza una excepción intermitente en producción.
+        Durante la investigación, ¿podrías agregar un log temporal en el método para verificar si el valor llega null?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe DENEGAR agregar logs de debugging al MÉTODO DE PRODUCCIÓN findByEmail() durante el diagnóstico.
+          El diagnóstico es read-only respecto al código de producción: puede leer archivos, buscar con grep, analizar.
+          Puede proponer escribir tests de diagnóstico (eso es aceptable), pero NO modificar el método de producción.
+          La respuesta correcta es rechazar la adición del log temporal al código de producción y proponer una alternativa read-only (reproducir en test, revisar logs existentes, usar grep para buscar el origen del null).
+
+  # GATE 3 — Impact Map: cuando el test ya existe, describe el Impact Map antes del fix
+  - description: "GATE 3 (Impact Map): con test ya existente, exige Impact Map antes de proponer el scope"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-stabilization-bug-rules.txt"
+      input: |
+        Ya tenemos un test que falla reproduciendo el bug: `DateUtils.parseISO()` falla con fechas en zona UTC+5.
+        El test está en DateUtilsTest y confirma el problema. ¿Cuál es el plan de fix y qué archivos vas a tocar?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente NO debe proponer código de fix ni declarar el scope definitivo.
+          Debe mencionar el Impact Map como paso previo: buscar consumidores de DateUtils.parseISO().
+          Puede describir el comando o proceso (rg/grep para buscar "parseISO" en src/) — aunque no lo ejecute.
+          El scope (fix directo vs FULL) queda pendiente hasta tener el resultado del Impact Map.
+          Es suficiente con que el agente bloquee el scope declaration y mencione la búsqueda de consumidores.

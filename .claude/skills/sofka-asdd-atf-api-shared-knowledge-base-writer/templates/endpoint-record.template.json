@@ -1,0 +1,48 @@
+{
+  "$schema": "Registro histórico de un endpoint estable",
+  "endpoint_id": "POST-osf-api-v1-pending-billing-quotas",
+  "method": "POST",
+  "path": "/osf/api/v1/pending-billing-quotas",
+  "first_seen_in_run": "{run_id}",
+  "first_seen_at": "{ISO 8601}",
+  "current_contract_hash": "sha256:abc123...",
+  "contracts_history": ["sha256:older...", "sha256:abc123..."],
+  "behavior": {
+    "expected_status_codes": [201, 400, 409, 422, 500],
+    "observed_status_codes": [201, 400, 500],
+    "typical_response_time_ms": {
+      "p50": 87,
+      "p95": 142,
+      "p99": 310,
+      "sample_size": 1240,
+      "last_updated_in_run": "{run_id}"
+    },
+    "known_error_codes": [
+      "INVALID_CYCLE_DATE",
+      "DUPLICATE_REQUEST",
+      "INTERNAL_SERVER_ERROR"
+    ]
+  },
+  "associated_defects": [
+    {
+      "defect_id": "D-001",
+      "run_id": "{run_id-1}",
+      "category": "bug",
+      "fingerprint": "POST-osf-api-pending-billing-quotas:RN-008:bug:NPE",
+      "status": "open | resolved | recurring"
+    }
+  ],
+  "test_cases_history": [
+    {
+      "run_id": "{run_id}",
+      "cps": ["CP-001", "CP-002", "CP-003"],
+      "rules_covered": ["RN-008", "RN-010"]
+    }
+  ],
+  "stability_score": {
+    "value": 0.92,
+    "scale": "0-1 (1 = más estable)",
+    "based_on": "ratio de PASS entre las últimas 5 corridas",
+    "last_calculated_at": "{ISO 8601}"
+  }
+}

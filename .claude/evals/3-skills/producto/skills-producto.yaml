@@ -1,0 +1,82 @@
+description: "Skills: sofka-asdd-producto — proceso y output por skill"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # skill: pm
+  - description: "PROCESO pm: captura visión estratégica con OKRs y métricas"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-producto-pm.txt"
+      input: "Define la visión y OKRs para el producto: app de microcréditos para taxistas en Colombia. El banco quiere 10,000 créditos aprobados en el primer año."
+    assert:
+      - type: llm-rubric
+        value: |
+          El PM debe producir: visión del producto en 1-2 oraciones, OKRs con estructura
+          Objective + Key Results medibles (ej: KR: 10,000 créditos aprobados con TIR > X%),
+          stakeholders identificados, y restricciones de negocio relevantes.
+
+  # skill: ba
+  - description: "PROCESO ba: reglas de negocio con RN-XXX y procesos AS-IS/TO-BE"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-producto-ba.txt"
+      input: "Levanta las reglas de negocio del proceso de aprobación de microcréditos para taxistas: requisitos de documentación, montos, plazos y criterios de elegibilidad."
+    assert:
+      - type: llm-rubric
+        value: |
+          Las reglas de negocio deben: usar formato RN-001, RN-002...
+          incluir criterios de elegibilidad específicos (monto máx, plazo, ingreso mínimo),
+          describir el proceso AS-IS (cómo se hace hoy si existe) y
+          identificar gaps entre el proceso actual y el digital.
+
+  # skill: funcional
+  - description: "PROCESO funcional: casos de uso con flujos completos"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-producto-funcional.txt"
+      input: "Detalla el caso de uso CU-003: Solicitar microcrédito. El taxista aplica desde la app, sube documentos y recibe respuesta en 2 horas."
+    assert:
+      - type: icontains
+        value: "CU-003"
+      - type: llm-rubric
+        value: |
+          El caso de uso debe incluir: actores, precondiciones, flujo principal paso a paso,
+          flujos alternativos (ej: documento ilegible, conexión perdida),
+          flujos de excepción (ej: timeout del sistema de scoring),
+          y postcondición (estado final del sistema).
+
+  # skill: po
+  - description: "OUTPUT po: historias de usuario testables con Given/When/Then"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-producto-po.txt"
+      input: "Escribe la historia de usuario para: el taxista recibe notificación de aprobación o rechazo de su crédito vía WhatsApp."
+    assert:
+      - type: contains
+        value: "Given"
+      - type: contains
+        value: "When"
+      - type: contains
+        value: "Then"
+      - type: llm-rubric
+        value: |
+          La historia debe: seguir formato 'Como [rol], quiero [acción], para [beneficio]',
+          incluir criterios Given/When/Then verificables (no vagos como 'el usuario está satisfecho'),
+          cubrir el happy path y al menos 1 caso alternativo (ej: rechazo),
+          y los criterios deben ser testables por QA sin ambigüedad.
+
+  # skill: templates
+  - description: "OUTPUT templates: brief y spec con placeholders completos"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-producto-templates.txt"
+      input: "Proporciona el template de brief para un nuevo proyecto de app móvil para banco digital."
+    assert:
+      - type: llm-rubric
+        value: |
+          El template debe incluir secciones para: nombre del proyecto, cliente,
+          descripción del problema, usuarios objetivo, objetivos de negocio,
+          restricciones (técnicas, tiempo, presupuesto), dominio, y criterios de éxito.
+          Los placeholders deben ser descriptivos ([Nombre del cliente], no [X]).
+

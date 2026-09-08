@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "slice": "B8",
+  "status": "complete",
+  "captured_at": "2026-07-18",
+  "contract": {
+    "orchestrator_default": "sonnet",
+    "model_precedence": ["skill_override", "agent_pinning", "phase_default", "agent_frontmatter"],
+    "high_risk": "FULL plus Opus before tools",
+    "enforcement": "blocking plan normalization plus launch binding",
+    "privacy": "no prompts, outputs, commands or tool inputs in budget telemetry"
+  },
+  "results": {
+    "orchestrator_model": { "before": "claude-opus-4-8", "after": "claude-sonnet-4-6" },
+    "agent_frontmatter_turn_budget": {
+      "agents": 24,
+      "aggregate_before": 1450,
+      "aggregate_after": 1050,
+      "change_percent": -27.59,
+      "changed_agents": 14,
+      "maximum_before": 120,
+      "maximum_after": 50
+    },
+    "route_budgets": {
+      "TRIVIAL": { "max_agents": 0, "max_concurrent": 0, "turns": null, "max_retries": 0 },
+      "LIGHT": { "max_agents": 1, "max_concurrent": 1, "turns": [10, 20], "max_retries": 1 },
+      "MEDIUM": { "max_agents": 2, "max_concurrent": 2, "turns": [20, 35], "max_retries": 1 },
+      "FULL": { "max_agents": 3, "max_concurrent": 3, "turns": [30, 50], "max_retries": 1 }
+    },
+    "context_overhead": {
+      "always_on_words": { "before": 5825, "after": 5863, "change": 38 },
+      "largest_measured_effective_context_words": { "before": 19121, "after": 19159, "change": 38 },
+      "context_budget_warnings": { "before": 9, "after": 9 }
+    },
+    "deterministic_e2e": {
+      "route_fixtures": "4/4 PASS",
+      "model_precedence": "3/3 PASS",
+      "budget_adversarial_cases": "5/5 PASS",
+      "launch_binding": "3/3 PASS",
+      "telemetry_forbidden_fields": "4/4 PASS",
+      "sonnet_eval_configs": "25/25",
+      "new_budget_eval_cases": 4
+    },
+    "microbenchmark_1000_samples": {
+      "warmup": 10,
+      "router": { "p50_ms": 0.0008, "p95_ms": 0.0018, "max_ms": 0.1614 },
+      "budget_validation": { "p50_ms": 0.0082, "p95_ms": 0.0164, "max_ms": 0.3491 }
+    }
+  },
+  "acceptance": {
+    "trivial_zero_subagents": "PASS",
+    "routing_precision_no_regression": "PASS deterministic fixtures; online eval deferred to B9",
+    "high_risk_escalates_before_tools": "PASS",
+    "fanout_turn_retry_out_of_budget_blocks": "PASS",
+    "model_and_budget_launch_mismatch_blocks": "PASS",
+    "telemetry_privacy": "PASS",
+    "validator_gate": "PASS"
+  },
+  "unmeasured_components": [
+    "provider token billing",
+    "real subagent turn count when runtime omits it from SubagentStop",
+    "online promptfoo quality because ANTHROPIC_API_KEY is not available in this execution",
+    "end-to-end provider latency and cold start, deferred to B9"
+  ]
+}

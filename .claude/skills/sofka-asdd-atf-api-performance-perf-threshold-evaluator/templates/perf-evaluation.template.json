@@ -1,0 +1,47 @@
+{
+  "$schema": "Evaluación de resultados k6 contra thresholds",
+  "run_id": "{run_id}",
+  "evaluated_at": "{ISO 8601}",
+  "scenarios": [
+    {
+      "name": "smoke | load | stress | spike | soak",
+      "endpoint": "{METHOD} {path}",
+      "duration_min": 0,
+      "vus_max": 0,
+      "iterations_total": 0,
+      "metrics": {
+        "http_req_duration_avg_ms": 0,
+        "http_req_duration_p50_ms": 0,
+        "http_req_duration_p95_ms": 0,
+        "http_req_duration_p99_ms": 0,
+        "http_req_failed_rate_pct": 0,
+        "throughput_rps": 0,
+        "custom_success_count": 0
+      },
+      "thresholds_evaluation": [
+        {
+          "metric": "{nombre}",
+          "threshold": "{operador valor}",
+          "observed": "{valor con unidad}",
+          "result": "pass | fail | marginal"
+        }
+      ],
+      "verdict": "PASS | FAIL | MARGINAL",
+      "breaking_point_vus": null,
+      "baseline_comparison": {
+        "has_baseline": false,
+        "p95_change_pct": null,
+        "error_rate_change_pct": null,
+        "verdict": "improvement | stable | regression | n/a"
+      },
+      "recommendations": ["{recomendación concreta}"]
+    }
+  ],
+  "summary": {
+    "scenarios_passed": 0,
+    "scenarios_failed": 0,
+    "scenarios_marginal": 0,
+    "regressions_vs_baseline": 0,
+    "recommendations_total": 0
+  }
+}

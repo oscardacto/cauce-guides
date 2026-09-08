@@ -1,0 +1,24 @@
+{
+  "$schema": "Inventario de archivos descubiertos en docs/testing/atf/requirements/",
+  "scanned_at": "{ISO 8601}",
+  "scanned_folder": "docs/testing/atf/requirements/",
+  "total_files": 0,
+  "by_type": {
+    "hu": 0,
+    "openapi": 0,
+    "postman": 0,
+    "other": 0
+  },
+  "files": [
+    {
+      "src_id": "SRC-001",
+      "filename": "HU_microservicio_consulta_cuotas.md",
+      "relative_path": "docs/testing/atf/requirements/HU_microservicio_consulta_cuotas.md",
+      "type": "hu",
+      "format": "md",
+      "size_bytes": 12450,
+      "detection_method": "extension+content",
+      "preview_chars": "Microservicio de consulta de cuotas pendientes de facturar..."
+    }
+  ]
+}

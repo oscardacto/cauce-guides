@@ -1,0 +1,73 @@
+description: "Skills: sofka-asdd-developer-frontend / sofka-asdd-developer-backend — proceso y output por skill"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # skill: feature
+  - description: "PROCESO feature: implementa según spec, no inventa diseño"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-developer-feature.txt"
+      input: "Spec HU-012: validar RUT chileno. Formato: 12345678-9 o 12.345.678-9. El dígito verificador puede ser número o 'K'. ADR-005 define usar librería rut-chile. Implementa."
+    assert:
+      - type: llm-rubric
+        value: |
+          La implementación debe: usar la librería indicada en el ADR (rut-chile),
+          cubrir los dos formatos del spec (con y sin puntos), manejar el dígito 'K',
+          incluir unit tests para casos válidos e inválidos. NO debe reimplementar el algoritmo
+          si el ADR dice usar una librería específica.
+
+  # skill: integration-test
+  - description: "PROCESO integration-test: testea contratos entre servicios con mocks precisos"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-developer-integration-test.txt"
+      input: "Genera integration tests para: PaymentService llama a BankService.transfer(). BankService puede retornar success, insufficient_funds, o account_not_found."
+    assert:
+      - type: llm-rubric
+        value: |
+          Los integration tests deben: mockear BankService (no el banco real),
+          tener un test por cada caso de respuesta (success/insufficient_funds/account_not_found),
+          verificar que PaymentService maneja correctamente cada respuesta,
+          y usar assertions sobre el estado del sistema, no solo sobre el retorno del método.
+
+  # skill: refactoring-execute
+  - description: "PROCESO refactoring-execute: ejecuta refactoring con tests previos"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-developer-refactoring-execute.txt"
+      input: |
+        Refactoriza esta función según el plan del tech-lead (extraer validación a función separada):
+        ```python
+        def process_payment(amount, currency, account):
+            if amount <= 0 or amount > 1000000:
+                raise ValueError("Invalid amount")
+            if currency not in ["COP", "USD", "EUR"]:
+                raise ValueError("Invalid currency")
+            return bank.transfer(amount, currency, account)
+        ```
+    assert:
+      - type: llm-rubric
+        value: |
+          El refactoring debe: extraer la validación a una función separada validate_payment(),
+          mantener el comportamiento exacto (mismos errores, misma lógica),
+          no cambiar los tests existentes (solo deben pasar),
+          y el código resultante debe ser más legible que el original.
+
+  # skill: unit-test
+  - description: "OUTPUT unit-test: tests con Arrange-Act-Assert y casos límite"
+    vars:
+      system_prompt: "file://../../prompts/system-skill-developer-unit-test.txt"
+      input: "Genera unit tests para: calculateInterest(principal: number, rate: number, months: number): number. Formula: principal * (1 + rate/100)^months."
+    assert:
+      - type: llm-rubric
+        value: |
+          Los tests deben usar estructura Arrange-Act-Assert, cubrir:
+          - Caso base válido
+          - Valores límite: rate=0 (sin interés), months=1, months=120
+          - Valores inválidos: principal negativo, rate negativo, months=0
+          - Precisión numérica (resultado redondeado correctamente)
+          Cada test debe ser independiente y descriptivo.
+

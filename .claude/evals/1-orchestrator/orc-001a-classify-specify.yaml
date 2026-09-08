@@ -1,0 +1,51 @@
+description: "ORC-001 PROCESO: Clasificación de intent hacia fase Especificar"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "PROCESO: Brief de nuevo producto → identifica Especificar"
+    vars:
+      input: "Necesito construir un sistema de onboarding digital para clientes nuevos del banco. ¿Por dónde empezamos?"
+    assert:
+      - type: icontains
+        value: "Especificar"
+      - type: icontains
+        value: "sofka-asdd-producto"
+      - type: llm-rubric
+        value: |
+          La respuesta debe:
+          1. Identificar la fase 'Especificar' como punto de entrada correcto
+          2. Mencionar al agente sofka-asdd-producto (skill pm) como agente primario
+          3. Anunciar la delegación en formato: → **@sofka-asdd-producto** — [descripción]
+          4. NO ejecutar ninguna tarea directamente
+
+  - description: "PROCESO: Señal 'alcance' → identifica Especificar"
+    vars:
+      input: "Necesito definir el alcance y las restricciones del proyecto de pagos móviles"
+    assert:
+      - type: icontains
+        value: "Especificar"
+      - type: llm-rubric
+        value: |
+          La respuesta debe identificar la fase 'Especificar' a partir de la señal 'alcance' y 'restricciones',
+          y delegar a sofka-asdd-producto con skill pm como primario.
+
+  - description: "PROCESO: Señal '¿qué construimos?' → identifica Especificar"
+    vars:
+      input: "¿Qué construimos para el sistema de gestión de pólizas? Tengo al cliente disponible mañana"
+    assert:
+      - type: icontains
+        value: "Especificar"
+      - type: llm-rubric
+        value: |
+          La respuesta debe identificar la fase 'Especificar' a partir de '¿qué construimos?'
+          e incluir sofka-asdd-domain-expert como soporte por el contexto de dominio (seguros).

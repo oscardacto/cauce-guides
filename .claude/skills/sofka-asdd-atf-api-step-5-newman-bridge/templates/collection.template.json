@@ -1,0 +1,39 @@
+{
+  "info": {
+    "name": "{wi_id} — {wi_title}",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección generada por ATF API v3 (Newman bridge).\nFuente: docs/testing/atf/{run_id}/test-cases/{wi_id}-test-cases.json\nCorrer: newman run {wi_id}.postman_collection.json -e {wi_id}.postman_environment.json",
+    "_postman_id": "{uuid-determinístico-por-wi}",
+    "version": {"major": 1, "minor": 0, "patch": 0}
+  },
+  "item": [
+    {
+      "name": "[{CP-ID}] {CP-title}",
+      "request": {
+        "method": "{METHOD}",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": "{{baseUrl}}{path}",
+        "body": {
+          "mode": "raw",
+          "raw": "{JSON con variables {{fixture-id}}}",
+          "options": {"raw": {"language": "json"}}
+        },
+        "description": "Tags: {tags concatenados}\nRN cubiertas: {RN-list}\nAC cubiertos: {AC-list}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is {expected_status}', () => pm.response.to.have.status({expected_status}));",
+              "// 1 línea por body_assertion"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "auth": null,
+  "variable": []
+}

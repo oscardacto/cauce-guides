@@ -1,0 +1,46 @@
+{
+  "edges": [
+    {
+      "from": "wi-001",
+      "to": "wi-002",
+      "type": "state-prerequisite",
+      "reason": "wi-002 (proceso batch) opera sobre solicitudes en estado PENDING, que únicamente son generadas por el POST de wi-001",
+      "evidence": "HU sección 4.2: 'El proceso batch toma solo solicitudes en estado PENDING generadas por el endpoint POST.'",
+      "strength": "hard"
+    },
+    {
+      "from": "wi-002",
+      "to": "wi-003",
+      "type": "sequential-flow",
+      "reason": "La consulta de cuotas (wi-003) ocurre dentro del proceso batch (wi-002) — no se ejecuta independientemente",
+      "evidence": "HU sección 5.1: 'Como parte del proceso batch (RN-011 a RN-013), el sistema consulta las cuotas pendientes (RN-014) y consolida...'",
+      "strength": "hard"
+    }
+  ],
+  "topological_levels": [
+    {"level": 0, "wis": ["wi-001"]},
+    {"level": 1, "wis": ["wi-002"]},
+    {"level": 2, "wis": ["wi-003"]}
+  ],
+  "parallel_groups": [
+    {"group_id": "G0", "wis": ["wi-001"], "can_run_concurrently": true, "max_concurrent_recommended": 1},
+    {"group_id": "G1", "wis": ["wi-002"], "can_run_concurrently": true, "max_concurrent_recommended": 1},
+    {"group_id": "G2", "wis": ["wi-003"], "can_run_concurrently": true, "max_concurrent_recommended": 1}
+  ],
+  "step_activation_plan": {
+    "fase_2_analyze": "Sub-fases 2A (Analyze funcional) y 2B (Analyze técnica) corren en paralelo para los 3 WIs (no requieren coordinación entre WIs porque solo leen, no escriben estado del servicio).",
+    "fase_3a_test_plan": "Sub-fase 3A (Design test-plan) corre por WI en orden topológico — wi-001 primero, luego wi-002, luego wi-003. Cada plan referencia los planes anteriores para reusar técnicas y compartir riesgo.",
+    "fase_3b_test_cases": "Sub-fase 3B (Design test-cases) sigue el mismo orden topológico que 3A.",
+    "fase_4_automate": "Fase 4 (Automate) puede paralelizar internamente la generación de specs, pero los specs respetan el orden topológico al ejecutarse.",
+    "fase_5_execute": "Fase 5 (Execute) DEBE ejecutar wi-001 → wi-002 → wi-003 en orden. Ejecutar wi-002 antes que wi-001 fallaría siempre por estado no creado."
+  },
+  "cycle_detected": false,
+  "cycle_details": null,
+  "warnings": [
+    {
+      "severity": "info",
+      "message": "wi-003 no tiene endpoints expuestos directamente — su validación ocurre observando el efecto en wi-002 y la integración OSF externa."
+    }
+  ],
+  "generated_at": "2026-05-21T10:31:30-05:00"
+}

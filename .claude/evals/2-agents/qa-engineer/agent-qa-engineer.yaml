@@ -1,0 +1,87 @@
+description: "sofka-asdd-qa-engineer: test strategy y sign-off"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../../prompts/system-agent-qa-engineer.txt
+
+tests:
+  - description: "PROCESO: skill test-strategy — plan antes de implementar tests"
+    vars:
+      input: |
+        Necesito definir la estrategia de testing para el módulo de pagos.
+        Incluye unitario, integración, e2e y carga.
+    assert:
+      - type: llm-rubric
+        value: |
+          El QA con skill test-strategy debe producir:
+          1. Pirámide de testing con proporción de cada tipo
+          2. Para cada capa: herramientas, alcance y responsable
+          3. Criterios de entrada y salida de cada fase de testing
+          4. Definición de coverage mínimo aceptable
+          5. NO debe escribir los tests todavía — primero la estrategia
+
+  - description: "PROCESO: skill e2e-test — escenarios críticos del negocio"
+    vars:
+      input: |
+        Genera los tests e2e para el flujo de compra en el e-commerce:
+        seleccionar producto → agregar al carrito → pagar → confirmar orden.
+    assert:
+      - type: llm-rubric
+        value: |
+          El QA con skill e2e-test debe:
+          1. Cubrir el happy path completo (compra exitosa)
+          2. Cubrir casos de fallo críticos: pago rechazado, stock agotado, timeout
+          3. Los tests deben ser estables (no depender de datos dinámicos sin fixtures)
+          4. Usar selectores semánticamente correctos (data-testid, roles ARIA)
+          5. Incluir assertions de estado final del sistema (orden creada en DB)
+
+  - description: "PROCESO: skill coverage — analiza y propone mejoras a cobertura"
+    vars:
+      input: |
+        Coverage actual del módulo de autenticación: 45%.
+        Líneas no cubiertas: manejo de tokens expirados, refresh flow, logout forzado.
+    assert:
+      - type: llm-rubric
+        value: |
+          El QA con skill coverage debe:
+          1. Identificar las rutas críticas no cubiertas (tokens expirados, refresh, logout)
+          2. Proponer tests específicos para cada ruta no cubierta
+          3. Priorizar por criticidad del negocio (no solo por número de líneas)
+          4. Establecer el target de coverage realista con justificación
+
+  - description: "PROCESO: skill regression — detecta y previene regresiones"
+    vars:
+      input: |
+        Después del último deploy, el módulo de notificaciones dejó de enviar emails.
+        El bug afecta a usuarios que se registraron antes de la migración.
+    assert:
+      - type: llm-rubric
+        value: |
+          El QA con skill regression debe:
+          1. Identificar el test de regresión que debería haber detectado este bug
+          2. Proponer el test case que previene esta regresión específica
+          3. Evaluar si el CI/CD tiene gates de regresión adecuados
+          4. Recomendar la baseline de regresión para el módulo de notificaciones
+
+  - description: "OUTPUT: QA sign-off con criterios Go/No-Go explícitos"
+    vars:
+      input: |
+        El módulo de pagos está listo para release. Tests: 85% coverage, 0 fallos en e2e,
+        pero hay 2 tests flaky que se ignoran. ¿Damos el Go?
+    assert:
+      - type: llm-rubric
+        value: |
+          El QA sign-off debe ser EXPLÍCITO:
+          - Los tests flaky son un bloqueante o no (justificado)
+          - 85% coverage es suficiente para este módulo (justificado)
+          - Criterios Go/No-Go claros: qué pasa, qué falla
+          - Si hay condiciones: documentarlas (ej: 'Go con ticket para flaky en sprint siguiente')
+          NO puede ser un simple 'todo bien'. Debe evaluar cada criterio.
+

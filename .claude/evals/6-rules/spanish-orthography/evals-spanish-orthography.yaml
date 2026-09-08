@@ -1,0 +1,86 @@
+description: "Regla: sofka-asdd-spanish-orthography — tildes obligatorias, signos dobles, textos visibles al usuario"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # Tildes faltantes en mensajes de validación
+  - description: "Detecta y corrige tildes faltantes en mensajes de validación visibles al usuario"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-spanish-orthography.txt"
+      input: |
+        Revisa estos mensajes de validación que devuelve el backend al cliente:
+        - "El numero de documento es obligatorio"
+        - "La direccion debe tener minimo 5 caracteres"
+        - "El codigo postal es invalido"
+        ¿Están bien escritos?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe indicar que los tres mensajes tienen errores ortográficos.
+          Debe identificar y corregir:
+          - "numero" → "número"
+          - "obligatorio" → correcto (sin tilde), pero debe revisar el contexto
+          - "direccion" → "dirección"
+          - "minimo" → "mínimo"
+          - "codigo" → "código"
+          - "invalido" → "inválido"
+          NO debe aprobar ninguno de los tres mensajes tal como están.
+
+  # Exclusiones correctas: logs y códigos técnicos no llevan español
+  - description: "Exclusiones: no aplica ortografía española a logs ni a códigos de error técnicos"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-spanish-orthography.txt"
+      input: |
+        Tenemos este código en el servicio:
+        ```
+        log.error("Failed to process payment for orderId={}", orderId);
+        throw new DomainException("PAYMENT_PROCESSING_ERROR", "Error al procesar el pago");
+        ```
+        ¿El log necesita tildes? ¿Y el código de error `PAYMENT_PROCESSING_ERROR`?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe indicar que:
+          - El log ("Failed to process payment...") está en inglés — correcto, los logs siempre van en inglés y NO aplica la regla de ortografía española.
+          - El código de error `PAYMENT_PROCESSING_ERROR` es SCREAMING_SNAKE_CASE inglés — correcto, los códigos técnicos están excluidos.
+          - El mensaje de la excepción "Error al procesar el pago" es texto visible al usuario → sí debe tener ortografía correcta (en este caso ya está bien escrito).
+          NO debe exigir tildes en el log ni en el código de error técnico.
+
+  # Signos dobles obligatorios en UI
+  - description: "Signos dobles: exige ¿...? y ¡...! en textos de confirmación visibles al usuario"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-spanish-orthography.txt"
+      input: |
+        Este es el texto del modal de confirmación en el frontend:
+        "Esta seguro que desea eliminar el contrato? Esta accion no se puede deshacer."
+        ¿Está bien?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe identificar múltiples errores:
+          1. "Esta seguro" → "¿Está seguro" (falta signo de apertura ¿ y tilde en "Está").
+          2. "eliminar el contrato?" → correcto el cierre, pero falta el "¿" de apertura.
+          3. "Esta accion" → "Esta acción" (falta tilde en "acción").
+          4. "deshacer." → correcta la puntuación, pero el texto debería ser: "¿Está seguro de que desea eliminar el contrato? Esta acción no se puede deshacer."
+          NO debe aprobar el texto tal como está.
+
+  # Carga condicional: el nucleo manda resolver la referencia antes de actuar
+  - description: "Carga condicional: antes de escribir texto visible al usuario resuelve la referencia"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-spanish-orthography.txt"
+      input: |
+        Voy a agregar los labels y mensajes de validación del formulario de alta de clientes, en español.
+        ¿Los escribo ya?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe ejecutar el paso de carga condicional ANTES de escribir el texto visible al usuario.
+          Debe nombrar el comando exacto `node .claude/scripts/sofka-asdd-resolve-rule.mjs sofka-asdd-spanish-orthography`
+          y decir que lee COMPLETO `.claude/references/rules/sofka-asdd-spanish-orthography.md`.
+          Debe indicar que si el resolver o la lectura fallan, se detiene sin escribir el texto.
+          NO debe escribir los textos apoyándose solo en el núcleo, ni inventar o suponer el contenido de la referencia.

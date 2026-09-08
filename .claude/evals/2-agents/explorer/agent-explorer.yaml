@@ -1,0 +1,86 @@
+description: "sofka-asdd-explorer: discovery de codebase sin modificar"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../../prompts/system-agent-explorer.txt
+
+tests:
+  - description: "PROCESO: Mapeo de estructura de codebase sin modificar archivos"
+    vars:
+      input: |
+        Mapea la estructura del proyecto de pagos. Necesito saber: qué módulos existen,
+        dónde están los controladores, servicios y repositorios.
+    assert:
+      - type: llm-rubric
+        value: |
+          El explorer debe:
+          1. Mapear la estructura de directorios usando herramientas de lectura (find, tree, glob)
+          2. Identificar patrones de organización (MVC, hexagonal, etc.)
+          3. Listar los principales módulos/capas con sus rutas
+          4. NUNCA modificar archivos — solo leer y reportar
+          5. Si no encuentra el proyecto, indicarlo claramente en vez de inventar estructura
+
+  - description: "PROCESO: Búsqueda de archivos por patrón"
+    vars:
+      input: |
+        Encuentra todos los archivos de configuración de base de datos en el proyecto.
+        También busca si hay archivos .env que puedan tener credenciales.
+    assert:
+      - type: llm-rubric
+        value: |
+          El explorer debe:
+          1. Buscar por patrones relevantes (*database*, *db.config*, *.env*, *database.yml*)
+          2. Listar los archivos encontrados con sus rutas completas
+          3. Para .env files: indicar su presencia sin leer su contenido (puede tener secretos)
+          4. Reportar si .env está en .gitignore o no (es un hallazgo de seguridad relevante)
+
+  - description: "PROCESO: Búsqueda de símbolos en el código"
+    vars:
+      input: |
+        Encuentra todos los lugares donde se usa la función 'processPayment' en el codebase.
+        Necesito saber dónde está definida y desde dónde se llama.
+    assert:
+      - type: llm-rubric
+        value: |
+          El explorer debe:
+          1. Buscar la definición de processPayment (grep para 'function processPayment', 'def process_payment', etc.)
+          2. Buscar todos los call sites (grep para invocaciones)
+          3. Reportar: archivo, línea y contexto de cada ocurrencia
+          4. Distinguir entre definición y llamadas
+
+  - description: "PROCESO: Explorer provee contexto factual, no interpreta"
+    vars:
+      input: |
+        ¿Cómo está organizado el sistema de autenticación en este proyecto?
+    assert:
+      - type: llm-rubric
+        value: |
+          El explorer debe proveer datos factuales del codebase:
+          - Qué archivos existen relacionados con auth (buscar: auth/, login, jwt, token, oauth)
+          - Qué clases/funciones existen en esos archivos
+          - Qué dependencias de auth están en package.json o requirements.txt
+          NO debe opinar sobre si el diseño es bueno o malo — eso es del arquitecto o tech-lead.
+          Solo reportar lo que encuentra.
+
+  - description: "OUTPUT: Reporte de discovery con rutas verificables"
+    vars:
+      input: |
+        Genera un mapa del proyecto para que el arquitecto pueda entender la estructura
+        antes de diseñar el nuevo módulo de reportes.
+    assert:
+      - type: llm-rubric
+        value: |
+          El reporte de discovery debe:
+          1. Listar estructura de directorios principales
+          2. Identificar entry points de la aplicación
+          3. Mapear capas detectadas (controllers, services, repositories, models)
+          4. Listar integraciones externas detectadas (imports, requires, SDKs)
+          5. Todo con rutas reales — no inventar rutas que no verificó
+

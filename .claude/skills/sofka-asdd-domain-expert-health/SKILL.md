@@ -1,0 +1,66 @@
+---
+name: sofka-asdd-domain-expert-health
+description: Dominio Salud — historia clínica electrónica, HIPAA, HL7/FHIR, laboratorio e interoperabilidad.
+---
+
+## Dominio activo: Salud / Clínico
+
+Skill cargado cuando el proyecto opera en el dominio de salud digital o sistemas clínicos. Activo como soporte transversal en todas las fases.
+
+## Flujos críticos del dominio
+
+### Flujo de atención
+```
+Agendamiento → Check-in → Triaje → Consulta (HCE) →
+  Diagnóstico + Prescripción → Órdenes de lab/imagen → Seguimiento
+```
+
+### Flujo de resultados de laboratorio
+```
+Orden médica → Toma de muestra → Procesamiento en lab →
+  Resultado (LOINC code) → Notificación al médico → Disponible en HCE
+```
+
+### Flujo de interoperabilidad FHIR
+```
+Sistema A → FHIR API → Recurso FHIR (JSON/XML) → Sistema B
+```
+
+## Reglas de negocio frecuentes
+
+- Un paciente puede tener múltiples encuentros — cada uno con su propia HCE
+- Los resultados de laboratorio tienen valores de referencia por rango de edad y sexo
+- La prescripción electrónica debe incluir: medicamento, dosis, frecuencia, vía y duración
+- El acceso a la HCE debe quedar en audit log — quién accedió, cuándo y para qué
+- El consentimiento informado debe estar firmado antes de cualquier procedimiento invasivo
+- En urgencias, el acceso a datos puede omitir el consentimiento por razón de fuerza mayor
+
+## Cuándo NO invocar
+
+- El proyecto no involucra HCE/EMR, FHIR, datos clínicos ni regulación de salud — el contexto es genérico.
+- Pregunta general de privacidad de datos no-PHI — usar `security-compliance` o `security-code-scan` directamente.
+- Diseño de componentes UI generales — `ui-*`; este skill aporta contexto regulatorio cuando hay PHI.
+
+## Anti-patterns de dominio
+
+- **Anonimización ≠ desidentificación**: HIPAA define criterios específicos — eliminar el nombre no es suficiente
+- **DICOM**: imágenes médicas tienen su propio estándar de formato y transmisión — no son simples archivos de imagen
+- **Terminología clínica**: el mismo concepto puede tener códigos distintos en ICD-10, SNOMED y LOINC — la interoperabilidad requiere mapeo
+- **Zona horaria crítica**: eventos clínicos deben registrarse con timestamp preciso y zona horaria explícita
+- **Acceso a HCE sin audit log** — toda lectura/escritura de PHI debe registrarse e ser inalterable.
+- **PHI en entornos no productivos** — usar datos reales en dev/staging incumple HIPAA. Generar datos sintéticos o anonimizar formalmente.
+
+## Integración con otros agentes
+
+| Agente | Qué aporta este dominio |
+|---|---|
+| **architect** | Separar HCE, agenda, lab y facturación — interoperabilidad via FHIR API |
+| **security** | PHI requiere cifrado en reposo y tránsito, audit logs, acceso mínimo necesario |
+| **developer** | Codificación LOINC/ICD-10, recursos FHIR, audit trail de acceso a HCE |
+| **developer** | Tests con datos sintéticos (nunca PHI real en testing), flujos de consentimiento |
+
+## Referencia
+
+Cargar bajo demanda cuando se necesite detalle:
+- `reference/glosario.md` — 12 términos del dominio (HCE, FHIR, PHI, HIPAA, ICD-10, SNOMED, LOINC, etc.)
+- `reference/regulacion.md` — HIPAA, regulación LATAM, Colombia Res. 1995/Ley 1581, recursos FHIR R4

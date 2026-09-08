@@ -1,0 +1,56 @@
+{
+  "wi_id": "wi-002",
+  "technique_catalog": [
+    {
+      "endpoint": "GET /osf/api/v1/pending-billing-quotas",
+      "techniques_applied": [
+        {
+          "technique": "State Transition",
+          "target_fields": ["request.status"],
+          "rationale": "RN-011 a RN-013 declaran ciclo de vida PENDING → EXECUTION → END con disparo dual (scheduler + manual). Aplica para validar las 3 transiciones válidas y al menos 2 inválidas (END → PENDING, EXECUTION → PENDING).",
+          "estimated_cps": 5
+        },
+        {
+          "technique": "Decision Table",
+          "target_fields": ["scheduler_trigger", "manual_trigger", "pending_requests_count", "date_match"],
+          "rationale": "RN-011 combina trigger (scheduler/manual) con presencia de PENDING y match de fecha. Combinatoria explícita en HU.",
+          "estimated_cps": 4
+        },
+        {
+          "technique": "BVA",
+          "target_fields": ["periodProcessDate"],
+          "rationale": "El batch solo procesa fecha=hoy. BVA cubre fecha-1, fecha=hoy, fecha+1 para detectar off-by-one del scheduler.",
+          "estimated_cps": 3
+        },
+        {
+          "technique": "Contract Testing",
+          "target_fields": ["response_body"],
+          "rationale": "Response 200 debe cumplir schema BillingBatchResult.",
+          "estimated_cps": 1
+        }
+      ],
+      "techniques_rejected": [
+        {
+          "technique": "Pairwise",
+          "reason": "4 campos pero la combinatoria está restringida por RN — Decision Table directa es más explicita."
+        },
+        {
+          "technique": "EP",
+          "reason": "Los campos son booleanos (trigger sí/no) — quedan cubiertos por la Decision Table."
+        }
+      ],
+      "total_estimated_cps": 13
+    }
+  ],
+  "wi_total_estimated_cps": 13,
+  "techniques_distribution": {
+    "EP": 0,
+    "BVA": 3,
+    "Decision Table": 4,
+    "State Transition": 5,
+    "Pairwise": 0,
+    "Error Guessing": 0,
+    "Contract Testing": 1
+  },
+  "generated_at": "2026-05-21T10:50:00-05:00"
+}

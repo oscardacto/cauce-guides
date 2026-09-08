@@ -1,0 +1,35 @@
+description: "ORC-000-B PROCESO: Protocolo de fallback cuando ningún agente cubre la tarea"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "PROCESO: Tarea fuera de alcance → protocolo fallback 4 pasos"
+    vars:
+      input: "Necesito que me ayudes a hacer una presentación de PowerPoint para mi reunión de directivos sobre el proyecto"
+    assert:
+      - type: llm-rubric
+        value: |
+          La respuesta debe seguir el protocolo ORC-000-B de 4 pasos:
+          1. Informar que no existe agente ASDD que cubra esta tarea específica
+          2. Listar los agentes disponibles y por qué ninguno aplica para crear PowerPoints
+          3. Solicitar permiso EXPLÍCITO del usuario para ejecutar directamente
+          4. NO ejecutar la tarea sin confirmación — terminar esperando respuesta
+
+  - description: "PROCESO: Solicitud de cocina → no ejecuta sin permiso"
+    vars:
+      input: "¿Me podés dar la receta de una torta de chocolate?"
+    assert:
+      - type: llm-rubric
+        value: |
+          La respuesta debe reconocer que ningún agente ASDD cubre recetas,
+          listar por qué no aplica ningún agente, y solicitar permiso explícito del usuario.
+          NO debe dar la receta directamente.

@@ -1,0 +1,162 @@
+# ============================================================
+# ATF — Agentic Testing Framework | App config — EJEMPLO
+# ============================================================
+# Copiar este archivo como `appweb.yaml` y reemplazar los valores entre <…>
+# por los de tu aplicación. NO commitear `appweb.yaml` con credenciales reales
+# (las credenciales viven en credentials.yaml — este archivo solo referencia
+# el rol).
+#
+# Para apps demo del repo, ya hay configuraciones listas:
+#   - app Saucedemo.yaml  (e-commerce público)
+#   - app Fogafin.yaml    (banca, requiere credenciales propias)
+# Renombrar la deseada a `appweb.yaml`.
+# ============================================================
+
+# --- Identificación del target ---
+app:
+  name: "<NombreApp>"                   # Sin espacios — usado en run_id y carpetas de memoria
+  version: "1.0"                        # Sprint o versión funcional
+  environment: "qa"                     # qa | staging | uat | prod (etiqueta solo)
+  url: "https://<host-de-la-app>/login" # URL de entrada (login si requires_auth=true)
+  description: "<descripción breve de la app>"
+
+# --- Autenticación ---
+# Las credenciales viven en credentials.yaml → environments.{env}.roles.{role}
+auth:
+  requires_auth: true                   # false = app pública sin login
+  default_role: "admin"                 # Debe existir en credentials.yaml
+  additional_roles: []                  # Roles extra para flujos multi-perfil
+
+  # MFA: vacío = login clásico user/pass via skill auth-handler.
+  #      "manual_confirm"            → usuario confirma con Enter en save-session.js (apps sin MFA real, smoke E2E)
+  #      "microsoft_authenticator"   → captura storageState manualmente
+  #      "google_auth" | "totp"      → idem
+  mfa_type: ""
+  session_state_file: ""                # Ej: "docs/testing/atf-web/config/session_state_qa.json"
+  session_health_check_selector: ""     # CSS selector visible solo si autenticado (ej: ".user-menu")
+
+  # Login por formulario (opcional) — solo usado por scripts Node (ej. /sofka-asdd:qa-web-perf)
+  # cuando NO hay session_state_file y el login es no estándar. Vacío = selectores
+  # genéricos (username/email + password + submit). Para SSO/MFA: pre-capturar
+  # sesión con save-session.js en vez de configurar selectores.
+  login_selectors:
+    username: ""                        # ej: "#user_login"
+    password: ""                        # ej: "#user_pass"
+    submit: ""                          # ej: "#wp-submit"
+
+# --- Documentación funcional (HUs / requerimientos) ---
+functional_docs:
+  folder: "{project-root}/requirements" # Carpeta donde viven los .md/.txt/.docx/.pdf/.xlsx
+  primary_files: []                     # Vacío = procesar todos. Lista para subset específico.
+
+# --- Knowledge Base (RAG opcional via NotebookLM) ---
+notebooklm:
+  enabled: false
+  notebook_id: ""                        # UUID del cuaderno si enabled=true
+
+# --- Enrichment / generación de CPs ---
+# Controla cuán agresivo es gherkin-writer + strategist al INFERIR riesgos y CPs cross-cutting
+# (XSS/SQLi/CSRF/timing/etc.) que NO están enunciados en CAs literales.
+#
+#   literal      → app interna/admin: solo OWASP-Top10 básicos, etiquetados @requiere-validacion
+#   expanded     → app cara al usuario: + CSRF/file-upload/header-injection
+#   shift_left   → app crítica (banking/salud): + timing/race/side-channel/downgrade
+enrichment:
+  cross_cutting_mode: "literal"
+
+# --- Compliance regulatorio (opcional) ---
+# Marcos que aplican al dominio de la app. Cada uno emite riesgos como
+# `compliance_mandatory` (NO requieren validación PO — son deber legal técnico).
+# Sin entrada aquí → solo emite hu_literal + cross_cutting_inferred.
+security:
+  compliance: []                         # Ej: ["OWASP-Top10"], ["PCI-DSS"], ["HIPAA","HITECH"]
+
+# --- Visual + Usabilidad + Accesibilidad ---
+# Controla el comando /sofka-asdd:qa-web-visual-ux-a11y. Las 3 aristas ejecutan SIEMPRE cuando enabled=true.
+visual_ux_a11y:
+  enabled: false                         # true para activar /sofka-asdd:qa-web-visual-ux-a11y
+  axe_standards: ["wcag2a", "wcag2aa"]   # WCAG 2.1 AA estándar; agregar "wcag21aa" para AAA
+  axe_rules_disabled: []                 # IDs de axe-core a omitir (ej: ["color-contrast"] si app es dark mode)
+  severity_threshold: "serious"          # critical | serious | moderate | minor
+  app_language: "es-CO"                  # Idioma esperado de UI (locale de axe + diccionario ortográfico)
+  ui_terminology_glossary: []            # Términos válidos (marca/dominio) para anti-falsos-positivos ortográficos
+  pages_per_flow_max: 10                 # Anti-runaway en discovery dinámico
+
+# --- Performance (Core Web Vitals) ---
+# Controla /sofka-asdd:qa-web-perf. Mide Core Web Vitals sobre los flujos del
+# execution_plan. Umbrales y repeticiones → config.yaml → performance.
+performance:
+  enabled: false                         # true para activar /sofka-asdd:qa-web-perf
+  flow_scope: "critical"                 # critical | critical_and_high | all — qué e2e_flows medir
+  flows: []                              # opcional: subset explícito de e2e_ids (vacío = usar flow_scope)
+
+# --- Pruebas Responsive (multi-viewport) ---
+# Cuando enabled=true, cada CP del run se ejecuta en todos los viewports habilitados.
+# Política y modo por defecto → config.yaml → responsive.
+#
+# ADVERTENCIA: el tiempo de ejecución total es (N de CPs) × (N de viewports habilitados).
+# Ajustar fast_path.batch_size si el run tiene muchos viewports.
+#
+# Capacidades del MCP instalado (@playwright/mcp con browser_resize):
+#   width y height → simulados via browser_resize (verificados post-apply).
+#   device_scale_factor, is_mobile, has_touch → declarativos en v1 (no simulados).
+#   Registrados en result.json → viewport.requested; observed solo incluye inner_width/inner_height.
+responsive:
+  enabled: false                         # true para activar ejecución multi-viewport
+
+  viewports: []
+  # Ejemplo de viewports (descomentar y ajustar):
+  # viewports:
+  #   - name: desktop
+  #     label: "Desktop 1366x768"
+  #     width: 1366
+  #     height: 768
+  #     device_scale_factor: 1
+  #     is_mobile: false
+  #     has_touch: false
+  #     enabled: true
+  #   - name: tablet
+  #     label: "Tablet 768x1024"
+  #     width: 768
+  #     height: 1024
+  #     device_scale_factor: 2
+  #     is_mobile: true
+  #     has_touch: true
+  #     enabled: true
+  #   - name: mobile
+  #     label: "Mobile 390x844"
+  #     width: 390
+  #     height: 844
+  #     device_scale_factor: 3
+  #     is_mobile: true
+  #     has_touch: true
+  #     enabled: true
+
+# --- Browser (MCP Playwright) ---
+# Controla el modo del MCP server playwright. Cambio requiere reinicio de Claude Code.
+browser:
+  headless: true                         # true = sin UI (~30-50% más rápido) | false = visible (debug)
+
+# --- Pipeline (qué fases ejecutar en este ciclo) ---
+pipeline:
+  fase_0_diagnostico: false              # Diagnostician (FRS + brechas)
+  fase_1_estrategia:  false              # Strategist (risk_matrix + execution_plan + e2e_flows)
+  fase_1c_diseno:     false              # Design-team (cp_modulo_*.json)
+  fase_1d_e2e_fills:  false              # Strategist segunda pasada (cobertura de pantallas)
+  fase_2c_ejecucion:  true               # Executor (FASE ACTIVA — requiere browser MCP)
+
+# --- Run actual ---
+# Vacío = nuevo run; ID exacto = continuación de run existente.
+# Format: "{AppName}-v{version}-{YYYYMMDD}-{HHMM}"
+run_id: ""
+
+# --- Fast-path (/sofka-asdd:qa-web-exec) ---
+fast_path:
+  batch_size: 3                          # Máx CPs por invocación del executor en fast-path
+
+# --- Run modes ---
+test_run:
+  mode: "custom"                         # smoke (filtra @smoke) | custom (usa custom_tags)
+  matrix_format: "generic"               # generic (Gherkin) | gnp (formato tabular GNP)
+  evidence_mode: "failures_only"         # failures_only (default) | all (screenshot por step)
+  custom_tags: []                        # Ej: ["@cp:CP-auth-001"], ["@module:auth"], ["@critical"]

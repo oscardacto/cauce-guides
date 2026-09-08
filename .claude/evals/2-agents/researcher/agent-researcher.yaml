@@ -1,0 +1,89 @@
+description: "sofka-asdd-researcher: spikes, benchmarks y matrices"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../../prompts/system-agent-researcher.txt
+
+tests:
+  - description: "PROCESO: skill spike — investiga incertidumbre técnica concreta"
+    vars:
+      input: |
+        No sabemos si nuestro servicio Node.js puede manejar 10,000 conexiones WebSocket
+        concurrentes con la infraestructura actual. Necesitamos evidencia antes de diseñar.
+    assert:
+      - type: llm-rubric
+        value: |
+          El researcher con skill spike debe:
+          1. Definir la pregunta específica a responder (¿puede Node.js manejar 10k WS con X recursos?)
+          2. Proponer el experimento mínimo para obtener evidencia (no teorizar)
+          3. Definir métricas de éxito/fracaso del spike
+          4. Establecer el timebox (máximo 2-3 días para un spike)
+          5. Identificar qué decisión de arquitectura depende de este resultado
+
+  - description: "PROCESO: skill benchmark — compara opciones con datos"
+    vars:
+      input: |
+        Necesitamos elegir entre Kafka, RabbitMQ y AWS SQS para el sistema de mensajería.
+        ¿Cuál tiene mejor throughput para nuestro caso de uso: 50k mensajes/segundo?
+    assert:
+      - type: llm-rubric
+        value: |
+          El researcher con skill benchmark debe:
+          1. Definir los criterios de comparación relevantes para el caso (throughput, latencia, garantías, costo, ops complexity)
+          2. Buscar benchmarks existentes o proponer cómo medirlos
+          3. No hacer afirmaciones sin fuente — indicar de dónde viene cada dato
+          4. Producir una matriz de comparación con pesos por criterio
+          5. Hacer una recomendación preliminar (no definitiva — el arquitecto decide en el ADR)
+
+  - description: "PROCESO: skill comparison — matriz de decisión estructurada"
+    vars:
+      input: |
+        Comparar frameworks de testing e2e: Playwright vs Cypress vs Selenium.
+        El equipo usa React y necesita soporte para Chrome/Firefox/Safari.
+    assert:
+      - type: llm-rubric
+        value: |
+          El researcher con skill comparison debe producir una matriz con:
+          1. Criterios de evaluación ponderados (browser support, API, DX, comunidad, costo)
+          2. Puntuación de cada opción por criterio
+          3. Una recomendación con justificación basada en los datos
+          4. Trade-offs claros de la opción recomendada
+          NO debe simplemente listar pros y cons — necesita una decisión fundamentada.
+
+  - description: "PROCESO: Researcher no inventa datos — indica fuente o incertidumbre"
+    vars:
+      input: |
+        ¿Cuántas transacciones por segundo puede procesar Stripe en comparación con
+        nuestra solución propia? Dame los números exactos.
+    assert:
+      - type: llm-rubric
+        value: |
+          El researcher NO debe inventar números exactos que no puede verificar.
+          Debe:
+          1. Mencionar qué datos están disponibles públicamente (documentación de Stripe)
+          2. Indicar qué requeriría un benchmark real propio
+          3. Proponer cómo obtener los datos faltantes
+          4. Nunca afirmar 'X tps' sin fuente verificable
+
+  - description: "OUTPUT: Reporte de investigación con evidencia y recomendación"
+    vars:
+      input: |
+        Investiga las opciones de object storage para el sistema de documentos médicos.
+        Necesitamos: 10TB actuales, crecimiento del 50% anual, HIPAA compliance, Colombia.
+    assert:
+      - type: llm-rubric
+        value: |
+          El reporte de investigación debe incluir:
+          1. Opciones evaluadas (AWS S3, GCS, Azure Blob, MinIO)
+          2. Criterios ponderados: costo, compliance HIPAA, latencia Colombia, soporte local
+          3. Datos reales de precios (aproximados, indicando que pueden variar)
+          4. Recomendación final con justificación y trade-offs
+          5. Riesgos de la opción recomendada que el equipo debe conocer
+

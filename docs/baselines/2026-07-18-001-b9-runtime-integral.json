@@ -1,0 +1,559 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-07-18-001",
+  "slice": "B9",
+  "captured_at": "2026-07-18T18:14:00.979Z",
+  "source": {
+    "branch": "feature/asdd-runtime-efficiency-v2",
+    "commit": "0b5475031efe1464607156a94d4860588530072f"
+  },
+  "environment": {
+    "platform": "linux",
+    "release": "6.18.33.2-microsoft-standard-WSL2",
+    "architecture": "x64",
+    "node": "v24.18.0",
+    "classification": "Linux WSL2"
+  },
+  "method": {
+    "local": "5 warm-ups + 30 measured isolated processes; p50/p95 wall clock",
+    "provider": "one diagnostic structured-output sample per model and scenario; not a latency SLO",
+    "separation": "provider results are not included in local hook/filesystem/process distributions",
+    "privacy": "fixture ids and aggregate usage only; prompts, outputs, commands and tool inputs excluded",
+    "system_prompt_sha256": "8a235054d7e46af4450c082ca4e67ccefe9439fcb62bf7be585075b99b90dc59"
+  },
+  "results": {
+    "local": {
+      "bash_fast_path": {
+        "legacy": {
+          "min_ms": 36.95,
+          "p50_ms": 40.3,
+          "p95_ms": 55.57,
+          "max_ms": 61.34,
+          "mean_ms": 42.46
+        },
+        "current": {
+          "min_ms": 27.79,
+          "p50_ms": 29.35,
+          "p95_ms": 35.18,
+          "max_ms": 36.46,
+          "mean_ms": 30.51
+        },
+        "p95_change_percent": -36.69,
+        "processes_before": 7,
+        "processes_after": 1
+      },
+      "edit_fast_path": {
+        "legacy": {
+          "min_ms": 35.56,
+          "p50_ms": 39.01,
+          "p95_ms": 55.7,
+          "max_ms": 65.06,
+          "mean_ms": 41.82
+        },
+        "current": {
+          "min_ms": 28.32,
+          "p50_ms": 30.38,
+          "p95_ms": 33.69,
+          "max_ms": 34.2,
+          "mean_ms": 30.71
+        },
+        "p95_change_percent": -39.52,
+        "processes_before": 8,
+        "processes_after": 1
+      },
+      "deny_p95_ms": {
+        "bash": 34.46,
+        "edit": 33.9
+      },
+      "prompt_injection": {
+        "schema_version": 1,
+        "warmup_samples": 5,
+        "measured_samples": 30,
+        "execution": "isolated UserPromptSubmit Node process per sample",
+        "results": {
+          "normal": {
+            "injected_words": 0,
+            "output_bytes": 0,
+            "p50_ms": 18.84,
+            "p95_ms": 24.99
+          },
+          "figma": {
+            "injected_words": 76,
+            "output_bytes": 593,
+            "p50_ms": 19.52,
+            "p95_ms": 22.58
+          },
+          "authorization_security": {
+            "injected_words": 56,
+            "output_bytes": 473,
+            "p50_ms": 19.7,
+            "p95_ms": 25.02
+          },
+          "ambiguity": {
+            "injected_words": 91,
+            "output_bytes": 736,
+            "p50_ms": 19.59,
+            "p95_ms": 22.79
+          },
+          "explicit_recovery": {
+            "injected_words": 168,
+            "output_bytes": 1408,
+            "p50_ms": 19.76,
+            "p95_ms": 22.58
+          }
+        }
+      },
+      "routing_and_budget_microbenchmark": {
+        "schema_version": 1,
+        "samples": 1000,
+        "warmup": 10,
+        "router": {
+          "p50_ms": 0.0008,
+          "p95_ms": 0.0016,
+          "max_ms": 0.0272
+        },
+        "budget_validation": {
+          "p50_ms": 0.0077,
+          "p95_ms": 0.014,
+          "max_ms": 0.3407
+        }
+      },
+      "context": {
+        "schema_version": 2,
+        "unit": "words",
+        "always_on_words": 5863,
+        "session_start_hooks": 2,
+        "largest_agent_with_skills_words": 8905,
+        "largest_measured_effective_context_words": 19159,
+        "context_budget_warnings": 9,
+        "unmeasured_components": 17,
+        "registered_hooks_files": 16
+      }
+    },
+    "consumer": {
+      "schema_version": 1,
+      "execution": "independent Node consumer processes with isolated HOME and per-suite temporary fixtures",
+      "platform_semantics": {
+        "posix": "native",
+        "windows_paths": "dispatcher contract fixtures",
+        "spaces": "isolated HOME plus dispatcher fixtures",
+        "symlinks": "operation scope escape fixture",
+        "nested_and_multiple_repositories": "git guard fixtures"
+      },
+      "suites": 16,
+      "passed": 16,
+      "failed": [],
+      "results": [
+        {
+          "id": "yaml-and-context",
+          "pass": true,
+          "duration_ms": 20.67
+        },
+        {
+          "id": "context-layers",
+          "pass": true,
+          "duration_ms": 24.16
+        },
+        {
+          "id": "phase-reconciliation",
+          "pass": true,
+          "duration_ms": 22.15
+        },
+        {
+          "id": "dispatcher-contract-paths",
+          "pass": true,
+          "duration_ms": 19.98
+        },
+        {
+          "id": "dispatcher-differential",
+          "pass": true,
+          "duration_ms": 867.15
+        },
+        {
+          "id": "dispatcher-multi-deny",
+          "pass": true,
+          "duration_ms": 177.34
+        },
+        {
+          "id": "dispatcher-registration",
+          "pass": true,
+          "duration_ms": 67.27
+        },
+        {
+          "id": "collector-pre-post",
+          "pass": true,
+          "duration_ms": 105.68
+        },
+        {
+          "id": "conditional-orc",
+          "pass": true,
+          "duration_ms": 185.56
+        },
+        {
+          "id": "conditional-rules",
+          "pass": true,
+          "duration_ms": 225.29
+        },
+        {
+          "id": "lazy-capabilities",
+          "pass": true,
+          "duration_ms": 271.82
+        },
+        {
+          "id": "thin-coordinators",
+          "pass": true,
+          "duration_ms": 28.69
+        },
+        {
+          "id": "budgeted-routing",
+          "pass": true,
+          "duration_ms": 42.93
+        },
+        {
+          "id": "operation-scope-symlink",
+          "pass": true,
+          "duration_ms": 33.53
+        },
+        {
+          "id": "nested-git-repositories",
+          "pass": true,
+          "duration_ms": 131.32
+        },
+        {
+          "id": "security-fail-closed",
+          "pass": true,
+          "duration_ms": 330.47
+        }
+      ]
+    },
+    "provider": {
+      "schema_version": 1,
+      "execution": "claude -p safe-mode, tools disabled, structured output",
+      "system_prompt_sha256_note": "hash recorded by integral benchmark; prompt content excluded",
+      "cases": [
+        "trivial_local_query",
+        "light_atomic_change",
+        "full_feature",
+        "high_risk_authorization"
+      ],
+      "models": {
+        "claude-opus-4-8": {
+          "cases": 4,
+          "passed": 4,
+          "pass_rate": 1,
+          "total_cost_usd": 0.130354,
+          "total_output_tokens": 1997,
+          "latency": {
+            "p50_ms": 6779,
+            "p95_ms": 11701,
+            "ttft_p50_ms": 4549,
+            "ttft_p95_ms": 6257
+          },
+          "results": [
+            {
+              "id": "trivial_local_query",
+              "pass": true,
+              "checks": {
+                "route": true,
+                "fan_out": true,
+                "turns": true,
+                "high_risk": true,
+                "model_escalation": true
+              },
+              "actual": {
+                "route": "TRIVIAL",
+                "concurrent_subagents": 0,
+                "agent_model": "sonnet",
+                "max_turns": 2,
+                "high_risk": false
+              },
+              "duration_ms": 6779,
+              "duration_api_ms": 7881,
+              "ttft_ms": 6257,
+              "cost_usd": 0.06991,
+              "usage": {
+                "output_tokens": 381,
+                "cache_creation_input_tokens": 5972,
+                "cache_read_input_tokens": 0
+              },
+              "resolved_models": [
+                "claude-haiku-4-5-20251001",
+                "claude-opus-4-8"
+              ]
+            },
+            {
+              "id": "light_atomic_change",
+              "pass": true,
+              "checks": {
+                "route": true,
+                "fan_out": true,
+                "turns": true,
+                "high_risk": true,
+                "model_escalation": true
+              },
+              "actual": {
+                "route": "LIGHT",
+                "concurrent_subagents": 1,
+                "agent_model": "Sonnet",
+                "max_turns": 15,
+                "high_risk": false
+              },
+              "duration_ms": 8597,
+              "duration_api_ms": 10705,
+              "ttft_ms": 4359,
+              "cost_usd": 0.019254,
+              "usage": {
+                "output_tokens": 506,
+                "cache_creation_input_tokens": 309,
+                "cache_read_input_tokens": 5664
+              },
+              "resolved_models": [
+                "claude-haiku-4-5-20251001",
+                "claude-opus-4-8"
+              ]
+            },
+            {
+              "id": "full_feature",
+              "pass": true,
+              "checks": {
+                "route": true,
+                "fan_out": true,
+                "turns": true,
+                "high_risk": true,
+                "model_escalation": true
+              },
+              "actual": {
+                "route": "FULL",
+                "concurrent_subagents": 3,
+                "agent_model": "sonnet",
+                "max_turns": 50,
+                "high_risk": false
+              },
+              "duration_ms": 11701,
+              "duration_api_ms": 13224,
+              "ttft_ms": 5747,
+              "cost_usd": 0.026224,
+              "usage": {
+                "output_tokens": 782,
+                "cache_creation_input_tokens": 317,
+                "cache_read_input_tokens": 5664
+              },
+              "resolved_models": [
+                "claude-haiku-4-5-20251001",
+                "claude-opus-4-8"
+              ]
+            },
+            {
+              "id": "high_risk_authorization",
+              "pass": true,
+              "checks": {
+                "route": true,
+                "fan_out": true,
+                "turns": true,
+                "high_risk": true,
+                "model_escalation": true
+              },
+              "actual": {
+                "route": "FULL",
+                "concurrent_subagents": 3,
+                "agent_model": "opus",
+                "max_turns": 50,
+                "high_risk": true
+              },
+              "duration_ms": 6293,
+              "duration_api_ms": 7763,
+              "ttft_ms": 4549,
+              "cost_usd": 0.014966,
+              "usage": {
+                "output_tokens": 328,
+                "cache_creation_input_tokens": 324,
+                "cache_read_input_tokens": 5664
+              },
+              "resolved_models": [
+                "claude-haiku-4-5-20251001",
+                "claude-opus-4-8"
+              ]
+            }
+          ]
+        },
+        "claude-sonnet-4-6": {
+          "cases": 4,
+          "passed": 4,
+          "pass_rate": 1,
+          "total_cost_usd": 0.102729,
+          "total_output_tokens": 3936,
+          "latency": {
+            "p50_ms": 15821,
+            "p95_ms": 34859,
+            "ttft_p50_ms": 14927,
+            "ttft_p95_ms": 33711
+          },
+          "results": [
+            {
+              "id": "trivial_local_query",
+              "pass": true,
+              "checks": {
+                "route": true,
+                "fan_out": true,
+                "turns": true,
+                "high_risk": true,
+                "model_escalation": true
+              },
+              "actual": {
+                "route": "TRIVIAL",
+                "concurrent_subagents": 0,
+                "agent_model": "claude-sonnet-4-5",
+                "max_turns": 1,
+                "high_risk": false
+              },
+              "duration_ms": 6416,
+              "duration_api_ms": 7305,
+              "ttft_ms": 5911,
+              "cost_usd": 0.033725,
+              "usage": {
+                "output_tokens": 340,
+                "cache_creation_input_tokens": 4661,
+                "cache_read_input_tokens": 0
+              },
+              "resolved_models": [
+                "claude-haiku-4-5-20251001",
+                "claude-sonnet-4-6"
+              ]
+            },
+            {
+              "id": "light_atomic_change",
+              "pass": true,
+              "checks": {
+                "route": true,
+                "fan_out": true,
+                "turns": true,
+                "high_risk": true,
+                "model_escalation": true
+              },
+              "actual": {
+                "route": "LIGHT",
+                "concurrent_subagents": 1,
+                "agent_model": "claude-sonnet-4-5",
+                "max_turns": 10,
+                "high_risk": false
+              },
+              "duration_ms": 15821,
+              "duration_api_ms": 16795,
+              "ttft_ms": 14927,
+              "cost_usd": 0.0173083,
+              "usage": {
+                "output_tokens": 821,
+                "cache_creation_input_tokens": 512,
+                "cache_read_input_tokens": 4151
+              },
+              "resolved_models": [
+                "claude-haiku-4-5-20251001",
+                "claude-sonnet-4-6"
+              ]
+            },
+            {
+              "id": "full_feature",
+              "pass": true,
+              "checks": {
+                "route": true,
+                "fan_out": true,
+                "turns": true,
+                "high_risk": true,
+                "model_escalation": true
+              },
+              "actual": {
+                "route": "FULL",
+                "concurrent_subagents": 2,
+                "agent_model": "claude-opus-4-5",
+                "max_turns": 50,
+                "high_risk": true
+              },
+              "duration_ms": 34859,
+              "duration_api_ms": 36176,
+              "ttft_ms": 33711,
+              "cost_usd": 0.0319283,
+              "usage": {
+                "output_tokens": 1794,
+                "cache_creation_input_tokens": 517,
+                "cache_read_input_tokens": 4151
+              },
+              "resolved_models": [
+                "claude-haiku-4-5-20251001",
+                "claude-sonnet-4-6"
+              ]
+            },
+            {
+              "id": "high_risk_authorization",
+              "pass": true,
+              "checks": {
+                "route": true,
+                "fan_out": true,
+                "turns": true,
+                "high_risk": true,
+                "model_escalation": true
+              },
+              "actual": {
+                "route": "FULL",
+                "concurrent_subagents": 2,
+                "agent_model": "claude-opus-4-5",
+                "max_turns": 50,
+                "high_risk": true
+              },
+              "duration_ms": 18546,
+              "duration_api_ms": 19549,
+              "ttft_ms": 17928,
+              "cost_usd": 0.019767300000000005,
+              "usage": {
+                "output_tokens": 981,
+                "cache_creation_input_tokens": 519,
+                "cache_read_input_tokens": 4151
+              },
+              "resolved_models": [
+                "claude-haiku-4-5-20251001",
+                "claude-sonnet-4-6"
+              ]
+            }
+          ]
+        }
+      },
+      "failures": []
+    },
+    "original_to_final": {
+      "always_on_words": {
+        "before": 16973,
+        "after": 5863,
+        "change_percent": -65.46
+      },
+      "normal_prompt_words": {
+        "before": 145,
+        "after": 0,
+        "change_percent": -100
+      },
+      "bash_processes": {
+        "before": 7,
+        "after": 1
+      },
+      "edit_processes": {
+        "before": 8,
+        "after": 1
+      }
+    }
+  },
+  "gates": {
+    "always_on_words": true,
+    "normal_prompt_words": true,
+    "one_pretool_process": true,
+    "hook_p95_no_regression": true,
+    "consumer_e2e": true,
+    "provider_quality": true
+  },
+  "external_release_checks": [
+    "Repeat native performance distributions on macOS.",
+    "Repeat native performance distributions on Windows; Windows path semantics are covered here, native timing is not."
+  ],
+  "limitations": [
+    "Provider comparison has one sample per heterogeneous scenario; its latency is diagnostic, not statistically robust.",
+    "Provider token counts include Claude CLI/runtime overhead and are not equivalent to local context word counts.",
+    "Tool, MCP and provider-internal schemas remain unobservable from this runtime."
+  ]
+}

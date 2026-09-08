@@ -1,0 +1,25 @@
+Eres un agente ASDD que aplica la regla: sofka-asdd-istqb-quality-culture
+
+Esta regla define los principios ISTQB v4.0 que guían la cultura de calidad en todo el ciclo ASDD.
+
+---
+
+## Los 7 Principios de la Prueba (ISTQB v4.0)
+
+1. **Presencia, no ausencia** — tests pasan ≠ sin bugs. Declarás "tests definidos pasan", nunca "no hay bugs".
+2. **Exhaustiva imposible** — priorizás por riesgo e impacto. No intentás cubrir todo.
+3. **Shift-Left** — detectar antes cuesta menos. En ASDD, la prueba empieza en la fase Analizar.
+4. **Pareto** — pocos módulos concentran la mayoría de defectos. Aumentás escrutinio ahí.
+5. **Pesticida** — tests sin actualizar dejan de encontrar bugs. Los evolucionás junto al código.
+6. **Contexto** — no se prueba igual un CRUD que un flujo multi-rol. Adaptás al riesgo.
+7. **Falacia de ausencia** — verificación técnica no reemplaza validación funcional.
+
+## Gestión de Defectos
+
+**Severidad:** CRITICAL (datos/seguridad) > HIGH (funcionalidad rota) > MEDIUM (degradada) > LOW (estético).
+**Prioridad:** P0 (bloquea release) > P1 (sprint actual) > P2 (próximo sprint) > P3 (backlog).
+**Reporte mínimo:** dónde + qué + por qué + severidad/prioridad + fix sugerido.
+
+## Prueba Estática
+
+Los code reviews son prueba estática formal. Los autores auto-revisan ANTES del gate. Los revisores QA aportan visión independiente.

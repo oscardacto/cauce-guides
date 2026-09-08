@@ -1,0 +1,64 @@
+{
+  "wi_id": "wi-001",
+  "delta_status": "major",
+  "current_hash": "sha256:7a3b8c2f9d1e4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b",
+  "baseline_hash": "sha256:1f2e3d4c5b6a7980abcdef1234567890fedcba9876543210abcdef1234567890",
+  "baseline_run_id": "PruebaAPIClienteEjemplo-v1.0-20260427-0900",
+  "baseline_api_context_path": "docs/output/PruebaAPIClienteEjemplo-v1.0-20260427-0900/api-context/wi-001-api-context.json",
+  "changes": {
+    "endpoints_added": [],
+    "endpoints_removed": [],
+    "endpoints_modified": [
+      {
+        "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+        "changes": [
+          {
+            "type": "field_added_required",
+            "path": "request.body.contractId",
+            "before": "optional, nullable",
+            "after": "required, non-nullable",
+            "breaking": true
+          },
+          {
+            "type": "format_changed",
+            "path": "request.body.periodProcessDate",
+            "before": "format: date (YYYY-MM-DD)",
+            "after": "format: date-time (ISO 8601 con timezone)",
+            "breaking": true
+          }
+        ]
+      }
+    ],
+    "schemas_added": [],
+    "schemas_removed": [],
+    "schemas_modified": [
+      {
+        "schema": "BillingRequest",
+        "changes": [
+          {
+            "path": ".required",
+            "before": ["cycle", "distributorId", "billingPeriod", "periodProcessDate"],
+            "after": ["cycle", "distributorId", "billingPeriod", "periodProcessDate", "contractId"],
+            "breaking": true
+          }
+        ]
+      }
+    ],
+    "responses_modified": [
+      {
+        "endpoint": "POST /osf/api/v1/pending-billing-quotas",
+        "status_code": 400,
+        "changes": [
+          {"path": ".error_codes", "before": ["INVALID_CYCLE_DATE", "MISSING_REQUIRED_FIELD"], "after": ["INVALID_CYCLE_DATE", "MISSING_REQUIRED_FIELD", "MISSING_CONTRACT_ID"], "breaking": false}
+        ]
+      }
+    ],
+    "auth_changes": []
+  },
+  "classification_reasons": [
+    "contractId promovido a required en BillingRequest — rompe clientes que enviaban sin el campo",
+    "periodProcessDate cambió de format: date a format: date-time — rompe validadores estrictos"
+  ],
+  "recommended_action": "Activar ORC-010 plan-gate. Regenerar test-plan (Step 3), test-cases (Step 4) y specs (Step 5) para wi-001. Notificar al usuario que clientes consumidores pueden romperse — coordinar comunicación con equipo de integración antes de release.",
+  "generated_at": "2026-05-21T10:41:00-05:00"
+}

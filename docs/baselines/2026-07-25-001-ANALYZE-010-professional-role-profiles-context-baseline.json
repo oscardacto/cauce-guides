@@ -1,0 +1,971 @@
+﻿{
+  "schema_version": 1,
+  "run_id": "2026-07-25-001",
+  "artifact": "professional-role-profiles-context-baseline",
+  "status": "static-read-only-baseline-no-fresh-runtime-measurement",
+  "warning": "STALE — este baseline refleja el estado del repo al commit 5846fa7 (rama feature/asdd-runtime-efficiency-v2, 2026-07-25), previo al rename data-engineering v1.1 (2026-07-29). El array skills del perfil data lista sofka-asdd-data-{architecture-design,contract,discovery,governance-assessment} (sin -eng-) que ya no corresponden al estado actual del disco. No regenerar sin correr el spike de auditoría completo.",
+  "source_head": {
+    "branch": "feature/asdd-runtime-efficiency-v2",
+    "commit": "5846fa7703b62e40279f08548708cae939f9206a"
+  },
+  "measurement_policy": {
+    "g0_constraint": "No Claude execution and no repository scripts/hooks/tests/validators/workflows.",
+    "fresh_provider_or_runtime_measurement_performed": false,
+    "fresh_token_cost_latency_measurement_performed": false,
+    "rule": "Do not merge or compare word counts as if they used the same tokenizer. Each method is separately labeled.",
+    "unmeasured": [
+      "tool schemas",
+      "MCP schemas",
+      "provider internal context",
+      "dynamic prompt content",
+      "actual provider tokenization",
+      "actual role-profile startup because profiles do not exist yet"
+    ]
+  },
+  "current_head_static_estimates": {
+    "shell_wc_word_count": {
+      "status": "exact-for-method",
+      "provenance_class": "estimated",
+      "method": "Read-only shell wc -w evidence from the runtime-surfaces subaudit.",
+      "components": [
+        {
+          "surface": "CLAUDE.md",
+          "words": 2187
+        },
+        {
+          "surface": "17 .claude/rules/*.md cores",
+          "words": 4128
+        }
+      ],
+      "always_on_words": 6315,
+      "runtime_measured": false
+    },
+    "inert_js_regex_tokenizer": {
+      "status": "approximate",
+      "provenance_class": "estimated",
+      "method": "Inert JavaScript parser regex/tokenization used by the 809-entry inventory.",
+      "components": [
+        {
+          "surface": "CLAUDE.md",
+          "words_approx": 1903
+        },
+        {
+          "surface": "17 .claude/rules/*.md cores",
+          "words_approx": 4032
+        }
+      ],
+      "always_on_words_approx": 5935,
+      "runtime_measured": false
+    },
+    "intended_on_demand_corpora": {
+      "provenance_class": "estimated",
+      "deep_rule_references_words_wc": 19219,
+      "domain_references_words_wc": 34154,
+      "conditional_coordinator_routes_words_wc": 31065,
+      "loading_intent": "conditional or on-demand",
+      "sum_safe": false,
+      "note": "Do not add these values without an overlap analysis; they describe statically counted corpora, not startup context."
+    }
+  },
+  "prior_authoritative_runtime_baseline": {
+    "status": "historical-evidence-not-current-head",
+    "provenance_class": "prior-baseline",
+    "path": "docs/baselines/asdd-runtime-baseline-final-v2.json",
+    "run_id": "2026-07-18-001",
+    "commit": "f039fde3145a73d89ab7cbd5b21878ac3d7890ff",
+    "captured_at": "2026-07-18",
+    "always_on_words": {
+      "before": 16973,
+      "after": 5863,
+      "change_percent": -65.46
+    },
+    "normal_prompt_words": {
+      "before": 145,
+      "after": 0,
+      "change_percent": -100
+    },
+    "largest_agent_with_skills_words": 8905,
+    "largest_measured_effective_context_words": 19159,
+    "eager_skills_warning_count": 9,
+    "caveat": "This is the authoritative measured baseline for its older commit. It must not be presented as a fresh measurement of the current HEAD."
+  },
+  "configured_budgets_current_head": {
+    "path": ".sofka-asdd/context-budget.json",
+    "schema_version": 2,
+    "unit": "words",
+    "limits": {
+      "global_words": 25000,
+      "agent_words": 12000,
+      "agent_with_skills_words": 24000,
+      "command_words": 5000,
+      "hook_source_words": 3000
+    },
+    "targets": {
+      "always_on_words": {
+        "limit": 8000,
+        "stage": "error"
+      },
+      "eager_skills_per_agent": {
+        "limit": 1,
+        "stage": "warning"
+      },
+      "initial_agent_plus_skill_words": {
+        "limit": 10000,
+        "stage": "error"
+      },
+      "thin_coordinator_words": {
+        "limit": 3500,
+        "stage": "error"
+      }
+    },
+    "declared_hook_injection_words": 0,
+    "caveat": "The configuration records zero hook injection words, although UserPromptSubmit can inject context. This is a baseline gap, not proof of zero dynamic injection."
+  },
+  "professional_corpus": {
+    "scope": "24 agent definitions + 153 local SKILL.md files + 169 skill auxiliaries",
+    "textual_words": 230510,
+    "binary_assets": [
+      {
+        "path": ".claude/skills/sofka-asdd-data-eng-governance-assessment/templates/data-dictionary-template.xlsx",
+        "deleted": true,
+        "bytes": 10779,
+        "words": null
+      }
+    ],
+    "correction": "The XLSX contributes no words. The first inert parser binary-decode result is excluded.",
+    "startup_context": false,
+    "note": "Corpus size is an availability/discoverability measure, not an eager-loading measure."
+  },
+  "context_layers": [
+    {
+      "layer": "always-on-root-instructions",
+      "population": "CLAUDE.md",
+      "loading": "always-on",
+      "words_wc": 2187,
+      "words_inert_parser_approx": 1903,
+      "provenance_class": "estimated",
+      "runtime_observed_in_g0": false
+    },
+    {
+      "layer": "always-on-rule-cores",
+      "population": "17 .claude/rules/*.md files",
+      "loading": "always-on",
+      "count": 17,
+      "words_wc": 4128,
+      "words_inert_parser_approx": 4032,
+      "subgroups_inert_parser_approx": {
+        "compact_core": {
+          "count": 9,
+          "words": 1399
+        },
+        "full_always_on": {
+          "count": 8,
+          "words": 2633
+        }
+      },
+      "provenance_class": "estimated",
+      "runtime_observed_in_g0": false
+    },
+    {
+      "layer": "conditional-rule-references",
+      "population": "deep and domain reference documents",
+      "loading": "intended conditional/on-demand",
+      "deep_rule_reference_words_wc": 19219,
+      "domain_reference_words_wc": 34154,
+      "provenance_class": "estimated",
+      "startup_context": false,
+      "overlap_not_analyzed": true
+    },
+    {
+      "layer": "conditional-coordinator-routes",
+      "population": "10 coordinator phase documents plus rollback references",
+      "loading": "intended conditional/on-demand",
+      "words_wc": 31065,
+      "provenance_class": "estimated",
+      "startup_context": false
+    },
+    {
+      "layer": "agent-bodies",
+      "population": "24 local agent definitions",
+      "loading": "on agent selection/delegation; strategy differs by agent",
+      "words_specialized_parser": 28053,
+      "provenance_class": "estimated",
+      "startup_context": false
+    },
+    {
+      "layer": "local-skills",
+      "population": "153 bundled SKILL.md files",
+      "loading": "mixed: capability loader, frontmatter, body/conditional references",
+      "words_specialized_parser": 148701,
+      "provenance_class": "estimated",
+      "startup_context": false
+    },
+    {
+      "layer": "external-skills",
+      "population": "14 Databricks capabilities declared but not bundled",
+      "loading": "external/unresolved",
+      "count": 14,
+      "words": null,
+      "provenance_class": "not-observable",
+      "startup_context": false
+    },
+    {
+      "layer": "commands",
+      "population": "40 explicit command documents",
+      "loading": "explicit on-demand",
+      "words_wc": 33058,
+      "words_specialized_parser": 34058,
+      "provenance_class": "estimated",
+      "startup_context": false,
+      "comparability": "The two totals use different tokenization methods and are not interchangeable."
+    },
+    {
+      "layer": "skill-support",
+      "population": "169 skill auxiliary fixtures/references/templates",
+      "loading": "skill dependency or maintainer/reference use",
+      "text_words_specialized_parser": 53756,
+      "binary_assets": [
+        {
+          "path": ".claude/skills/sofka-asdd-data-eng-governance-assessment/templates/data-dictionary-template.xlsx",
+          "deleted": true,
+          "bytes": 10779,
+          "words": null
+        }
+      ],
+      "provenance_class": "estimated",
+      "startup_context": false
+    },
+    {
+      "layer": "runtime-and-maintainer-files",
+      "population": "hooks, scripts, runtime libraries, tools, tests and evaluation fixtures",
+      "loading": "executed or maintained as code/data; not prompt context by filesystem presence",
+      "words": null,
+      "provenance_class": "not-observable",
+      "startup_context": false
+    },
+    {
+      "layer": "dynamic-provider-context",
+      "population": "tool schemas, MCP schemas, provider internals, actual prompts and cache state",
+      "loading": "provider/runtime dependent",
+      "words_or_tokens": null,
+      "provenance_class": "not-observable"
+    }
+  ],
+  "profile_static_corpus": [
+    {
+      "id": "software",
+      "label": "Software Delivery",
+      "status": "provisional_profile",
+      "agents": [
+        "sofka-asdd-developer-backend",
+        "sofka-asdd-developer-frontend",
+        "sofka-asdd-solution-architect",
+        "sofka-asdd-tech-lead"
+      ],
+      "agent_count": 4,
+      "agent_words": 3445,
+      "skills": [
+        "sofka-asdd-developer-bug-fix",
+        "sofka-asdd-developer-build-validator",
+        "sofka-asdd-developer-continuous-improver",
+        "sofka-asdd-developer-e2e-test",
+        "sofka-asdd-developer-feature",
+        "sofka-asdd-developer-integration-test",
+        "sofka-asdd-developer-merge-conflicts",
+        "sofka-asdd-developer-refactoring-execute",
+        "sofka-asdd-developer-safe-refactor",
+        "sofka-asdd-developer-unit-test",
+        "sofka-asdd-architect-api-contract",
+        "sofka-asdd-architect-bounded-context",
+        "sofka-asdd-solution-architect-component-diagram",
+        "sofka-asdd-solution-architect-cross-impact",
+        "sofka-asdd-solution-architect-dep-audit",
+        "sofka-asdd-solution-architect-diagrams",
+        "sofka-asdd-architect-discovery",
+        "sofka-asdd-architect-patterns",
+        "sofka-asdd-architect-quality",
+        "sofka-asdd-solution-architect-resilience-auditor",
+        "sofka-asdd-architect-review",
+        "sofka-asdd-architect-sofka-docs",
+        "sofka-asdd-architect-tradeoff-analysis",
+        "sofka-asdd-tech-lead-artifact-audit",
+        "sofka-asdd-tech-lead-code-review",
+        "sofka-asdd-tech-lead-commit",
+        "sofka-asdd-tech-lead-create-mr",
+        "sofka-asdd-tech-lead-delivery-report",
+        "sofka-asdd-tech-lead-gitflow",
+        "sofka-asdd-tech-lead-impl-quality-gate",
+        "sofka-asdd-tech-lead-integration-validator",
+        "sofka-asdd-tech-lead-new-bug",
+        "sofka-asdd-tech-lead-pre-push",
+        "sofka-asdd-tech-lead-quality-gate",
+        "sofka-asdd-tech-lead-refactoring-plan",
+        "sofka-asdd-tech-lead-sdd-traceability",
+        "sofka-asdd-unit-test-design"
+      ],
+      "skill_count": 37,
+      "skill_words": 42211,
+      "specialized_commands": [],
+      "specialized_command_count": 0,
+      "specialized_command_words": 0,
+      "specialized_command_word_method": "specialized-parser",
+      "counting_note": "Agents and skills use exclusive primary-domain ownership from the specialized audit. Cross-domain candidates remain in secondary_domains and are not double-counted. Commands use the reconciled namespace inventory."
+    },
+    {
+      "id": "platform-devops",
+      "label": "Platform/DevOps",
+      "status": "provisional_profile",
+      "agents": [
+        "sofka-asdd-cloud-architect",
+        "sofka-asdd-devops-engineer"
+      ],
+      "agent_count": 2,
+      "agent_words": 2665,
+      "skills": [
+        "sofka-asdd-cloud-architect-design",
+        "sofka-asdd-cloud-architect-finops",
+        "sofka-asdd-cloud-architect-security",
+        "sofka-asdd-devops-engineer-cloud",
+        "sofka-asdd-devops-engineer-devsecops",
+        "sofka-asdd-devops-engineer-iac",
+        "sofka-asdd-devops-engineer-observability",
+        "sofka-asdd-devops-engineer-pipeline",
+        "sofka-asdd-devops-engineer-testing"
+      ],
+      "skill_count": 9,
+      "skill_words": 9499,
+      "specialized_commands": [],
+      "specialized_command_count": 0,
+      "specialized_command_words": 0,
+      "specialized_command_word_method": "specialized-parser",
+      "counting_note": "Agents and skills use exclusive primary-domain ownership from the specialized audit. Cross-domain candidates remain in secondary_domains and are not double-counted. Commands use the reconciled namespace inventory."
+    },
+    {
+      "id": "qa-atf",
+      "label": "QA/ATF",
+      "status": "provisional_profile",
+      "agents": [
+        "sofka-asdd-atf-api-qa-engineer",
+        "sofka-asdd-atf-reporting-qa-engineer",
+        "sofka-asdd-atf-web-qa-engineer"
+      ],
+      "agent_count": 3,
+      "agent_words": 5496,
+      "skills": [
+        "sofka-asdd-atf-api-orchestrator-dependency-mapper",
+        "sofka-asdd-atf-api-orchestrator-manifest-writer",
+        "sofka-asdd-atf-api-orchestrator-run-bootstrap",
+        "sofka-asdd-atf-api-orchestrator-work-item-partitioner",
+        "sofka-asdd-atf-api-performance-k6-script-generator",
+        "sofka-asdd-atf-api-performance-perf-threshold-evaluator",
+        "sofka-asdd-atf-api-reporting-backlog-sync",
+        "sofka-asdd-atf-api-reporting-qgs-evaluator",
+        "sofka-asdd-atf-api-reporting-report-renderer",
+        "sofka-asdd-atf-api-security-owasp-api-checks",
+        "sofka-asdd-atf-api-security-zap-runner",
+        "sofka-asdd-atf-api-shared-checkpoint-manager",
+        "sofka-asdd-atf-api-shared-config-loader",
+        "sofka-asdd-atf-api-shared-evidence-collector",
+        "sofka-asdd-atf-api-shared-knowledge-base-writer",
+        "sofka-asdd-atf-api-shared-rate-limit-protocol",
+        "sofka-asdd-atf-api-step-1-acceptance-criteria-normalizer",
+        "sofka-asdd-atf-api-step-1-gap-detector",
+        "sofka-asdd-atf-api-step-1-hu-parser",
+        "sofka-asdd-atf-api-step-2-contract-delta-detector",
+        "sofka-asdd-atf-api-step-2-contract-hasher",
+        "sofka-asdd-atf-api-step-2-openapi-parser",
+        "sofka-asdd-atf-api-step-3-istqb-test-techniques",
+        "sofka-asdd-atf-api-step-3-risk-scorer-api",
+        "sofka-asdd-atf-api-step-4-gherkin-writer-api",
+        "sofka-asdd-atf-api-step-4-test-case-designer",
+        "sofka-asdd-atf-api-step-4-test-data-generator-api",
+        "sofka-asdd-atf-api-step-5-bun-runner-setup",
+        "sofka-asdd-atf-api-step-5-newman-bridge",
+        "sofka-asdd-atf-api-step-5-playwright-api-scaffolder",
+        "sofka-asdd-atf-api-step-6-execution-runner",
+        "sofka-asdd-atf-api-step-6-failure-classifier",
+        "sofka-asdd-atf-web-alm-data-builder",
+        "sofka-asdd-atf-web-auth-handler",
+        "sofka-asdd-atf-web-batch-planner",
+        "sofka-asdd-atf-web-browser-lifecycle",
+        "sofka-asdd-atf-web-checkpoint-writer",
+        "sofka-asdd-atf-web-context-manager",
+        "sofka-asdd-atf-web-data-generator",
+        "sofka-asdd-atf-web-db-validator",
+        "sofka-asdd-atf-web-enrich-deep-cp",
+        "sofka-asdd-atf-web-enrichment-analyzer",
+        "sofka-asdd-atf-web-execution-result-writer",
+        "sofka-asdd-atf-web-gherkin-writer",
+        "sofka-asdd-atf-web-highlight-injector",
+        "sofka-asdd-atf-web-instance-planner",
+        "sofka-asdd-atf-web-knowledge-distiller",
+        "sofka-asdd-atf-web-knowledge-updater",
+        "sofka-asdd-atf-web-lighthouse-validator",
+        "sofka-asdd-atf-web-material-reference-detector",
+        "sofka-asdd-atf-web-navigation-loader",
+        "sofka-asdd-atf-web-notebooklm-query",
+        "sofka-asdd-atf-web-playwright-navigator",
+        "sofka-asdd-atf-web-rate-limit-handler",
+        "sofka-asdd-atf-web-rerun-resolver",
+        "sofka-asdd-atf-web-response-integrator",
+        "sofka-asdd-atf-web-risk-scorer",
+        "sofka-asdd-atf-web-test-data-needs",
+        "sofka-asdd-atf-web-testability-scorer",
+        "sofka-asdd-atf-web-visual-ux-a11y-validator"
+      ],
+      "skill_count": 60,
+      "skill_words": 46509,
+      "specialized_commands": [
+        "sofka-asdd:qa-analyze",
+        "sofka-asdd:qa-automate",
+        "sofka-asdd:qa-bootstrap",
+        "sofka-asdd:qa-design",
+        "sofka-asdd:qa-do",
+        "sofka-asdd:qa-execute",
+        "sofka-asdd:qa-fast-track",
+        "sofka-asdd:qa-regression",
+        "sofka-asdd:qa-report",
+        "sofka-asdd:qa-resume",
+        "sofka-asdd:qa-retest",
+        "sofka-asdd:qa-web-design",
+        "sofka-asdd:qa-web-diagnose",
+        "sofka-asdd:qa-web-enrich",
+        "sofka-asdd:qa-web-exec",
+        "sofka-asdd:qa-web-handoff-receive",
+        "sofka-asdd:qa-web-handoff",
+        "sofka-asdd:qa-web-knowledge",
+        "sofka-asdd:qa-web-perf",
+        "sofka-asdd:qa-web-run",
+        "sofka-asdd:qa-web-setup-app",
+        "sofka-asdd:qa-web-strategize",
+        "sofka-asdd:qa-web-visual-ux-a11y"
+      ],
+      "specialized_command_count": 23,
+      "specialized_command_words": 19081,
+      "specialized_command_word_method": "specialized-parser",
+      "counting_note": "Agents and skills use exclusive primary-domain ownership from the specialized audit. Cross-domain candidates remain in secondary_domains and are not double-counted. Commands use the reconciled namespace inventory."
+    },
+    {
+      "id": "data",
+      "label": "Data",
+      "status": "provisional_profile",
+      "agents": [
+        "sofka-asdd-data-architect",
+        "sofka-asdd-data-eng-databricks",
+        "sofka-asdd-data-governance"
+      ],
+      "agent_count": 3,
+      "agent_words": 4716,
+      "skills": [
+        "sofka-asdd-data-eng-architecture-design",
+        "sofka-asdd-data-eng-contract",
+        "sofka-asdd-data-eng-discovery",
+        "sofka-asdd-data-eng-governance-assessment"
+      ],
+      "skill_count": 4,
+      "skill_words": 8752,
+      "specialized_commands": [
+        "sofka-asdd:data-eng-build",
+        "sofka-asdd:data-eng-design",
+        "sofka-asdd:data-eng-discover",
+        "sofka-asdd:data-eng-publish",
+        "sofka-asdd:data-eng-validate"
+      ],
+      "specialized_command_count": 5,
+      "specialized_command_words": 9963,
+      "specialized_command_word_method": "specialized-parser",
+      "counting_note": "Agents and skills use exclusive primary-domain ownership from the specialized audit. Cross-domain candidates remain in secondary_domains and are not double-counted. Commands use the reconciled namespace inventory."
+    },
+    {
+      "id": "management-functional",
+      "label": "Management/Functional",
+      "status": "provisional_profile",
+      "agents": [
+        "sofka-asdd-ba-bitacora",
+        "sofka-asdd-ba-constructor",
+        "sofka-asdd-ba-descomponedor",
+        "sofka-asdd-ba-evaluador",
+        "sofka-asdd-producto"
+      ],
+      "agent_count": 5,
+      "agent_words": 4972,
+      "skills": [
+        "sofka-asdd-ba-bitacora-log",
+        "sofka-asdd-ba-constructor-contexto",
+        "sofka-asdd-ba-constructor-extraccion",
+        "sofka-asdd-ba-constructor-gherkin",
+        "sofka-asdd-ba-evaluador-coherencia",
+        "sofka-asdd-ba-evaluador-gaps",
+        "sofka-asdd-ba-evaluador-mece",
+        "sofka-asdd-producto-ba",
+        "sofka-asdd-producto-funcional",
+        "sofka-asdd-producto-new-hu",
+        "sofka-asdd-producto-pm",
+        "sofka-asdd-producto-po",
+        "sofka-asdd-producto-story-planner",
+        "sofka-asdd-producto-templates"
+      ],
+      "skill_count": 14,
+      "skill_words": 15188,
+      "specialized_commands": [],
+      "specialized_command_count": 0,
+      "specialized_command_words": 0,
+      "specialized_command_word_method": "specialized-parser",
+      "counting_note": "Agents and skills use exclusive primary-domain ownership from the specialized audit. Cross-domain candidates remain in secondary_domains and are not double-counted. Commands use the reconciled namespace inventory."
+    },
+    {
+      "id": "experience-design",
+      "label": "Experience/Design",
+      "status": "provisional_profile",
+      "agents": [
+        "sofka-asdd-ui",
+        "sofka-asdd-ux"
+      ],
+      "agent_count": 2,
+      "agent_words": 4424,
+      "skills": [
+        "sofka-asdd-ui-accessibility",
+        "sofka-asdd-ui-design-audit",
+        "sofka-asdd-ui-design-tokens",
+        "sofka-asdd-ui-figma-impl",
+        "sofka-asdd-ui-hifi-builder",
+        "sofka-asdd-ui-motion",
+        "sofka-asdd-ui-responsive",
+        "sofka-asdd-ui-ux-content",
+        "sofka-asdd-ux-context-core",
+        "sofka-asdd-ux-desk-researcher",
+        "sofka-asdd-ux-executive-storytelling",
+        "sofka-asdd-ux-flows-builder",
+        "sofka-asdd-ux-gap-auditor",
+        "sofka-asdd-ux-qualitative-synthesizer",
+        "sofka-asdd-ux-research-instruments"
+      ],
+      "skill_count": 15,
+      "skill_words": 19185,
+      "specialized_commands": [],
+      "specialized_command_count": 0,
+      "specialized_command_words": 0,
+      "specialized_command_word_method": "specialized-parser",
+      "counting_note": "Agents and skills use exclusive primary-domain ownership from the specialized audit. Cross-domain candidates remain in secondary_domains and are not double-counted. Commands use the reconciled namespace inventory."
+    },
+    {
+      "id": "security",
+      "label": "Security",
+      "status": "transversal_candidate",
+      "agents": [
+        "sofka-asdd-security"
+      ],
+      "agent_count": 1,
+      "agent_words": 562,
+      "skills": [
+        "sofka-asdd-security-code-scan",
+        "sofka-asdd-security-compliance",
+        "sofka-asdd-security-dependency-audit",
+        "sofka-asdd-security-secrets-scan"
+      ],
+      "skill_count": 4,
+      "skill_words": 2128,
+      "specialized_commands": [],
+      "specialized_command_count": 0,
+      "specialized_command_words": 0,
+      "specialized_command_word_method": "specialized-parser",
+      "counting_note": "Agents and skills use exclusive primary-domain ownership from the specialized audit. Cross-domain candidates remain in secondary_domains and are not double-counted. Commands use the reconciled namespace inventory."
+    },
+    {
+      "id": "core-overlays",
+      "label": "Cross-domain/Core",
+      "status": "transversal_core",
+      "agents": [
+        "sofka-asdd-domain-expert",
+        "sofka-asdd-explorer",
+        "sofka-asdd-meta",
+        "sofka-asdd-researcher"
+      ],
+      "agent_count": 4,
+      "agent_words": 1773,
+      "skills": [
+        "sofka-asdd-domain-expert-education",
+        "sofka-asdd-domain-expert-fintech",
+        "sofka-asdd-domain-expert-health",
+        "sofka-asdd-domain-expert-insurance",
+        "sofka-asdd-domain-expert-logistics",
+        "sofka-asdd-domain-expert-retail",
+        "sofka-asdd-meta-platform",
+        "sofka-asdd-researcher-benchmark",
+        "sofka-asdd-researcher-comparison",
+        "sofka-asdd-researcher-spike"
+      ],
+      "skill_count": 10,
+      "skill_words": 5229,
+      "specialized_commands": [
+        "sofka-asdd:add-agent",
+        "sofka-asdd:add-skill",
+        "sofka-asdd:analyze",
+        "sofka-asdd:build",
+        "sofka-asdd:design",
+        "sofka-asdd:do",
+        "sofka-asdd:docs-as-is",
+        "sofka-asdd:docs-to-be",
+        "sofka-asdd:document",
+        "sofka-asdd:resume",
+        "sofka-asdd:specify",
+        "sofka-asdd:verify"
+      ],
+      "specialized_command_count": 12,
+      "specialized_command_words": 5014,
+      "specialized_command_word_method": "specialized-parser",
+      "counting_note": "Agents and skills use exclusive primary-domain ownership from the specialized audit. Cross-domain candidates remain in secondary_domains and are not double-counted. Commands use the reconciled namespace inventory."
+    }
+  ],
+  "agent_loading_strategy": {
+    "groups": {
+      "eager-frontmatter-skills": [
+        {
+          "agent": "sofka-asdd-atf-api-qa-engineer",
+          "declared_frontmatter_skill_count": 1
+        },
+        {
+          "agent": "sofka-asdd-atf-reporting-qa-engineer",
+          "declared_frontmatter_skill_count": 7
+        },
+        {
+          "agent": "sofka-asdd-ba-bitacora",
+          "declared_frontmatter_skill_count": 1
+        },
+        {
+          "agent": "sofka-asdd-ba-constructor",
+          "declared_frontmatter_skill_count": 5
+        },
+        {
+          "agent": "sofka-asdd-ba-evaluador",
+          "declared_frontmatter_skill_count": 4
+        },
+        {
+          "agent": "sofka-asdd-cloud-architect",
+          "declared_frontmatter_skill_count": 3
+        },
+        {
+          "agent": "sofka-asdd-data-architect",
+          "declared_frontmatter_skill_count": 2
+        },
+        {
+          "agent": "sofka-asdd-data-eng-databricks",
+          "declared_frontmatter_skill_count": 14
+        },
+        {
+          "agent": "sofka-asdd-data-governance",
+          "declared_frontmatter_skill_count": 2
+        },
+        {
+          "agent": "sofka-asdd-meta",
+          "declared_frontmatter_skill_count": 1
+        },
+        {
+          "agent": "sofka-asdd-researcher",
+          "declared_frontmatter_skill_count": 3
+        },
+        {
+          "agent": "sofka-asdd-security",
+          "declared_frontmatter_skill_count": 4
+        }
+      ],
+      "thin-core-plus-conditional-phase": [
+        {
+          "agent": "sofka-asdd-atf-web-qa-engineer",
+          "declared_frontmatter_skill_count": 1
+        },
+        {
+          "agent": "sofka-asdd-ba-descomponedor",
+          "declared_frontmatter_skill_count": 1
+        }
+      ],
+      "on-demand-capability-catalog": [
+        {
+          "agent": "sofka-asdd-developer-backend",
+          "declared_frontmatter_skill_count": 0
+        },
+        {
+          "agent": "sofka-asdd-developer-frontend",
+          "declared_frontmatter_skill_count": 0
+        },
+        {
+          "agent": "sofka-asdd-devops-engineer",
+          "declared_frontmatter_skill_count": 0
+        },
+        {
+          "agent": "sofka-asdd-producto",
+          "declared_frontmatter_skill_count": 0
+        },
+        {
+          "agent": "sofka-asdd-solution-architect",
+          "declared_frontmatter_skill_count": 0
+        },
+        {
+          "agent": "sofka-asdd-tech-lead",
+          "declared_frontmatter_skill_count": 0
+        },
+        {
+          "agent": "sofka-asdd-ui",
+          "declared_frontmatter_skill_count": 0
+        },
+        {
+          "agent": "sofka-asdd-ux",
+          "declared_frontmatter_skill_count": 0
+        }
+      ],
+      "agent-body-only": [
+        {
+          "agent": "sofka-asdd-domain-expert",
+          "declared_frontmatter_skill_count": 0
+        },
+        {
+          "agent": "sofka-asdd-explorer",
+          "declared_frontmatter_skill_count": 0
+        }
+      ]
+    },
+    "counts": {
+      "eager-frontmatter-skills": 12,
+      "thin-core-plus-conditional-phase": 2,
+      "on-demand-capability-catalog": 8,
+      "agent-body-only": 2
+    },
+    "capability_catalog": {
+      "path": ".sofka-asdd/capability-loading.json",
+      "strategy": "one-plan-declared-primary-plus-explicit-approved-dependency",
+      "agent_count": 8,
+      "catalog_links": 76,
+      "unique_local_capability_ids": 65,
+      "max_eager_skills": 0,
+      "max_dependencies": 1
+    },
+    "frontmatter_declared_skill_links": {
+      "agent_count": 14,
+      "links": 49,
+      "unique_ids": 44
+    },
+    "thin_conditional_coordinators": [
+      "sofka-asdd-atf-web-qa-engineer",
+      "sofka-asdd-ba-descomponedor"
+    ],
+    "body_only_agents": [
+      "sofka-asdd-domain-expert",
+      "sofka-asdd-explorer"
+    ],
+    "eager_skill_warning_agents": [
+      {
+        "agent": "sofka-asdd-atf-reporting-qa-engineer",
+        "declared_skill_count": 7,
+        "bundled": [
+          "sofka-asdd-atf-api-shared-config-loader",
+          "sofka-asdd-atf-api-shared-checkpoint-manager",
+          "sofka-asdd-atf-api-shared-rate-limit-protocol",
+          "sofka-asdd-atf-api-shared-knowledge-base-writer",
+          "sofka-asdd-atf-api-reporting-qgs-evaluator",
+          "sofka-asdd-atf-api-reporting-report-renderer",
+          "sofka-asdd-atf-api-reporting-backlog-sync"
+        ],
+        "external_or_unresolved": []
+      },
+      {
+        "agent": "sofka-asdd-ba-constructor",
+        "declared_skill_count": 5,
+        "bundled": [
+          "sofka-asdd-ba-constructor-contexto",
+          "sofka-asdd-ba-constructor-extraccion",
+          "sofka-asdd-ba-constructor-gherkin",
+          "sofka-asdd-ba-evaluador-gaps",
+          "sofka-asdd-ba-bitacora-log"
+        ],
+        "external_or_unresolved": []
+      },
+      {
+        "agent": "sofka-asdd-ba-evaluador",
+        "declared_skill_count": 4,
+        "bundled": [
+          "sofka-asdd-ba-evaluador-mece",
+          "sofka-asdd-ba-evaluador-coherencia",
+          "sofka-asdd-ba-evaluador-gaps",
+          "sofka-asdd-ba-bitacora-log"
+        ],
+        "external_or_unresolved": []
+      },
+      {
+        "agent": "sofka-asdd-cloud-architect",
+        "declared_skill_count": 3,
+        "bundled": [
+          "sofka-asdd-cloud-architect-design",
+          "sofka-asdd-cloud-architect-finops",
+          "sofka-asdd-cloud-architect-security"
+        ],
+        "external_or_unresolved": []
+      },
+      {
+        "agent": "sofka-asdd-data-architect",
+        "declared_skill_count": 2,
+        "bundled": [
+          "sofka-asdd-data-eng-discovery",
+          "sofka-asdd-data-eng-architecture-design"
+        ],
+        "external_or_unresolved": []
+      },
+      {
+        "agent": "sofka-asdd-data-eng-databricks",
+        "declared_skill_count": 14,
+        "bundled": [],
+        "external_or_unresolved": [
+          "databricks-core",
+          "databricks-docs",
+          "databricks-python-sdk",
+          "databricks-unity-catalog",
+          "databricks-pipelines",
+          "databricks-spark-structured-streaming",
+          "databricks-jobs",
+          "databricks-dabs",
+          "databricks-dbsql",
+          "databricks-iceberg",
+          "databricks-zerobus-ingest",
+          "spark-python-data-source",
+          "databricks-metric-views",
+          "databricks-synthetic-data-gen"
+        ]
+      },
+      {
+        "agent": "sofka-asdd-data-governance",
+        "declared_skill_count": 2,
+        "bundled": [
+          "sofka-asdd-data-eng-governance-assessment",
+          "sofka-asdd-data-eng-contract"
+        ],
+        "external_or_unresolved": []
+      },
+      {
+        "agent": "sofka-asdd-researcher",
+        "declared_skill_count": 3,
+        "bundled": [
+          "sofka-asdd-researcher-spike",
+          "sofka-asdd-researcher-benchmark",
+          "sofka-asdd-researcher-comparison"
+        ],
+        "external_or_unresolved": []
+      },
+      {
+        "agent": "sofka-asdd-security",
+        "declared_skill_count": 4,
+        "bundled": [
+          "sofka-asdd-security-code-scan",
+          "sofka-asdd-security-secrets-scan",
+          "sofka-asdd-security-dependency-audit",
+          "sofka-asdd-security-compliance"
+        ],
+        "external_or_unresolved": []
+      }
+    ],
+    "eager_skill_warning_count": 9,
+    "interpretation": "The template does not eagerly load all 153 local skills. Remaining weight comes from global discoverability, role-entry asymmetry, stale catalog metadata, and nine agents that declare more than one eager skill."
+  },
+  "commands": {
+    "explicit_on_demand_count": 40,
+    "word_count_methods": {
+      "shell_wc": {
+        "words": 33058,
+        "method": "wc -w over .claude/commands/sofka-asdd/*.md at current HEAD",
+        "status": "exact-for-method"
+      },
+      "specialized_parser": {
+        "words": 34058,
+        "method": "specialized static parser; sum of namespace values below",
+        "status": "exact-for-method"
+      },
+      "interchangeable": false
+    },
+    "by_namespace": [
+      {
+        "domain": "QA/ATF",
+        "count": 23,
+        "words_specialized_parser": 19081
+      },
+      {
+        "domain": "Data",
+        "count": 5,
+        "words_specialized_parser": 9963
+      },
+      {
+        "domain": "Core/general plus extension",
+        "count": 12,
+        "words_specialized_parser": 5014
+      }
+    ],
+    "namespace_specialized_parser_sum": 34058,
+    "startup_context": false
+  },
+  "rules_and_runtime_surfaces": {
+    "rule_cores": {
+      "count": 17,
+      "always_compact_core": 9,
+      "full_always_on": 8
+    },
+    "rule_references": {
+      "count": 20,
+      "conditional_pairs_for_compact_cores": 9
+    },
+    "hooks": {
+      "filesystem_count": 18,
+      "registered_lifecycle_commands": 6,
+      "internal_or_unregistered": 12
+    },
+    "registered_lifecycle": [
+      "UserPromptSubmit",
+      "SubagentStop",
+      "PreToolUse:Agent",
+      "PreToolUse:Bash|Write|Edit",
+      "SessionStart:dispatcher",
+      "SessionStart:manifest"
+    ],
+    "caveat": "Counts are structural. G0 did not execute the lifecycle to observe actual dynamic injection or process latency."
+  },
+  "profile_readiness_interpretation": {
+    "high": [
+      "software",
+      "qa-atf"
+    ],
+    "medium_or_partial": [
+      "platform-devops",
+      "management-functional",
+      "experience-design"
+    ],
+    "partial_with_external_dependencies": [
+      "data"
+    ],
+    "transversal_appsec_partial": [
+      "security"
+    ],
+    "pilot_recommendation": [
+      "management-functional",
+      "data"
+    ],
+    "sixth_profile_recommendation": "experience-design",
+    "not_implemented": true
+  },
+  "known_caveats_and_gaps": [
+    "There is no profile registry, local focus state or profile-aware router yet.",
+    "Only QA/ATF and Data expose dedicated role command namespaces; other roles depend on general ASDD or agents/skills discoverability.",
+    "Data has four bundled primary skills; the Databricks agent declares fourteen external/unresolved skills.",
+    "Management has overlapping Product and standalone BA routes without an automated handoff.",
+    "Security coverage is AppSec-centered and distributed across other domains; it is not yet a complete professional Security profile.",
+    "Static word counts are not provider tokens and cannot predict exact context-window consumption.",
+    "The current-head static estimates and older runtime baseline use different methods/commits and must remain separate."
+  ],
+  "provenance": [
+    "/tmp/asdd-professional-role-profiles-2026-07-25-001/inventory-candidate.json",
+    "/tmp/asdd-professional-role-profiles-2026-07-25-001/profile-summary.json",
+    "/tmp/2026-07-25-001-SPIKE-1R-agents-skills-agents.csv",
+    "/tmp/2026-07-25-001-SPIKE-1R-agents-skills-skills.csv",
+    "/tmp/2026-07-25-001-SPIKE-1R-agents-skills-aux.csv",
+    ".sofka-asdd/capability-loading.json",
+    ".sofka-asdd/context-budget.json",
+    ".claude/settings.json",
+    "docs/baselines/asdd-runtime-baseline-final-v2.json",
+    "read-only runtime-surfaces subaudit at current HEAD"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "Findings de seguridad OWASP API Top 10",
+  "run_id": "{run_id}",
+  "scan_started_at": "{ISO 8601}",
+  "scan_completed_at": "{ISO 8601}",
+  "scope": {
+    "endpoints_audited": 0,
+    "checks_executed": ["API1", "API2"],
+    "checks_skipped": [
+      {"code": "{API-N}", "reason": "{string}"}
+    ]
+  },
+  "findings": [
+    {
+      "id": "SEC-NNN",
+      "owasp_code": "API1 | API2 | API3 | API4 | API5 | API6 | API7 | API8 | API9 | API10",
+      "owasp_name": "{nombre oficial}",
+      "severity": "critical | high | medium | low",
+      "cvss_approx": 0.0,
+      "title": "{título conciso, accionable}",
+      "description": "{2-4 frases con qué se observó}",
+      "affected_endpoint": "{METHOD} {path}",
+      "evidence_path": "docs/testing/atf/{run_id}/security/evidence/{SEC-ID}/",
+      "remediation": "{pasos numerados de corrección}",
+      "owasp_reference": "https://owasp.org/API-Security/editions/2023/en/..."
+    }
+  ],
+  "summary": {
+    "total_findings": 0,
+    "by_severity": {"critical": 0, "high": 0, "medium": 0, "low": 0},
+    "blocking_step_7": ["critical", "high"]
+  }
+}

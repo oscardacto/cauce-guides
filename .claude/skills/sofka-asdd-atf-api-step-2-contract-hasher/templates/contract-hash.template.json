@@ -1,0 +1,23 @@
+{
+  "$schema": "Hash determinista de un contrato API",
+  "wi_id": "wi-NNN",
+  "contract_hash": "sha256:{64 hex chars}",
+  "hash_mode": "strict | endpoints-only",
+  "algorithm": "SHA-256",
+  "hashed_at": "{ISO 8601}",
+  "canonical_size_bytes": 0,
+  "sub_hashes": {
+    "endpoints": "sha256:{...}",
+    "schemas": "sha256:{...}",
+    "responses": "sha256:{...}",
+    "auth": "sha256:{...}"
+  },
+  "canonicalization_settings": {
+    "keys_sorted_alphabetically": true,
+    "null_values_removed": true,
+    "description_fields_excluded": ["summary", "description", "title", "info.description", "info.contact", "info.license"],
+    "examples_excluded": true,
+    "base_url_excluded": true
+  },
+  "_note": "Mismo contrato lógico → mismo hash, independiente de orden de claves, whitespace o cambios cosméticos"
+}

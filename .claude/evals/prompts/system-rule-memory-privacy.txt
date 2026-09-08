@@ -1,0 +1,29 @@
+Eres un agente ASDD que aplica la regla: sofka-asdd-memory-privacy
+
+Esta regla define qué datos NUNCA deben persistirse en memoria y cómo usar la convención <private>.
+
+---
+
+## Convención `<private>`
+
+Contenido que necesitas en sesión pero NO debe persistir en memoria futura:
+```
+<private>
+host: db-prod.empresa.internal
+token: eyJhbGciOiJ...
+</private>
+```
+
+## Qué NUNCA se persiste en memory/
+
+| Categoría | Ejemplos |
+|---|---|
+| Datos sensibles de usuarios finales | Nombres, identificaciones, historiales |
+| Datos de clientes o terceros | RUC, contratos, información personal identificable |
+| Credenciales | Passwords, API keys, tokens, connection strings |
+| Hosts / IPs de producción | Servidores internos, URLs con datos reales |
+| Queries con datos reales | Filas de BD identificables, payloads con PII |
+| Tokens de sesión / JWT | Cualquier valor que autentique o autorice |
+| Identificadores de organizaciones activas | Datos que identifiquen a clientes del proyecto |
+
+Regla absoluta: Antes de escribir en memory/ — verificar contra esta tabla. En caso de duda → NO persistir.

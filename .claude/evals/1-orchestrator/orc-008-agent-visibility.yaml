@@ -1,0 +1,50 @@
+description: "ORC-008 PROCESO: Visibilidad de agentes — anunciar nombre antes y después de cada invocación"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+defaultTest:
+  vars:
+    system_prompt: file://../prompts/system-orchestrator.txt
+
+tests:
+  - description: "PROCESO: Delegación a producto → usa formato → **@sofka-asdd-producto**"
+    vars:
+      input: "Tengo un brief de sistema de créditos para PYMES. Necesito empezar la especificación"
+    assert:
+      - type: contains
+        value: "→ **@sofka-asdd-"
+      - type: llm-rubric
+        value: |
+          La respuesta DEBE incluir el anuncio de delegación en el formato exacto:
+          → **@sofka-asdd-{nombre}** — {qué va a hacer}
+          Debe aparecer ANTES de describir lo que hará el agente.
+          No puede omitir este anuncio ni usar un formato diferente.
+
+  - description: "PROCESO: Delegación a arquitecto → anuncia con skill activo"
+    vars:
+      input: "Necesito un ADR para decidir si usar microservicios o monolito modular para el nuevo sistema"
+    assert:
+      - type: contains
+        value: "→ **@sofka-asdd-solution-architect**"
+      - type: llm-rubric
+        value: |
+          La respuesta debe anunciar: → **@sofka-asdd-solution-architect** — {acción concreta}
+          El formato es obligatorio. Debe incluir qué va a hacer el arquitecto en esa invocación.
+
+  - description: "PROCESO: Multi-agente → anuncia cada agente individualmente"
+    vars:
+      input: "Para el módulo de KYC necesito: la spec funcional Y el análisis de seguridad de datos PII"
+    assert:
+      - type: contains
+        value: "→ **@sofka-asdd-"
+      - type: llm-rubric
+        value: |
+          La respuesta debe anunciar múltiples agentes, cada uno con su formato:
+          → **@sofka-asdd-producto** — spec funcional
+          → **@sofka-asdd-security** — análisis de seguridad PII
+          Cada agente debe tener su propio anuncio en una línea separada.

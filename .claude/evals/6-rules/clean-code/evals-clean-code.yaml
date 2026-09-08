@@ -1,0 +1,67 @@
+description: "Regla: sofka-asdd-clean-code — SOLID + Clean Code, idioma de código, coverage y Boy Scout Rule"
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-6
+    label: claude-sonnet-4-6
+
+prompts:
+  - '[{"role": "system", "content": "{{system_prompt}}"}, {"role": "user", "content": "{{input}}"}]'
+
+tests:
+  # DIP + ISP: rechaza dependencia directa a implementación concreta
+  - description: "DIP: rechaza dependencia directa a implementación en lugar de abstracciones"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-clean-code.txt"
+      input: |
+        Estoy implementando un caso de uso `ProcessPayment`. El servicio de dominio recibe directamente
+        una instancia de `StripePaymentGateway` (clase concreta) en el constructor.
+        ¿Está bien así o hay que cambiarlo?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe indicar que esto viola DIP (Dependency Inversion Principle).
+          Debe explicar que el dominio debe depender de una abstracción (interfaz/puerto) como `PaymentGateway`, no de `StripePaymentGateway` directamente.
+          Debe proponer definir un puerto/interfaz en la capa de dominio que `StripePaymentGateway` implemente en la capa de infraestructura.
+          NO debe aprobar la dependencia directa a la implementación concreta.
+
+  # Clean Code: magic strings + nesting profundo
+  - description: "Clean Code: identifica magic strings y nesting profundo como violaciones"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-clean-code.txt"
+      input: |
+        Revisa este fragmento de código:
+        ```
+        if (user.role === "ADMIN") {
+          if (user.status === "ACTIVE") {
+            if (order.amount > 1000) {
+              if (order.currency === "COP") {
+                processOrder(order);
+              }
+            }
+          }
+        }
+        ```
+        ¿Qué problemas tiene?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe identificar al menos DOS de estos problemas:
+          1. Magic strings ("ADMIN", "ACTIVE", "COP") — deben ser constantes nombradas o enums.
+          2. Nesting excesivo (4 niveles) — viola el límite de ≤ 2 niveles. Debe proponer guard clauses o early return.
+          NO debe aprobar el código tal como está ni sugerir que "funciona así que está bien".
+
+  # Boy Scout Rule: mejora incremental vs scope del ticket
+  - description: "Boy Scout Rule: propone mejora pero la escala correctamente si excede el scope"
+    vars:
+      system_prompt: "file://../../prompts/system-rule-clean-code.txt"
+      input: |
+        Mientras implemento el ticket #4210 (agregar campo `email` al perfil de usuario), noto que
+        `UserProfileService` tiene un método `updateProfile()` de 120 líneas con CC=22 que no toco en mi cambio.
+        ¿Lo refactorizo ahora mismo o lo dejo?
+    assert:
+      - type: llm-rubric
+        value: |
+          El agente debe aplicar la Boy Scout Rule: reconocer que el código necesita mejora.
+          Pero debe indicar que un refactoring de 120 líneas con CC=22 excede el scope del ticket #4210.
+          Debe recomendar escalar la oportunidad a sofka-asdd-tech-lead o crear un ticket de deuda técnica — NO ignorarlo ni hacerlo silenciosamente en el mismo PR.
+          NO debe decir "déjalo tal cual, no es tu problema" ni tampoco "refactorizalo ahora completo".
