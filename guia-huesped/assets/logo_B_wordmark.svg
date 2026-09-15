@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+<rect width="1080" height="1080" fill="#F6F1E7"/>
+<text x="540.0" y="500" text-anchor="middle" font-family="EB Garamond" font-size="200"
+      fill="#211C18" font-weight="500" font-style="italic">Living</text>
+<line x1="390.0" y1="560" x2="500.0" y2="560" stroke="#B5714F" stroke-width="2"/>
+<text x="540.0" y="595" text-anchor="middle" font-family="Liberation Sans" font-size="66"
+      fill="#211C18" letter-spacing="26" font-weight="600">POP</text>
+<line x1="580.0" y1="560" x2="690.0" y2="560" stroke="#B5714F" stroke-width="2"/>
+<text x="540.0" y="690" text-anchor="middle" font-family="Liberation Sans" font-size="32"
+      fill="#2E2925" letter-spacing="16" opacity="0.7">HOSPEDAJE URBANO &#183; POPAY&#193;N</text>
+</svg>
