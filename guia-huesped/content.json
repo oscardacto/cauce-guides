@@ -1,0 +1,205 @@
+{
+  "contract": "adr-005",
+  "version": "1.0.0",
+  "property": {
+    "id": "living-pop-302",
+    "name": {
+      "es": "Living POP · apartaestudio 302",
+      "en": "Living POP · studio 302"
+    },
+    "geo": { "city": "Popayán", "country": "CO", "lat": null, "lon": null },
+    "contact": {
+      "display": "350 370 8191",
+      "tel": "+573503708191",
+      "whatsapp": "573503708191"
+    },
+    "languages": ["es", "en", "fr", "pt"],
+    "defaultLanguage": "es"
+  },
+  "ui": {
+    "sectionNumbers": {
+      "es": ["uno", "dos", "tres", "cuatro"],
+      "en": ["one", "two", "three", "four"]
+    },
+    "whatsappAction": { "es": "Escribir por WhatsApp", "en": "Message on WhatsApp" },
+    "callAction": { "es": "Llamar", "en": "Call" },
+    "languageLabel": { "es": "Idioma", "en": "Language" },
+    "fallbackNote": {
+      "es": "Esta guía necesita JavaScript para mostrarse completa. Lo esencial está acá abajo.",
+      "en": "This guide needs JavaScript to show in full. The essentials are right below."
+    }
+  },
+  "sections": [
+    {
+      "id": "the-home",
+      "order": 1,
+      "title": { "es": "La casa", "en": "The home" },
+      "blocks": [
+        {
+          "id": "shower",
+          "type": "prose",
+          "subtitle": { "es": "La ducha", "en": "The shower" },
+          "body": {
+            "es": ["Abre la llave y listo: el calentador a gas se enciende solo. El agua tarda unos segundos en llegar caliente."],
+            "en": ["Open the tap and that's it — the gas heater lights on its own. The water takes a few seconds to come through warm."]
+          }
+        },
+        {
+          "id": "coffee-maker",
+          "type": "prose",
+          "subtitle": { "es": "La cafetera", "en": "The coffee maker" },
+          "body": {
+            "es": [
+              "El café lo dejamos nosotros. Es de Cuckoo Café, tostado acá en Popayán.",
+              "Llena el depósito con agua fría hasta la marca que necesites. La línea de 12 tazas es el máximo.",
+              "El filtro es permanente: va en su canasta, sin papel. Encima, el café molido — una cucharada colmada por taza es un buen punto de partida.",
+              "Tapa cerrada, jarra sobre la placa, y enciendes.",
+              "Si quieres servirte antes de que termine, puedes retirar la jarra. Devuélvela antes de veinte segundos o el filtro se desborda.",
+              "Cuando termines, un ciclo corto solo con agua deja el filtro limpio para el siguiente café."
+            ],
+            "en": [
+              "The coffee is on us. It comes from Cuckoo Café, roasted here in Popayán.",
+              "Fill the tank with cold water up to the mark you need. The 12-cup line is the maximum.",
+              "The filter is permanent — it sits in its basket, no paper needed. Ground coffee goes on top; a heaped spoonful per cup is a good place to start.",
+              "Lid closed, carafe on the plate, and switch it on.",
+              "If you'd like a cup before it finishes, you can lift the carafe out. Put it back within twenty seconds or the filter overflows.",
+              "When you're done, a short cycle with just water leaves the filter clean for the next pot."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "house-rules",
+      "order": 2,
+      "title": { "es": "La casa se cuida sola, casi", "en": "The home almost looks after itself" },
+      "blocks": [
+        {
+          "id": "sound",
+          "type": "prose",
+          "subtitle": { "es": "El sonido viaja.", "en": "Sound travels." },
+          "body": {
+            "es": ["Las paredes del edificio son delgadas y hay vecinos permanentes. Después de las 10 de la noche, conversación normal. No es espacio para reuniones ni fiestas."],
+            "en": ["The building has thin walls and full-time neighbours. After 10 at night, conversation level is the way to go. This isn't a space for gatherings or parties."]
+          }
+        },
+        {
+          "id": "registered-guests",
+          "type": "prose",
+          "subtitle": { "es": "Solo quienes están en la reserva.", "en": "Only the guests on the booking." },
+          "body": {
+            "es": ["El apartamento es para las personas registradas. Si alguien más va a quedarse, escríbeme antes y lo ajustamos."],
+            "en": ["The apartment is for the people listed on the reservation. If someone else is going to stay, message me beforehand and we'll sort it out."]
+          }
+        },
+        {
+          "id": "building-door",
+          "type": "prose",
+          "subtitle": { "es": "La puerta del edificio es de todos.", "en": "The building door belongs to everyone." },
+          "body": {
+            "es": ["No abras a personas que no conoces ni dejes entrar a nadie detrás de ti. La seguridad del edificio depende de que cada quien entre con su propio acceso."],
+            "en": ["It's best not to open for people you don't know, or to let anyone follow you in. The building stays secure when everyone comes in with their own access."]
+          }
+        },
+        {
+          "id": "indoor-air",
+          "type": "prose",
+          "subtitle": { "es": "El aire de la casa.", "en": "The air indoors." },
+          "body": {
+            "es": ["No se fuma dentro, ni se consumen sustancias. El olor se queda en los textiles y lo hereda quien viene después."],
+            "en": ["There's no smoking inside, and no substances. The smell settles into the fabrics and the next guest inherits it."]
+          }
+        },
+        {
+          "id": "rubbish",
+          "type": "prose",
+          "subtitle": { "es": "La basura.", "en": "Rubbish." },
+          "body": {
+            "es": ["Déjala en la caneca de la cocina, en bolsa cerrada. Del resto nos encargamos nosotros. Si se acumula más de la cuenta, el shut del piso queda justo frente al ascensor."],
+            "en": ["Leave it in the kitchen bin, in a closed bag. We take care of the rest. If it piles up more than usual, the rubbish chute on this floor is right across from the lift."]
+          }
+        },
+        {
+          "id": "no-pets",
+          "type": "prose",
+          "subtitle": { "es": "Sin mascotas.", "en": "No pets for now." },
+          "body": {
+            "es": ["Por ahora no recibimos animales. Si viajas con uno, avísame y te recomiendo dónde sí."],
+            "en": ["We're not set up for animals yet. If you're travelling with one, let me know and I'll point you somewhere that is."]
+          }
+        },
+        {
+          "id": "shared-areas",
+          "type": "prose",
+          "subtitle": { "es": "Las zonas comunes.", "en": "The shared areas." },
+          "body": {
+            "es": ["Gimnasio, coworking y lavandería son del edificio, no del apartamento. Se usan con el mismo cuidado con que usarías los tuyos."],
+            "en": ["The gym, coworking space and laundry belong to the building, not to the apartment. They're used with the same care you'd give your own."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "popayan",
+      "order": 3,
+      "title": { "es": "Popayán", "en": "Popayán" },
+      "blocks": [],
+      "places": []
+    },
+    {
+      "id": "checking-out",
+      "order": 4,
+      "title": { "es": "La salida", "en": "Checking out" },
+      "blocks": [
+        {
+          "id": "checkout-time",
+          "type": "data",
+          "format": "time",
+          "label": { "es": "Check-out", "en": "Check-out" },
+          "value": { "es": "11:00 a.m.", "en": "11:00 AM" }
+        },
+        {
+          "id": "before-you-go",
+          "type": "list",
+          "subtitle": { "es": "Antes de irte:", "en": "Before you go:" },
+          "items": {
+            "es": [
+              "Deja la loza usada en el lavaplatos. No hace falta lavarla.",
+              "Apaga luces y TV.",
+              "Cierra la puerta del balcón.",
+              "Deja las toallas usadas en el baño.",
+              "Revisa cargadores y documentos."
+            ],
+            "en": [
+              "Leave used dishes in the sink — no need to wash them.",
+              "Switch off the lights and the TV.",
+              "Close the balcony door.",
+              "Leave used towels in the bathroom.",
+              "Have a last look for chargers and documents."
+            ]
+          }
+        },
+        {
+          "id": "closing",
+          "type": "prose",
+          "body": {
+            "es": [
+              "La puerta se cierra sola. No hay llaves que devolver.",
+              "Si necesitas salir más tarde, escríbeme el día anterior y miramos el calendario."
+            ],
+            "en": [
+              "The door locks itself. There are no keys to return.",
+              "If you need a later checkout, message me the day before and we'll look at the calendar."
+            ]
+          }
+        },
+        {
+          "id": "contact",
+          "type": "data",
+          "format": "contact",
+          "label": { "es": "Contacto", "en": "Contact" }
+        }
+      ]
+    }
+  ]
+}
