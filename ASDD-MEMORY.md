@@ -12,8 +12,7 @@ Formato de fila: `| tipo | fecha | título corto | notas |`.
 
 | Tipo | Fecha | Memoria | Notas |
 |---|---|---|---|
-
-_Sin memorias registradas todavía._ Agregá filas siguiendo el procedimiento de abajo.
+| `reference` | 2026-09-15 | [Run único activo + naming en docs/](.claude/memory/asdd-single-active-run-limitation.md) | No hay suspensión de run ni naming legado para escritura nueva: un ADR de gobernanza queda sin ruta de archivo. |
 
 > Las lecciones transversales del ASDD **no** viven acá: son reglas de
 > `.claude/rules/` (por ejemplo GS-006 y GS-007 en `asdd-git-safety.md`, o el
