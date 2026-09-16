@@ -13,7 +13,7 @@ Este documento congela las decisiones visuales validadas en maqueta. Claude Code
 
 **Sin Tailwind ni CDN.** Prohibido cualquier script o hoja externa. Todo el estilo va en CSS nativo dentro del HTML final. Es lo que sostiene Lighthouse ≥ 95 y cero peticiones de red.
 
-**Firma: wordmark, no arco.** `logo_B_wordmark.svg` al pie, centrado, ancho 160–180 px. Deroga la línea de ADR-004 v1.1 que fijaba `LP-arcoL-*.svg`. Registro completo de la decisión en `guia-huesped-v0.1.md`.
+**Sin firma al pie** (16 de septiembre de 2026, deroga la versión anterior de esta línea). `logo_B_wordmark.svg` se retira: contiene `B5714F` y `EB Garamond`, y el primero está en la lista de prohibidos del criterio 1 de §7 — la spec se exigía a sí misma un asset que su propia verificación rechazaba. La página va sin firma hasta que haya un wordmark hecho con el sistema vigente. El descarte de `LP-arcoL-*.svg` que fijaba ADR-004 v1.1 sigue vigente. Registro completo en `guia-huesped-v0.1.md`.
 
 **Numeración dinámica.** Las secciones se numeran en palabras y de forma correlativa en el frontend: UNO, DOS, TRES. Si una sección no tiene bloques en el contrato de datos, no se renderiza y la siguiente hereda el número inmediato. El huésped nunca ve un salto numérico. La numeración del corpus (secciones 1–4) es interna y no se expone.
 

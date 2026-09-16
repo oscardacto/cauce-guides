@@ -115,7 +115,7 @@ Para el repositorio. Aquí no va código.
 - CHIRIMÍA `#E9A227` no se usa en v0.1.
 - Titulares de sección en Fraunces Regular a 28 px o más. Todo lo demás Inter. La hora de check-out y el teléfono en IBM Plex Mono.
 - Retícula 8 px. Margen 24 px hasta 767, 90 px desde 768.
-- Firma: `logo_B_wordmark.svg` al pie, centrado, ancho 160–180 px. Vector, nunca el PNG. Si el descriptor «HOSPEDAJE URBANO · POPAYÁN» se puede separar dentro del SVG, se quita: el huésped ya está dentro del apartamento cuando lee esto.
+- **Sin firma al pie.** Decisión del propietario, 16 de septiembre de 2026, que deroga la línea anterior de este mismo punto (ver «Decisiones registradas»). `logo_B_wordmark.svg` se retira del repo: contiene `B5714F` —Terracota, derogado por ADR-004 y **prohibido en el build por el punto siguiente de esta misma sección**— y `EB Garamond`, que no pertenece al sistema tipográfico (Georgia serif · sans · mono). Es un asset de la exploración de julio que sobrevivió al cambio de sistema. Sus tres `fill` (`#211C18`, `#2E2925`, `#F6F1E7`) tampoco son tokens de ADR-004. La página va sin firma hasta que exista un wordmark construido con el sistema vigente.
 
 **Prohibido en el build.** Cualquier aparición de `1B1A18`, `EFE6D4`, `B5714F`, `Jost`, `Cinzel`, `DejaVu`, `LP-S_arco`, `Casa Patio`. Cualquier hit es defecto.
 
@@ -166,7 +166,9 @@ Regla de renderizado: **una sección sin contenido no se maqueta.** No lleva tit
 
 **Se eliminó «comportamientos inapropiados».** No es verificable y no informa. Quien iba a portarse mal no se detiene ahí; quien no, se siente sospechoso.
 
-**Firma: wordmark, no arco.** Decisión del propietario, 15 de septiembre. Deroga la línea de ADR-004 v1.1 que fijaba `LP-arcoL-*.svg` como símbolo. La guía firma con `logo_B_wordmark.svg`. El sello circular (`logo_A_sello`) queda descartado: muere al tamaño de un pie de página, donde el texto curvo no se lee.
+**Firma: wordmark, no arco.** ~~Decisión del propietario, 15 de septiembre.~~ **SUPERADA el 16 de septiembre de 2026 — no se borra, es el registro de por qué se intentó.** Deroga la línea de ADR-004 v1.1 que fijaba `LP-arcoL-*.svg` como símbolo. La guía iba a firmar con `logo_B_wordmark.svg`. El sello circular (`logo_A_sello`) queda descartado: muere al tamaño de un pie de página, donde el texto curvo no se lee.
+
+Motivo de la superación: al revisar el asset, el wordmark resultó ser de la exploración de julio y no del sistema vigente — `B5714F` y `EB Garamond` adentro. La guía va sin firma. El descarte del sello sigue en pie.
 
 Pendiente de resolver con el sistema de marca: si el wordmark reemplaza al arco en todo el sistema o solo en producto digital, y qué pasa con la serif del wordmark frente a la Inter vectorizada de los lockups. Mientras eso no se decida, esta es una decisión local de la guía, no del sistema.
 
