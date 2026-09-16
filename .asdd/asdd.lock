@@ -84,6 +84,14 @@
       "docs_glob": "docs/**/*"
     }
   },
+  "project": {
+    "account": "cauce",
+    "solution": "guia-huesped",
+    "name": "cauce-guia",
+    "domain": "other",
+    "stack": ["node/javascript"],
+    "description": "Guia digital de huesped de Living POP 302, sobre una copia de la plantilla ASDD 3.7.0."
+  },
   "project_context": {
     "maturity": null
   },
