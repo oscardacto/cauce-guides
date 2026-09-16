@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía del huésped · LIVING POP</title>
+<style>
+  :root{--cal:#F2EEE6;--tinta:#16130F;--niebla:#E2DCD1;--teja:#A94D28;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+    --mono:Consolas,'Courier New',monospace;}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--cal);color:var(--tinta);font-family:var(--sans);
+    font-size:16px;line-height:1.5}
+  .band{background:var(--cal)}
+  .band--niebla{background:var(--niebla)}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px}
+  @media(min-width:768px){.wrap{padding:0 90px}}
+  p,li{max-width:60ch}
+
+  .topbar{padding-top:24px;padding-bottom:24px}
+  .lang{display:flex;align-items:center;gap:8px}
+  .lang__label{font-family:var(--mono);font-size:12px;text-transform:uppercase;
+    letter-spacing:.18em;color:var(--tinta);margin-right:8px}
+  .lang__btn{min-width:48px;min-height:48px;padding:8px 16px;background:none;
+    border:none;border-bottom:2px solid transparent;color:var(--tinta);
+    font-family:var(--mono);font-size:12px;text-transform:uppercase;
+    letter-spacing:.18em;cursor:pointer}
+  .lang__btn[aria-pressed="true"]{border-bottom-color:var(--tinta);font-weight:700}
+
+  header{padding-top:32px;padding-bottom:56px}
+  h1{font-family:var(--serif);font-weight:400;font-size:40px;line-height:48px;margin:0}
+  @media(min-width:768px){h1{font-size:56px;line-height:64px}}
+  .rule{border:none;border-top:2px solid var(--teja);width:64px;margin:24px 0 0}
+
+  section.content{padding-top:56px;padding-bottom:56px}
+  .num{font-family:var(--mono);font-size:12px;text-transform:uppercase;
+    letter-spacing:.18em;color:var(--tinta);margin:0 0 8px}
+  h2{font-family:var(--serif);font-weight:400;font-size:32px;line-height:40px;margin:0}
+  @media(min-width:768px){h2{font-size:40px;line-height:48px}}
+  h3{font-family:var(--serif);font-weight:400;font-size:24px;line-height:32px;
+    margin:56px 0 8px}
+  p{margin:0 0 16px}
+  ul{margin:0 0 16px;padding-left:24px;list-style:disc}
+  li{margin-bottom:8px}
+  li::marker{color:var(--tinta)}
+
+  .label{font-family:var(--mono);font-size:12px;text-transform:uppercase;
+    letter-spacing:.18em;color:var(--tinta);margin:56px 0 8px}
+  .time{font-family:var(--mono);font-size:32px;line-height:40px;color:var(--teja);
+    margin:0}
+  .actions{margin-top:8px}
+  .action{display:inline-flex;align-items:center;min-height:48px;min-width:48px;
+    padding:8px 0;font-family:var(--mono);color:var(--tinta);text-decoration:underline}
+  .action--wa{font-size:24px;line-height:32px}
+  .action--call{font-size:16px;line-height:24px}
+  .actions__call{margin-top:16px}
+  footer{padding-top:56px;padding-bottom:64px}
+  .fallback{padding-top:56px;padding-bottom:56px}
+</style>
+</head>
+<body>
+
+<noscript>
+  <div class="band"><div class="wrap fallback">
+    <p>Esta guía necesita JavaScript para mostrarse completa. Lo esencial está acá abajo.</p>
+    <p class="label">Check-out</p>
+    <p class="time">11:00 a.m.</p>
+    <p class="label">Contacto</p>
+    <p><a class="action action--wa" href="https://wa.me/573503708191">Escribir por WhatsApp</a></p>
+    <p><a class="action action--call" href="tel:+573503708191">Llamar · 350 370 8191</a></p>
+  </div></div>
+</noscript>
+
+<div id="app"></div>
+
+<script>
+(function(){
+  var PUBLISHED=['es','en'];
+  var lang=null,data=null;
+  var app=document.getElementById('app');
+
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function t(map){return map&&(map[lang]||map[data.property.defaultLanguage])||'';}
+
+  function detect(){
+    var nav=(navigator.language||'es').slice(0,2).toLowerCase();
+    return PUBLISHED.indexOf(nav)>-1?nav:data.property.defaultLanguage;
+  }
+
+  function fallbackHTML(){
+    return '<div class="band"><div class="wrap fallback">'+
+      '<p>Esta guía no pudo cargarse completa. Lo esencial está acá abajo.</p>'+
+      '<p class="label">Check-out</p><p class="time">11:00 a.m.</p>'+
+      '<p class="label">Contacto</p>'+
+      '<p><a class="action action--wa" href="https://wa.me/573503708191">Escribir por WhatsApp</a></p>'+
+      '<p><a class="action action--call" href="tel:+573503708191">Llamar · 350 370 8191</a></p>'+
+      '</div></div>';
+  }
+
+  function blockHTML(b){
+    var h='';
+    if(b.subtitle)h+='<h3>'+esc(t(b.subtitle))+'</h3>';
+    if(b.type==='prose'&&b.body)
+      (t(b.body)||[]).forEach(function(p){h+='<p>'+esc(p)+'</p>';});
+    if(b.type==='list'&&b.items){
+      h+='<ul>';(t(b.items)||[]).forEach(function(i){h+='<li>'+esc(i)+'</li>';});h+='</ul>';
+    }
+    if(b.type==='data'&&b.format==='time')
+      h+='<p class="label">'+esc(t(b.label))+'</p><p class="time">'+esc(t(b.value))+'</p>';
+    if(b.type==='data'&&b.format==='contact'){
+      var c=data.property.contact,u=data.ui;
+      h+='<p class="label">'+esc(t(b.label))+'</p><div class="actions">'+
+         '<a class="action action--wa" href="https://wa.me/'+esc(c.whatsapp)+'">'+
+           esc(t(u.whatsappAction))+'</a>'+
+         '<div class="actions__call"><a class="action action--call" href="tel:'+esc(c.tel)+'">'+
+           esc(t(u.callAction))+' · '+esc(c.display)+'</a></div></div>';
+    }
+    return h;
+  }
+
+  function render(){
+    document.documentElement.lang=lang;
+    var u=data.ui;
+    var shown=data.sections.filter(function(s){return s.blocks&&s.blocks.length;});
+    var words=(u.sectionNumbers&&u.sectionNumbers[lang])||[];
+
+    var h='<div class="band"><div class="wrap topbar"><div class="lang">'+
+      '<span class="lang__label">'+esc(t(u.languageLabel))+'</span>';
+    PUBLISHED.forEach(function(L){
+      h+='<button class="lang__btn" type="button" data-lang="'+L+'" aria-pressed="'+
+         (L===lang)+'">'+L+'</button>';
+    });
+    h+='</div></div></div>';
+
+    h+='<div class="band"><div class="wrap"><header><h1>'+
+       esc(t(data.property.name))+'</h1><hr class="rule"></header></div></div>';
+
+    shown.forEach(function(s,i){
+      var niebla=(i%2===1)?' band--niebla':'';
+      h+='<div class="band'+niebla+'"><div class="wrap"><section class="content">'+
+         '<p class="num">'+esc(words[i]||'')+'</p><h2>'+esc(t(s.title))+'</h2>';
+      s.blocks.forEach(function(b){h+=blockHTML(b);});
+      h+='</section></div></div>';
+    });
+
+    h+='<div class="band"><div class="wrap"><footer></footer></div></div>';
+    app.innerHTML=h;
+
+    Array.prototype.forEach.call(app.querySelectorAll('.lang__btn'),function(btn){
+      btn.addEventListener('click',function(){lang=btn.getAttribute('data-lang');render();});
+    });
+  }
+
+  fetch('content.json')
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(json){data=json;lang=detect();render();})
+    .catch(function(){app.innerHTML=fallbackHTML();});
+})();
+</script>
+</body>
+</html>
