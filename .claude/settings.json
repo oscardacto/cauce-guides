@@ -44,8 +44,6 @@
             "Read(*)",
             "Grep(*)",
             "Glob(*)",
-            "Write(*)",
-            "Edit(*)",
             "Bash(powershell -c \u0027 *)"
         ],
         "deny": [
