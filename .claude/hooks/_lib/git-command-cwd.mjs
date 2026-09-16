@@ -184,7 +184,7 @@ const PIPE_RE = /\|/;
  * lo que esos dos checks deben correr sobre el string CON las comillas
  * dobles intactas.
  */
-function maskQuotes(command, maskDouble) {
+export function maskQuotes(command, maskDouble) {
   let out = "";
   let inSingle = false;
   let inDouble = false;

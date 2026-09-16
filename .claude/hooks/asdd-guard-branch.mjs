@@ -22,7 +22,7 @@
 import { readFileSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
-import { resolveEffectiveCwd, parseInlineEnvVar } from "./_lib/git-command-cwd.mjs";
+import { resolveEffectiveCwd, parseInlineEnvVar, maskQuotes } from "./_lib/git-command-cwd.mjs";
 import { consumeCommitAuthorization } from "../scripts/lib/asdd-commit-authorization-lib.mjs";
 
 const DEFAULT_PROTECTED = "main,master,qa,dev,develop";
@@ -32,6 +32,11 @@ const ENV_VAR_NAME = "ASDD_GUARD_BRANCH_DISABLE";
 // `cd y && git commit`. No matchea menciones en strings de otros comandos
 // gracias al límite de palabra y a exigir `git` + flags globales + `commit`.
 const GIT_COMMIT_RE = /\bgit(\s+(-C\s+\S+|--git-dir=\S+|--work-tree=\S+|-c\s+\S+))*\s+commit\b/;
+
+// Un comando que invoca un intérprete puede esconder "git commit" en una
+// cadena que el intérprete evalúa en runtime — ahí hay que mirar el crudo
+// (fail-closed), enmascarar comillas ahí abriría un bypass real.
+const INTERPRETER_RE = /\b(bash|sh|zsh)\s+(-\w*c\w*)\b|\beval\b|\bnode\s+-e\b|\bcmd(\.exe)?\s+\/c\b/i;
 
 function readStdin() {
   try {
@@ -71,7 +76,8 @@ export function getBranchGuardDecision(input, environment = process.env) {
   if (toolName !== "Bash") return null;
 
   const command = input?.tool_input?.command || input?.toolInput?.command || "";
-  if (!GIT_COMMIT_RE.test(command)) return null;
+  const commandForDetection = INTERPRETER_RE.test(command) ? command : maskQuotes(command, true);
+  if (!GIT_COMMIT_RE.test(commandForDetection)) return null;
 
   // Escape hatch auditable: por env de sesión O por prefijo inline en el
   // comando (VAR=1 comando). El prefijo inline nunca llega al proceso Node
