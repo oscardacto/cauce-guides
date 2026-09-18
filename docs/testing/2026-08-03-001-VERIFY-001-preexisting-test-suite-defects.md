@@ -134,7 +134,7 @@ dispatcher apuntan al **mismo commit**:
 59975b2257b92ea08714e4cbb5c32f856a62e763
 2026-07-17
 perf(hooks): consolidate session start guards
-Autor: Andrés Mauricio Jiménez Peñaranda <andres.jimenez@sofka.com.co>
+Autor: Jane Doe <jane.doe@example.com>
 ```
 
 `git show --stat 59975b2` (extracto):
